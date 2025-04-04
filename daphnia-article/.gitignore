@@ -1,0 +1,9 @@
+*.DS_Store
+*.Rhistory
+*.tex
+*.bbl
+*.log
+*.aux
+*.blg
+ms.Rout
+figure

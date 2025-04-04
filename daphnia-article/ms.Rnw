@@ -1,0 +1,1146 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath}
+\usepackage{enumerate}
+\usepackage[authoryear,numbers]{natbib}
+\usepackage{graphicx}
+\usepackage[english]{babel}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{adjustbox}
+\usepackage{placeins}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\usepackage{float}
+\usepackage[ruled,vlined]{algorithm2e}
+\usepackage[utf8]{inputenc}
+\usepackage{hyphenat}
+\tolerance=1000
+\usepackage{url}
+\usepackage{textcomp}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows, fit}
+\usetikzlibrary{automata,positioning}
+\usetikzlibrary{shapes.multipart}
+\tikzset{
+    process/.style = {rectangle, rounded corners, minimum width=2cm,minimum height=1cm, text centered, text width=6cm, draw=black, fill=orange!30},
+    process2/.style = {rectangle, rounded corners, minimum width=2cm,minimum height=1cm, text centered, text width=6cm, draw=black, fill=blue!30},
+    decision/.style = {diamond, minimum width=2cm, minimum height=1cm, text centered, draw=black, fill=green!30},
+    decision2/.style = {diamond, minimum width=2cm, minimum height=1cm, text centered, draw=black, fill=blue!30},
+    arrow/.style = {thick,->,>=stealth},
+    myfit/.style={draw,dashed,black, inner xsep=10pt, inner ysep=15pt, rounded corners=5pt},
+    mytitle/.style={draw,black, fill=orange!50, inner sep=5pt, right, xshift=10pt, align=center, execute at begin node=\setlength{\baselineskip}{2em}}
+    }
+\parskip 3mm
+
+\bibliographystyle{apalike}
+\newcommand{\blind}{1}
+\usetikzlibrary{positioning}
+\usetikzlibrary {arrows.meta}
+\usetikzlibrary{shapes.geometric}
+\usetikzlibrary{calc}
+% DON'T change margins - should be 1 inch all around.
+\addtolength{\oddsidemargin}{-.5in}%
+\addtolength{\evensidemargin}{-1in}%
+\addtolength{\textwidth}{1in}%
+\addtolength{\textheight}{1.7in}%
+\addtolength{\topmargin}{-1in}%
+
+\newcommand\authoraddress{ \vspace{-1mm} \\ \normalsize}
+
+\newcommand\jwc[1]{\textcolor{brown}{[JW: #1]}}
+\newcommand\eic[1]{\textcolor{orange}{[EI: #1]}}
+\newcommand\byc[1]{\textcolor{blue}{[BY: #1]}}
+\newcommand\TODO[1]{\textcolor{red}{[TODO: #1]}}
+\newcommand\Unit{U}
+\newcommand\unit{u}
+\newcommand\seq[2]{{#1}\!:\!{#2}}
+\newcommand\species{\mathbbm{k}}
+%\newcommand\native{n}
+%\newcommand\native{\mathrm{nat}}
+%\usepackage{mathrsfs}
+%\newcommand\native{\mathscr{N}}
+\usepackage{bbm}
+\newcommand\native{\mathbbm{n}}
+%\newcommand\native{\textsc{n}}
+%\newcommand\invasive{i}
+%\newcommand\invasive{\mathrm{inv}}
+%\newcommand\invasive{\mathscr{I}}
+\newcommand\invasive{\mathbbm{i}}
+%\newcommand\invasive{\textsc{i}}
+%\newcommand\Normal{\operatorname{N}}
+\newcommand\Normal{\mathrm{N}}
+\begin{document}
+\def\spacingset#1{\renewcommand{\baselinestretch}%
+{#1}\small\normalsize} \spacingset{1}
+
+
+<<Debug, include=FALSE>>=
+library(knitr)
+# Set global caching
+cache_option = FALSE
+opts_chunk$set(echo = TRUE, cache = cache_option)
+@
+
+
+\if1\blind
+{
+  \title{\bf Mechanistic models for panel data: Analysis of ecological experiments with four interacting species}
+\author{Bo Yang \authoraddress Department of Biostatistics, University of Michigan \\
+        Jesse Wheeler  \authoraddress Department of Statistics, University of Michigan \\
+	Meghan A. Duffy  \authoraddress Department of Ecology and Evolutionary Biology, University of Michigan\\
+        Aaron A. King  \authoraddress Department of Ecology and Evolutionary Biology \&  \authoraddress Center for the Study of Complex Systems, University of Michigan\\
+        Edward L. Ionides \authoraddress Department of Statistics, University of Michigan}
+  \maketitle
+} \fi
+
+
+\if0\blind
+{
+  \bigskip
+  \bigskip
+  \bigskip
+  \begin{center}
+    {\LARGE\bf Mechanistic models for panel data: Analysis of ecological experiments with four interacting species}
+\end{center}
+  \medskip
+} \fi
+
+<<Setup, include=FALSE,echo=FALSE,results='hide', cache=cache_option>>=
+ library(patchwork)
+ library(magrittr)
+ library(readxl)
+ library(pomp)
+ library(panelPomp)
+ library(foreach)
+ library(doParallel)
+ registerDoParallel(cores=detectCores())
+ library(ggplot2)
+ library(gridExtra)
+ library(scales)
+ library(dplyr)
+ # library(gtable)
+
+ myround <- function (x, digits = 1) {
+  if (length(digits) > 1) {
+    digits <- digits[1]
+    warning("Using only digits[1]")
+  }
+  if (digits < 1) {
+    as.character(round(x,digits))
+  } else {
+    tmp <- sprintf(paste("%.", digits, "f", sep = ""), x)
+    zero <- paste0("0.", paste(rep("0", digits), collapse = ""))
+    tmp[tmp == paste0("-", zero)] <- zero
+    tmp
+  }
+}
+
+  mysignif_ll_AIC <- function (x, digits = 1) {
+   myround(x, digits - ceiling(log10(sqrt(x*x))))
+  }
+
+  mysignif <- function(x, digits = 2) {
+    if (is.na(x) || is.nan(x)) {
+      return("NA")
+    }
+    s <- formatC(x, format = "e", digits = digits)
+
+    parts <- strsplit(s, "e", fixed = TRUE)[[1]]
+    mantissa <- parts[1]
+    exponent <- as.integer(parts[2])
+    if (exponent == 0){
+       return(paste0("$",mantissa, "$"))
+    }
+    else if (exponent == 1){
+       return(paste0("$",mantissa, "\\cdot 10$"))
+    }
+    else{
+       return(paste0("$",mantissa, "\\cdot 10^{", exponent, "}$"))
+    }
+
+  }
+ #----------------load data---------------------------------------------------------------
+load("data/raw_data.rda")
+
+ #-----------------------------Mix with para----------------------------------------------------------------------------
+ mixed_para <- Mesocosm_data_mixed[91:170, ]
+ mixed_para <- subset(mixed_para, select = c(rep, day, dent.adult,dent.inf,lum.adult,lum.adult.inf,dent.juv,lum.juv))
+ mixed_para <- mixed_para[80: 1, ]
+ #Convert sampling date to natural date. Samples are collected every 5 days after the #first 7 days.
+ mixed_para$day = (mixed_para$day - 1) * 5 + 7
+ mixed_para_data = list()
+ trails = c("K","L","M","N","O","P","Q","S")
+ for (i in 1: length(trails)){
+   mixed_para_data[[i]]=subset(mixed_para, select = c("day", "dent.adult","dent.inf","lum.adult","lum.adult.inf","dent.juv","lum.juv"),
+                               mixed_para$rep == trails[i])
+ }
+@
+
+%\bigskip
+
+\begin{abstract} %% 200-word limit for ASA journals
+\noindent In an ecological context, panel data arise when time series measurements are made on a collection of ecological processes.
+Each process may correspond to a spatial location for field data, or to an experimental ecosystem in a designed experiment.
+Statistical models for ecological panel data should capture the high levels of nonlinearity, stochasticity, and measurement uncertainty inherent in ecological systems.
+Furthermore, the system dynamics may depend on unobservable variables.
+This study applies iterated filtering techniques to explore new possibilities for likelihood-based statistical analysis of these complex systems.
+We analyze data from a mesocosm experiment in which two species of the freshwater planktonic crustacean genus, {\it Daphnia}, coexist with an alga and a fungal parasite.
+Time series data are collected on replicated mesocosms under six treatment conditions.
+Iterated filtering enables maximization of the likelihood for scientifically motivated nonlinear partially observed Markov process models, providing access to standard likelihood-based methods for parameter estimation, confidence intervals, hypothesis testing, model selection and diagnostics.
+This toolbox allows scientists to propose and evaluate scientifically motivated stochastic dynamic models for panel data, constrained only by the requirement to write code to simulate from the model and to specify a measurement distribution describing how the system state is observed.
+\end{abstract}
+
+
+\noindent%
+{\it Keywords:  Panel Iterated Filtering; SIRJPF model; PanelPOMP; Daphnia}
+\vfill
+
+\newpage
+\spacingset{1.9} % DON'T change the spacing!
+    \section{Introduction}
+  \label{sec:intro}
+
+  Biological dynamic systems often contain elements or processes that are difficult to observe, even under controlled experimental conditions.
+  These unobservable, or latent, components are often crucial to understanding system dynamics, or are of scientific interest themselves.
+  Additionally, both the measurements obtained from the systems in question and their underlying dynamic processes often exhibit substantial stochasticity.
+  The combination of these two factors complicates data interpretation and analysis in ecological studies.
+  Given these inherent properties of ecological systems, it is essential to use models that can account for key latent mechanisms and the stochastic nature of the system when conducting inference \citep{young98,bjornstad01}.
+
+Partially observed Markov process (POMP) models, also known as hidden Markov models or state space models \citep{breto09,auger-methe21}, comprise a class of models suited to the description of such systems.
+These models describe the latent process using a Markovian representation, a reasonable approach in many situations.
+  A POMP model is mechanistic if it provides a causal description of the system, i.e., if it can explain the consequence of interventions to the system.
+  Statistical inferences on mechanistic models can provide insight into key latent mechanisms.
+  Further, statistical tests between rival mechanistic hypotheses can inform qualitative understanding about suitable model structures.
+  Thus, mechanistic models are invaluable tools for addressing challenges in ecology \citep{mouquet15}.
+
+  Collections of time series on related but disjoint systems are called panel data, also known as longitudinal data.
+  Each component system is called a unit, and the units may be sites in a field study (e.g., plots, lakes) or independent mesocosms or microcosms in a controlled laboratory setting.
+  Studying the entire panel may allow precision in statistical conclusions that is unattainable from a single unit.
+  Alternatively, scientists may be interested in specific differences between the units, requiring the investigation of the entire panel of data.
+  For either of these goals, investigation of panel data leads to the challenging statistical task of fitting a collection of related nonlinear non-Gaussian vector-valued POMP models, called a PanelPOMP model \citep{breto20}.
+  In this article, we demonstrate how recent methodological advances can facilitate data analysis for such models in a multi-species system.
+  We use data from a controlled experiment involving the population dynamics of two freshwater plankton species ({\it Daphnia dentifera} and {\it Daphnia lumholtzi}) together with an alga, \textit{Ankistrodesmus falcatus}, as food and a fungal parasite, \textit{Metschnikowia bicuspidata}, that can infect both {\it Daphnia} species.
+  These data were collected by \citet{searle16} to investigate how the competition between the North American native {\it D.~dentifera} and the invasive {\it D.~lumholtzi} is modified by their differing susceptibility to the parasite.
+  Advances in data collection make this experiment representative of a growing class of situations where panel data is available on a complex multi-species system.
+
+  Our model builds upon the ordinary differential equation model of \citet{searle16}.
+  We include dynamic stochasticity, leading to a stochastic differential equation model which provides an improved statistical fit to the data while also assisting identification of model misspecification \citep{king15}.
+  We carry out likelihood-based inference using panel iterated filtering \citep{breto20} which is a PanelPOMP extension of basic iterated filtering methodology \citep{ionides15,king16} for POMP models.
+  Iterated filtering methods have a plug-and-play property \citep{he10} that they require a simulator for the dynamic model but do not need the ability to evaluate transition densities.
+  The plug-and-play property permits practical consideration of a broad class of PanelPOMP models, assisting the creative task of developing scientifically plausible models that simultaneously have good statistical fit.
+  POMP models have long been advocated as an appropriate framework for ecological systems \citep{schnute94,buckland04}.
+  A major practical limitation has been the computational difficulty in carrying out inference.
+  When Laplace approximations are applicable, the Template Model Builder approach is available \citep{kristensen16}.
+Iterated filtering techniques apply to a more general class of POMP models, but the high-dimensional nature of PanelPOMP models adds additional methodological challenges.  
+  We are not aware of any previous scientific studies where nonlinear, non-Gaussian PanelPOMP models (with some parameters shared between units and some parameters specific to each unit) have been calibrated to multi-species panel data via maximum likelihood.
+
+  A central question when using model-based statistical inference to investigate ecological dynamics is to discover which biological details are necessary to include in a model to provide an adequate statistical explanation for the data.
+  Our approach to answering this question uses standard tools of likelihood-based inference.
+  We compare the model likelihood to statistical benchmarks, such as linear or autoregressive models, seeking to continue improving a mechanistic model until it captures the predictability of the data with at least comparable skill to a simple non-mechanistic analysis \citep{wheeler24,li24}.
+  In doing so, we ensure that the proposed dynamic model provides a plausible mechanistic description of the dynamic system, supported by evidence that that the model also provides a suitable quantitative description of data that arise from the system.
+
+  To do this, we study residuals and conditional log-likelihood anomalies for each data point to identify relative weaknesses and strengths of different models.
+  We calculate Akaike's Information Criterion to compare the overall fit of rival mechanistic models.
+We compute profile likelihood confidence intervals, making appropriate adjustment for Monte Carlo uncertainty \citep{ionides17,ning21}.
+All these techniques are predicated on an ability to evaluate and maximize the log-likelihood function.
+This ability was unlocked by panel iterated filtering \citep{breto20} and further strengthened by the marginalized panel iterated filtering algorithm that we develop and demonstrate here.
+These algorithms are discussed in more detail in Section~\ref{sec:meth}.
+First, we discuss the experimental system in Section~\ref{sec:studysystem}.
+Then, we present our models and their fitted parameter values in Section~\ref{sec:mecmod}.
+Section~\ref{sec:res} presents additional results showing that our stochastic model, that describes depletion of the algal food resource together with age-structured population dynamics, provides a better statistical explanation of the data than the previous deterministic model by \citet{searle16} that supposed the dynamics are driven by a switch of reproductive strategies from the asexual production of juveniles to the sexual production of long-lasting dormant eggs.
+Our findings have consequences for the interpretation of this experiment and the planning of future experiments.
+Section~\ref{sec:dis} is a concluding discussion.
+
+\section{A {\it Daphnia} mesocosm experiment}
+\label{sec:studysystem}
+
+\textit{D.~dentifera} is native to North American stratified lakes, whereas \textit{D.~lumholtzi} is an invasive species originating from Africa, Asia, and Australia.
+First observed in North America in the 1990s, \textit{D.~lumholtzi} has rapidly expanded across the United States, impacting native species and ecosystem dynamics \citep{havel93,searle16salinization}.
+This leads to ecological interest in understanding competition between \textit{D.~dentifera} and \textit{D.~lumholtzi}, two species with high evolutionary divergence having their most recent common ancestor around 145 million years ago \citep{kotov11,cornetti19}.
+Here, we investigate how this competition is affected by a parasite that infects both species.
+\citet{searle16} hypothesized that the presence of a fast-growing invasive species, which has a high susceptibility to the native parasite {\it M.~bicuspidata}, could amplify the parasite in the native population.
+
+Female \textit{Daphnia} reproduce asexually in favorable situations, parthenogenetically producing female offspring equipped for parthenogenetic reproduction.
+Maturation of juveniles to adults takes five to ten days.
+In response to adverse environmental cues, \textit{Daphnia} produce male and female offspring which reproduce sexually to produce durable resting eggs called ephippia \citep{radzikowski18,searle16salinization}.
+The ephippia can remain viable for many years, awaiting the return of favorable conditions.
+
+{\it Daphnia} become infected by the parasite by ingesting free-floating spores as they filter the water to extract food.
+The spores pass through the gut wall to infect the body cavity of the {\it Daphnia}, where the fungus grows until the body cavity is full of spores and the host dies, releasing the spores into the water.
+Infected \textit{Daphnia} die within two to three weeks \citep{ebert05}, whereas healthy \textit{Daphnia} can survive for many months.
+Infection leads to sterility and reduced feeding, and an opaque body cavity which can be readily distinguished from the transparent cavity of uninfected {\it Daphnia}.
+
+\citet{searle16} conducted an experiment involving a collection of mesocosms, each consisting of 15 liter of growth medium in a bucket, initialized with  2.5 $\times$ $10^8$ cells of green alga, {\it A.~falcatus}, and with one or two species of {\it Daphnia}.
+Six treaments were carried out, comprised of three levels of the host ({\it D.\ dentifera} or {\it D. lumholtzi} or both) factored with two levels of the parasite (present or absent).
+The experimental units are replicates of the treatments; the design consisted of 10 replicates for single-host treatments and 9 replicates for two-host treatments.
+The initial {\it Daphnia} population consisted of 45 adult females, which in two-host treatments consisted of 35 native \textit{Daphnia} and 10 invasives.
+After a four day acclimatization period, spores of the fungal parasite, {\it M.~bicuspidata} were added at a concentration of 25 per \text{mL} if the mesocosm was assigned to the parasite exposure treatment.
+Every five days, a well-mixed sample of 1 liter was removed, and the species (native or invasive), infection status, sex, and age (juvenile or adult) were identified for each \textit{Daphnia} using a microscope.
+A negligible number of infected juveniles were observed so henceforth we model infection only in adults.
+Algal and nutrient levels were supplemented twice per week, with medium added as necessary to maintain the volume.
+The mesocosms were kept inside, at 23.3$^\circ C$ and a 16-hour light, 8-hour dark cycle.
+Population densities and infection prevalence (if appropriate) were quantified every five days, beginning a week after the experiment started.
+Regular stirring of mesocosms ensured resuspension of algae and parasites.
+The experiment concluded after 52 days, totaling 10 sampling sessions.
+
+
+\begin{figure}[ht]
+\centering
+<<DataVis,echo=FALSE, fig.height=3.4, cache=cache_option>>=
+mixed_para_data_combined <- do.call(rbind, lapply(1:length(mixed_para_data), function(i) {
+  cbind(mixed_para_data[[i]], Trial = paste("Trial", trails[i]))
+}))
+
+mixed_para_data_combined$Bucket = paste0(rep("Bucket ",80),rep(1:8, each = 10))
+
+bucket_labeller <- as_labeller(function(bucket) gsub("Bucket ", "Mesocosm-", bucket))
+
+library(ggplot2)
+lum.style="twodash"  # could be dotdash or dashed or twodash
+dent.style="solid"
+lum.width=0.6
+dent.width=0.5
+p1 <- ggplot(mixed_para_data_combined, aes(x = day)) +
+  geom_line(aes(y = dent.adult), color = "blue", linewidth = dent.width,
+    linetype=dent.style) +
+  geom_line(aes(y = lum.adult), color = "black", linewidth = lum.width,
+    linetype=lum.style) +
+  geom_line(aes(y = lum.adult.inf), color = "purple", linewidth = lum.width,
+    linetype=lum.style) +
+  geom_line(aes(y = dent.inf), color = "red", linewidth = dent.width,
+    linetype=dent.style) +
+  facet_wrap(~Bucket, nrow = 1, labeller = bucket_labeller) +
+  theme_minimal() +
+  theme(
+    axis.title.x = element_blank(),
+    axis.text.x = element_blank(),
+    axis.title.y = element_text(size = 8),
+    axis.text.y = element_text(size = 9),
+    strip.text = element_text(size = 8),
+    strip.background = element_blank(),
+    strip.placement = "outside",
+    plot.margin = margin(0, 0.5, 0, 0.5, "cm"),
+    legend.position = "none"
+  ) +
+  ylab('Adult density') +
+  xlab('Day') +
+  scale_x_continuous(limits = c(0, 52), breaks = c(0, 25, 50)) +
+  scale_y_continuous(trans="sqrt")
+
+p2<- ggplot(mixed_para_data_combined, aes(x = day)) +
+  geom_line(aes(y = dent.juv), color = "orange", linewidth = dent.width,
+    linetype=dent.style) +
+  geom_line(aes(y = lum.juv), color = "brown", linewidth = lum.width,
+    linetype=lum.style) +
+  facet_wrap(~Bucket, nrow = 1) +
+  theme_minimal() +
+  theme(
+    axis.title.x = element_text(size = 9),
+    axis.title.y = element_text(size = 8),
+    axis.text.x = element_text(size = 8),
+    axis.text.y = element_text(size = 8),
+    strip.text = element_blank(),
+    strip.background = element_blank(),
+    strip.placement = "outside",
+    plot.margin = margin(0, 0.5, 0, 0.5, "cm"),
+    legend.position = "none"
+  ) +
+  ylab('Juvenile density') +
+  xlab('Day') +
+  scale_x_continuous(limits = c(0, 52), breaks = c(0, 25, 50)) +
+  scale_y_continuous(trans="sqrt")
+
+
+# grid.arrange(p1, p2, ncol = 1, heights = c(1, 1))
+grid.arrange(p1, p2, ncol = 1)
+@
+\caption{\label{fig:data_vis}
+Density (Individuals$/$Liter) of \textit{D.~dentifera} (solid lines) and \textit{D.~lumholtzi} (dashed lines).
+The top panel shows adult susceptibles (\textit{D.~dentifera}, blue; \textit{D.~lumholtzi}, black) and infecteds (\textit{D.~dentifera}, red; \textit{D.~lumholtzi}, purple).
+The bottom panel shows juvenile susceptibles (\textit{D.~dentifera}, orange; \textit{D.~lumholtzi}, brown).
+There were negligible infected juveniles.
+Columns are buckets corresponding to replications with same treatment setting.
+}
+\end{figure}
+
+Here, we focus on the most complex experimental treatment, namely, the four species treatment with both host species, the alga and the parasite.
+The simpler treatments are presented in Supplementary Sections~S4,~S5 and~S6.
+Data from the four species treatment are displayed in Figure~\ref{fig:data_vis}.
+The females and juveniles show a population peak around day 25, typically followed by a collapse and a mild resurgence around day 50.
+The males arise predominantly later in the experiment as shown in Table S12.
+The hypothesis that motivated the model of \citet{searle16} is that the arrival of the males, and the subsequent switch to the generation of ephippia by sexually reproduction, explains the decay of the other populations.
+This hypothesis is related to resource depletion, since shortage of food and high population density are both triggers for a change in reproductive strategy \citep{radzikowski18,searle16salinization}.
+However, resource depletion affects parthenogenetic reproduction as well influencing a switch to sexual reproduction, and we investigate the hypothesis that explicit modeling of resource depletion can help to explain the observed dynamics.
+This led us to introduce a latent food variable, and we found that including age structure via a juvenile stage also helps to improve the statistical fit of the model.
+Our paradigm is to assess models that represent known or hypothesized biological mechanisms in terms of their ability to explain observed data, quantified by likelihood penalized by model complexity.
+Our hypothesized model is supported so far as it is the best available model according to this criterion; our model and data are available at \eic{IT'S TIME TO PUT A CLEAN VERSION OF THE REPO IN PUBLIC; LET'S DISCUSS THIS} to facilitate further investigations.
+
+\section{The Susceptible-Infected-Removed-Juvenile-Parasite-Food 2-species model (SIRJPF2)}
+\label{sec:mecmod}
+
+\begin{figure}[H]
+\begin{center}
+%%%%% SIRJPF2 diagram
+\resizebox{8cm}{!}{
+\begin{tikzpicture}[
+  square/.style={rectangle, draw=black, minimum width=0.5cm, minimum height=0.5cm, rounded corners=.1cm, fill=blue!8},
+  rhombus/.style={diamond, draw=black, minimum width=0.1cm, minimum height=0.1cm, fill=purple!8,aspect = 1},
+  travel/.style={circle, draw=black, minimum width=0.5cm, minimum height=0.5cm, fill=green!8},
+  report/.style={shape=regular polygon, regular polygon sides=8, draw, fill=red!8,minimum size=0.6cm,inner sep=0cm},
+  bendy/.style={bend left=10},
+  bendy2/.style={bend left=100},
+  bendy3/.style={bend left=-100},
+  >/.style={shorten >=0.25mm},
+  >/.tip={Stealth[length=1.5mm,width=1.5mm]}
+]
+\tikzset{>={}};
+
+\node (Sn) at (5.5,0) [square] {$S^\native$};
+\node (In) at (5.5,-2) [square] {$I^\native$};
+\node (Si) at (-0.5,0) [square] {$S^\invasive$};
+\node (Ii) at (-0.5,-2) [square] {$I^\invasive$};
+\node (Jn) at (5.5,2) [square] {$J^\native$};
+\node (Ji) at (-0.5,2) [square] {$J^\invasive$};
+\node (R) at (2.5,0)  [rhombus] {$R$};
+\node (P) at (2.5,-2)[travel] {$P$};
+\node (F) at (2.5,2) [report] {$F$};
+
+
+
+\draw [->, bendy] (Sn) to  (In);
+\draw [->, bendy] (Si) to  (Ii);
+\draw [->, bendy] (In) to  (Sn);
+\draw [->, bendy] (Ii) to  (Si);
+\draw [->, bendy] (Jn) to  (Sn);
+\draw [->, bendy] (Ji) to  (Si);
+\draw [->, bendy] (Sn) to  (Jn);
+\draw [->, bendy] (Si) to  (Ji);
+
+
+\draw [->] (F) --  (R);
+\draw [->] (P) --  (R);
+\draw [->] (Sn) -- (R);
+\draw [->] (In) -- (R);
+\draw [->] (Si) -- (R);
+\draw [->] (Ii) -- (R);
+\draw [->] (Jn) -- (R);
+\draw [->] (Ji) -- (R);
+\draw [->] (F) -- (Sn);
+\draw [->] (F) -- (Si);
+\draw [->] (F) -- (Jn);
+\draw [->] (F) -- (Ji);
+\draw [->] (F) -- (In);
+\draw [->] (F) -- (Ii);
+\draw (F) edge[loop above] (F);
+
+\draw [->, bendy] (P) to (In);
+\draw [->, bendy] (P) to (Ii);
+\draw [->, bendy] (In) to (P);
+\draw [->, bendy] (Ii) to (P);
+
+
+\end{tikzpicture}
+}
+\end{center}
+\vspace{-5mm}
+\caption{A flow diagram for the SIRJPF2 model.
+The two species of \textit{Daphnia} interact with each other indirectly through $F$ (Food) and $P$ (Parasite) compartments.
+Transition to the $R$ state represents death or removal of any species.
+}
+\label{fig:flow_SIRJPF2}
+\end{figure}
+
+Figure~\ref{fig:flow_SIRJPF2} shows a flow diagram for a two-species model where the \textit{Daphnia} are susceptible adult (S), infected adult (I), or juvenile (J), with a superscript $\invasive$ for invasive and $\native$ for native.
+We also keep track of the aquatic parasite spore density (P) and the food density (F).
+Removal (i.e., death, consumption or destructive sampling) for any species is described by transition to class R.
+Similar to many epidemiological models, this description of the dynamic system extends the basic SIR model \citep{weiss13}.
+Mathematically, the model is described by \eqref{eq:model:first}--\eqref{eq:model:last}, a system of stochastic differential equations which we interpret in the It\^{o} sense \citep{oksendal98}.
+Nonlinearity arises through product terms in the infection and consumption specifications.
+We use Gaussian noise, though multiplicative gamma noise can be employed to enforce non-negativity of rates \citep{bhadra11}.
+A version of SIRJPF2 with gamma noise, called SIRJPF2-Gamma, is presented in Section~S9, though we found that a simpler Gaussian noise model is sufficient.
+
+
+The nonlinearity and intrinsic stochasticity of the SIRPF2 model are characteristic features of dynamics in biological systems \citep{coulson04,wilkinson18}.
+In the following equations, the superscript $\species$ describes the species of \textit{Daphnia}, taking value ${\native}$ for native (\textit{D.~dentifera}) and ${\invasive}$ for invasive  (\textit{D.~lumholtzi}).
+The subscript $u$ ranges in $\seq{1}{U}$ with $U=8,9,10$ depending on the specific treatment.
+Most parameters are written with potential dependence on $u$ to enable investigation of factors explaining differences between replicates.
+We will later establish that this dependence is not needed; random dynamic noise is sufficient to explain the observed differences.
+The experimentally determined sampling rate, $\delta = 0.013$ per liter per day, and food replenishment rate, $\mu = 0.37 \times 10^5$ cells per liter per day, are fixed parameter values that are shared between units based on the experimental protocol.
+{\small
+\begin{align}
+    \label{eq:model:first}
+    dS^{\species}_{\unit}(t) &= \lambda^{\species}_{J,{\unit}} \,  J^{\species}_{\unit}(t) \, dt -
+    \big\{
+    \theta^{\species}_{S,{\unit}} + p^{\species}_{\unit} \, f^{\species}_{S,{\unit}} \, P_{\unit}(t) + \delta
+    \big\}
+    \, S^{\species}_{\unit}(t)\, dt + S^{\species}_{\unit}(t) \, d\zeta^{\species}_{S,{\unit}},\\
+    dI^{\species}_{\unit}(t) &= p^{\species}_{\unit} \, f^{\species}_{S,{\unit}}\,  S^{\species}_{\unit}(t) \, P_{\unit}(t)\, dt -
+    \big\{
+    \theta^{\species}_{I,{\unit}} + \delta
+    \big\}
+    \, I^{\species}_{\unit}(t)\, dt + I^{\species}_{\unit}(t) \, d\zeta^{\species}_{I,{\unit}},\\
+    dJ^{\species}_{\unit}(t) &= r^{\species}_{\unit} \, f^{\species}_{S,{\unit}} \, F_{\unit}(t) \, S^{\species}_{\unit}(t)\, dt -
+    \big\{
+    \theta^{\species}_{J,{\unit}}  + \delta + \lambda^{\species}_{J,{\unit}}
+    \big\} 
+    \, J^{\species}_{\unit}(t)\, dt + J^{\species}_{\unit}(t)\, d\zeta^{\species}_{J,{\unit}}, \\
+    dP_{\unit}(t) &= \hspace{-1mm} \sum_{\species \in \{\native, \invasive\}} \hspace{-1mm} \left(\beta^{\species}_{\unit} \, \theta^{\species}_{I,{\unit}} \,  I^{\species}_{\unit}(t) - f^{\species}_{S,{\unit}} \big\{ S^{\species}_{\unit}(t) + \xi_{\unit} I^{\species}_{\unit}(t) \big\} P_{\unit}(t)\right) \! dt - \theta_{P,{\unit}} \, P_{\unit}(t)\, dt + P_{\unit}(t)\, d\zeta_{P,{\unit}},\\
+    dF_{\unit}(t) &= - \hspace{-1mm} \sum_{\species \in \{\native, \invasive\}} f^{\species}_{S,{\unit}} \, F_{\unit}(t) \left(S^{\species}_{\unit}(t)+\xi_{J,{\unit}} \, J^{\species}_{\unit}(t) +\xi_{\unit} \, I^{\species}_{\unit}(t)\right)dt  + \mu \, dt + F_{\unit}(t)\, d\zeta_{F,{\unit}},\\
+d\zeta^{\species}_{S,{\unit}} &\sim \Normal \big[0, (\sigma^{\species}_{S,{\unit}})^{2}\, dt\big],
+\quad
+d\zeta^{\species}_{I,{\unit}} \sim \Normal \big[0, (\sigma^{\species}_{I,{\unit}})^{2}\, dt\big],
+\quad
+d\zeta^{\species}_{J,{\unit}} \sim \Normal \big[0, (\sigma^{\species}_{J,{\unit}})^{2}\, dt\big],\\
+d\zeta_{F,{\unit}} &\sim \Normal \big[0, \sigma_{F,{\unit}}^{2}\, dt\big],
+\quad
+d\zeta_{P,{\unit}} \sim \Normal \big[0, \sigma_{P,{\unit}}^{2}\, dt\big].
+\label{eq:model:last}
+\end{align}
+}
+Here, $\Normal[\mu,\sigma^2]$ is the normal distribution with mean $\mu$ and variance $\sigma^2$.
+Intraspecific competition among hosts is conceptualized via limitation of food and environment resources, with $r^{\species}_{\unit}$ denoting the reproductive rate for species $\species \in \{\native,\invasive\}$.
+Host density growth, influenced by algal density, is posited to be linear, indicating a direct relationship between food availability and \textit{Daphnia} reproduction.
+Mortality rates of susceptible hosts of species $\species$ are denoted as $\theta^{\species}_{S,{\unit}}$.
+The model represents the dynamics of infection through \textit{M.~bicuspidata} ingestion by susceptible hosts.
+Specifically, susceptible hosts become infected at a rate depending on the density of parasite spores, $P_{\unit}(t)$ and the host filtration rate, $f^{\species}_{S,{\unit}}$.
+This filtration rate is expected to be smaller for infected and juvenile individuals, modeled by rate factors $\xi_{\unit}$ and $\xi_{J,{\unit}}$ which are modeled as equal for both host species.
+
+Infected hosts of species $\species$ die at rate $\theta^{\species}_{I,{\unit}}$, at which point $\beta^{\species}_{\unit}$ parasite spores are released.
+We do not measure the spores in this experiment, and so only the product $\beta^{\species}_{\unit}\, p^{\species}_{\unit}$ is identified but not the separate values of $\beta^{\species}_{\unit}$ and $p^{\species}_{\unit}$.
+We therefore fix $\beta^{\species}_{\unit}=3\times 10^3$ for $\species\in\{\native,\invasive\}$ and for all units \citep{penczykowski14}, though \citet{searle16} estimated a slightly smaller value.
+Maturation and death of juvenile individuals are modeled to occur at rate  $\lambda^{\species}_{J,{\unit}}$ and  $\theta^{\species}_{J,{\unit}}$ respectively.
+
+The model's effectiveness at statistically describing the variation in \textit{Daphnia} population dynamics depends critically on its ability to account for overdispersion, a phenomenon which is overlooked in the common practice of using binomial and Poisson variation to add stochasticity to deterministic models \citep{breto11}.
+For the process model, this overdispersion is implemented by the noise parameters, $\sigma^{\species}_{I,{\unit}}$,  $\sigma^{\species}_{J,{\unit}}$, $\sigma^{}_{F,\unit}$, $\sigma^{}_{P,{\unit}}$.
+For the measurement model, we obtain overdispersion by using a negative binomial model for the observed counts.
+\begin{align}
+N^{\species}_{S,{\unit},n} &\sim \operatorname{NBinomial}\big(
+  S^{\species}_{\unit}(t_n), \tau^{\species}_{S,{\unit}}
+\big),
+\\
+N^{\species}_{I,{\unit},n} &\sim \operatorname{NBinomial}\big(
+  I^{\species}_{\unit}(t_n), \tau^{\species}_{I,{\unit}}
+\big),
+\end{align}
+where $\operatorname{NBinomial}(\mu,\tau)$ is the negative binomial distribution with mean $\mu$ and variance $\mu+ \frac{\mu^2}{\tau}$.
+Since the sampled volume is $1$ liter, the densities $S^{\species}_{\unit}(t_n)$ and $I^{\species}_{\unit}(t_n)$ are on the same scale as the respective counts, $N^{\species}_{S,{\unit},n}$ and  $N^{\species}_{I,{\unit},n}$.
+We do not include the data on juveniles during the model fitting process, following the approach of \citet{searle16}.
+Therefore, these data are available for an out-of-sample model validation.
+
+Simpler treatments with a single \textit{Dapnia} species (SIRJPF) and without the parasite (SRJF and SRJF2) arise as special cases of SIRJPF2, with appropriate states and parameters set to zero.
+These experiment treatments and corresponding models are presented in Section~S4, S5 and S6.
+By isolating the food variable in the absence of parasites and/or inter-species competition among {\it Daphnia}, these results provide additional evidence on how food resource availability or scarcity impacts the population dynamics of native and invasive species.
+
+
+\section{Methodology for PanelPOMP models}
+\label{sec:meth}
+
+The applications of POMP models span various fields, including epidemiology \citep{mietchen2024,fox22,wen2024}, ecology \citep{auger-methe21,marino19,blackwood13}, and finance \citep{breto14}, among others.
+In epidemiological studies, POMP models are instrumental in estimating disease transmission rates and predicting future outbreaks by modeling the spread of infectious diseases when only a fraction of cases are observed \citep{subramanian21}.
+Similarly, POMP models help in understanding animal population dynamics and migration patterns based on limited or sporadic sighting data \citep{auger-methe21}.
+Latent state estimation and parameter inference in POMP models is commonly carried out using the particle filter, also known as sequential Monte Carlo \citep{arulampalam02}.
+Particle filters involve simulating a large number of potential realizations of the latent process and updating these simulations as new observations become available, thereby approximating the conditional distribution of the state given the data.
+Plug-and-play inference methods including iterated filtering, particle Markov chain Monte Carlo, and approximate Bayesian computing (ABC) are available using software such as pomp \citep{king16} or NIMBLE \citep{de17}.
+
+Algorithms and software for vector-valued POMP models could in principle be applied to PanelPOMP models, but in practice the high dimensionality of panel data requires modified algorithms.
+The panel iterated filter (PIF) algorithm of \citet{breto20} enables plug-and-play likelihood-based inference for general PanelPOMP models.
+We start by setting up some general notation that we use to describe PIF, a variant of PIF called the marginalized panel iterated filter (MPIF), and our specific model for the mesocosm experiment.
+
+Time series data are collected on $\Unit$ units, labeled $1,2,\dots,\Unit$.
+Unit $\unit$ is observed at $N_u$ measurement times, denoted by $t_{\unit,1},t_{\unit,2},\dots,t_{\unit,N_\unit}$ which we write as $t_{\unit,1:N_\unit}$.
+For our example, $N_{\unit}=N=10$, and $t_{\unit,n}=t_n=5n+2$ days, though the algorithms and software do not need regular observation times.
+The observation on unit $\unit$ at time $t_{\unit,n}$ is denoted by $y^*_{\unit,n}$,
+and in our example this corresponds to a vector of measured densities of {\it Daphnia} classified by species, life stage, and infection status.
+The data are modeled by a stochastic process $\{Y_{\unit,n}, \unit\in \seq{1}{\Unit}, n\in \seq{1}{N_\unit}\}$.
+We suppose there is an unobserved continuous-time Markov process $\{ X_\unit(t), t_{u,0}\le t\le t_{N_u}\}$ such that $Y_{u,n}$ is a noisy measurement of $X_u(t_{u,n})$.
+In our example,
+\begin{eqnarray}
+X_{\unit}(t)&=&\big(
+  S^{\native}_{\unit}(t), I^{\native}_{\unit}(t),  J^{\native}_{\unit}(t),
+  S^{\invasive}_{\unit}(t), I^{\invasive}_{\unit}(t),  J^{\invasive}_{\unit}(t),
+  P_{\unit}(t), F_{\unit}(t)
+\big),
+\\
+Y_{\unit,n}&=&\big(
+  N^{\native}_{S,\unit,n},  N^{\native}_{I,\unit,n},
+  N^{\invasive}_{S,\unit,n},  N^{\invasive}_{I,\unit,n}
+\big).
+\end{eqnarray}
+The time at which the latent process for unit $u$ is initialized is $t_{u,0}$, and in our specific example $t_{u,0}=t_0=0$.
+We write $X_{\unit,n}=X_{\unit}(t_{\unit,n})$, and we note that the collection of these discrete-time latent state values is sufficient to describe the model for the data.
+Nevertheless, in many situations (including this case study) it is scientifically helpful to construct the latent process in continuous time.
+The PanelPOMP model depends on a parameter vector, $\theta$, which we write as $\theta=(\phi,\psi_{1:\Unit})$ where $\phi$ is the vector of parameters shared between all units and $\psi_\unit$ is a vector of parameters specific to unit $\unit$.
+We can then define a general PanelPOMP model in terms of the transition density $f_{X_{\unit,n}|X_{\unit,n-1}}(x_{\unit,n}|x_{\unit,n-1};\phi,\psi_{\unit})$, the initial density $f_{X_{\unit,0}}(x_{\unit,0};\phi,\psi_{\unit})$, and the measurement density $f_{Y_{\unit,n}|X_{\unit,n}}(y_{\unit,n}|x_{\unit,n};\phi,\psi_{\unit})$ of each unit $\unit$ in the panel.
+For a model such as ours, the transition density is defined implicitly by the model equations (\ref{eq:model:first}--\ref{eq:model:last}).
+The plug-and-play property means that we never require explicit evaluation of this density, only the ability to obtain simulated trajectories satisfying {eq:model:first}.
+We do that using Euler's method \citep{kloeden99}.
+
+A defining feature of a PanelPOMP is that the latent processes are modeled as independent across units, so the data generating models for each unit are linked only via the shared parameter vector, $\phi$.
+The likelihood function can therefore be written as
+\begin{equation}
+\mathcal{L}(\theta) = \prod_{\unit=1}^{U} \int f_{Y_{\unit,1:N}|X_{\unit,1:N}}(y^*_{\unit,1:N}|x_{\unit,1:N};\phi,\psi_{\unit}) \, f_{X_{\unit,1:N}}(x_{\unit,1:N};\phi,\psi_\unit)\, dx_{\unit,1:N}.
+\end{equation}
+Here, we are supposing the existence of conditional probability densities; these may be interpreted as probability mass functions if the latent process and/or the measurement model are discrete-valued.
+The likelihood function cannot generally be evaluated explicitly.
+However, techniques that let us approximately evaluate and maximize this likelihood, while making proper accommodation for the approximation error, let us employ likelihood-based inference tools for parameter estimation, confidence intervals, diagnosis of model misspecification, and model selection.
+Our subsequent investigation demonstrates all these aspects of data analysis.
+
+Particle filters use a Monte Carlo swarm of latent state values, known as particles, to represent the conditional distribution of the latent variables given the data.
+Particles are updated according to the dynamics of the latent process and then resampled according to their likelihood given the data.
+This resampling is key to the particle filter's efficacy, since it allows the algorithm to focus its computational effort on the most probable states of the latent process, as indicated by the observed data.
+Iterated particle filters maximize the likelihood for a POMP model by associating a parameter value with each particle.
+An analogy with Darwinian evolution explains heuristically how this happens.
+The parameter values are the heritable DNA belonging to each particle.
+The parameter perturbations are analogous to mutations, and the resampling is analogous to natural selection which preferentially favors the fittest particles, i.e., those with parameter values most consistent with the data.
+\citet{kitagawa98} noticed that this favorable property of a particle filter, with perturbed parameters, can be empirically shown to move the population of these parameter values toward a region of increasing likelihood.
+\citet{ionides06} and \citet{ionides15} found ways to iterate this process that lead to concentration around the MLE.
+A recently developed panel extension of iterated filtering \citep{breto20} applies the same principle to PanelPOMP models.
+A flow diagram for a panel iterated filtering (PIF) algorithm is shown in Fig.~\ref{fig:pif}, and full details are given in Section~S2.
+At each iteration, $m=\seq{1}{M}$, the magnitude of the perturbations is reduced, and we use geometric ``cooling'' with a reduction factor $\rho<1$.
+By providing likelihood-based inference for a general class of nonlinear, non-Gaussian PanelPOMP models, PIF has the potential to facilitate discoveries in a wide range of scientific domains.
+This article provides a case study for such an application in the field of ecology.
+
+\begin{figure}[h!]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[
+    node distance=5cm
+  ]
+
+\node (N) at (0,0) [decision, yshift=-0.5cm] {\texttt{n=1:N}};
+\node (initialize) [process, left of=N,xshift= 0cm] {Initialize particle \texttt{j}, unit \texttt{u},\\
+time $\mathtt{t_0}$, states \& parameters};
+\node[fit=(initialize),myfit] (initialize1) {};
+\node[mytitle] at (initialize1.north west) {\texttt{j=1:J}};
+
+
+\node (U) [decision, left of=initialize1, xshift= 0cm] {\texttt{u=1:U}};
+\node (M) [decision2, left of=U, xshift= 2.5cm] {\texttt{m=1:M}};
+\node (S) [mytitle, above of=M, xshift=1cm] {\textbf{Input:} PanelPOMP model\\ and data};
+
+
+\draw[arrow,black] (initialize1) -- (N);
+\draw[arrow,black] (U) -- (initialize1);
+\draw[arrow,black] (M) -- (U);
+\draw[arrow,black] ($(S.south)!.5!(S.south west)$) -- (M);    
+\node (predict) [process, right of=N,xshift=0cm,yshift=0.1cm] {Simulate stochastic dynamics,\\ unit $\mathtt{u}$, time $\mathtt{t_{n-1}}$ to $\mathtt{t_{n}}$};
+\node (perturb) [process2, above of=predict,yshift=-3cm] {Perturb parameters $\mathtt{\phi}$, $\mathtt{\psi_u}$};
+\node (weight) [process, below of=predict,yshift=2.8cm] {Calculate weights for data,\\ unit $\mathtt{u}$, time $\mathtt{t_{n}}$};
+\draw[arrow,black] (perturb) -- (predict);
+\draw[arrow,black] (predict) -- (weight);
+\node[fit=(perturb)(predict)(weight),myfit] (ppw) {};
+\node[mytitle] at (ppw.north west) {\texttt{j=1:J}};
+\draw[arrow,black] (N) -- (ppw);
+
+\node (resampleParams) [process2, right of=predict,xshift=2.5cm,yshift=-1.1cm] {Resample parameters};
+\node (resampleState) [process, above of=resampleParams,yshift=-3cm] {Resample states};
+% \draw[arrow,black] (resampleState) -- (resampleParams);
+\node[fit=(resampleParams)(resampleState),myfit] (resampleProcess) {};
+\node[mytitle] at (resampleProcess.north west) {\texttt{j=1:J}};
+\draw[arrow,black] (ppw) -- (resampleProcess);
+
+
+\node (resampleProcess_south1) [below of=resampleProcess,yshift= 0.75cm] {};
+\node (resampleProcess_south2) [below of=resampleProcess,yshift= 0.25cm] {};
+\node (resampleProcess_south3) [below of=resampleProcess,yshift=-0.25cm] {};
+\node (N_south) [below of=N,yshift=0.75cm] {};
+\node (U_south) [below of=U,yshift=0.25cm] {};
+\node (M_south) [below of=M,yshift=-0.25cm] {};
+
+
+\draw[arrow,black] (resampleProcess.south) -- (resampleProcess_south1.south) -- (N_south.south) -- (N.south);
+\draw[arrow,black] (resampleProcess.south) -- (resampleProcess_south2.south) -- (U_south.south) -- (U.south);
+\draw[arrow,black] (resampleProcess.south) -- (resampleProcess_south3.south) -- (M_south.south) -- (M.south);
+
+\node (O) [mytitle, below of=resampleProcess, yshift=-2.5cm,xshift=-0.36cm] {\textbf{Output: }Monte Carlo Maximum\\
+ Likelihood Parameter Estimate};
+\draw[arrow,black] (resampleProcess.south) -- (O.north) ;
+\end{tikzpicture}
+}
+\caption{A flow diagram for panel iterated filtering. If the blue shaded blocks are omitted, this becomes a standard particle filter for each unit. Full pseudocode is in Section~S2. In the PIF algorithm of \citet{breto20}, the parameter resampling step involves re-selecting the unit-specific parameters corresponding to particle $j$ for units $\tilde u \neq u$ as well as $\psi_u$.
+For the marginalized PIF algorithm, only $\phi$ and $\psi_u$ are reselected in this step.
+}
+\label{fig:pif}
+\end{figure}
+
+Parameter estimates and corresponding confidence intervals were obtained using PIF.
+A sufficiently large number of particles is needed to maintain particle diversity and achieve robust exploration of the parameter space.
+However, computational cost increases with the number of particles.
+We found that for this model and data, $J=500$ particles and cooling parameter $\rho = 0.7^{1/50} = 0.993$ gave sufficient Monte Carlo accuracy and computational feasibility.
+The likelihood maximization via the PIF algorithm was conducted in three successive stages of $M=150$, $M=150$, and $M=250$ iterations, respectively.
+This tempering approach has commonly been found useful for iterated filtering applications \citep{bhadra11}. 
+After completing each stage, we selected the top 25\% of parameter values ranked by their corresponding log-likelihoods and used these as the initial parameter swarm for the subsequent stage.
+Numerical experimentation under this setting provided log-likelihood estimates with standard error $0.35$ and adequately supported parameter inference while keeping computations within the capabilities of one 36-core Linux machine.
+
+In PanelPOMP models, it is necessary to decide which parameters should be shared across units, versus which should be unit-specific.
+This decision can be guided both by scientific considerations and by empirical evidence.
+As the number of units in the PanelPOMP model increases, the number of parameters increases linearly with the number of unit-specific parameters.
+Therefore, balancing model fit and parsimony becomes essential to avoid overly complex models.
+Here, we use Akaike's Information Criterion (AIC), defined to be twice the number of estimated parameters minus twice the maximized log-likelihood.
+AIC compensates for over-fitting by seeking to optimize out-of-sample forecast skill for a log-likelihood scoring rule \citep{aic74}.
+Thus, AIC penalizes complexity only so far as it affects generalization error for prediction; parsimony has additional scientific benefits, but the scientific value of model simplicity cannot be determined by a purely statistical criterion.
+Various other information criteria have been proposed and used in ecological data analysis, in addition to likelihood ratio hypothesis tests \cite{johnson04}.
+However, AIC has earned widespread use due to its clear theoretical motivation and its applicability for evaluating collections of non-nested hypotheses, including comparing mechanistic models to non-mechanistic benchmark models.
+
+
+<<Results, include=FALSE,echo=FALSE,results='hide', cache=cache_option>>=
+load('data/all_shared_parameter.rda')
+mif.estimate = as.data.frame(t(mif.estimate))
+se_target = s.e.of.pf.loglik.of.mif.estimate
+loglik_target = pf.loglik.of.mif.estimate
+parms = mif.estimate
+AIC_target = -2 * loglik_target + 2 * length(parms)
+
+f_Sn = parms$f_Sn
+f_Si = parms$f_Si
+theta_Jn = parms$theta_Jn
+theta_Ji = parms$theta_Ji
+probi = parms$probi
+probn = parms$probi
+ri = parms$ri
+rn = parms$rn
+theta_Ii = parms$theta_Ii
+theta_In = parms$theta_In
+theta_Si = parms$theta_Si
+theta_Sn = parms$theta_Sn
+theta_P = parms$theta_P
+xi_J = 1.00
+xi = parms$xi
+sigSn = parms$sigSn
+sigIn = parms$sigIn
+sigSi = parms$sigSi
+sigIi = parms$sigIi
+sigJn = parms$sigJn
+sigJi = parms$sigJi
+sigF = parms$sigF
+sigP = parms$sigP
+k_Ii = parms$k_Ii
+k_In = parms$k_In
+k_Si = parms$k_Si
+k_Sn = parms$k_Sn
+lambda_Jn = 0.1
+lambda_Ji = 0.1
+beta_n = 30.00
+beta_i = 30.00
+delta = 0.013
+mu = 0.37
+
+load('data/profile_ci_table.rda')
+ci_table = exp(ci_table)
+load('data/benchmark_model_summary.rda')
+@
+\begin{table}[h]
+\renewcommand{\arraystretch}{0.5}
+\centering
+\resizebox{\textwidth}{!}{
+\begin{tabular}{||c|c |c|c|c||}
+\hline
+Parameter & Definition &Unit & Value & CI\\[0.5ex]
+\hline
+\hline
+$S^{k}$ & Susceptible host density for species $k$  & $\mathrm{individual} \cdot L ^{-1}$                 & Variable                & \\
+$I^{k}$ & Infected host density for species $k$     & $ \mathrm{individual} \cdot L ^{-1}$                & Variable                & \\
+$J^{k}$ & Juvenile host density for species $k$     & $ \mathrm{individual} \cdot L ^{-1}$                & Variable                & \\
+$F$   & Alga density                              & $10^6 \cdot \mathrm{cell} \cdot L ^{-1}$             & Variable                & \\
+$P$   & Spore density                             & $10^3 \cdot \mathrm{spore} \cdot L ^{-1}$            & Variable                & \\
+$r^{\native}$ & Native growth rate                        & $\mathrm{individual} \cdot 10^{-6}\cdot \mathrm{cell}^{-1}$ & \Sexpr{mysignif(rn,2)}  & (\Sexpr{mysignif(ci_table$rn[1],2)},\Sexpr{mysignif(ci_table$rn[2],2)})\\
+$r^{\invasive}$ & Invasive growth rate                      & $\mathrm{individual} \cdot 10^{-6}\cdot \mathrm{cell}^{-1}$ & \Sexpr{mysignif(ri,2)}  & (\Sexpr{mysignif(ci_table$ri[1],2)}, $\infty$)\\
+$f_{S^{\native}}$ & Native susceptible adult host filtering rate   &  $\mathrm{L} \cdot \mathrm{individual}^{-1} \cdot \mathrm{day}^{-1}$   & \Sexpr{mysignif(f_Sn,2)}  & (\Sexpr{mysignif(ci_table$f_Sn[1],2)},\Sexpr{mysignif(ci_table$f_Sn[2],2)})\\
+$f_{S^{\invasive}}$ & Invasive susceptible adult host filtering rate &  $\mathrm{L} \cdot \mathrm{individual}^{-1} \cdot \mathrm{day}^{-1}$   & \Sexpr{mysignif(f_Si,2)}  & (\Sexpr{0},\Sexpr{mysignif(ci_table$f_Si[2],2)})\\
+$p^{\native}$          & Number of native infections per spore             &     $10^{-3} \cdot \mathrm{individual} \cdot \mathrm{spore}^{-1} $ & \Sexpr{mysignif(probn,2)}  & (\Sexpr{mysignif(ci_table$probn[1],2)},\Sexpr{mysignif(ci_table$probn[2],2)})\\
+$p^{\invasive}$          & Number of invasive infections per spore           &     $10^{-3} \cdot \mathrm{individual} \cdot \mathrm{spore}^{-1} $ & \Sexpr{mysignif(probi,2)}  & (\Sexpr{mysignif(ci_table$probi[1],2)},\Sexpr{mysignif(ci_table$probi[2],2)})\\
+$\theta^{\native}_{S}$ & Native susceptible adult host mortality rate     &     $ \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Sn,2)}  & (\Sexpr{0},\Sexpr{mysignif(ci_table$theta_Sn[2],2)})\\
+$\theta^{\invasive}_{S}$ & Invasive susceptible adult host mortality rate   &     $  \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Si,2)}  & (\Sexpr{0},\Sexpr{mysignif(ci_table$theta_Si[2],2)})\\
+$\theta^{\native}_{I}$ & Native infected adult host mortality rate        &     $  \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_In,2)}  & (\Sexpr{mysignif(ci_table$theta_In[1],2)},\Sexpr{mysignif(ci_table$theta_In[2],2)})\\
+$\theta^{\invasive}_{I}$ & Invasive infected adult host mortality rate      &     $  \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Ii,2)}  & (\Sexpr{mysignif(ci_table$theta_Ii[1],2)},\Sexpr{mysignif(ci_table$theta_Ii[2],2)})\\
+$\theta^{\native}_{J}$ & Native juvenile mortality rate        &     $ \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Jn,2)}  & (\Sexpr{0},\Sexpr{mysignif(ci_table$theta_Jn[2],2)})\\
+$\theta^{\invasive}_{J}$ & Invasive juvenile mortality rate      &     $  \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Ji,2)}  & (\Sexpr{0},\Sexpr{mysignif(ci_table$theta_Ji[2],2)})\\
+$\theta_{P}$   & Spore degradation rate                           &     $\mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_P,2)}   & (\Sexpr{0},\Sexpr{mysignif(ci_table$theta_P[2],2)})\\
+$\lambda^{\native}_{J}$ & Maturation rate of native juvenile                  &     $ \mathrm{day}^{-1} $                  & \Sexpr{mysignif(lambda_Jn,2)}  & \\
+$\lambda^{\invasive}_{J}$ & Maturation rate of invasive juvenile                &     $ \mathrm{day}^{-1} $                  & \Sexpr{mysignif(lambda_Ji,2)}  & \\
+$\xi$           & Ratio of infected host filtering rate       &     $\mathrm{Unitless}$                    & \Sexpr{mysignif(xi,2)}         & (\Sexpr{mysignif(ci_table$xi[1],2)},\Sexpr{mysignif(ci_table$xi[2],2)})\\
+$\xi_J$         & Ratio of juvenile individual filtering rate &     $\mathrm{Unitless}$                    & \Sexpr{mysignif(xi_J,2)} & \\
+$\beta^{\native}$       & Spores produced per infected native individual     &  $10^3 \cdot \mathrm{spores} \cdot \mathrm{individual}^{-1} \cdot \mathrm{day}^{-1}$  & \Sexpr{mysignif(beta_n,2)} & \\
+$\beta^{\invasive}$       & Spores produced per infected invasive individual   &  $10^3 \cdot \mathrm{spores} \cdot \mathrm{individual}^{-1} \cdot \mathrm{day}^{-1}$  & \Sexpr{mysignif(beta_i,2)} & \\
+$\mu$           & Alga refilling rate                                &  $10^6 \cdot \mathrm{cell} \cdot \mathrm{L} ^{-1} \cdot \mathrm{day}^{-1}$                 & \Sexpr{mysignif(mu,2)} & \\
+$\delta$        & Sampling rate                                      &  $\mathrm{day}^{-1}$                                                                         & \Sexpr{mysignif(delta,2)} & \\
+$\sigma^{\native}_{S}$ & Standard deviation of Brownian motion of susceptible native adults &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigSn,2)}  & (\Sexpr{0},\Sexpr{mysignif(ci_table$sigSn[2],2)})\\
+$\sigma^{\invasive}_{S}$ & Standard deviation of Brownian motion of susceptible invasive adult    &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigSi,2)}  & (\Sexpr{0},\Sexpr{mysignif(ci_table$sigSi[2],2)})\\
+$\sigma^{\native}_{I}$ & Standard deviation of Brownian motion of infected native adult         &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigIn,2)}  & (\Sexpr{0},$\infty$)\\
+$\sigma^{\invasive}_{I}$ & Standard deviation of Brownian motion of infected invasive adult       &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigIi,2)}  & (\Sexpr{0},\Sexpr{mysignif(ci_table$sigIi[2],2)})\\
+$\sigma^{\native}_{J}$ & Standard deviation of Brownian motion of native juvenile               &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigJn,2)}  & (\Sexpr{mysignif(ci_table$sigJn[1],2)},\Sexpr{mysignif(ci_table$sigJn[2],2)})\\
+$\sigma^{\invasive}_{J}$ & Standard deviation of Brownian motion of invasive juvenile             &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigJi,2)}  & (\Sexpr{mysignif(ci_table$sigJi[1],2)},\Sexpr{mysignif(ci_table$sigJi[2],2)})\\
+$\sigma_{F}$   & Standard deviation of Brownian motion of alga                          &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigF,2)}  & (\Sexpr{mysignif(ci_table$sigF[1],2)},\Sexpr{mysignif(ci_table$sigF[2],2)})\\
+$\sigma_{P}$   & Standard deviation of Brownian motion of parasite                      &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigP,2)}  & (\Sexpr{mysignif(ci_table$sigP[1],2)},\Sexpr{mysignif(ci_table$sigP[2],2)})\\
+$\tau^{\native}_{S}$      &  Measurement dispersion for susceptible native adult       &$\mathrm{Unitless}$           & \Sexpr{mysignif(k_Sn,2)}  & (\Sexpr{mysignif(ci_table$k_Sn[1],2)},\Sexpr{mysignif(ci_table$k_Sn[2],2)})\\
+$\tau^{\invasive}_{S}$      &  Measurement dispersion for susceptible invasive adult       &$\mathrm{Unitless}$            & \Sexpr{mysignif(k_Si,2)}  & (\Sexpr{mysignif(ci_table$k_Si[1],2)},\Sexpr{mysignif(ci_table$k_Si[2],2)})\\
+$\tau^{\native}_{I}$      &  Measurement dispersion for infected native adult        &$\mathrm{Unitless}$            & \Sexpr{mysignif(k_In,2)}  & (\Sexpr{mysignif(ci_table$k_In[1],2)},\Sexpr{mysignif(ci_table$k_In[2],2)})\\
+$\tau^{\invasive}_{I}$      &  Measurement dispersion for infected invasive adult        &$\mathrm{Unitless}$            & \Sexpr{mysignif(k_Ii,2)}  & (\Sexpr{mysignif(ci_table$k_Ii[1],2)},\Sexpr{mysignif(ci_table$k_Ii[2],2)})\\
+\hline
+\end{tabular}}
+\caption{Variables and parameter definitions and estimates. The superscript $\native$ and $\invasive$ represents native (\textit{D.~dentifera}) and invasive (\textit{D.~lumholtzi}) respectively.
+}
+\label{tab:estimates}
+\renewcommand{\arraystretch}{1}
+\end{table}
+
+\section{Results}
+\label{sec:res}
+
+\begin{table}[H]
+\centering
+\small
+\begin{center}
+\small
+\begin{tabular}{||c |c |c |c||}
+ \hline
+Model & Parameters & Max log-likelihood & AIC \\ [0.5ex]
+ \hline\hline
+SIRJPF2 & \Sexpr{length(parms)} & \Sexpr{mysignif_ll_AIC(loglik_target,5)} & \Sexpr{mysignif_ll_AIC(AIC_target,6)} \\
+SIRPF2 & \Sexpr{length(parms)} & \Sexpr{mysignif_ll_AIC(benchmark_model_summary$Model_no_juv[1],5)} & \Sexpr{mysignif_ll_AIC(benchmark_model_summary$Model_no_juv[2],6)} \\
+SIRJPF2-Gamma & \Sexpr{length(parms)} & \Sexpr{mysignif_ll_AIC(benchmark_model_summary$SIRJPF2_gamma[1],5)} & \Sexpr{mysignif_ll_AIC(benchmark_model_summary$SIRJPF2_gamma[2],6)} \\
+Negative Binomial (Cubic) & 24 & \Sexpr{mysignif_ll_AIC(benchmark_model_summary$NB_cubic[1],5)} & \Sexpr{mysignif_ll_AIC(benchmark_model_summary$NB_cubic[2],6)} \\
+Negative Binomial (Quadratic) & 20 & \Sexpr{mysignif_ll_AIC(benchmark_model_summary$NB_quad[1],5)} & \Sexpr{mysignif_ll_AIC(benchmark_model_summary$NB_quad[2],6)} \\
+Negative Binomial (Linear) & 16 & \Sexpr{mysignif_ll_AIC(benchmark_model_summary$NB_linear[1],6)} & \Sexpr{mysignif_ll_AIC(benchmark_model_summary$NB_linear[2],6)} \\
+Searle et al. (2016) & 19 & \Sexpr{mysignif_ll_AIC(benchmark_model_summary$ModelS[1],6)} & \Sexpr{mysignif_ll_AIC(benchmark_model_summary$ModelS[2],6)} \\[0.5ex]
+\hline
+\end{tabular}
+\end{center}
+\caption{Comparison of model fit}
+\label{Table:Model_comparison}
+\end{table}
+
+Parameter estimates and confidence intervals for the SIRJPF2 model are in Table~\ref{tab:estimates}, which also includes a brief description of the parameter mechanism and the corresponding measurement units.
+The log-likelihood, AIC and number of parameters for this model is compared against alternatives in Table~\ref{Table:Model_comparison}.
+Differences in AIC values between model are intepretable only between alternative models for the same data, we fit a few statistical benchmarks to help calibrate these results.
+For comparison, we fit a negative binomial regression model with dependence on linear, quadratic, and cubic version of the measurement time.
+Comparing a mechanistic model to a simple statistical benchmark model is a useful test of model specification, since it reveals quickly whether the mechanistic model is constructed in a way that is statistically compatible with the data \citep{wheeler24,li24}.
+The negative binomial models with polynomial (quadratic or cubic) terms fit the dynamics better than the simpler linear version.
+Although these more flexible polynomial expansions do not represent latent biological processes directly, they better capture the non-linearlity of the system, leading to a higher log-likelihood and a lower AIC than the linear model.
+
+Table~\ref{Table:Model_comparison} includes the log-likelihood and AIC values for the deterministic ODE model of \citet{searle16}, which served as a starting point for our model.
+Although the mechanistic model of \citet{searle16} was successfully used to provide scientific insight into the ecological dynamics of the experiment, we see that it does not provide a competitive statistical fit to the data compared to simple alternatives.
+At the same time, we fit susceptible-infected-recovery-parasite-food (SIRPF2) model, which exclude the juvenile state from our SIRPF2 model as described in Supplementary S7.3.
+The SIRPF2 model ignores the process of maturation of juvenile and only underscores the infection process of \textit{Daphnia} adult.
+Even this model shows better statistical fit than the deterministic ODE model of \citet{searle16} and Negative Binomial model, it has weaker performance than SIPPF2 model.
+A model that has a better statistical fit is expected to make relatively accurate predictions.
+Every increase in model fit raises the bar for subsequent models, if they wish to use improved model fit to support new scientific insights.
+At the same time, we fit susceptible-infected-recovery-parasite-food (SIRPF2) model, which exclude the juvenile state from our SIRPF2 model as described in Supplementary S7.3, which shows stronger statistical fit than other benchmark models expect SIRJPF2 model.
+
+Our SIRJPF2 model quantitatively describes the observed data better than any of the alternatives, while simultaneously providing a plausible mechanistic description of the experimental system.
+Having assessed the fit of our model, we have some support for interpreting the estimated parameters of the model.
+It is hard to rule out the possibility that some biological details in the model are misspecified in ways that may lead to confounding with the modeled mechanisms and therefore bias in the causal interpretation of estimated parameters \citep{wheeler24}.
+With that caveat acknowledged, we proceed to interpret the model and parameters at face value.
+
+There are some substantial differences in the observed trajectories between experimental replicates (Figs.~\ref{fig:data_vis}, S5, S6, S14, S19, S20).
+This could result from small differences in the initialization of the replicates, or it could simply be a consequence of the natural variation in any biological system.
+In the context of our model, these hypotheses correspond to unit-specific parameters and stochastic dynamics, respectively.
+Here, the evidence suggests that stochastic dynamics are sufficient to explain the variation in the data.
+Table~S1 in the supplement presents a comparison of model fit and complexity across various configurations of unit-specific parameters within the PanelPOMP framework for the SIRJPF2 model. These distinct configurations represent varying hypotheses explaining the differences across replicates.
+The models assessed include those with unit-specific parameters for combinations of mortality rates ($\theta^\native_{S},\theta^\invasive_{S}$,$\theta^\native_{I},\theta^\invasive_{I}$), filter rates ($f^\native_{S},f^\invasive_{S}$), growth efficiency factors ($r^{\native},r^{\invasive}$), and spore infection rates ($p^{\native},p^{\invasive}$).
+
+When parameters are shared between units, we obtain a substantial reduction in the number of parameters to be estimated.
+For field data, one may expect the need for unit-specific parameters describing structural differences between units.
+For example, in a PanelPOMP analysis of pre-vaccine polio transmission dynamics for state-level data in USA, \citet{breto20} used unit-specific parameters to describe variations in the seasonality of transmission across units.
+Modeling decisions concerning shared and unit-specific parameters are testable hypotheses that are of scientific interest in the quest for a parsimonious understanding of the dynamics, and for understanding sources of variation.
+
+In our selected model, the native {\it Daphnia} species was found to have a higher feeding rate ($f^{\native}_{S}> f^{\invasive}_{S}$) and a lower rate of infection per consumed spore ($p^{\native} < p^{\invasive}$), consistent with Figure~1C of \citet{searle16}.
+Our results indicate that stochasticity in the juvenile stage ($\sigma^{\native}_{J}$ and $\sigma^{\invasive}_{J}$) is an important model feature, needed to adequately describe the data (the corresponding confidence intervals in Table~\ref{tab:estimates} exclude zero; see also the profiles in Fig.~S1).
+That suggests the juvenile stage is particularly sensitive to unmodeled phenomena, such as lower fitness resulting from resource depletion, since unmodeled phenomena can be explained by the model as stochastic uncertainty.
+Noise in other stages is small, and often insignificantly different from zero, as shown by flat profile likelihood plots for $\sigma^{\native}_{S}$, $\sigma^{\invasive}_{S}$, $\sigma^{\native}_{I}$, $\sigma^{\invasive}_{I}$ and $\sigma_F$ in Figure~S1.
+The proposed model is flexible enough to describe the predictability and uncertainty inherent in the system in various ways, and the data have come down in favor of $\sigma^{\native}_{J}$ and $\sigma^{\invasive}_{J}$.
+This indicates that the model might be recalibrated after fixing some or all of the other noise intensities to zero, but there is no pressing need to do so.
+The noise term is helpful when describing other dynamics, for example, dynamics with two species of \textit{Daphnia} and no parasite as shown in Supplement~S5.
+Other model parameters are found to be weakly estimable.
+Natural death rates, ($\theta^{\native}_{S}$, $\theta^{\invasive}_{S}$, $\theta^{\native}_{J}$ and $\theta^{\invasive}_{J}$), are poorly identified in the presence of the parasite since most death comes through the infection process.
+By contrast, these parameters are better identified in the treatments without the parasite (Fig.~S15).
+
+<<Result2, include=FALSE,echo=FALSE,results='hide'>>=
+  load('data/estimate_comparison.rda')
+
+
+surviv_dent_target_para = target_para_parameter[["rn"]]/(target_para_parameter[["probn"]]*target_para_parameter[["f_Sn"]])
+surviv_lum_target_para = target_para_parameter[["ri"]]/(target_para_parameter[["probi"]]*target_para_parameter[["f_Si"]])
+
+surviv_dent_single_para = dent_para_parameter[["rn"]]/(dent_para_parameter[["probn"]]*dent_para_parameter[["f_Sn"]])
+surviv_lum_single_para = lum_para_parameter[["ri"]]/(lum_para_parameter[["probi"]]*lum_para_parameter[["f_Si"]])
+
+# surviv_dent_single_no_para = dent_no_para_parameter[["rn"]]/(dent_no_para_parameter[["pn"]]*dent_no_para_parameter[["f_Sn"]])
+# surviv_lum_single_no_para = lum_no_para_parameter[["ri"]]/(lum_no_para_parameter[["pi"]]*lum_no_para_parameter[["f_Si"]])
+#
+# surviv_dent_target_no_para = target_no_para_parameter[["rn"]]/(target_no_para_parameter[["pn"]]*target_no_para_parameter[["f_Sn"]])
+# surviv_lum_target_no_para = target_no_para_parameter[["ri"]]/(target_no_para_parameter[["pi"]]*target_no_para_parameter[["f_Si"]])
+
+@
+
+Alternative  SIRJPF2 model specifications were fitted with various parameters taken to be unit-specific.
+The log-likelihood estimates and corresponding AIC values for these models are presented in Supplementary Table~S1.
+These results suggest that introducing unit-specific parameters increased model complexity without significantly improving model performance.
+Similar results hold for the other treatments (Tables~S4, S5, S7, S10, S11).
+Consequently, we choose to select the model with all shared parameters, as it offers a more parsimonious and robust representation of the system dynamics without substantially compromising the explanatory power.
+
+Profile likelihood provides a useful approach for constructing confidence intervals in nonlinear stochastic systems \citep{simpson23}.
+Calculation of the profiles can validate that sufficient computational effort was conducted in order for the Monte Carlo optimization to converge: by increasing Monte Carlo replications, consistent convergence to the same maximum of the profile likelihood curve confirms adequate numerical effort for optimization.
+To obtain confidence intervals, we correct for the Monte Carlo uncertainty in the profile likelihood evaluations by using the Monte Carlo Adjusted Profile (MCAP) method of \citet{ionides17} (see Fig.~S1 for the SIRJPF2 model, and Figs.~S7, S8, S15, S21, S22 for other treatments).
+
+As shown in Table~\ref{tab:estimates}, the estimated values of $p^{\native}$ and $p^{\invasive}$ differ significantly, suggesting that the parasite influences the proportion of individuals becoming infected within each species in distinct scale.
+This difference, in turn, affects the interactions between the two species.
+
+Our estimated value of the filtration rate factor for infected {\it Daphnia} is $\xi > 1$, which is superficially incompatible with previous empirical observations that infection leads to reduced filtration, especially as disease progresses \citep{searle16,penczykowski14}.
+One way to reconcile these results is the possibility that \textit{Daphnia} which filter faster are exposed to more spores and are consequently more likely to become infected.
+There are six genotypes in each experimental unit, and we only observe population-level dynamics rather than individual-level data.
+When modeling these dynamics, our parameters of interest actually represent population-level means.
+In other words, given this specific combination of genotypes, $\xi > 1$ indicates that at the population level, the average filtration rate of infected \textit{Daphnia} is higher than that of susceptible \textit{Daphnia}.
+However, the direction can be reversed at the individual level.
+$\xi > 1$ could also be a result of reverse causation due to unmodeled heterogeneity: infected \textit{Daphnia} may statistically have a higher filtration rate even though infection decreases the filtration rate.
+A subsequent investigation extending the model and measurements to include \textit{Daphna} size and genotype could help to clarify this.
+
+
+
+\subsection{Model diagnostics}
+
+All the models we have presented here have included explicit modeling of juveniles and their maturation, although the model of \citet{searle16} did not do this. 
+We found that the extra delay in the adult dynamics introduced by the juvenile stage was necessary for the model system to provide a strong statistical fit to the data.
+\citet{searle16} collected juvenile data but did not include it in their data analysis. 
+We make our analysis comparable to \citet{searle16} by fitting to the same data, and therefore we do not include a measurement model for juveniles.
+This means that the juvenile data are available to us a check of model specification, and we show this in simulations from the fitted model in Fig.~\ref{fig:sim_plot}. 
+
+Knowing that the average body length of juvenile \textit{Daphnia} is shorter than the average body size of adult \textit{Daphnia} for both species, we expect that juvenile individuals will have a lower filtering rate.
+Yet, without fitting to juvenile data, it is unclear whether that question is identifiable from the model at hand.
+To explore this assumption, we compared the value $\xi_{J,{\unit}} = 1$ (juveniles and adults filter at the same rate) with the extreme value $\xi_{J,{\unit}} = 0.001$ (juveniles filter much slower than adults).
+We then maximized the log-likelihood over the remaining parameters subject to this constraint, and we compared the conditional maximized log-likelihood at each time for each observation category for the different $\xi_{J,{\unit}}$ values, as shown in Fig.~S3(a).
+These results show that setting $\xi_{J,{\unit}} = 1$ leads to only a slightly higher maximized log-likelihood ($-881.13$) than $\xi_{J,{\unit}} = 0.001$ ($-882.24$), indicating that the parameter is weakly identified.
+Moreover, plotting the conditional log-likelihood for each state at each time, we observe that the log-likelihood components for susceptible and infected \textit{D. dentifera} and \textit{D. lumholtzi} are nearly the same between the two parameter settings.
+Thus, the similar log-likelihoods are not a consequence of a tradeoff between fitting different features of the data, but simply provide indistinguishable explanations of the fitted data.
+However, the choice of $\xi_{J,{\unit}}$ nevertheless affects the interpretation of the model: the maximum likelihood estimates constrained to different values of $\xi_{J,{\unit}}$ lead to distinct behavior of juvenile \textit{Daphnia} in simulations, as shown in Fig.~S3(b).
+If $\xi_{J,{\unit}}$ is set to be lower than is biologically plausible, simulated trajectories from the fitted model have far fewer juveniles than was observed, which is shown in Fig.~S3(b) as well.
+This indicates model misspecification which could bias the estimates of $r^{\species}_{\unit}, p^{\species}_{\unit}$ and $ f^{\species}_{S,\unit}$.
+When a weakly identified parameter has consequences for the biological interpretation of the model, it is appropriate to fix that parameter at a biologically plausible value consistent with previous studies \citep{ebert05}, and we therefore fixed $\xi_{J,{\unit}} = 1$ for subsequent analysis.
+When a weakly identified parameter has consequences for the biological interpretation of the model, it is appropriate to fix that parameter at a biologically plausible value, while bearing in mind that decision corresponds to an extra modeling assumption about which the data being fitted are agnostic.
+
+\subsection{Simulations}
+\begin{figure}[H]
+\centering
+<<SimulationPlot,echo=FALSE, fig.width=7,fig.height=4,out.width="\\textwidth", cache=cache_option>>=
+  load('data/simulation.rds')
+all_sims_summary <- all_sims %>%
+  group_by(day) %>%
+  summarise(lower = quantile(Sn, 0.025),   # 2.5% quantile
+            upper = quantile(Sn, 0.975),
+            mean = mean(Sn))
+
+p1 = ggplot() +
+  geom_ribbon(data = all_sims_summary, aes(x = day, ymin = lower, ymax = upper), fill = "#ADD8E6", alpha = 0.5) +
+  geom_line(data = data_df, aes(x = day, y =  dent.adult, group = unit, color = unit)) +
+  geom_line(data = all_sims_summary, aes(x = day, y =  mean),linewidth = 1) +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  labs(x = NULL, y = expression(paste("Susceptible ", italic("D. dentifera")))) +
+  theme(axis.title = element_text(size = 10), axis.text.x = element_blank())+
+  scale_x_continuous(limits = c(0, 52), breaks = c(0, 25, 50))
+
+
+all_sims_summary <- all_sims %>%
+  group_by(day) %>%
+  summarise(lower = quantile(In, 0.025),   # 2.5% quantile
+            upper = quantile(In, 0.975),
+            mean = mean(In))
+
+p2 = ggplot() +
+  geom_ribbon(data = all_sims_summary, aes(x = day, ymin = lower, ymax = upper), fill = "#ADD8E6", alpha = 0.5) +
+  geom_line(data = data_df, aes(x = day, y =  dent.inf, group = unit, color = unit)) +
+  geom_line(data = all_sims_summary, aes(x = day, y =  mean),linewidth = 1) +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  labs(x = NULL, y = expression(paste("Infected ", italic("D. dentifera")))) +
+  theme(axis.title = element_text(size = 10), axis.text.x = element_blank())+
+  scale_x_continuous(limits = c(0, 52), breaks = c(0, 25, 50))
+
+
+all_sims_summary <- all_sims %>%
+  group_by(day) %>%
+  summarise(lower = quantile(Si, 0.025),   # 2.5% quantile
+            upper = quantile(Si, 0.975),
+            mean = mean(Si))
+
+p3 = ggplot() +
+  geom_ribbon(data = all_sims_summary, aes(x = day, ymin = lower, ymax = upper), fill = "#ADD8E6", alpha = 0.5) +
+  geom_line(data = data_df, aes(x = day, y =  lum.adult, group = unit, color = unit)) +
+  geom_line(data = all_sims_summary, aes(x = day, y =  mean),linewidth = 1) +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  labs(x = "day", y = expression(paste("Susceptible ", italic("D. lumholtzi")))) +
+  theme(axis.title = element_text(size = 10))+
+  scale_x_continuous(limits = c(0, 52), breaks = c(0, 25, 50))
+
+
+all_sims_summary <- all_sims %>%
+  group_by(day) %>%
+  summarise(lower = quantile(Ii, 0.025),   # 2.5% quantile
+            upper = quantile(Ii, 0.975),
+            mean = mean(Ii))
+
+p4 = ggplot() +
+  geom_ribbon(data = all_sims_summary, aes(x = day, ymin = lower, ymax = upper), fill = "#ADD8E6", alpha = 0.5) +
+  geom_line(data = data_df, aes(x = day, y =  lum.adult.inf, group = unit, color = unit)) +
+  geom_line(data = all_sims_summary, aes(x = day, y =  mean),linewidth = 1) +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  labs(x = "day", y = expression(paste("Infected ", italic("D. lumholtzi")))) +
+  theme(axis.title = element_text(size = 10))+
+  scale_x_continuous(limits = c(0, 52), breaks = c(0, 25, 50))
+
+
+
+
+#Juv
+all_sims_summary <- all_sims %>%
+  group_by(day) %>%
+  summarise(lower = quantile(Ji, 0.025),   # 2.5% quantile
+            upper =  quantile(Ji,0.975),
+            mean =  mean(Ji))
+
+p5 = ggplot() +
+  geom_ribbon(data = all_sims_summary, aes(x = day, ymin = lower, ymax = upper), fill = "#ADD8E6", alpha = 0.5) +
+  geom_line(data = data_df, aes(x = day, y =  lum.juv, group = unit, color = unit)) +
+  geom_line(data = all_sims_summary, aes(x = day, y =  mean),linewidth = 1) +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  labs(x = "day", y = expression(paste("Juvenile ", italic("D. lumholtzi")))) +
+  theme(axis.title = element_text(size = 10))+
+  scale_x_continuous(limits = c(0, 52), breaks = c(0, 25, 50))
+
+
+all_sims_summary <- all_sims %>%
+  group_by(day) %>%
+  summarise(lower = quantile(Jn, 0.025),   # 2.5% quantile
+            upper = quantile(Jn, 0.975),
+            mean =mean(Jn))
+
+p6 = ggplot() +
+  geom_ribbon(data = all_sims_summary, aes(x = day, ymin = lower, ymax = upper), fill = "#ADD8E6", alpha = 0.5) +
+  geom_line(data = data_df, aes(x = day, y =  dent.juv, group = unit, color = unit)) +
+  geom_line(data = all_sims_summary, aes(x = day, y =  mean),linewidth = 1) +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  labs(x = NULL, y = expression(paste("Juvenile ", italic("D. dentifera")))) +
+  theme(axis.title = element_text(size = 10), axis.text.x = element_blank())+
+  scale_x_continuous(limits = c(0, 52), breaks = c(0, 25, 50))
+
+
+
+
+
+all_sims_summary <- all_sims %>%
+  group_by(day) %>%
+  summarise(lower = quantile(F, 0.1),   # 2.5% quantile
+            upper =  quantile(F, 0.9),
+            mean =  mean(F))
+filtered_data <- all_sims %>%
+  filter(.id == 1) %>%
+  select(day, F, unit)
+
+
+p7 = ggplot() +
+  geom_ribbon(data = all_sims_summary, aes(x = day, ymin = lower, ymax = upper), fill = "#ADD8E6", alpha = 0.5) +
+  geom_line(data = all_sims_summary, aes(x = day, y =  mean),linewidth = 1) +
+  geom_line(data = filtered_data, aes(x = day, y = F, group = unit, color = unit),linetype="dashed")+
+  theme_minimal() +
+  theme(legend.position = "none") +
+  labs(x = NULL, y = "Alga") +
+  theme(axis.title = element_text(size = 10), axis.text.x = element_blank())+
+  scale_x_continuous(limits = c(0, 52), breaks = c(0, 25, 50))
+
+
+all_sims_summary <- all_sims %>%
+  group_by(day) %>%
+  summarise(lower = quantile(P, 0.025),   # 2.5% quantile
+            upper = quantile(P, 0.975),
+            mean =mean(P))
+filtered_data <- all_sims %>%
+  filter(.id == 1) %>%
+  select(day, P, unit)
+p8 = ggplot() +
+  geom_ribbon(data = all_sims_summary, aes(x = day, ymin = lower, ymax = upper), fill = "#ADD8E6", alpha = 0.5) +
+  geom_line(data = all_sims_summary, aes(x = day, y =  mean),linewidth = 1) +
+  geom_line(data = filtered_data, aes(x = day, y = P, group = unit, color = unit),linetype="dashed")+
+  theme_minimal() +
+  theme(legend.position = "none") +
+  labs(x = "day", y = "Parasite") +
+  theme(axis.title = element_text(size = 10))+
+  scale_x_continuous(limits = c(0, 52), breaks = c(0, 25, 50))
+
+suppressWarnings(
+  {
+    grid_arrange <- grid.arrange( p1,p2,p6,p7,p3,p4,p5,p8,ncol = 4, nrow = 2, newpage = TRUE)
+  }
+)
+@
+  % \includegraphics[width=1\textwidth]{"Density_plot.png"}
+
+\caption{\label{fig:sim_plot}
+Simulations of \textit{Daphnia} densities (Individuals$/$Liter), alga density ($10^6\cdot$cells$/$Liter) and parasite density ($10^3\cdot$spores$/$Liter), over time (days), in the mixed species parasitized dynamics based on estimated parameters, with $95\%$ pointwise confidence band (blue area) and simulated mean curves (solid black curves). 
+Observed densities are represented by the solid colored curves.
+The parasite and food densities were not observed, and the dashed colored curves represent a sample of simulated trajectories.
+Individual simulation plots are shown in Fig.~S2.
+}
+\end{figure}
+
+Based on AIC comparisons, we identified the optimal parameter swarm that reaches the best balance between fit and parsimony among unit-specific models and benchmark models. 
+In addition to comparing model fit using information criterion, we further validate the calibrated SIRJPF2 model via a simulation study.
+We generate 1000 simulations from the model and compare these simulations to the data (Figure \ref{fig:sim_plot}).
+
+The simulation bands presented in Figure \ref{fig:sim_plot} closely align with the empirical data curves from the actual experiment, underscoring the model's capability to replicate the observed dynamics.
+Notably, the model captures not only the trends but also the variability of the experimental data.
+Supplementary Fig.~S2 further illustrate the fluctuation behavior of each states within the dynamics.
+Simulations from other models considered are included in the supplementary Figure~S9--S12, S16, S17, S23--S26.
+
+
+With added $J^{\species}_{\unit}$ states based on SIRPF2 model, our model provides an improved statistical fit and high coverage in observed juvenile population dynamics, even without inclusion of juvenile data.
+As juveniles show rare infection by the parasite and gradually mature, this imposes limits on the growth speed of susceptible \textit{Daphnia} and further constrains the density growth rate of infecteds.
+Further, juveniles compete with adults for available food resources.
+While we have shown the relevance of age-structured dynamics for understanding the data on adults, future work could identify the juvenile dynamics more precisely (for example, improving identifiability of $\xi_{J,\unit}$) by fitting directly to juvenile data.
+
+The consistency of simulated data with the empirical data provides a qualitative indicator of the fit of the model that complements a comparison of log-likelihood values.
+Our simulations from  the fitted SIRJPF2 model align with the observed data for the susceptible and infected species of \textit{Daphnia}, and from the out-of fit juvenile data.
+This encourages us to explore the dynamics of latent states in the dynamic system by simulating the unobserved densities of \textit{M.~bicuspidata} and \textit{A.~falcatus} (see the third column of Fig.~\ref{fig:sim_plot}).
+The model predicts that the alga density decreases dramatically from its starting value, and then starts to rebound, due to resupply, once the \textit{Daphnia} population has crashed.
+The parasite density is predicted to rise sharply during the population growth phase and then plateaus at a high level.
+
+As mentioned in Section~\ref{sec:mecmod}, high population density of \textit{Daphnia} and limited food resources will prompt the production of male \textit{Daphnia} leading to sexual reproduction and the generation of diapausing eggs.
+That biological feature plays a large role in the model of \cite{searle16}, though Table~\ref{Table:Model_comparison} shows that our proposed mechanism for the role of resource depletion provides a better statistical explanation of the analyzed data.
+Our modeling and inference approach could be extended to include data on males and ephippial females, collected by \cite{searle16} but not included in either their model or ours.
+
+\section{Discussion}
+\label{sec:dis}
+
+Data science is having a transformative impact on ecological science \citep{mouquet15} and yet too few studies undertake the task of reconciling ecological theory with time series data \citep{peacor22}.
+We have shown that our panel data methodology can allow full-information plug-and-play likelihood-based inference for the complex partially observed nonlinear stochastic dynamic models required to carry out this reconciliation.
+If the previous lack of such data analyses is evidence for the previous lack of effective methods, the PanelPOMP methodology should facilitate many previously intractable scientific investigations.
+Further advances in methodology, such as automatic differentiation for particle filters \citep{tan24}, will continue to increase the numerical tractability of PanelPOMP models.
+
+Despite the complexity of our SIRJPF2 model, there are various ways in which further biological mechanisms could be incorporated.
+Our general plug-and-play framework can be further extended, and information criteria can be used to assess the importance of the proposed extension.
+For example, we could have incorporated the phenomenon that \textit{Daphnia} with advanced infection have reduced feeding rate, or we could have allowed for the possibility that recently infected \textit{Daphnia} can continue to reproduce.
+Additional residual analysis can search for patterns suggesting model improvements, following a similar approach to the residual analysis carried out here.
+
+Fitting a mechanistic model can provide a coherent explanation of system dynamics, but one must remain cautious about the possibility of confounding factors: mechanisms that are omitted from the model and which provide alternative (and perhaps scientifically pertinent) explanations of the observed phenomena \citep{li24,wheeler24}.
+We have an external test of our data by showing that it fits the juvenile data even though it was not fit to them, but this validation does not guarantee that all conclusions from the fitted model are correct.
+For example, while our results explain the decrease of \textit{Daphnia} density by resource depletion, data on the exact food level were not available.
+The mechanism, although logical within the model’s framework, remains an unvalidated assumption in the theory rather than being directly supported by data.
+Subsequent experimentation could substantiate or refute this prediction.
+
+Deterministic dynamic models continue to be widely used for ecological theory, despite the fact that inclusion of stochastic effects both improves model adequacy and enables diagnosis of model shortcomings \citep{king15}.
+For our case study, the stochastic model has a nice feature that there is no need for mesocosm-specific parameters to explain the difference between the experimental replicates.
+
+The dynamic noise in our models adequately explains the observed variability in the trajectories without postulating systematic differences between the experimental replicates.
+Thus, we have demonstrated that this model class can lead to scientific parsimony compared to deterministic models since the latter require unit-specific parameters to describe the data.
+
+We have analyzed data collected in a controlled environment, raising the question of the applicability of our methods to field ecosystems. 
+The applicability of our approach is contingent on having panel data of sufficient length and quality to inform interactions between species.
+Such panel datasets are available, for example, on pathogen-host ecosystems \citep{martinez-bakker15} and fisheries \citep{naiman02}.
+The flexibility of the PanelPOMP model class provides many opportunities for developing new models that integrate ecological theory with panel time series data.
+
+\bibliography{bib-daphnia}
+\end{document}

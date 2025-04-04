@@ -1,0 +1,1855 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{enumerate}
+\usepackage[authoryear,numbers]{natbib}
+\usepackage{graphicx}
+\usepackage[english]{babel}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{placeins}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage[ruled]{algorithm2e}
+\usepackage{hyperref}
+\usepackage{float}
+\usepackage[utf8]{inputenc}
+\usepackage{hyphenat}
+\tolerance=1000
+\usepackage{url}
+\usepackage{makecell}
+\usepackage{textcomp}
+\usepackage{tikz}
+\usepackage{hyphenat}
+\usepackage{tikz}
+\usepackage{float} 
+\usetikzlibrary{arrows.meta, shapes.geometric, positioning}
+\bibliographystyle{apalike}
+\newcommand{\blind}{1}
+
+% DON'T change margins - should be 1 inch all around.
+\addtolength{\oddsidemargin}{-.5in}%
+\addtolength{\evensidemargin}{-1in}%
+\addtolength{\textwidth}{1in}%
+\addtolength{\textheight}{1.7in}%
+\addtolength{\topmargin}{-1in}%
+
+\newcommand\Unit{U}
+\newcommand\unit{u}
+\newcommand\seq[2]{{#1}\!:\!{#2}}
+\newcommand\species{\mathbbm{k}}
+\newcommand\params{\, ; \,}
+\usepackage{bbm}
+\newcommand\native{\mathbbm{n}}
+\newcommand\invasive{\mathbbm{i}}
+\newcommand\Normal{\mathrm{N}}
+\newcommand\benchmarktime{n}
+
+
+
+\parskip 3mm
+\newcommand\authoraddress{ \vspace{-1mm} \\ \normalsize}
+\newcommand\jwc[1]{\textcolor{brown}{[JW: #1]}}
+\newcommand\eic[1]{\textcolor{orange}{[EI: #1]}}
+\newcommand\byc[1]{\textcolor{blue}{[BY: #1]}}
+\newcommand\TODO[1]{\textcolor{red}{[TODO: #1]}}
+
+\renewcommand{\contentsname}{Supplementary Content}
+\renewcommand{\refname}{Supplementary References}
+\renewcommand\thefigure{S-\arabic{figure}}
+\renewcommand\thetable{S-\arabic{table}}
+%\renewcommand\thepage{S-\arabic{page}}
+\renewcommand\thesection{S\arabic{section}}
+\renewcommand\theequation{S\arabic{equation}}
+\renewcommand\thealgocf{S\arabic{algocf}}
+
+\setcounter{tocdepth}{2}
+
+\begin{document}
+\def\spacingset#1{\renewcommand{\baselinestretch}%
+{#1}\small\normalsize} \spacingset{1}
+
+
+<<Debug, include=FALSE>>=
+library(knitr)
+# Set global caching
+cache_option = FALSE
+opts_chunk$set(echo = TRUE, cache = cache_option)
+@
+
+
+\if1\blind
+{
+  \title{\bf Supplement to ``Mechanistic models for panel data: Analysis of ecological experiments with four interacting species''}
+\author{Bo Yang$^1$, Jesse Wheeler$^2$, Meghan A. Duffy$^3$, Aaron A. King$^{3,4}$ \\ and Edward L. Ionides$^2$\\
+\authoraddress University of Michigan, Departments of $^1$Biostatistics, $^2$Statistics,
+\\
+\authoraddress $^3$Ecology \& Evolutionary Biology, $^4$Complex Systems}
+  \maketitle
+} \fi
+
+\if0\blind
+{
+  \bigskip
+  \bigskip
+  \bigskip
+  \begin{center}
+    {\LARGE\bf Supplement to "Mechanistic models for panel data: analysis of ecological experiments with four interacting species"}
+\end{center}
+  \medskip
+} \fi
+
+
+<<Setup, include=FALSE,echo=FALSE,results='hide', cache=cache_option>>=
+ library(patchwork)
+ library(magrittr)
+ library(readxl)
+ library(pomp)
+ library(panelPomp)
+ library(ggplot2)
+ library(gridExtra)
+ library(scales)
+ library(dplyr)
+load("../data/raw_data.rda")
+ myround <- function (x, digits = 1) {
+  if (length(digits) > 1) {
+    digits <- digits[1]
+    warning("Using only digits[1]")
+  }
+  if (digits < 1) {
+    as.character(round(x,digits))
+  } else {
+    tmp <- sprintf(paste("%.", digits, "f", sep = ""), x)
+    zero <- paste0("0.", paste(rep("0", digits), collapse = ""))
+    tmp[tmp == paste0("-", zero)] <- zero
+    tmp
+  }
+}
+
+mysignif_ll_AIC <- function (x, digits = 1) {
+ myround(x, digits - ceiling(log10(abs(x))))
+}
+
+mysignif <- function(x, digits = 2) {
+if (is.na(x) || is.nan(x)) {
+  return("NA")
+}
+s <- formatC(x, format = "e", digits = digits)
+
+parts <- strsplit(s, "e", fixed = TRUE)[[1]]
+mantissa <- parts[1]
+exponent <- as.integer(parts[2])
+if (exponent == 0){
+   return(paste0("$",mantissa, "$"))
+}
+else if (exponent == 1){
+   return(paste0("$",mantissa, "\\cdot 10$"))
+}
+else{
+   return(paste0("$",mantissa, "\\cdot 10^{", exponent, "}$"))
+}
+}
+@
+
+\tableofcontents
+\newpage
+\section{Monte Carlo Adjusted Profile}
+The Monte Carlo Adjusted Profile (MCAP) method represents an advancement in the realm of statistical estimation, particularly in scenarios involving complex models with large number of parameters.
+This technique, which incorporates Monte Carlo simulation into profile analysis, is designed to refine the estimation of confidence intervals of estimated parameters.
+\parskip 3mm
+
+At its core, the MCAP method relies on generating a large number of replicated data sets through Monte Carlo simulation.
+Each data set is adjusted to reflect the profile of interest and analyzed separately. The implementation of MCAP involves several steps.
+Initially, the parameter space is explored through a fine grid over which the likelihood is computed. For each point on the grid, Monte Carlo simulations are used to generate replicates of the data under the null hypothesis.
+These replicates are then subjected to statistical analysis, and the resulting estimates are used to construct adjusted confidence profiles.
+\parskip 3mm
+
+When comparing to other profile analysis methods, MCAP offers a particularly effective way in handling high-dimensional data or time series.
+The MCAP method's reliance on Monte Carlo simulations allows for a flexible assessment of the statistical properties of estimators under various model specifications and conditions \citep{breto20}.
+\citet{ionides17} demonstrate the MCAP method's efficacy in dynamic system models, where traditional methods often fail to capture the intricate dependencies between parameters.
+\parskip 3mm
+
+
+\section{Panel Iterated Filter}
+
+\begin{algorithm}[H]
+\caption{Panel iterated filter (PIF)}
+\label{alg:pif}
+%\SetAlgoLined
+%\SetNoline
+\DontPrintSemicolon
+\KwIn{PanelPOMP model, as defined in Section~3 of the main text\;
+  Number of particles, $J$, and filter iterations, $M$\;
+  Cooling factor $\rho$\;
+  Starting parameter vector swarm, \( \Theta^{(0)}_{j} = (\Phi^{(0)}_{j},\Psi^{(0)}_{1:U,j}) \),
+  for $j = \seq{1}{J}$\;
+  Perturbation variance, $V^\Theta_{u,n}$, for $u=\seq{1}{U}$, $n=\seq{1}{N_u}$\;
+  Logical variable determining marginalization, $\mathrm{MARGINALIZE}$
+  }
+\KwOut{Parameter swarm, $\Theta^{(M)}_{1:J}$, approximating the MLE}
+\For{\( m = 1 \) \KwTo \( M \)}{
+  $\Theta^{F,m}_{0,j} = \Theta^{(m-1)}_{j}$ for $j = \seq{1}{J}$\;
+  \For{\( u = 1 \) \KwTo \( U \)}{
+    $(\Phi^{F,m}_{u,0,j},\Psi^{F,m}_{u,0,j}) \sim \mathcal{N}(\Theta^{F,m}_{u-1,j},\rho^{2m}V^\Theta_{u,0})$ for $j = \seq{1}{J}$\;
+    \( X_{u,0,j}^{F,m} \sim f_{X_{u,0}}(\, \cdot \params \Phi^{F,m}_{u,0,j},\Psi^{F,m}_{u,0,j}) \) for $j = \seq{1}{J}$\;
+    \For{\( n = 1 \) \KwTo \( N_u \)}{
+       $\Phi^{P,m}_{u,n,j} \sim \mathcal{N}\big(\Phi^{F,m}_{u,n-1,j}, \rho^{2m}V^\Phi_{u,n}\big)$ for $j = \seq{1}{J}$\;
+       $\Psi^{P,m}_{u,n,j} \sim \mathcal{N}\big(\Psi^{F,m}_{u,n-1,j}, \rho^{2m}V^\Psi_{u,n}\big)$ for $j = \seq{1}{J}$\;
+       \( X_{u,n,j}^{P,m} \sim f_{X_{u,n} | X_{u,n-1}}\big(\, \cdot \mid X_{u,n-1,j}^{F,m} \params \Phi^{P,m}_{u,n,j},\Psi^{P.m}_{u,n,j}\big) \) for \( j = \seq{1}{J} \)\;
+       $w_{u,n,j}^m = f_{Y_{u,n} | X_{u,n}}\big(y^*_{u,n} \mid X^{F,m}_{u,n,j} \params \Phi^{P,m}_{u,n,j},\Psi^{P.m}_{u,n,j}\big)$ for \( j = \seq{1}{J} \)\;
+       $k_j = i$ with probability proportional to $ w_{u,n,i}^m$ for $i,j = \seq{1}{J}$\;
+       $X^{F,m}_{u,n,j} = X^{P,m}_{u,n,k_j}$ for $j = \seq{1}{J}$\;
+       $\Phi^{F,m}_{u,n,j} = \Phi^{P,m}_{u,n,k_j}$ for $j = \seq{1}{J}$\;
+       $\Psi^{F,m}_{u,n,j} = \Psi^{P,m}_{u,n,k_j}$ for $j = \seq{1}{J}$\;
+              \uIf{$\mathrm{MARGINALIZE}$}{$\Psi^{F,m}_{\tilde u,n,j} = \Psi^{P,m}_{\tilde u,n,j}$ for all $\tilde u \neq u$, $j=\seq{1}{J}$}
+       \Else{$\Psi^{F,m}_{\tilde u,n,j} = \Psi^{P,m}_{\tilde u,n,k_j}$ for all $\tilde u \neq u$, $j=\seq{1}{J}$}
+       }
+  $\Theta^{F,m}_{u,j} = \big( \Phi^{F,m}_{u,N_u,j},  \Psi^{F,m}_{1:U,N_u,j} \big)$
+  }
+  $\Theta^{(m)}_{j} = \Theta^{F,m}_{U,j}$;
+}
+\end{algorithm}
+
+Algorithm~\ref{alg:pif} presents pseudocode for PIF.
+Here, $\Phi^{F,m}_{u,n,j}$ is the $j$th filter particle searching for the MLE of the shared parameter $\phi$ in the $m$th filter iteration, at time point $n$ and unit $u$.
+ $\Psi^{F,m}_{u,n,j}$ is the corresponding quantity searching for the MLE of the unit-specific parameter, $\psi_u$.
+Cooling factor $\rho$ determines how aggressively the parameter perturbations are dampened as the number of iterations increases.
+By gradually reducing the size of these parameter random walks, the algorithm refines the parameter estimates and converges more tightly to the maximum likelihood point.
+
+When $\mathrm{MARGINALIZE}=\mathrm{TRUE}$, the estimate of the unit-specific parameter $\psi_u$ belonging to particle $j$ is unchanged when filtering throuth a unit $\tilde u\neq u$. 
+The unmarginalized PIF was proposed by \cite{breto20} and was provided with theoretical convergence results that are not yet available for MPIF.
+However, our results demonstrate that MPIF has superior empirical performance on the ecological model considered here.
+Theoretical support for MPIF will be published elsewhere.
+
+To briefly review, the model is specified by the initial condition, $ f_{X_{u,0}}(\, \cdot \, \params \phi,\psi_u)$, the latent state transition density, $f_{X_{u,n} | X_{u,n-1}}\big(\, \cdot \mid \,  \params \phi,\psi_u \big)$, and the measurement density, $f_{Y_{u,n} | X_{u,n}}\big(\, \cdot \mid \cdot \params \phi,\psi_u\big)$, for $u = \seq{1}{U}$ and $n=\seq{1}{N_u}$.
+The full parameter vector is written as $\theta=(\phi,\psi_{1:U})$.
+For notational convenience, we define $u=0$ to be an empty panel with $N_0=0$.
+Algorithm~\ref{alg:pif} supposes Gaussian perturbations of the parameters, which is a common practical choice but may require re-parameterizing to avoid boundaries.
+For example, non-negative parameters are typically log-transformed.
+Additional generality is provided by the pseudocode in \cite{breto24} that is implemented in the \texttt{mif2} function of the R package \texttt{panelPomp}.
+
+\section{SIRJPF2 Model}
+\subsection{Results}
+\subsubsection{MCAP Result}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{profile/Target_dynamics/para/Profile_plot.png}
+    \caption{Monte Carlo Adjusted Profile results of SIRJPF2 model for mixed species Parasitized dynamics.
+    The vertical dotted lines represent the 95\% confidence interval obtained by MCAP.
+    The vertical blue lines show the MLE by MCAP method. And the red vertical lines are the estimated parameters by the panelPOMP. }
+    \label{fig:SIRJPF2_profile}
+\end{figure}
+
+<<LoadSIRJPF2data, include=FALSE, cache=cache_option>>=
+load('../../data/Target_dynamics/para/Target_para_loglik_df.rds')
+@
+
+\subsubsection{Model Comparison}
+In the panelPOMP framework, one must decide whether or not each parameter should be unit specific, or shared across units.
+These decisions greatly affect the degree of freedom for each model. For example, with ten units in the model, adding a shared parameter increases the model’s dimension by one, and adding a unit specific parameter will increase the dimension by ten.
+An increase in parameter dimension increases the model’s ability to quantitatively describe the observed data, but leads to the possibility of over-fitting, resulting in a model with poor explanatory and predictive power.
+In order to find a balance between fitting accuracy and simplicity when selecting models, we employed the Akaike information criterion (AIC) as a criteria to compare models while adjusting for dimension.
+We estimate model parameters via maximum likelihood using the panel iterated filtering (PIF) \citep{breto20} and calculate AIC for all models.
+The following table shows the comparison of different models under different settings of unit specific parameter.
+Each row represents a different model configuration, with specific parameters designated as either unit-specific or shared across all units.
+Within the table, the max log-likelihood and AIC columns report the maximum log-likelihood and AIC values for each model configuration, where a lower AIC indicates a more favorable balance between model fit and complexity. Similarly, the max log-likelihood (MPIF) and AIC (MPIF) columns provide analogous metrics under the marginalized method setting for the PIF procedure.
+\begin{table}[h!]
+\centering
+\small
+\begin{center}
+\begin{tabular}{||c |c |c |c|c||}
+ \hline
+Specific parameters  & Max log-likelihood & AIC & \makecell[c]{Max log-likelihood\\(MPIF)} & \makecell[c]{AIC\\(MPIF)}\\ [0.5ex]
+ \hline\hline
+$\varnothing$ & \Sexpr{mysignif_ll_AIC(target_para_parameter_table[1,]$ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[1,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[1,]$ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[1,]$AIC,6)} \\
+$\theta^{\species}_{I,\unit}$ & \Sexpr{mysignif_ll_AIC(target_para_parameter_table[2,]$ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[2,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[2,]$ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[2,]$AIC,6)} \\
+$p^{\species}_{\unit}$ & \Sexpr{mysignif_ll_AIC(target_para_parameter_table[3,]$ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[3,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[3,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[3,]$block_AIC,6)} \\
+$\theta_{P,\unit}$ & \Sexpr{mysignif_ll_AIC(target_para_parameter_table[4,]$ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[4,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[4,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[4,]$block_AIC,6)} \\
+$\xi_{\unit}$ & \Sexpr{mysignif_ll_AIC(target_para_parameter_table[5,]$ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[5,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[5,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[5,]$block_AIC,6)} \\
+$f^{\species}_{S,\unit}$ & \Sexpr{mysignif_ll_AIC(target_para_parameter_table[6,]$ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[6,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[6,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[6,]$block_AIC,6)} \\
+$\theta^{\species}_{S,\unit}$ & \Sexpr{mysignif_ll_AIC(target_para_parameter_table[7,]$ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[7,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[7,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[7,]$block_AIC,6)} \\
+$r^{\species}_{\unit}$ & \Sexpr{mysignif_ll_AIC(target_para_parameter_table[8,]$ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[8,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[8,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[8,]$block_AIC,6)} \\[1ex]
+ \hline
+\end{tabular}
+\end{center}
+\caption{Comparison of model fit and complexity across various configurations of unit-specific parameters within the panelPOMP framework for mixed species Parasitized dynamics. The unit-specific parameter setting assessed include ($\theta^{\species}_{I,\unit}$), ($p^{\species}_{\unit}$), $\xi_{\unit}$, ($f^{\species}_{S,\unit}$ ), ($\theta^{\species}_{S,\unit}$), $\theta_{P,\unit}$ and ($r^{\species}_{\unit}$) for $\species \in \{\native,\invasive\}$.}
+\label{Table:SIRJPF2_model_comparison}
+\end{table}
+
+\subsection{Simulation}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{simulation/target_para_simulation/simulation_lines.png}
+   \caption{Simulated densities (Individuals$/$Liter) of susceptible, infected and juvenile \textit{D.~dentifera}, susceptible, infected and juvenile \textit{D.~lumholtzi} and alga density ($10^6\cdot$cells$/$Liter) over time for each experimental unit. The blue lines represent individual simulation runs, capturing the variability in susceptible density across replicates, while the red line represents the actual experiment data.}
+    \label{fig:SIRJPF2_simulation_lines}
+\end{figure}
+
+
+\subsection{Residual Analysis}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.75\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{residual/residual_panel.png}
+   \caption{Comparison of conditional log likelihood of model fitting on susceptible, infected \textit{D.~dentifera} and \textit{D.~lumholtzi} at each observation for setting of $\xi_{J,\unit} = 1$ (blue) and $\xi_{J,\unit} = 0.001$ (red).}
+    \label{fig:Res_loglik}
+    \end{subfigure}
+    \vspace{1em}
+    
+    \begin{subfigure}{0.75\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{residual/residual_comparison.png}
+     \caption{Simulated densities (Individuals$/$Liter) of juvenile \textit{D.~lumholtzi} and \textit{D.~dentifera} over time for in the mixed species parasitized dynamics based on maximized loglikelihood parameters, with simulated mean curves (solid black curves) and $95\%$ confidence band for setting $\xi_{J,\unit} = 0.001$ (purple) and  $\xi_{J,\unit} = 1$ (blue).
+The observed densities are represented by the solid colorful curves.}
+    \label{fig:Res_sim}
+    \end{subfigure}
+    \label{fig:Res}
+    \caption{Residual analysis results}
+\end{figure}
+
+
+
+
+
+\section{SIRJPF Model}
+The SIRJPF model presented here encapsulates the dynamics in each bucket($\unit$) among susceptible individuals ($S^{\species}$), infected individuals ($I^{\species}$), juvenile population ($J^{\species}$), algae as a food resource ($F$), the parasite population ($P$).
+The superscript $\species$ denotes the species, which represents native or invasive species.
+Each stochastic differential equation accounts for various biological and ecological processes, augmented with stochastic terms to capture the inherent randomness within the systems.
+{\small
+\begin{align}
+    dS^{\species}_{\unit}(t) &= \lambda^{\species}_{J,{\unit}} J^{\species}_{\unit}(t) \, dt - \big\{\theta^{\species}_{S,{\unit}} + p^{\species}_{\unit} f^{\species}_{S,{\unit}} P_{\unit}(t) + \delta \big\} S^{\species}_{\unit}(t)\, dt, \label{eq:SIRJPF_dS}\\
+    dJ^{\species}_{\unit}(t) &= r^{\species}_{\unit}f^{\species}_{S,{\unit}}F_{\unit}(t) S^{\species}_{\unit}(t)\, dt - \theta^{\species}_{J,{\unit}} J^{\species}_{\unit}(t)\, dt - \delta J^{\species}_{\unit}(t)\, dt - \lambda^{\species}_{J,{\unit}} J^{\species}_{\unit}(t)\, dt + J^{\species}_{\unit}(t)\, d\zeta^{\species}_{J,{\unit}}, \label{eq:SIRJPF_dJ}\\
+    dI^{\species}_{\unit}(t) &= p^{\species}_{\unit} f^{\species}_{S,{\unit}} S^{\species}_{\unit}(t) P_{\unit}(t)\, dt - \big\{\theta^{\species}_{I,{\unit}} + \delta \big\} I^{\species}_{\unit}(t)\, dt + I^{\species}_{\unit}(t) \, d\zeta^{\species}_{I,{\unit}}, \label{eq:SIRJPF_dI}\\
+    dP_{\unit}(t) &= \beta^{\species}_{\unit} \theta^{\species}_{I,{\unit}} I^{\species}_{\unit}(t)dt - f^{\species}_{S,{\unit}} ( S^{\species}_{\unit}(t) + \xi_{\unit} I^{\species}_{\unit}(t))P_{\unit}(t) dt - \theta_{p,{\unit}} P_{\unit}(t)\, dt + P_{\unit}(t)\, d\zeta_{P,{\unit}}, \label{eq:SIRJPF_dP}\\
+    dF_{\unit}(t) &= - f^{\species}_{S,{\unit}} F_{\unit}(t) \left(S^{\species}_{\unit}(t)+\xi_{J,{\unit}}J^{\species}_{\unit}(t) +\xi_{\unit} I^{\species}_{\unit}(t)\right)dt  + \mu \, dt + F_{\unit}(t)\, d\zeta_{F,{\unit}}, \label{eq:SIRJPF_dF}\\
+d\zeta^{\species}_{I,{\unit}} &\sim \Normal \big[0, (\sigma^{\species}_{I,{\unit}})^{2}\, dt\big],
+d\zeta^{\species}_{J,{\unit}} \sim \Normal \big[0, (\sigma^{\species}_{J,{\unit}})^{2}\, dt\big],\\
+d\zeta_{F,{\unit}} &\sim \Normal \big[0, (\sigma_{F,{\unit}})^{2}\, dt\big],
+d\zeta_{P,{\unit}} \sim \Normal \big[0, (\sigma_{P,{\unit}})^{2}\, dt\big].
+\end{align}
+}
+
+
+
+
+Each equation represents specific biological interactions and processes.
+Equation \eqref{eq:SIRJPF_dS} models the dynamics of the susceptible \textit{Daphnia} population across time, $S^{\species}_{\unit}(t)$, where growth occurs from the juvenile population $J^{\species}_{\unit}(t)$ at a maturation rate $\lambda^{\species}_{J,\unit}$, while losses include natural mortality ($\theta^{\species}_{S,\unit}$), infection by intaking parasite at rate $p^{\species}_{\unit} f^{\species}_{S,\unit} P^{\species}_{\unit}(t)$, and sampling rate ($\delta$).
+\parskip 3mm
+
+In Equation \eqref{eq:SIRJPF_dJ}, the dynamics of the juvenile population $J^{\species}_{\unit}(t)$ are captured, with growth occurring via feeding on algae, scaled by birth rate $r^{\species}_{\unit}$ and feeding rate $f^{\species}_{S,\unit} F^{\species}_{\unit}(t)$.
+Losses in $J^{\species}_{\unit}(t)$ include natural mortality ($\theta^{\species}_{J,\unit}$), sampling rate ($\delta$), and maturation to the adult population at rate $\lambda^{\species}_{J,\unit}$.
+Additionally, $J^{\species}_{\unit}(t) \, d\zeta^{\species}_{J,\unit}$ represents stochastic fluctuations affecting the juvenile population.
+\parskip 3mm
+
+Equation \eqref{eq:SIRJPF_dI} describes the infected population $I^{\species}_{\unit}(t)$, with new infections arising from interaction between susceptible individuals $S^{\species}_{\unit}(t)$ and alga at rate $p^{\species}_{\unit} f^{\species}_{S,\unit} S^{\species}_{\unit}(t) P^{\species}_{\unit}(t)$.
+Infected individuals experience losses through natural mortality ($\theta^{\species}_{I,\unit}$) and sampling rate ($\delta$), while $I^{\species}_{\unit}(t) \, d\zeta^{\species}_{I,\unit}$ accounts for stochastic noise.
+\parskip 3mm
+
+Equation \eqref{eq:SIRJPF_dP} models the dynamics of \textit{M.} population $P_{\unit}(t)$, which grows through spore release from the death of infected individuals $I^{\species}_{\unit}(t)$ at a rate $\beta^{\species}_{\unit} \theta^{\species}_{I,\unit}$.
+Losses are due to intaking by susceptible and infected individuals, scaled by filtering rate $f^{\species}_{S,\unit}$ and the ratio of filtering rate $\xi_{\unit}$ between subjects before and after infection, and natural mortality at rate $\theta^{\species}_{P,\unit}$.
+Stochastic fluctuations are represented by the term $P_{\unit}(t) \, d\zeta_{P,\unit}$.
+\parskip 3mm
+
+Finally, Equation \eqref{eq:SIRJPF_dF} models the \textit{A.} alga population $F_{\unit}(t)$. The algae are consumed by susceptible individuals, juveniles, and infected individuals, scaled by consumption rate $f_S$ and ratio of filtering rate $\xi_{J,\unit}$ and $\xi_{\unit}$. Algae gets manually refilled at rate $\mu$, with $F_{\unit}(t) \, d\zeta_{F,\unit}$ representing stochastic noise.
+\parskip 3mm
+
+The stochastic terms $d\zeta^{\species}_{J,{\unit}}$, $d\zeta^{\species}_{I,{\unit}}$, $d\zeta_{P,{\unit}}$, and $d\zeta_{F,{\unit}}$ represent Brownian motion affecting each population, modeled as Gaussian white noise with mean zero and variances $(\sigma^{\species}_{S,{\unit}})^{2}\, dt$, $(\sigma^{\species}_{J,{\unit}})^{2}\, dt$, $(\sigma^{\species}_{I,{\unit}})^{2}\, dt$, $(\sigma_{P,{\unit}})^{2}\, dt$, and $(\sigma_{F,{\unit}})^{2}\, dt$, respectively.
+\parskip 3mm
+
+This model intricately details the interactions and feedback mechanisms among the populations under study.
+The equations describe the growth or decline of each population, influenced by deterministic factors such as reproduction, filtering rates, predation, infection, and mortality, alongside stochastic factors captured through the $d\zeta_{\cdot,u}$ terms for each unit.
+These stochastic components represent environmental variability and other unpredictable influences, adhering to the principles of stochastic differential equations.
+By incorporating random fluctuations, the model offers a realistic representation of population dynamics, extending beyond the deterministic framework of classical models.
+\parskip 3mm
+
+This model’s capacity to intertwine biological realism with statistical rigor makes it a potent tool for understanding complex ecological interactions.
+In the following sections, we will present the flow diagram and parameter estimation results to further illustrate the interaction between latent states, emphasizing the advantages of combining the \texttt{panelPOMP} framework with SIRJPF model in addressing this complex problem.
+
+
+\subsection{Flow Diagram}
+The SIRJPF model illustrates the interdependent dynamics among the Susceptible ($S$), Infected ($I$), Juvenile ($J$), Food ($F$), and Parasite ($P$) populations, with transitions representing ecological and biological interactions.
+The model integrates deterministic growth and mortality rates with stochastic components, providing a realistic framework for studying population fluctuations under variable environmental conditions.
+
+\usetikzlibrary{positioning}
+\usetikzlibrary {arrows.meta}
+\usetikzlibrary{shapes.geometric}
+
+\begin{figure}[H]
+\begin{center}
+\resizebox{8cm}{!}{
+\begin{tikzpicture}[
+  square/.style={rectangle, draw=black, minimum width=0.5cm, minimum height=0.5cm, rounded corners=.1cm, fill=blue!8},
+  rhombus/.style={diamond, draw=black, minimum width=0.1cm, minimum height=0.1cm, fill=purple!8,aspect = 1},
+  travel/.style={circle, draw=black, minimum width=0.5cm, minimum height=0.5cm, fill=green!8},
+  report/.style={shape=regular polygon, regular polygon sides=8, draw, fill=red!8,minimum size=0.6cm,inner sep=0cm},
+  bendy/.style={bend left=10},
+  bendy2/.style={bend left=100},
+  bendy3/.style={bend left=-100},
+  >/.style={shorten >=0.25mm},
+  >/.tip={Stealth[length=1.5mm,width=1.5mm]}
+]
+\tikzset{>={}};
+
+\node (S) at (2.5,0) [square] {$S^{\species}$};
+\node (I) at (5.5,0) [square] {$I^{\species}$};
+\node (J) at (-0.5,0) [square] {$J^{\species}$};
+\node (R) at (2.5,-2)  [rhombus] {$R$};
+\node (P) at (5.5,-2)[travel] {$P$};
+\node (F) at (-0.5,-2) [report] {$F$};
+
+
+
+\draw [->, bendy] (S) to  (I);
+\draw [->, bendy] (I) to  (S);
+\draw [->, bendy] (J) to  (S);
+\draw [->, bendy] (S) to  (J);
+
+
+\draw [->] (P) --  (S);
+\draw [->] (F) --  (R);
+\draw [->] (P) --  (R);
+\draw [->] (S) -- (R);
+\draw [->] (I) -- (R);
+\draw [->] (J) -- (R);
+\draw [->] (F) -- (S);
+\draw [->] (F) -- (J);
+\draw [->] (F) -- (I);
+\draw (F) edge[loop below] (F);
+
+\draw [->, bendy] (P) to (I);
+\draw [->, bendy] (I) to (P);
+
+
+\end{tikzpicture}
+}
+\end{center}
+\vspace{-5mm}
+\caption{Flow diagram for the SIRJPF model illustrating population interactions. The model includes the $R$ state, representing mortality. Susceptible populations ($S^{\species}$) can reproduce into juvenile ($J^{\species}$), where the superscript $\species$ denotes the species of \textit{Daphnia}. And \textit{A.} Algae ($F$) will be refilled, as shown by the recycling arrows. Transitions from $S^{\species}$ to $I^{\species}$ denote infection, and transitions to the $R$ state occur upon death, where deceased individuals release parasites back into the environment. All $S^{\species}$, $I^{\species}$ and $J^{\species}$ consume resources from $F$, and over time, components in $F$ and $P$ also progress to $R$.}
+\label{fig:flow_SIRJPF}
+\end{figure}
+
+\subsection{Data Visualization}
+\begin{figure}[H]
+\centering
+<<DataVisSIRPFdent,echo=FALSE, fig.width=9,fig.height=4,out.width="\\textwidth", cache=cache_option>>=
+dentpara <- Mesocosm_data[101:180, ]
+dentpara <- subset(dentpara, select = c(rep, day, dent.adult,dent.inf,dent.juv))
+dentpara <- dentpara[80: 1, ]
+#Convert sampling date to natural date. Samples are collected every 5 days after the #first 7 days.
+dentpara$day = (dentpara$day - 1) * 5 + 7
+dentpara_data = list()
+trails = c("K","L","M","N","O","P","Q","S")
+for (i in 1: length(trails)){
+  dentpara_data[[i]]=subset(dentpara, select = c("day", "dent.adult","dent.inf",'dent.juv'),
+                   dentpara$rep == trails[i])
+}
+
+dentpara_data_combined <- do.call(rbind, lapply(1:length(dentpara_data), function(i) {
+  cbind(dentpara_data[[i]], Trial = paste("Trial", trails[i]))
+}))
+
+dentpara_data_combined$Bucket = paste0(rep("Bucket ",80),rep(1:8, each = 10))
+
+bucket_labeller <- as_labeller(function(bucket) gsub("Bucket ", "Mesocosm-", bucket))
+
+lum.style="longdash"
+dent.style="solid"
+lum.width=0.6
+dent.width=0.5
+
+p0 <- ggplot(dentpara_data_combined, aes(x = day)) +
+  geom_line(aes(y = dent.adult), color = "black", linewidth = dent.width,
+    linetype=dent.style) +
+  geom_line(aes(y = dent.inf), color = "red", linewidth = dent.width,
+    linetype=dent.style) +
+  facet_wrap(~Bucket, nrow = 1, labeller = bucket_labeller) +
+  theme_minimal() +
+  theme(
+    axis.title.x = element_blank(),
+    axis.text.x = element_blank(),
+    axis.title.y = element_text(size = 8),
+    axis.text.y = element_text(size = 9),
+    strip.text = element_text(size = 9),
+    strip.background = element_blank(),
+    strip.placement = "outside",
+    plot.margin = margin(0, 0.5, 0, 0.5, "cm"),
+    legend.position = "none"
+  ) +
+  ylab('Adult density') +
+  xlab('Day') +
+  scale_x_continuous(limits = c(0, 52), breaks = c(0, 25, 50)) +
+  scale_y_continuous(trans="sqrt")
+
+
+p1 <- ggplot(dentpara_data_combined, aes(x = day)) +
+  geom_line(aes(y = dent.juv), color = "orange", linewidth = dent.width,
+    linetype=dent.style)+
+  facet_wrap(~Bucket, nrow = 1) +
+  theme_minimal() +
+  theme(
+    axis.title.x = element_text(size = 9),
+    axis.title.y = element_text(size = 8),
+    axis.text.x = element_text(size = 8),
+    axis.text.y = element_text(size = 8),
+    strip.text = element_blank(),
+    strip.background = element_blank(),
+    strip.placement = "outside",
+    plot.margin = margin(0, 0.5, 0, 0.5, "cm"),
+    legend.position = "none"
+  ) +
+  ylab('Juvenile density') +
+  xlab('Day') +
+  scale_x_continuous(limits = c(0, 52), breaks = c(0, 25, 50)) +
+  scale_y_continuous(trans="sqrt")
+
+grid.arrange(p0, p1, ncol = 1)
+@
+\caption{\label{fig:data_vis_SIRPF_dent}
+Density (Individuals$/$Liter) of \textit{D.~dentifera}.
+The top panel shows adult susceptibles (\textit{D.~dentifera}, black) and infecteds (\textit{D.~dentifera}, red).
+The bottom panel shows juvenile susceptibles (\textit{D.~dentifera}, orange).
+There were negligible infected juveniles.
+Columns are buckets corresponding to replications with same treatment setting.
+}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+<<DataVisSIRPFlum,echo=FALSE, fig.width=9,fig.height=4,out.width="\\textwidth", cache=cache_option>>=
+lumpara <- Mesocosm_data_invasive[101:190, ]
+lumpara <- subset(lumpara, select = c(rep, day, lum.adult,lum.adult.inf,lum.juv))
+lumpara <- lumpara[90: 1, ]
+#Convert sampling date to natural date. Samples are collected every 5 days after the #first 7 days.
+lumpara$day = (lumpara$day - 1) * 5 + 7
+lumpara_data = list()
+trails = c("L","M","N","O","P","Q","R","S","T")
+for (i in 1: length(trails)){
+  lumpara_data[[i]]=subset(lumpara, select = c("day", "lum.adult","lum.adult.inf",'lum.juv'),
+                   lumpara$rep == trails[i])
+}
+
+lumpara_data_combined <- do.call(rbind, lapply(1:length(lumpara_data), function(i) {
+  cbind(lumpara_data[[i]], Trial = paste("Trial", trails[i]))
+}))
+
+lumpara_data_combined$Bucket = paste0(rep("Bucket ",90),rep(1:9, each = 10))
+
+bucket_labeller <- as_labeller(function(bucket) gsub("Bucket ", "Mesocosm-", bucket))
+
+p1 <- ggplot(lumpara_data_combined, aes(x = day)) +
+  geom_line(aes(y = lum.adult), color = "blue", linewidth = lum.width,
+    linetype=dent.style) +
+  geom_line(aes(y = lum.adult.inf), color = "green", linewidth = lum.width,
+    linetype=dent.style) +
+  facet_wrap(~Bucket, nrow = 1, labeller = bucket_labeller) +
+  theme_minimal() +
+  theme(
+    axis.title.x = element_blank(),
+    axis.text.x = element_blank(),
+    axis.title.y = element_text(size = 8),
+    axis.text.y = element_text(size = 9),
+    strip.text = element_text(size = 9),
+    strip.background = element_blank(),
+    strip.placement = "outside",
+    plot.margin = margin(0, 0.5, 0, 0.5, "cm"),
+    legend.position = "none"
+  ) +
+  ylab('Adult density') +
+  xlab('Day') +
+  scale_x_continuous(limits = c(0, 52), breaks = c(0, 25, 50)) +
+  scale_y_continuous(trans="sqrt")
+
+
+
+p2<- ggplot(lumpara_data_combined, aes(x = day)) +
+  geom_line(aes(y = lum.juv), color = "purple", linewidth = dent.width,
+    linetype=dent.style)+
+  facet_wrap(~Bucket, nrow = 1) +
+  theme_minimal() +
+  theme(
+    axis.title.x = element_text(size = 9),
+    axis.title.y = element_text(size = 8),
+    axis.text.x = element_text(size = 8),
+    axis.text.y = element_text(size = 8),
+    strip.text = element_blank(),
+    strip.background = element_blank(),
+    strip.placement = "outside",
+    plot.margin = margin(0, 0.5, 0, 0.5, "cm"),
+    legend.position = "none"
+  ) +
+  ylab('Juvenile density') +
+  xlab('Day') +
+  scale_x_continuous(limits = c(0, 52), breaks = c(0, 25, 50)) +
+  scale_y_continuous(trans="sqrt")
+
+grid.arrange(p1, p2, ncol = 1)
+@
+\caption{\label{fig:data_vis_SIRPF_lum}
+Density (Individuals$/$Liter) of \textit{D.~lumholtzi}.
+The top panel shows adult susceptibles (\textit{D.~lumholtzi}, blue) and infecteds (\textit{D.~lumholtzi}, green).
+The bottom panel shows juvenile susceptibles (\textit{D.~lumholtzi}, purple).
+There were negligible infected juveniles.
+Columns are buckets corresponding to replications with same treatment setting.
+}
+\end{figure}
+
+\subsection{Result}
+<<LoadSIRJPFdatanative, include=FALSE, cache=cache_option>>=
+load("profile/Simple_dynamics/Dent/para/profile_ci_table.rda")
+load('profile/Simple_dynamics/Dent/para/estimation_parameters.rds')
+load('../../data/Simple_dynamics/Dent/para/Dent_para_loglik_df.rds')
+ci_table = exp(ci_table)
+rn = dent_para_parameters[['rn']]
+f_Sn = dent_para_parameters[['f_Sn']]
+probn = dent_para_parameters[['probn']]
+theta_Sn = dent_para_parameters[['theta_Sn']]
+theta_In = dent_para_parameters[['theta_In']]
+theta_Jn = dent_para_parameters[['theta_Jn']]
+theta_P = dent_para_parameters[['theta_P']]
+sigSn = dent_para_parameters[['sigSn']]
+sigIn = dent_para_parameters[['sigIn']]
+sigJn = dent_para_parameters[['sigJn']]
+sigP = dent_para_parameters[['sigP']]
+sigF = dent_para_parameters[['sigF']]
+k_Sn = dent_para_parameters[['k_Sn']]
+k_In = dent_para_parameters[['k_In']]
+xi = dent_para_parameters[['xi']]
+xi_J = 1
+beta_n = 30
+mu = 0.37
+delta = 0.013
+lambda_Jn = 0.1
+@
+\subsubsection{Parameter Estimation}
+\begin{table}[H]
+\centering
+\resizebox{\textwidth}{!}{
+\begin{tabular}{||c|c |c|c|c||}
+\hline
+Parameter & Definition &Unit & Value & CI\\[0.5ex]
+\hline
+\hline
+$S^{\native}$ & Susceptible host density   & $\mathrm{individual} \cdot L ^{-1}$                 & Variable                & \\
+$I^{\native}$ & Infected host density     & $ \mathrm{individual} \cdot L ^{-1}$                & Variable                & \\
+$J^{\native}$ & Juvenile host density    & $ \mathrm{individual} \cdot L ^{-1}$                & Variable                & \\
+$F$   & Alga density                              & $10^6 \cdot \mathrm{cell} \cdot L ^{-1}$             & Variable                & \\
+$P$   & Spore density                             & $10^3 \cdot \mathrm{spore} \cdot L ^{-1}$            & Variable                & \\
+$r^{\native}$ &  Birth rate of juvenile                        & $\mathrm{individual} \cdot 10^{-6}\cdot \mathrm{cell}^{-1}$ & \Sexpr{mysignif(rn,2)}  & (\Sexpr{mysignif(ci_table$rn[1],2)},\Sexpr{mysignif(ci_table$rn[2],2)})\\
+$f^{\native}_{S}$ & Susceptible adult host filtering rate   &  $\mathrm{L} \cdot \mathrm{individual}^{-1} \cdot \mathrm{day}^{-1}$   & \Sexpr{mysignif(f_Sn,2)}  & (\Sexpr{mysignif(ci_table$f_Sn[1],2)},\,\Sexpr{mysignif(ci_table$f_Sn[2],2)})\\
+$p^{\native}$          & Number of infection per spore            &     $10^{-3} \cdot \mathrm{individual} \cdot \mathrm{spore}^{-1} $ & \Sexpr{mysignif(probn,2)}  & (\Sexpr{mysignif(ci_table$probn[1],2)},\,\Sexpr{mysignif(ci_table$probn[2],2)})\\
+$\theta^{\native}_{S}$ & Susceptible adult host mortality rate     &     $  \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Sn,2)}  & (\Sexpr{0},\,\Sexpr{mysignif(ci_table$theta_Sn[2],2)})\\
+$\theta^{\native}_{I}$ & Infected adult host mortality rate        &     $  \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_In,2)}  & (\Sexpr{mysignif(ci_table$theta_In[1],2)},\,\Sexpr{mysignif(ci_table$theta_In[2],2)})\\
+$\theta^{\native}_{J}$ & Juvenile mortality rate        &     $ \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Jn,2)}  & (\Sexpr{0},\,\Sexpr{mysignif(ci_table$theta_Jn[2],2)})\\
+$\theta_{P}$   & Spore degradation rate                           &     $ \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_P,2)}   & (\Sexpr{0},\,$\infty$)\\
+$\lambda^{\native}_{J}$ & Mature rate of the juvenile                  &     $ \mathrm{day}^{-1} $                  & \Sexpr{mysignif(lambda_Jn,2)}  & \\
+$\xi$           & Ratio of infected host filtering rate       &     $\mathrm{Unitless}$                    & \Sexpr{mysignif(xi,2)}         & (\Sexpr{mysignif(ci_table$xi[1],2)},\,\Sexpr{mysignif(ci_table$xi[2],2)})\\
+$\xi_J$         & Ratio of juvenile individual filtering rate &     $\mathrm{Unitless}$                    & \Sexpr{mysignif(xi_J,2)} & \\
+$\beta^{\native}$       & Spores produced by death per infected individual     &  $10^3 \cdot \mathrm{spore} \cdot \mathrm{individual}^{-1} \cdot \mathrm{day}^{-1}$  & \Sexpr{mysignif(beta_n,2)} & \\
+$\mu$           & Algae refilling rate                                &  $10^6 \cdot \mathrm{cell} \cdot \mathrm{L} ^{-1} \cdot \mathrm{day}^{-1}$                 & \Sexpr{mysignif(mu,2)} & \\
+$\delta$        & Sampling rate                                      &  $day ^{-1}$                                                                         & \Sexpr{mysignif(delta,2)} & \\
+$\sigma^{\native}_{S}$ & Standard deviation of Brownian motion of susceptible adult      &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigSn,2)}  & (\Sexpr{0},\,\Sexpr{mysignif(ci_table$sigSn[2],2)})\\
+$\sigma^{\native}_{I}$ & Standard deviation of Brownian motion of infected adult         &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigIn,2)}  & (\Sexpr{0},\,$\infty$)\\
+$\sigma^{\native}_{J}$ & Standard deviation of Brownian motion of juvenile               &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigJn,2)}  & (\Sexpr{mysignif(ci_table$sigJn[1],2)},\,\Sexpr{mysignif(ci_table$sigJn[2],2)})\\
+$\sigma_{F}$   & Standard deviation of Brownian motion of alga                          &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigF,2)}  & (\Sexpr{0},\,\Sexpr{mysignif(ci_table$sigF[2],2)})\\
+$\sigma_{P}$   & Standard deviation of Brownian motion of parasite                      &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigP,2)}  & (\Sexpr{mysignif(ci_table$sigP[1],2)},\,\Sexpr{mysignif(ci_table$sigP[2],2)})\\
+$\tau^{\native}_{S}$      &  Measurement dispersion for susceptible adult                 &$\mathrm{Unitless}$           & \Sexpr{mysignif(k_Sn,2)}  & (\Sexpr{mysignif(ci_table$k_Sn[1],2)},\,\Sexpr{mysignif(ci_table$k_Sn[2],2)})\\
+$\tau^{\native}_{I}$      &  Measurement dispersion for infected adult                &$\mathrm{Unitless}$            & \Sexpr{mysignif(k_In,2)}  & (\Sexpr{mysignif(ci_table$k_In[1],2)},\,\Sexpr{mysignif(ci_table$k_In[2],2)})\\
+\hline
+\end{tabular}}
+\caption{Variables and parameter definitions and estimates of SIRJPF model for \textit{D.~dentifera}-only dynamics. The confidence interval is generated by the Monte Carlo Adjusted Profile.}
+\label{Table:SIRJPF_native}
+\end{table}
+
+<<LoadSIRJPFdatainvaisve, include=FALSE, cache=cache_option>>=
+load("profile/Simple_dynamics/Lum/para/profile_ci_table.rda")
+load('profile/Simple_dynamics/Lum/para/estimation_parameters.rds')
+load('../../data/Simple_dynamics/Lum/para/Lum_para_loglik_df.rds')
+ci_table = exp(ci_table)
+ri = lum_para_parameters[['ri']]
+f_Si = lum_para_parameters[['f_Si']]
+probi = lum_para_parameters[['probi']]
+theta_Si = lum_para_parameters[['theta_Si']]
+theta_Ii = lum_para_parameters[['theta_Ii']]
+theta_Ji = lum_para_parameters[['theta_Ji']]
+theta_P = lum_para_parameters[['theta_P']]
+sigSi = lum_para_parameters[['sigSi']]
+sigIi = lum_para_parameters[['sigIi']]
+sigJi = lum_para_parameters[['sigJi']]
+sigP = lum_para_parameters[['sigP']]
+sigF = lum_para_parameters[['sigF']]
+k_Si = lum_para_parameters[['k_Si']]
+k_Ii = lum_para_parameters[['k_Ii']]
+xi = lum_para_parameters[['xi']]
+xi_J = 1
+beta_i = 30
+mu = 0.37
+delta = 0.013
+lambda_Ji = 0.1
+@
+\subsubsection{Parameter Estimation}
+\begin{table}[H]
+\centering
+\resizebox{\textwidth}{!}{
+\begin{tabular}{||c|c |c|c|c||}
+\hline
+Parameter & Definition &Unit & Value & CI\\[0.5ex]
+\hline
+\hline
+$S^{\invasive}$ & Susceptible host density   & $\mathrm{individual} \cdot L ^{-1}$                 & Variable                & \\
+$I^{\invasive}$ & Infected host density     & $ \mathrm{individual} \cdot L ^{-1}$                & Variable                & \\
+$J^{\invasive}$ & Juvenile host density    & $ \mathrm{individual} \cdot L ^{-1}$                & Variable                & \\
+$F$   & Alga density                              & $10^6 \cdot \mathrm{cell} \cdot L ^{-1}$             & Variable                & \\
+$P$   & Spore density                             & $10^3 \cdot \mathrm{spore} \cdot L ^{-1}$            & Variable                & \\
+$r^{\invasive}$ &  Birth rate of juvenile                        & $\mathrm{individual} \cdot 10^{-6}\cdot \mathrm{cell}^{-1}$ & \Sexpr{mysignif(ri,2)}  & (\Sexpr{mysignif(ci_table$ri[1],2)},\Sexpr{mysignif(ci_table$ri[2],2)})\\
+$f^{\invasive}_{S}$ & Susceptible adult host filtering rate   &  $\mathrm{L} \cdot \mathrm{individual}^{-1} \cdot \mathrm{day}^{-1}$   & \Sexpr{mysignif(f_Si,2)}  & (\Sexpr{mysignif(ci_table$f_Si[1],2)},\Sexpr{mysignif(ci_table$f_Si[2],2)})\\
+$p^{\invasive}$          & Number of infection per spore            &     $10^{-3} \cdot \mathrm{individual} \cdot \mathrm{spore}^{-1} $ & \Sexpr{mysignif(probi,2)}  & (\Sexpr{mysignif(ci_table$probi[1],2)},\Sexpr{mysignif(ci_table$probi[2],2)})\\
+$\theta^{\invasive}_{S}$ & Susceptible adult host mortality rate     &     $ \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Si,2)}  & (\Sexpr{mysignif(ci_table$theta_Si[1],2)},\Sexpr{mysignif(ci_table$theta_Si[2],2)})\\
+$\theta^{\invasive}_{I}$ & Infected adult host mortality rate        &     $ \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Ii,2)}  & (\Sexpr{mysignif(ci_table$theta_Ii[1],2)},\Sexpr{mysignif(ci_table$theta_Ii[2],2)})\\
+$\theta^{\invasive}_{J}$ & Juvenile mortality rate        &     $  \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Ji,2)}  & (\Sexpr{0},$\infty$)\\
+$\theta_{P}$   & Spore degradation rate                           &     $ \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_P,2)}   & (\Sexpr{0},$\infty$)\\
+$\lambda^{\invasive}_{J}$ & Mature rate of the juvenile                  &     $ \mathrm{day}^{-1} $                  & \Sexpr{mysignif(lambda_Jn,2)}  & \\
+$\xi$           & Ratio of infected host filtering rate       &     $\mathrm{Unitless}$                    & \Sexpr{mysignif(xi,2)}         & (\Sexpr{mysignif(ci_table$xi[1],2)},\Sexpr{mysignif(ci_table$xi[2],2)})\\
+$\xi_J$         & Ratio of juvenile individual filtering rate &     $\mathrm{Unitless}$                    & \Sexpr{mysignif(xi_J,2)} & \\
+$\beta^{\invasive}$       & Spores produced by death per infected individual     &  $10^3 \cdot \mathrm{spore} \cdot \mathrm{individual}^{-1} \cdot \mathrm{day}^{-1}$  & \Sexpr{mysignif(beta_i,2)} & \\
+$\mu$           & Algae refilling rate                                &  $10^6 \cdot \mathrm{cell} \cdot \mathrm{L} ^{-1} \cdot \mathrm{day}^{-1}$                 & \Sexpr{mysignif(mu,2)} & \\
+$\delta$        & Sampling rate                                      &  $day ^{-1}$                                                                         & \Sexpr{mysignif(delta,2)} & \\
+$\sigma^{\invasive}_{S}$ & Standard deviation of Brownian motion of susceptible adult      &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigSi,2)}  & (\Sexpr{0},$\infty$)\\
+$\sigma^{\invasive}_{I}$ & Standard deviation of Brownian motion of infected adult         &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigIi,2)}  & (\Sexpr{0},$\infty$)\\
+$\sigma^{\invasive}_{J}$ & Standard deviation of Brownian motion of juvenile               &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigJi,2)}  & (\Sexpr{0},$\infty$)\\
+$\sigma_{F}$   & Standard deviation of Brownian motion of alga                          &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigF,2)}  & (\Sexpr{0},$\infty$)\\
+$\sigma_{P}$   & Standard deviation of Brownian motion of parasite                      &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigP,2)}  & (\Sexpr{0},$\infty$)\\
+$\tau^{\invasive}_{S}$      &  Measurement dispersion for susceptible adult                  &$\mathrm{Unitless}$           & \Sexpr{mysignif(k_Si,2)}  & (\Sexpr{mysignif(ci_table$k_Si[1],2)},$\infty$)\\
+$\tau^{\invasive}_{I}$      &  Measurement dispersion for infected adult                 &$\mathrm{Unitless}$            & \Sexpr{mysignif(k_Ii,2)}  & (\Sexpr{0},$\infty$)\\
+\hline
+\end{tabular}}
+\caption{Variables and parameter definitions and estimates of SIRJPF model for \textit{D.~lumholtzi}-only dynamics. The confidence interval is generated by the Monte Carlo Adjusted Profile.}
+\label{Table:SIRJPF_invasive}
+\end{table}
+
+\subsubsection{MCAP Results}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{profile/Simple_dynamics/Dent/para/Profile_plot.png}
+    \caption{Monte Carlo Adjusted Profile results of SIRJPF model for \textit{D.~dentifera}-only dynamics.
+    The vertical dotted lines represent the 95\% confidence interval obtained by MCAP.
+    The vertical blue lines show the MLE by MCAP method. And the red vertical lines are the estimated parameters by the panelPOMP.}
+    \label{fig:SIRJPF_dent_profile}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{profile/Simple_dynamics/Lum/para/Profile_plot.png}
+    \caption{Monte Carlo Adjusted Profile results of SIRJPF model for \textit{D.~lumholtzi}-only dynamics.
+    The vertical dotted lines represent the 95\% confidence interval obtained by MCAP.
+    The vertical blue lines show the MLE by MCAP method. And the red vertical lines are the estimated parameters by the panelPOMP.}
+    \label{fig:SIRJPF_native_profile}
+\end{figure}
+
+\subsubsection{Model Comparison}
+\begin{table}[h!]
+\centering
+\begin{center}
+\begin{tabular}{||c |c |c |c|c||}
+ \hline
+Specific parameters  & Max log-likelihood & AIC & \makecell[c]{Max log-likelihood\\(block)} & \makecell[c]{AIC\\(block)}\\ [0.5ex]
+ \hline\hline
+$\theta^{\native}_{I,\unit}$ & \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[1,]$ll,5)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[1,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[1,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[1,]$block_AIC,6)} \\
+$\varnothing$  & \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[2,]$ll,5)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[2,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[2,]$ll,5)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[2,]$AIC,6)} \\
+$\xi_{\unit}$ & \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[3,]$ll,5)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[3,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[3,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[3,]$block_AIC,6)} \\
+$p^{\native}_{\unit}$ & \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[4,]$ll,5)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[4,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[4,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[4,]$block_AIC,6)} \\
+$r^{\native}_{\unit}$ & \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[5,]$ll,5)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[5,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[5,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[5,]$block_AIC,6)} \\
+$\theta^{\native}_{S,\unit}$ & \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[6,]$ll,5)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[6,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[6,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[6,]$block_AIC,6)} \\
+$\theta_{P,\unit}$ & \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[7,]$ll,5)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[7,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[7,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[7,]$block_AIC,6)} \\
+$f^{\native}_{S,\unit}$ & \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[8,]$ll,5)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[8,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[8,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[8,]$block_AIC,6)} \\[1ex]
+ \hline
+\end{tabular}
+\end{center}
+\caption{Comparison of model fit and complexity across various configurations of unit-specific parameters within the panelPOMP framework for \textit{D.~dentifera}-only dynamics. The unit-specific parameter setting assessed include $\theta^{\native}_{I,\unit}$, $p^{\native}_{\unit}$, $r^{\native}_{\unit}$, $\xi_{\unit}$, $\theta^{\native}_{S,\unit}$, $\theta_{P,\unit}$.}
+\label{Table:SIRJPF_dent_model_comparison}
+\end{table}
+
+\begin{table}[h!]
+\centering
+\begin{center}
+\begin{tabular}{||c |c |c |c|c||}
+ \hline
+Specific parameters  & Max log-likelihood & AIC & \makecell[c]{Max log-likelihood\\(block)} & \makecell[c]{AIC\\(block)}\\ [0.5ex]
+ \hline\hline
+$\xi_{\unit}$ & \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[1,]$ll,5)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[1,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[1,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[1,]$block_AIC,6)} \\
+$\varnothing$  & \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[2,]$ll,5)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[2,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[2,]$ll,5)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[2,]$AIC,6)} \\
+$p^{\invasive}_{\unit}$ & \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[3,]$ll,5)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[3,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[3,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[3,]$block_AIC,6)} \\
+$\theta^{\invasive}_{I,\unit}$ & \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[4,]$ll,5)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[4,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[4,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[4,]$block_AIC,6)} \\
+$f^{\invasive}_{S,\unit}$ & \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[5,]$ll,5)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[5,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[5,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[5,]$block_AIC,6)} \\
+$p^{\invasive}_{\unit}$ & \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[6,]$ll,5)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[6,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[6,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[6,]$block_AIC,6)} \\
+$\theta_{P,\unit}$ & \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[7,]$ll,5)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[7,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[7,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[7,]$block_AIC,6)} \\
+$r^{\invasive}_{\unit}$ & \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[8,]$ll,5)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[8,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[8,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[8,]$block_AIC,6)} \\[1ex]
+ \hline
+\end{tabular}
+\end{center}
+\caption{Comparison of model fit and complexity across various configurations of unit-specific parameters within the panelPOMP framework for \textit{D.~lumholtzi}-only dynamics. The unit-specific parameter setting assessed include $\theta^{\invasive}_{I,\unit}$, $p^{\invasive}_{\unit}$, $r^{\invasive}_{\unit}$, $\xi_{\unit}$, $\theta^{\invasive}_{S,\unit}$, $\theta_{P,\unit}$.}
+\label{Table:SIRJPF_lum_model_comparison}
+\end{table}
+
+Despite the model configuration with unit-specific $\theta^{\native}_{I,\unit}$ and $\xi_{\unit}$ achieving the lowest AIC value in Table \ref{Table:SIRJPF_dent_model_comparison} and \ref{Table:SIRJPF_lum_model_comparison}, the improvement over the all-shared-parameters model is marginal.
+This slight advantage may be attributed to Monte Carlo error inherent in the parameter estimation process using the panelPOMP framework.
+The stochastic nature of the iterated filtering algorithms employed in POMP relies on Monte Carlo simulations, which can introduce variability in the maximum likelihood estimates and, consequently, the AIC values.
+\parskip 3mm
+
+Given the potential for such computational noise and the relatively small difference in AIC, we prefer to adopt the model with all shared parameters.
+This choice promotes parsimony and reduces the risk of overfitting, ensuring that the model remains both interpretable and generalizable.
+By keeping $\theta_I$—the natural death rate of infected \textit{Daphnia}—shared across all units, we maintain a simpler model structure that is sufficient to describe the observed data without unnecessary complexity.
+
+\subsection{Simulation}
+The simulation plots (Figures \ref{fig:SIRJPF_native_simulation_band} to \ref{fig:SIRJPF_lum_simulation_lines}) demonstrate our model's capability to capture the complex interactions among various states within the population dynamics of \textit{D.~dentifera} and \textit{D.~lumholtzi}.
+Specifically, the model captures the latent pattern for susceptible and infected densities across multiple experimental units, as evidenced by the close alignment between the simulated mean trajectories (depicted by the black and light-blue bands) and the observed experimental data (colorful solid lines).
+Each blue line represents an individual simulation case, capturing the stochastic variability across replicates, while the light blue shaded area (where present) denotes the 95\% confidence interval of the simulation results.
+Remarkably, although juvenile density data were not included in the model fitting process, the model still effectively predicts juvenile density trends.
+The promising performance of the model indicates the model's capacity to generalize underlying ecological processes, as the 95\% confidence intervals largely cover the observed juvenile data, thereby lending additional support to the model's robustness.
+\parskip 3mm
+
+At the same time, the depletion of \textit{A.} algal density over time, reflected in the simulation further explains the behavior of the \textit{Daphnia}.
+The decline in algal density at later stages indicates that the system reaches a state of food limitation, which is a dynamic anticipated by our model.
+The reduction in food availability provides a mechanistic explanation for the observed trends in \textit{Daphnia} densities, as resource scarcity constrains population growth, ultimately affecting the susceptible, infected, and juvenile densities.
+This behavior underscores the model’s relevance in ecological forecasting by not only capturing individual population dynamics but also accounting for resource-consumption interactions that shape these dynamics.
+The model’s ability to reproduce these patterns accurately highlights its potential utility in explaining and predicting empirical trends in complex ecological systems.
+
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{simulation/dent_para_simulation/simulation_band.png}
+    \caption{Simulation plots of densities (Individuals$/$Liter) for susceptible, infected, and juvenile \textit{D.~dentifera}, along with alga density ($10^6\cdot$cells$/$Liter) and parasite density ($10^3\cdot$spores$/$Liter), over time (days). The colorful solid lines represent observed experimental data, showing the variability across different experimental replicates. The black line represents the mean trajectory from the simulation model, capturing the general trend of each density. The light blue shaded area corresponds to the 95\% confidence interval of the simulations, indicating the range of model predictions. Dashed lines illustrate individual simulated trajectories, highlighting the model’s ability to capture fluctuations around the mean trajectory.}
+    \label{fig:SIRJPF_native_simulation_band}
+\end{figure}
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{simulation/dent_para_simulation/simulation_lines.png}
+   \caption{Simulated densities (Individuals$/$Liter) of susceptible \textit{D.~dentifera}, infected \textit{D.~dentifera} density, juvenile \textit{D.~dentifera} and alga density ($10^6\cdot$cells$/$Liter) over time (days) for each experimental unit. The blue lines represent individual simulation runs, capturing the variability in susceptible density across replicates, while the red line represents the actual experimental data.}
+    \label{fig:SIRJPF_dent_simulation_lines}
+\end{figure}
+
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{simulation/lum_para_simulation/simulation_band.png}
+    \caption{Simulation plots of densities (Individuals$/$Liter) for susceptible, infected, and juvenile \textit{D.~lumholtzi}, along with alga density ($10^6\cdot$cells$/$Liter) and parasite density ($10^3\cdot$spores$/$Liter), over time (days). The colorful solid lines represent observed experimental data, showing the variability across different experimental replicates. The black line represents the mean trajectory from the simulation model, capturing the general trend of each density. The light blue shaded area corresponds to the 95\% confidence interval of the simulations, indicating the range of model predictions. Dashed lines illustrate individual simulated trajectories, highlighting the model’s ability to capture fluctuations around the mean trajectory.}
+    \label{fig:SIRJPF_invasive_simulation_band}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{simulation/lum_para_simulation/simulation_lines.png}
+   \caption{Simulated trajectories of susceptible \textit{D.~lumholtzi}, infected \textit{D.~lumholtzi}, juvenile \textit{D.~lumholtzi} and alga density ($10^6\cdot$cells$/$Liter) over time (days) for each experimental unit (u1 to u9). The blue lines represent individual simulation runs, capturing the variability in susceptible density across replicates, while the red line represents the actual experimental data.}
+    \label{fig:SIRJPF_lum_simulation_lines}
+\end{figure}
+
+
+\section{SRJF2 Model}
+In this section, we introduce the SRJF2 model, which analyze the dynamics between native and invasive species competing for a shared food resource, algae ($F$) in each bucket($\unit$).
+The stochastic differential equations governing the system are:
+
+
+{\small
+\begin{align}
+    dS^{\species}_{\unit}(t) &= \lambda^{\species}_{J,{\unit}} J^{\species}_{\unit}(t) \, dt - (\theta^{\species}_{S,{\unit}} + \delta) S^{\species}_{\unit}(t)\, dt , \label{eq:SRJF2_dS}\\
+    dJ^{\species}_{\unit}(t) &= r^{\species}_{\unit}f^{\species}_{S,{\unit}}F_{\unit}(t) S^{\species}_{\unit}(t)\, dt - \theta^{\species}_{J,{\unit}} J^{\species}_{\unit}(t)\, dt - \delta J^{\species}_{\unit}(t)\, dt - \lambda^{\species}_{J,{\unit}} J^{\species}_{\unit}(t)\, dt + J^{\species}_{\unit}(t)\, d\zeta^{\species}_{J,{\unit}}, \label{eq:SRJF2_dJ}\\
+    dF_{\unit}(t) &= - \sum_{\species \in \{\native, \invasive\}} f^{\species}_{S,{\unit}} F_{\unit}(t) \left(S^{\species}_{\unit}(t)+\xi_{J,{\unit}}J^{\species}_{\unit}(t)\right)dt  + \mu \, dt + F_{\unit}(t)\, d\zeta_{F,{\unit}}, \label{eq:SRJF2_dF}\\
+d\zeta^{\species}_{J,{\unit}} &\sim \Normal \big[0, (\sigma^{\species}_{J,{\unit}})^{2}\, dt\big]\,
+d\zeta_{F,{\unit}} \sim \Normal \big[0, \sigma_{F,{\unit}}^{2}\, dt\big]\label{eq:SRJF2_dzetaS}.
+\end{align}
+}
+
+
+Equation~\eqref{eq:SRJF2_dS} models the rate of change of the specific species' susceptible population $S^{\species}_{\unit}(t)$.
+The term $\lambda^{\species}_{J,\unit} J^{\species}_{\unit}(t) \, dt$ represents the maturation of juveniles into susceptible adults at rate $\lambda^{\species}_{J,\unit}$.
+The mortality term $-\left(\theta^{\species}_{S,\unit} + \delta\right) S^{\species}_{\unit}(t) \, dt$ accounts for natural death at rate $\theta^{\species}_{S,\unit}$ and the sampling rate $\delta$.
+\parskip 3mm
+
+Equation~\eqref{eq:SRJF2_dJ} describes the dynamics of the juvenile population $J^{\species}_{\unit}(t)$.
+The growth term $r^{\species}_{\unit} f^{\species}_{S,\unit} F_{\unit}(t) S^{\species}_{\unit}(t) \, dt$ signifies the production of juveniles through reproduction, where $r^{\species}_{\unit}$ is the growth factor and $f^{\species}_{S,\unit}$ is the filtering rate of susceptible individuals on algae.
+The loss term $-\left(\theta^{\species}_{J,\unit} + \delta + \lambda^{\species}_{J,\unit}\right) J^{\species}(t) \, dt$ includes natural juvenile mortality at rate $\theta^{\species}_{J,\unit}$, sampling rate $\delta$, and maturation into the susceptible adult class at rate $\lambda^{\species}_{J,\unit}$.
+The stochastic term $J^{\species}_{\unit}(t) \, d\zeta^{\species}_{J,\unit}$ captures random fluctuations affecting the juvenile population, with $d\zeta^{\species}_{J,\unit}$ being the Brownian motion characterized by variance $(\sigma^{\species}_{J,{\unit}})^{2}\, dt$.
+\parskip 3mm
+
+Equation~\eqref{eq:SRJF2_dF} captures the dynamics of the algae population $F_{\unit}(t)$, which serves as a shared food resource for both native and invasive species.
+The consumption terms $\sum_{\species \in \{\native, \invasive\}} f^{\species}_{S,{\unit}} F_{\unit}(t) \left(S^{\species}_{\unit}(t)+\xi_{J,{\unit}}J^{\species}_{\unit}(t)\right)dt$ represent the reduction of algae due to feeding by native and invasive susceptible individuals and juveniles, respectively.
+The parameter $\xi_{J,\unit}$ denotes the relative ratio of juveniles on algae consumption compared to susceptible adults.
+The term $\mu \, dt$ represents the refill rate of algae, contributing to its replenishment.
+The stochastic fluctuation $F_{\unit}(t) \, d\zeta_{F,\unit}$ introduces randomness into the algae dynamics, where $d\zeta_{F,\unit}$ is the Brownian motion with variance $\sigma_{F,{\unit}}^{2}\, dt$.
+\parskip 3mm
+
+These processes model the inherent randomness and environmental variability affecting the populations of native and invasive species and the alga resource.
+\parskip 3mm
+
+In the following sections, we will present the flow diagram and parameter estimation results to further illustrate the interaction between latent states, emphasizing the advantages of combining the \texttt{panelPOMP} framework with SRJF2 model in addressing this complex problem.
+
+
+\subsection{Flow Diagram}
+The following Figure~\ref{fig:SRJF2} presents the flow diagram of the SRJF2 model, illustrating the interactions among susceptible individuals ($S^{\native}$, $S^{\invasive}$), juveniles ($J^{\native}$,$J^{\invasive}$), \textit{A.} algae as a food resource ($F$), and mortality ($R$).
+The bidirectional arrows between $J^{\species}$ and $S^{\species}$, represent the maturation of juveniles into susceptible individuals and the reproduction of susceptible individuals into juveniles.
+Both susceptible individuals and juveniles, consume resources from the algae population $F$, as indicated by the arrows from $F$ to each population node.
+The algae $F$ is refilled over time, depicted by the recycling loop, and contributes to the growth of both susceptible individuals and juveniles.
+All populations have pathways leading to the mortality state $R$, representing natural death and disease-induced mortality.
+Two species of \textit{Daphnia} are competing through the food resources in this model.
+
+\begin{figure}[H]
+\begin{center}
+%%%%% SRJF2 diagram
+\resizebox{8cm}{!}{
+\begin{tikzpicture}[
+  square/.style={rectangle, draw=black, minimum width=0.5cm, minimum height=0.5cm, rounded corners=.1cm, fill=blue!8},
+  rhombus/.style={diamond, draw=black, minimum width=0.1cm, minimum height=0.1cm, fill=purple!8,aspect = 1},
+  travel/.style={circle, draw=black, minimum width=0.5cm, minimum height=0.5cm, fill=green!8},
+  report/.style={shape=regular polygon, regular polygon sides=8, draw, fill=red!8,minimum size=0.6cm,inner sep=0cm},
+  bendy/.style={bend left=10},
+  bendy2/.style={bend left=100},
+  bendy3/.style={bend left=-100},
+  >/.style={shorten >=0.25mm},
+  >/.tip={Stealth[length=1.5mm,width=1.5mm]}
+]
+\tikzset{>={}};
+
+\node (Sn) at (5.5,0) [square] {$S^{\native}$};
+\node (Si) at (-0.5,0) [square] {$S^{\invasive}$};
+\node (Jn) at (5.5,2) [square] {$J^{\native}$};
+\node (Ji) at (-0.5,2) [square] {$J^{\invasive}$};
+\node (R) at (2.5,0)  [rhombus] {$R$};
+\node (F) at (2.5,2) [report] {$F$};
+
+
+
+\draw [->, bendy] (Jn) to  (Sn);
+\draw [->, bendy] (Ji) to  (Si);
+\draw [->, bendy] (Sn) to  (Jn);
+\draw [->, bendy] (Si) to  (Ji);
+
+
+\draw [->] (F) --  (R);
+\draw [->] (Sn) -- (R);
+\draw [->] (Si) -- (R);
+\draw [->] (Jn) -- (R);
+\draw [->] (Ji) -- (R);
+\draw [->] (F) -- (Sn);
+\draw [->] (F) -- (Si);
+\draw [->] (F) -- (Jn);
+\draw [->] (F) -- (Ji);
+\draw (F) edge[loop above] (F);
+
+
+\end{tikzpicture}
+}
+\end{center}
+\vspace{-5mm}
+\caption{Flow diagram for the SRJF2 model illustrating population interactions. The model includes the $R$ state, representing mortality. For $\species \in \{\native,\invasive\}$, Susceptible populations ($S^{\species}$) can reproduce into juvenile ($J^{\species}$). And \textit{A.} Algae ($F$) will be refilled, as shown by the recycling arrows. Both $S^{\species}$ and $J^{\species}$ consume resources from $F$, and over time, components in $F$ also progress to $R$.}
+\label{fig:SRJF2}
+\end{figure}
+
+\subsection{Data Visualization}
+\begin{figure}[H]
+\centering
+<<DataVisSRJF2,echo=FALSE, fig.width=9,fig.height=4,out.width="\\textwidth", cache=cache_option>>=
+mixnopara <- Mesocosm_data_mixed[1:90, ]
+mixnopara <- subset(mixnopara, select = c(rep, day, dent.adult,lum.adult,dent.juv,lum.juv))
+mixnopara <- mixnopara[90: 1, ]
+#Convert sampling date to natural date. Samples are collected every 5 days after the #first 7 days.
+mixnopara$day = (mixnopara$day - 1) * 5 + 7
+mixnopara_data = list()
+trails = c("A","C","D","E","F","G","H","I","J")
+for (i in 1: length(trails)){
+  mixnopara_data[[i]]=subset(mixnopara, select = c("day", "dent.adult","lum.adult","dent.juv","lum.juv"),
+                   mixnopara$rep == trails[i])
+}
+mixnopara_data_combined <- do.call(rbind, lapply(1:length(mixnopara_data), function(i) {
+  cbind(mixnopara_data[[i]], Trial = paste("Trial", trails[i]))
+}))
+
+mixnopara_data_combined$Bucket = paste0(rep("Bucket ",90),rep(1:9, each = 10))
+
+bucket_labeller <- as_labeller(function(bucket) gsub("Bucket ", "Mesocosm-", bucket))
+
+p1 <- ggplot(mixnopara_data_combined, aes(x = day)) +
+  geom_line(aes(y = dent.adult), color = "black", linewidth = dent.width,
+    linetype=dent.style) +
+  geom_line(aes(y = lum.adult), color = "blue", linewidth = lum.width,
+    linetype=lum.style) +
+  facet_wrap(~Bucket, nrow = 1, labeller = bucket_labeller) +
+  theme_minimal() +
+  theme(
+    axis.title.x = element_blank(),
+    axis.text.x = element_blank(),
+    axis.title.y = element_text(size = 8),
+    axis.text.y = element_text(size = 9),
+    strip.text = element_text(size = 9),
+    strip.background = element_blank(),
+    strip.placement = "outside",
+    plot.margin = margin(0, 0.5, 0, 0.5, "cm"),
+    legend.position = "none"
+  ) +
+  ylab('Adult density') +
+  xlab('Day') +
+  scale_x_continuous(limits = c(0, 52), breaks = c(0, 25, 50)) +
+  scale_y_continuous(trans="sqrt")
+
+
+p2<- ggplot(mixnopara_data_combined, aes(x = day)) +
+  geom_line(aes(y = dent.juv), color = "orange", linewidth = dent.width,
+    linetype=dent.style) +
+  geom_line(aes(y = lum.juv), color = "purple", linewidth = lum.width,
+    linetype=lum.style) +
+  facet_wrap(~Bucket, nrow = 1) +
+  theme_minimal() +
+  theme(
+    axis.title.x = element_text(size = 9),
+    axis.title.y = element_text(size = 8),
+    axis.text.x = element_text(size = 8),
+    axis.text.y = element_text(size = 8),
+    strip.text = element_blank(),
+    strip.background = element_blank(),
+    strip.placement = "outside",
+    plot.margin = margin(0, 0.5, 0, 0.5, "cm"),
+    legend.position = "none"
+  ) +
+  ylab('Juvenile density') +
+  xlab('Day') +
+  scale_x_continuous(limits = c(0, 52), breaks = c(0, 25, 50)) +
+  scale_y_continuous(trans="sqrt")
+
+
+
+grid.arrange(p1, p2, ncol = 1)
+@
+\caption{\label{fig:data_vis_SRJF2}
+Density (Individuals$/$Liter) of \textit{D.~dentifera} (solid lines) and \textit{D.~lumholtzi} (dashed lines).
+The top panel shows adult susceptibles (\textit{D.~dentifera}, black and \textit{D.~lumholtzi}, blue).
+The bottom panel shows juvenile susceptibles (\textit{D.~dentifera}, orange; \textit{D.~lumholtzi}, purple).
+There were negligible infected juveniles.
+Columns are buckets corresponding to replications with same treatment setting.
+}
+\end{figure}
+
+\subsection{Result}
+\subsubsection{Parameter Estimation}
+<<LoadSRJF2, include=FALSE, cache=TRUE>>=
+load("profile/Target_dynamics/no_para/profile_ci_table.rda")
+load('profile/Target_dynamics/no_para/estimation_parameters.rds')
+load('../../data/Target_dynamics/no_para/Target_no_para_loglik_df.rds')
+ci_table = exp(ci_table)
+
+rn = target_no_para_parameters[['rn']]
+f_Sn = target_no_para_parameters[['f_Sn']]
+theta_Sn = target_no_para_parameters[['theta_Sn']]
+theta_Jn = target_no_para_parameters[['theta_Jn']]
+sigSn = target_no_para_parameters[['sigSn']]
+sigJn = target_no_para_parameters[['sigJn']]
+k_Sn = target_no_para_parameters[['k_Sn']]
+ri = target_no_para_parameters[['ri']]
+f_Si = target_no_para_parameters[['f_Si']]
+theta_Si = target_no_para_parameters[['theta_Si']]
+theta_Ji = target_no_para_parameters[['theta_Ji']]
+sigSi = target_no_para_parameters[['sigSi']]
+sigJi = target_no_para_parameters[['sigJi']]
+sigF = target_no_para_parameters[['sigF']]
+k_Si = target_no_para_parameters[['k_Si']]
+xi_J = 1
+beta_i = 30
+mu = 0.37
+delta = 0.013
+lambda_Ji = 0.1
+beta_n = 30
+lambda_Jn = 0.1
+@
+\begin{table}[H]
+\centering
+\resizebox{\textwidth}{!}{
+\begin{tabular}{||c|c |c|c|c||}
+\hline
+Parameter & Definition &Unit & Value & CI\\[0.5ex]
+\hline
+\hline
+$S^{\species}$ & Susceptible host density for species $\species$  & $\mathrm{individual} \cdot L ^{-1}$                 & Variable                & \\
+$J^{\species}$ & Juvenile host density for species $\species$     & $ \mathrm{individual} \cdot L ^{-1}$                & Variable                & \\
+$F$   & Alga density                              & $10^6 \cdot \mathrm{cell} \cdot L ^{-1}$             & Variable                & \\
+$P$   & Spore density                             & $10^3 \cdot \mathrm{spore} \cdot L ^{-1}$            & Variable                & \\
+$r^{\native}$ & Native growth rate                        & $\mathrm{individual} \cdot 10^{-6}\cdot \mathrm{cell}^{-1}$ & \Sexpr{mysignif(rn,2)}  & (\Sexpr{mysignif(ci_table$rn[1],2)},\Sexpr{mysignif(ci_table$rn[2],2)})\\
+$r^{\invasive}$ & Invasive growth rate                      & $\mathrm{individual} \cdot 10^{-6}\cdot \mathrm{cell}^{-1}$ & \Sexpr{mysignif(ri,2)}  & (\Sexpr{mysignif(ci_table$ri[1],2)},\Sexpr{mysignif(ci_table$ri[2],2)})\\
+$f^{\native}_{S}$ & Native susceptible adult host filtering rate   &  $\mathrm{L} \cdot \mathrm{individual}^{-1} \cdot \mathrm{day}^{-1}$   & \Sexpr{mysignif(f_Sn,2)}  & (\Sexpr{mysignif(ci_table$f_Sn[1],2)},\Sexpr{mysignif(ci_table$f_Sn[2],2)})\\
+$f^{\invasive}_{S}$ & Invasive susceptible adult host filtering rate &  $\mathrm{L} \cdot \mathrm{individual}^{-1} \cdot \mathrm{day}^{-1}$   & \Sexpr{mysignif(f_Si,2)}  & (\Sexpr{mysignif(ci_table$f_Si[1],2)},\Sexpr{mysignif(ci_table$f_Si[2],2)})\\
+$\theta^{\native}_{S}$ & Native susceptible adult host mortality rate     &     $  \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Sn,2)}  & (\Sexpr{mysignif(ci_table$theta_Sn[1],2)},\Sexpr{mysignif(ci_table$theta_Sn[2],2)})\\
+$\theta^{\invasive}_{S}$ & Invasive susceptible adult host mortality rate   &     $  \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Si,2)}  & (\Sexpr{mysignif(ci_table$theta_Si[1],2)},\Sexpr{mysignif(ci_table$theta_Si[2],2)})\\
+$\theta^{\native}_{J}$ & Native juvenile mortality rate        &     $   \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Jn,2)}  & (\Sexpr{mysignif(ci_table$theta_Jn[1],2)},$\infty$)\\
+$\theta^{\invasive}_{J}$ & Invasive juvenile mortality rate      &     $  \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Ji,2)}  & (\Sexpr{mysignif(ci_table$theta_Ji[1],2)},$\infty$)\\
+$\lambda^{\native}_{J}$ & Mature rate of native juvenile                  &     $ \mathrm{day}^{-1} $                  & \Sexpr{mysignif(lambda_Jn,2)}  & \\
+$\lambda^{\invasive}_{J}$ & Mature rate of invasive juvenile                &     $ \mathrm{day}^{-1} $                  & \Sexpr{mysignif(lambda_Ji,2)}  & \\
+$\xi_J$         & Ratio of juvenile individual filtering rate &     $\mathrm{Unitless}$                    & \Sexpr{mysignif(xi_J,2)} & \\
+$\beta^{\native}$       & Spores produced per infected native individual     &  $10^3 \cdot \mathrm{spore} \cdot \mathrm{individual}^{-1} \cdot \mathrm{day}^{-1}$  & \Sexpr{mysignif(beta_n,2)} & \\
+$\beta^{\invasive}$       & Spores produced per infected invasive individual   &  $10^3 \cdot \mathrm{spore} \cdot \mathrm{individual}^{-1} \cdot \mathrm{day}^{-1}$  & \Sexpr{mysignif(beta_i,2)} & \\
+$\mu$           & Alga refilling rate                                &  $10^6 \cdot \mathrm{cell} \cdot \mathrm{L} ^{-1} \cdot \mathrm{day}^{-1}$                 & \Sexpr{mysignif(mu,2)} & \\
+$\delta$        & Sampling rate                                      &  $day ^{-1}$                                                                         & \Sexpr{mysignif(delta,2)} & \\
+$\sigma^{\native}_{S}$ & Standard deviation of Brownian motion of susceptible native adult      &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigSn,2)}  & (\Sexpr{0},\Sexpr{mysignif(ci_table$sigSn[2],2)})\\
+$\sigma^{\invasive}_{S}$ & Standard deviation of Brownian motion of susceptible invasive adult    &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigSi,2)}  & (\Sexpr{0},\Sexpr{mysignif(ci_table$sigSi[2],2)})\\
+$\sigma^{\native}_{J}$ & Standard deviation of Brownian motion of native juvenile               &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigJn,2)}  & (\Sexpr{mysignif(ci_table$sigJn[1],2)},$\infty$)\\
+$\sigma^{\invasive}_{J}$ & Standard deviation of Brownian motion of invasive juvenile             &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigJi,2)}  & (\Sexpr{0},\Sexpr{mysignif(ci_table$sigJi[2],2)})\\
+$\sigma_{F}$   & Standard deviation of Brownian motion of alga                          &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigF,2)}  & (\Sexpr{mysignif(ci_table$sigF[1],2)},\Sexpr{mysignif(ci_table$sigF[2],2)})\\
+$\tau^{\native}_{S}$      &  Measurement dispersion for susceptible native adult             &$\mathrm{Unitless}$           & \Sexpr{mysignif(k_Sn,2)}  & (\Sexpr{mysignif(ci_table$k_Sn[1],2)},\Sexpr{mysignif(ci_table$k_Sn[2],2)})\\
+$\tau^{\invasive}_{S}$      &  Measurement dispersion for susceptible invasive adult              &$\mathrm{Unitless}$            & \Sexpr{mysignif(k_Si,2)}  & (\Sexpr{mysignif(ci_table$k_Si[1],2)},\Sexpr{mysignif(ci_table$k_Si[2],2)})\\
+\hline
+\end{tabular}}
+\caption{Variables and parameter definitions and estimates of SRJF2 model for dynamics with both species of \textit{Daphnia}. The confidence interval is generated by the Monte Carlo Adjusted Profile.}
+\label{Table:SRJF2}
+\end{table}
+
+
+\subsubsection{MCAP Results}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{profile/Target_dynamics/no_para/Profile_plot.png}
+    \caption{Monte Carlo Adjusted Profile results of SRJF2 model for dynamics with both species of \textit{Daphnia}.
+    The vertical dotted lines represent the 95\% confidence interval obtained by MCAP.
+    The vertical blue lines show the MLE by MCAP method. And the red vertical lines are the estimated parameters by the panelPOMP.}
+    \label{fig:SRJF2_profile}
+\end{figure}
+
+\subsubsection{Model Comparison}
+
+\begin{table}[h!]
+\centering
+\begin{center}
+\begin{tabular}{||c |c |c |c|c||}
+ \hline
+Specific parameters  & Max log-likelihood & AIC & \makecell[c]{Max log-likelihood\\(block)} & \makecell[c]{AIC\\(block)}\\ [0.5ex]
+ \hline\hline
+$\varnothing$  & \Sexpr{mysignif_ll_AIC(target_no_para_parameter_table[1,]$ll,5)}& \Sexpr{mysignif_ll_AIC(target_no_para_parameter_table[1,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(target_no_para_parameter_table[1,]$ll,5)}& \Sexpr{mysignif_ll_AIC(target_no_para_parameter_table[1,]$AIC,6)} \\
+$\theta^{\species}_{S,\unit}$ & \Sexpr{mysignif_ll_AIC(target_no_para_parameter_table[2,]$ll,5)}& \Sexpr{mysignif_ll_AIC(target_no_para_parameter_table[2,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(target_no_para_parameter_table[2,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(target_no_para_parameter_table[2,]$block_AIC,6)} \\
+$f^{\species}_{S,\unit}$ & \Sexpr{mysignif_ll_AIC(target_no_para_parameter_table[3,]$ll,5)}& \Sexpr{mysignif_ll_AIC(target_no_para_parameter_table[3,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(target_no_para_parameter_table[3,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(target_no_para_parameter_table[3,]$block_AIC,6)} \\
+$r^{\species}_{\unit}$  & \Sexpr{mysignif_ll_AIC(target_no_para_parameter_table[4,]$ll,5)}& \Sexpr{mysignif_ll_AIC(target_no_para_parameter_table[4,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(target_no_para_parameter_table[4,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(target_no_para_parameter_table[4,]$block_AIC,6)} \\[1ex]
+ \hline
+\end{tabular}
+\end{center}
+\caption{Comparison of model fit and complexity across various configurations of unit-specific parameters within the panelPOMP framework with SRJF2 model for dynamics with both species of \textit{Daphnia}. The unit-specific parameter setting assessed include (1)$\theta^{\species}_{S,\unit}$, (2)$f^{\species}_{S,\unit}$ , and (3)$r^{\species}_{\unit}$ for $\species \in \{\native,\invasive\}$.}
+\label{Table:SRJF2_model_comparison}
+\end{table}
+
+Table~\ref{Table:SRJF2_model_comparison} presents a comparison of model fit and complexity across various configurations of unit-specific parameters within the panelPOMP framework for the SRJF2 model, which captures the dynamics of both native and invasive \textit{Daphnia} species.
+We employed MCAP methods to estimate the maximum log-likelihood and AIC for each model configuration.
+The models assessed include those with unit-specific parameters for the mortality rates ($\theta^{\species}_{S,\unit}$), filter rates ($f^{\species}_{S,\unit}$), and growth efficiency factors ($r^{\species}_{\unit}$) for $\species \in \{\native,\invasive\}$.
+The model with all parameters shared (no unit-specific parameters) achieves the minimum AIC, indicating the best balance between model fit and complexity.
+This outcome suggests that introducing unit-specific parameters does not significantly enhance the model's performance and may unnecessarily increase complexity.
+Consequently, we choose to retain the model with all shared parameters, as it offers a more parsimonious and robust representation of the system dynamics without compromising the explanatory power.
+
+\subsection{Simulation}
+The simulation results presented in Figures \ref{fig:SRJF2_simulation_band} to \ref{fig:SRJF2_simulation_lines} showcase our model's ability to represent the complex population interactions between \textit{D.~dentifera} and \textit{D.~lumholtzi}.
+The model captures the patterns of susceptible and juvenile densities across multiple experimental units, as evidenced by the close alignment of the simulated mean trajectories (illustrated by the black line and light blue confidence bands) with the experimental data (shown by the colorful solid lines).
+Despite the fact that juvenile density data were not used in calibrating the model, the model accurately predicts juvenile density trends, indicating its capability to generalize ecological processes effectively.
+The inclusion of the 95\% confidence intervals, which largely encompass the observed juvenile data, further supports the robustness of the model's predictions.
+\parskip 3mm
+
+Figure \ref{fig:SRJF2_simulation_lines} provides further insight into the dynamics of algal depletion over time, an aspect that is integral to the model’s predictions for \textit{Daphnia} populations.
+The observed decrease in algal density at later stages, captured in the simulations, suggests a shift to a resource-limited environment—a behavior that aligns well with our model's assumptions.
+As algae availability declines, population growth of both susceptible and juvenile \textit{Daphnia} becomes constrained, providing a mechanistic explanation for the observed patterns in their densities.
+By incorporating resource-consumption feedback into the population dynamics, the model demonstrates not only an ability to simulate individual population trends but also to capture critical ecological feedback loops.
+This predictive accuracy enhances the model's utility for understanding and forecasting trends in complex ecological systems.
+
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{simulation/target_no_para_simulation/simulation_band.png}
+    \caption{Simulation plots of densities (Individuals$/$Liter) for susceptible and juvenile populations of both native \textit{D.~dentifera} and invasive \textit{D.~lumholtzi}, along with alga density ($10^6\cdot$cells$/$Liter) over time (days). Colorful solid lines represent observed experimental data for each experimental replicate, showcasing variability across replicates. The black line represents the mean simulation trajectory, while the light blue shaded area corresponds to the 95\% confidence interval of the simulation. Dashed lines indicate individual simulation cases, illustrating the model's capacity to capture fluctuations around the mean trajectory.}
+    \label{fig:SRJF2_simulation_band}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{simulation/target_no_para_simulation/simulation_lines.png}
+    \caption{Simulated density ($10^6\cdot$cells$/$Liter) of susceptible native \textit{D.~dentifera}, susceptible invasive \textit{D.~lumholtzi}, juvenile native \textit{D.~dentifera}, invasive \textit{D.~lumholtzi}, and alga density ($F$) over time (days) for each experimental unit. The blue lines represent individual simulation cases, while the red line denotes observed experimental data, showing how simulated variability compares to actual data.}
+    \label{fig:SRJF2_simulation_lines}
+\end{figure}
+
+
+
+\section{SRJF Model}
+In this section, we introduce the SRJF model, which formalizes the dynamics among susceptible individuals ($S^{\species}$), the juvenile population ($J^{\species}$), and algae serving as a food resource ($F$) as follows:
+
+{\small
+\begin{align}
+    dS^{\species}_{\unit}(t) &= \lambda^{\species}_{J,{\unit}} J^{\species}_{\unit}(t) \, dt - (\theta^{\species}_{S,{\unit}} + \delta) S^{\species}_{\unit}(t)\, dt , \label{eq:SRJF_dS}\\
+    dJ^{\species}_{\unit}(t) &= r^{\species}_{\unit}f^{\species}_{S,{\unit}}F_{\unit}(t) S^{\species}_{\unit}(t)\, dt - \theta^{\species}_{J,{\unit}} J^{\species}_{\unit}(t)\, dt - \delta J^{\species}_{\unit}(t)\, dt - \lambda^{\species}_{J,{\unit}} J^{\species}_{\unit}(t)\, dt + J^{\species}_{\unit}(t)\, d\zeta^{\species}_{J,{\unit}}, \label{eq:SRJF_dJ}\\
+    dF_{\unit}(t) &= - f^{\species}_{S,{\unit}} F_{\unit}(t) \left(S^{\species}_{\unit}(t)+\xi_{J,{\unit}}J^{\species}_{\unit}(t)\right)dt  + \mu \, dt + F_{\unit}(t)\, d\zeta_{F,{\unit}}, \label{eq:SRJF_dF}\\
+d\zeta^{\species}_{J,{\unit}} &\sim \Normal \big[0, (\sigma^{\species}_{J,{\unit}})^{2}\, dt\big]\,
+d\zeta_{F,{\unit}} \sim \Normal \big[0, \sigma_{F,{\unit}}^{2}\, dt\big].\label{eq:SRJF_dzetaS}
+\end{align}
+}
+
+Equation~\eqref{eq:SRJF_dS} describes the rate of change of the susceptible population $S^{\species}_{\unit}(t)$. The term $\lambda^{\species}_{J,\unit} J^{\species}(t) \, dt$ represents the growth of susceptible individuals from the maturation of juvenile population at a rate $\lambda^{\species}_{J,\unit}$.
+The loss term $-\left(\theta^{\species}_{S,{\unit}}+ \delta\right) S^{\species}_{\unit}(t) \, dt$ accounts for the mortality of susceptible individuals due to natural causes at rate $\theta^{\species}_{S,\unit}$ and sampling at rate $\delta$.
+The stochastic component $S^{\species}_{\unit}(t) \, d\zeta^{\species}_{S,\unit}$ introduces random fluctuations into the susceptible population dynamics, with $d\zeta^{\species}_{S,\unit}$ being a Brownian motion characterized by variance $(\sigma^{\species}_{S,{\unit}})^{2}\, dt$.
+\parskip 3mm
+
+In Equation~\eqref{eq:SRJF_dJ}, the dynamics of the juvenile population $J^{\species}_{\unit}(t)$ are modeled. The growth term $r^{\species}_{\unit} f^{\species}_{S,\unit} F^{\species}_{\unit}(t) S^{\species}_{\unit}(t) \, dt$ signifies the increase in juveniles resulting from feeding on alga, where $r^{\species}_{\unit}$ is the growth efficiency factor and $f^{\species}_{S,\unit}$ is the filtering rate of susceptible individuals.
+The interaction $F^{\species}_{\unit}(t) S^{\species}_{\unit}(t)$ captures how the availability of algae influences juvenile growth.
+The loss term $-\left(\theta^{\species}_{J,\unit} + \delta + \lambda^{\species}_{J,\unit}\right) J^{\species}_{\unit}(t) \, dt$ reflects natural juvenile mortality at rate $\theta^{\species}_{J,\unit}$, sampling at rate $\delta$, and the maturing of juveniles to susceptible individuals at rate $\lambda^{\species}_{J,\unit}$.
+The stochastic term $J^{\species}_{\unit}(t) \, d\zeta^{\species}_{J,\unit}$ reflects random environmental and demographic fluctuations affecting juveniles, with $d\zeta^{\species}_{J,\unit}$ being Brownian motion with variance $(\sigma^{\species}_{J,{\unit}})^{2}\, dt$.
+However, introducing several stochastic terms when describing \textit{Daphnia} behavior allows too much freedom for model, which results in weakly identified parameters and overfitting.
+For the purpose of better generalization, we allow the stochastic term in juvenile states to affect the density of adult to show the fluctuations.
+\parskip 3mm
+
+Equation~\eqref{eq:SRJF_dF} captures the dynamics of the \textit{A.} algae population $F^{\species}_{\unit}(t)$.
+The consumption term $- f^{\species}_{S,\unit} F^{\species}_{\unit}(t) \left(S^{\species}_{\unit}(t) + \xi_{J,\unit} J^{\species}_{\unit}(t) \right) \, dt$ represents the reduction of algae due to feeding by both susceptible individuals and juveniles, with $\xi_{J,\unit}$ indicating the ratio of juveniles on algae consumption compared to susceptible individuals.
+The term $\mu \, dt$ denotes the refill rate of alga.
+The stochastic fluctuation $F^{\species}_{\unit}(t) \, d\zeta^{\species}_{F,\unit}$ introduces randomness into the algae dynamics, where $d\zeta^{\species}_{F,\unit}$ shows the Brownian motion with variance $\sigma_{F,{\unit}}^{2}\, dt$.
+\parskip 3mm
+
+These terms model the latent randomness in the system due to environmental variability and other stochastic factors influencing the susceptible individuals, juveniles, and alga populations.
+\parskip 3mm
+
+In the following sections, we will present the flow diagram and parameter estimation results to further illustrate the interaction between latent states, emphasizing the advantages of combining the \texttt{panelPOMP} framework with SRJF model in addressing this complex problem.
+
+
+\subsection{Flow Diagram}
+\begin{figure}[H]
+\begin{center}
+%%%%% SEAIR diagram
+\resizebox{8cm}{!}{
+\begin{tikzpicture}[
+  square/.style={rectangle, draw=black, minimum width=0.5cm, minimum height=0.5cm, rounded corners=.1cm, fill=blue!8},
+  rhombus/.style={diamond, draw=black, minimum width=0.1cm, minimum height=0.1cm, fill=purple!8,aspect = 1},
+  travel/.style={circle, draw=black, minimum width=0.5cm, minimum height=0.5cm, fill=green!8},
+  report/.style={shape=regular polygon, regular polygon sides=8, draw, fill=red!8,minimum size=0.6cm,inner sep=0cm},
+  bendy/.style={bend left=10},
+  bendy2/.style={bend left=100},
+  bendy3/.style={bend left=-100},
+  >/.style={shorten >=0.25mm},
+  >/.tip={Stealth[length=1.5mm,width=1.5mm]}
+]
+\tikzset{>={}};
+
+\node (Sn) at (5.5,0) [square] {$S$};
+\node (Jn) at (5.5,2) [square] {$J$};
+\node (R) at (2.5,0)  [rhombus] {$R$};
+\node (F) at (2.5,2) [report] {$F$};
+
+
+
+\draw [->, bendy] (Jn) to  (Sn);
+\draw [->, bendy] (Sn) to  (Jn);
+
+
+\draw [->] (F) --  (R);
+\draw [->] (Sn) -- (R);
+\draw [->] (Jn) -- (R);
+\draw [->] (F) -- (Sn);
+\draw [->] (F) -- (Jn);
+\draw (F) edge[loop above] (F);
+
+
+\end{tikzpicture}
+}
+\end{center}
+\vspace{-5mm}
+\caption{Flow diagram for the SRJF model illustrating population interactions. The model includes the $R$ state, representing mortality. For $\species \in \{\native,\invasive\}$, susceptible populations ($S^{\species}$) can reproduce into juvenile ($J^{\species}$) and \textit{A.} Algae ($F$) will be refilled, as shown by the recycling arrows. Both $S^{\species}$ and $J^{\species}$ consume resources from $F$, and over time, components in $F$ also progress to $R$.}
+\label{fig:SRJF}
+\end{figure}
+
+
+\subsection{Data Visualization}
+\begin{figure}[H]
+\centering
+<<DataVisSRJFdent,echo=FALSE, fig.width=9,fig.height=4,out.width="\\textwidth", cache=cache_option>>=
+dentNoPara <- Mesocosm_data[1:100, ]
+dentNoPara <- subset(dentNoPara, select = c(rep, day, dent.adult,dent.juv))
+dentNoPara <- dentNoPara[100: 1, ]
+#Convert sampling date to natural date. Samples are collected every 5 days after the #first 7 days.
+dentNoPara$day = (dentNoPara$day - 1) * 5 + 7
+dentNoPara_data = list()
+trails = c("A","B","C","D","E","F","G","H","I","J")
+for (i in 1: length(trails)){
+  dentNoPara_data[[i]]=subset(dentNoPara, select = c("day", "dent.adult",'dent.juv'),
+                   dentNoPara$rep == trails[i])
+}
+
+dentNoPara_data_combined <- do.call(rbind, lapply(1:length(dentNoPara_data), function(i) {
+  cbind(dentNoPara_data[[i]], Trial = paste("Trial", trails[i]))
+}))
+
+dentNoPara_data_combined$Bucket = factor(
+  paste0("Bucket ", rep(1:10, each = 10)),
+  levels = paste0("Bucket ", 1:10)
+)
+bucket_labeller <- as_labeller(function(bucket) gsub("Bucket ", "Mesocosm-", bucket))
+
+p0 <- ggplot(dentNoPara_data_combined, aes(x = day)) +
+  geom_line(aes(y = dent.adult), color = "black", linewidth = dent.width,
+    linetype=dent.style) +
+  facet_wrap(~Bucket, nrow = 1, labeller = bucket_labeller) +
+  theme_minimal() +
+  theme(
+    axis.title.x = element_blank(),
+    axis.text.x = element_blank(),
+    axis.title.y = element_text(size = 8),
+    axis.text.y = element_text(size = 8),
+    strip.text = element_text(size = 8),
+    strip.background = element_blank(),
+    strip.placement = "outside",
+    plot.margin = margin(0, 0.5, 0, 0.5, "cm"),
+    legend.position = "none"
+  ) +
+  ylab('Adult density') +
+  xlab('Day') +
+  scale_x_continuous(limits = c(0, 52), breaks = c(0, 25, 50)) +
+  scale_y_continuous(trans="sqrt")
+
+p1 <- ggplot(dentNoPara_data_combined, aes(x = day)) +
+  geom_line(aes(y = dent.juv), color = "orange", linewidth = dent.width,
+    linetype=dent.style) +
+  facet_wrap(~Bucket, nrow = 1) +
+  theme_minimal() +
+  theme(
+    axis.title.x = element_text(size = 8),
+    axis.title.y = element_text(size = 8),
+    axis.text.x = element_text(size = 8),
+    axis.text.y = element_text(size = 8),
+    strip.text = element_blank(),
+    strip.background = element_blank(),
+    strip.placement = "outside",
+    plot.margin = margin(0, 0.5, 0, 0.5, "cm"),
+    legend.position = "none"
+  ) +
+  ylab('Juvenile density') +
+  xlab('Day') +
+  scale_x_continuous(limits = c(0, 52), breaks = c(0, 25, 50)) +
+  scale_y_continuous(trans="sqrt")
+
+
+grid.arrange(p0, p1, ncol = 1)
+@
+\caption{\label{fig:data_vis_SRJF_dent}
+Density (Individuals$/$Liter) of \textit{D.~dentifera}.
+The top panel shows adult susceptibles (\textit{D.~dentifera}, black).
+The bottom panel shows juvenile susceptibles (\textit{D.~dentifera}, orange).
+There were negligible infected juveniles.
+Columns are buckets corresponding to replications with same treatment setting.
+}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+<<DataVisSRJFlumdata,echo=FALSE, fig.width=9,fig.height=4,out.width="\\textwidth", cache=cache_option>>=
+lumNoPara <- Mesocosm_data_invasive[1:100, ]
+lumNoPara <- subset(lumNoPara, select = c(rep, day, lum.adult,lum.juv))
+lumNoPara <- lumNoPara[100: 1, ]
+#Convert sampling date to natural date. Samples are collected every 5 days after the #first 7 days.
+lumNoPara$day = (lumNoPara$day - 1) * 5 + 7
+lumNoPara_data = list()
+trails = c("A","B","C","D","E","F","G","H","I","J")
+for (i in 1: length(trails)){
+  lumNoPara_data[[i]]=subset(lumNoPara, select = c("day", "lum.adult",'lum.juv'),
+                   lumNoPara$rep == trails[i])
+}
+
+lumNoPara_data_combined <- do.call(rbind, lapply(1:length(lumNoPara_data), function(i) {
+  cbind(lumNoPara_data[[i]], Trial = paste("Trial", trails[i]))
+}))
+
+lumNoPara_data_combined$Bucket = factor(
+  paste0("Bucket ", rep(1:10, each = 10)),
+  levels = paste0("Bucket ", 1:10)
+)
+
+bucket_labeller <- as_labeller(function(bucket) gsub("Bucket ", "Mesocosm-", bucket))
+
+p1 <- ggplot(lumNoPara_data_combined, aes(x = day)) +
+  geom_line(aes(y = lum.adult), color = "blue", linewidth = dent.width,
+    linetype=dent.style) +
+  facet_wrap(~Bucket, nrow = 1, labeller = bucket_labeller) +
+  theme_minimal() +
+  theme(
+    axis.title.x = element_blank(),
+    axis.text.x = element_blank(),
+    axis.title.y = element_text(size = 8),
+    axis.text.y = element_text(size = 9),
+    strip.text = element_text(size = 9),
+    strip.background = element_blank(),
+    strip.placement = "outside",
+    plot.margin = margin(0, 0.5, 0, 0.5, "cm"),
+    legend.position = "none"
+  ) +
+  ylab('Adult density') +
+  xlab('Day') +
+  scale_x_continuous(limits = c(0, 52), breaks = c(0, 25, 50)) +
+  scale_y_continuous(trans="sqrt")
+
+
+
+p2<- ggplot(lumNoPara_data_combined, aes(x = day)) +
+  geom_line(aes(y = lum.juv), color = "purple", linewidth = dent.width,
+    linetype=dent.style) +
+  facet_wrap(~Bucket, nrow = 1) +
+  theme_minimal() +
+  theme(
+    axis.title.x = element_text(size = 9),
+    axis.title.y = element_text(size = 8),
+    axis.text.x = element_text(size = 8),
+    axis.text.y = element_text(size = 8),
+    strip.text = element_blank(),
+    strip.background = element_blank(),
+    strip.placement = "outside",
+    plot.margin = margin(0, 0.5, 0, 0.5, "cm"),
+    legend.position = "none"
+  ) +
+  ylab('Juvenile density') +
+  xlab('Day') +
+  scale_x_continuous(limits = c(0, 52), breaks = c(0, 25, 50)) +
+  scale_y_continuous(trans="sqrt")
+
+
+grid.arrange(p1, p2, ncol = 1)
+@
+\caption{\label{fig:data_vis_SIPJF_lum}
+Density (Individuals$/$Liter) of \textit{D.~lumholtzi}.
+The top panel shows adult susceptibles (\textit{D.~lumholtzi}, blue).
+The bottom panel shows juvenile susceptibles (\textit{D.~lumholtzi}, purple).
+There were negligible infected juveniles.
+Columns are buckets corresponding to replications with same treatment setting.
+}
+\end{figure}
+
+\subsection{Result}
+<<LoadSRJFdatanative, include=FALSE, cache=cache_option>>=
+load("profile/Simple_dynamics/Dent/no_para/profile_ci_table.rda")
+load('profile/Simple_dynamics/Dent/no_para/estimation_parameters.rds')
+load('../../data/Simple_dynamics/Dent/no_para/Dent_no_para_loglik_df.rds')
+ci_table = exp(ci_table)
+
+####################################
+
+rn = dent_no_para_parameters[['rn']]
+f_Sn = dent_no_para_parameters[['f_Sn']]
+theta_Sn = dent_no_para_parameters[['theta_Sn']]
+theta_Jn = dent_no_para_parameters[['theta_Jn']]
+sigJn = dent_no_para_parameters[['sigJn']]
+sigSn = 0
+sigF = dent_no_para_parameters[['sigF']]
+k_Sn = dent_no_para_parameters[['k_Sn']]
+
+xi_J = 1
+mu = 0.37
+delta = 0.013
+lambda_Jn = 0.1
+@
+\subsubsection{Parameter Estimation}
+\begin{table}[H]
+\centering
+\resizebox{\textwidth}{!}{
+\begin{tabular}{||c|c |c|c|c||}
+\hline
+Parameter & Definition &Unit & Value & CI\\[0.5ex]
+\hline
+\hline
+$S^{\native}$ & Susceptible host density   & $\mathrm{individual} \cdot L ^{-1}$                 & Variable                & \\
+$J^{\native}$ & Juvenile host density    & $ \mathrm{individual} \cdot L ^{-1}$                & Variable                & \\
+$F$   & Alga density                              & $10^6 \cdot \mathrm{cell} \cdot L ^{-1}$             & Variable                & \\
+$r^{\native}$ &  Birth rate of juvenile                        & $\mathrm{individual} \cdot 10^{-6}\cdot \mathrm{cell}^{-1}$ & \Sexpr{mysignif(rn,2)}  & (\Sexpr{mysignif(ci_table$rn[1],2)},\Sexpr{mysignif(ci_table$rn[2],2)})\\
+$f^{\native}_{S}$ & Susceptible adult host filtering rate   &  $\mathrm{L} \cdot \mathrm{individual}^{-1} \cdot \mathrm{day}^{-1}$   & \Sexpr{mysignif(f_Sn,2)}  & (\Sexpr{mysignif(ci_table$f_Sn[1],2)},\Sexpr{mysignif(ci_table$f_Sn[2],2)})\\
+$\theta^{\native}_{S}$ & Susceptible adult host mortality rate     &     $  \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Sn,2)}  & (\Sexpr{mysignif(ci_table$theta_Sn[1],2)},\Sexpr{mysignif(ci_table$theta_Sn[2],2)})\\
+$\theta^{\native}_{J}$ & Juvenile mortality rate        &     $ \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Jn,2)}  & (0,\Sexpr{mysignif(ci_table$theta_Jn[2],2)})\\
+$\lambda^{\native}_{J}$ & Mature rate of the juvenile                  &     $ \mathrm{day}^{-1} $                  & \Sexpr{mysignif(lambda_Jn,2)}  & \\
+$\xi_J$         & Ratio of juvenile individual filtering rate &     $\mathrm{Unitless}$                    & \Sexpr{mysignif(xi_J,2)} & \\
+$\beta^{\native}$       & Spores produced by death per infected individual     &  $10^3 \cdot \mathrm{spore} \cdot \mathrm{individual}^{-1} \cdot \mathrm{day}^{-1}$  & \Sexpr{mysignif(beta_n,2)} & \\
+$\mu$           & Algae refilling rate                                &  $10^6 \cdot \mathrm{cell} \cdot \mathrm{L} ^{-1} \cdot \mathrm{day}^{-1}$                 & \Sexpr{mysignif(mu,2)} & \\
+$\delta$        & Sampling rate                                      &  $day ^{-1}$                                                                         & \Sexpr{mysignif(delta,2)} & \\
+$\sigma^{\native}_{S}$ & Standard deviation of Brownian motion of susceptible adult      &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & 0  & \\
+$\sigma^{\native}_{J}$ & Standard deviation of Brownian motion of juvenile               &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigJn,2)}  & (\Sexpr{mysignif(ci_table$sigJn[1],2)},\Sexpr{mysignif(ci_table$sigJn[2],2)})\\
+$\sigma_{F}$   & Standard deviation of Brownian motion of alga                          &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigF,2)}  & (\Sexpr{0},\Sexpr{mysignif(ci_table$sigF[2],2)})\\
+$\tau^{\native}_{S}$      &  Measurement dispersion for susceptible adult          &$\mathrm{Unitless}$           & \Sexpr{mysignif(k_Sn,2)}  & (\Sexpr{mysignif(ci_table$k_Sn[1],2)},\Sexpr{mysignif(ci_table$k_Sn[2],2)})\\
+\hline
+\end{tabular}}
+\caption{Variables and parameter definitions and estimates of SRJF model for \textit{D.~dentifera}-only dynamics. The confidence interval is generated by the Monte Carlo Adjusted Profile.}
+\label{Table:SRJF_native}
+\end{table}
+
+<<LoadSSRJFdatainvaisve, include=FALSE, cache=cache_option>>=
+load("profile/Simple_dynamics/Lum/no_para/profile_ci_table.rda")
+load('profile/Simple_dynamics/Lum/no_para/estimation_parameters.rds')
+load('../../data/Simple_dynamics/Lum/no_para/Lum_no_para_loglik_df.rds')
+ci_table = exp(ci_table)
+ri = lum_no_para_parameters[['ri']]
+f_Si = lum_no_para_parameters[['f_Si']]
+theta_Si = lum_no_para_parameters[['theta_Si']]
+theta_Ji = lum_no_para_parameters[['theta_Ji']]
+sigSi = lum_no_para_parameters[['sigSi']]
+sigJi = lum_no_para_parameters[['sigJi']]
+sigF = lum_no_para_parameters[['sigF']]
+k_Si = lum_no_para_parameters[['k_Si']]
+xi_J = 1
+mu = 0.37
+delta = 0.013
+lambda_Ji = 0.1
+@
+\subsubsection{Parameter Estimation}
+\begin{table}[H]
+\centering
+\resizebox{\textwidth}{!}{
+\begin{tabular}{||c|c |c|c|c||}
+\hline
+Parameter & Definition &Unit & Value & CI\\[0.5ex]
+\hline
+\hline
+$S^{\invasive}$ & Susceptible host density   & $\mathrm{individual} \cdot L ^{-1}$                 & Variable                & \\
+$J^{\invasive}$ & Juvenile host density    & $ \mathrm{individual} \cdot L ^{-1}$                & Variable                & \\
+$F$   & Alga density                              & $10^6 \cdot \mathrm{cell} \cdot L ^{-1}$             & Variable                & \\
+$r^{\invasive}$ &  Birth rate of juvenile                        & $\mathrm{individual} \cdot 10^{-6}\cdot \mathrm{cell}^{-1}$ & \Sexpr{mysignif(ri,2)}  & (\Sexpr{mysignif(ci_table$ri[1],2)},\Sexpr{mysignif(ci_table$ri[2],2)})\\
+$f^{\invasive}_{S}$ & Susceptible adult host filtering rate   &  $\mathrm{L} \cdot \mathrm{individual}^{-1} \cdot \mathrm{day}^{-1}$   & \Sexpr{mysignif(f_Si,2)}  & (\Sexpr{mysignif(ci_table$f_Si[1],2)},\Sexpr{mysignif(ci_table$f_Si[2],2)})\\
+$\theta^{\invasive}_{S}$ & Susceptible adult host mortality rate     &     $ \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Si,2)}  & (\Sexpr{mysignif(ci_table$theta_Si[1],2)},\Sexpr{mysignif(ci_table$theta_Si[2],2)})\\
+$\theta^{\invasive}_{J}$ & Juvenile mortality rate        &     $ \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Ji,2)}  & (\Sexpr{0},\Sexpr{mysignif(ci_table$theta_Ji[2],2)})\\
+$\lambda^{\invasive}_{J}$ & Mature rate of the juvenile                  &     $ \mathrm{day}^{-1} $                  & \Sexpr{mysignif(lambda_Jn,2)}  & \\
+$\xi_J$         & Ratio of juvenile individual filtering rate &     $\mathrm{Unitless}$                    & \Sexpr{mysignif(xi_J,2)} & \\
+$\beta^{\invasive}$       & Spores produced by death per infected individual     &  $10^3 \cdot \mathrm{spore} \cdot \mathrm{individual}^{-1} \cdot \mathrm{day}^{-1}$  & \Sexpr{mysignif(beta_i,2)} & \\
+$\mu$           & Algae refilling rate                                &  $10^6 \cdot \mathrm{cell} \cdot \mathrm{L} ^{-1} \cdot \mathrm{day}^{-1}$                 & \Sexpr{mysignif(mu,2)} & \\
+$\delta$        & Sampling rate                                      &  $day ^{-1}$                                                                         & \Sexpr{mysignif(delta,2)} & \\
+$\sigma^{\invasive}_{S}$ & Standard deviation of Brownian motion of susceptible adult      &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigSi,2)}  & (\Sexpr{0},\Sexpr{mysignif(ci_table$sigSi[2],2)})\\
+$\sigma^{\invasive}_{J}$ & Standard deviation of Brownian motion of juvenile               &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigJi,2)}  & (\Sexpr{mysignif(ci_table$sigJi[1],2)},\Sexpr{mysignif(ci_table$sigJi[2],2)})\\
+$\sigma^{\invasive}_{F}$   & Standard deviation of Brownian motion of alga                          &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigF,2)}  & (\Sexpr{0},\Sexpr{mysignif(ci_table$sigF[2],2)})\\
+$\tau^{\invasive}_{S}$      &  Measurement dispersion for susceptible adult           &$\mathrm{Unitless}$           & \Sexpr{mysignif(k_Si,2)}  & (\Sexpr{mysignif(ci_table$k_Si[1],2)},\Sexpr{mysignif(ci_table$k_Si[2],2)})\\
+\hline
+\end{tabular}}
+\caption{Variables and parameter definitions and estimates of SRJF model for \textit{D.~lumholtzi}-only dynamics. The confidence interval is generated by the Monte Carlo Adjusted Profile.}
+\label{Table:SRJF_invasive}
+\end{table}
+
+\subsubsection{MCAP Results}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{profile/Simple_dynamics/Dent/no_para/Profile_plot.png}
+    \caption{Monte Carlo Adjusted Profile results of SRJF model for \textit{D.~dentifera}-only dynamics.
+    The vertical dotted lines represent the 95\% confidence interval obtained by MCAP.
+    The vertical blue lines show the MLE by MCAP method. And the red vertical lines are the estimated parameters by the panelPOMP.}
+    \label{fig:SRJF_dent_profile}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{profile/Simple_dynamics/Lum/no_para/Profile_plot.png}
+    \caption{Monte Carlo Adjusted Profile results of SRJF model for \textit{D.~lumholtzi}-only dynamics.
+    The vertical dotted lines represent the 95\% confidence interval obtained by MCAP.
+    The vertical blue lines show the MLE by MCAP method. And the red vertical lines are the estimated parameters by the panelPOMP.}
+    \label{fig:SRJF_lum_profile}
+\end{figure}
+
+
+\subsubsection{Model Comparison}
+\begin{table}[h!]
+\centering
+\begin{center}
+\begin{tabular}{||c |c |c |c|c||}
+ \hline
+Specific parameters  & Max log-likelihood & AIC & \makecell[c]{Max log-likelihood\\(block)} & \makecell[c]{AIC\\(block)}\\ [0.5ex]
+ \hline\hline
+$\varnothing$ & \Sexpr{mysignif_ll_AIC(dent_no_para_parameter_table[1,]$ll,5)}& \Sexpr{mysignif_ll_AIC(dent_no_para_parameter_table[1,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(dent_no_para_parameter_table[1,]$ll,5)}& \Sexpr{mysignif_ll_AIC(dent_no_para_parameter_table[1,]$AIC,6)} \\
+$\theta^{\native}_{S,\unit}$  & \Sexpr{mysignif_ll_AIC(dent_no_para_parameter_table[2,]$ll,5)}& \Sexpr{mysignif_ll_AIC(dent_no_para_parameter_table[2,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(dent_no_para_parameter_table[2,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(dent_no_para_parameter_table[2,]$block_AIC,6)} \\
+$r^{\native}_{\unit}$ & \Sexpr{mysignif_ll_AIC(dent_no_para_parameter_table[3,]$ll,5)}& \Sexpr{mysignif_ll_AIC(dent_no_para_parameter_table[3,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(dent_no_para_parameter_table[3,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(dent_no_para_parameter_table[3,]$block_AIC,6)} \\
+$f^{\native}_{S,\unit}$ & \Sexpr{mysignif_ll_AIC(dent_no_para_parameter_table[4,]$ll,5)}& \Sexpr{mysignif_ll_AIC(dent_no_para_parameter_table[4,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(dent_no_para_parameter_table[4,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(dent_no_para_parameter_table[4,]$block_AIC,6)}\\[1ex]
+ \hline
+\end{tabular}
+\end{center}
+\caption{Comparison of model fit and complexity across various configurations of unit-specific parameters within the panelPOMP framework for \textit{D.~dentifera}-only dynamics. The unit-specific parameter setting assessed include $f^{\native}_{S,\unit}$, $r^{\native}_{\unit}$, $\theta^{\native}_{S,\unit}$.}
+\label{Table:SRJF_dent_model_comparison}
+\end{table}
+
+\begin{table}[h!]
+\centering
+\begin{center}
+\begin{tabular}{||c |c |c |c|c||}
+ \hline
+Specific parameters  & Max log-likelihood & AIC & \makecell[c]{Max log-likelihood\\(block)} & \makecell[c]{AIC\\(block)}\\ [0.5ex]
+ \hline\hline
+$\varnothing$ & \Sexpr{mysignif_ll_AIC(lum_no_para_parameter_table[1,]$ll,5)}& \Sexpr{mysignif_ll_AIC(lum_no_para_parameter_table[1,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(lum_no_para_parameter_table[1,]$ll,5)}& \Sexpr{mysignif_ll_AIC(lum_no_para_parameter_table[1,]$AIC,6)} \\
+$\theta^{\invasive}_{S,\unit}$  & \Sexpr{mysignif_ll_AIC(lum_no_para_parameter_table[2,]$ll,5)}& \Sexpr{mysignif_ll_AIC(lum_no_para_parameter_table[2,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(lum_no_para_parameter_table[2,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(lum_no_para_parameter_table[2,]$block_AIC,6)} \\
+$r^{\invasive}_{\unit}$ & \Sexpr{mysignif_ll_AIC(lum_no_para_parameter_table[3,]$ll,5)}& \Sexpr{mysignif_ll_AIC(lum_no_para_parameter_table[3,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(lum_no_para_parameter_table[3,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(lum_no_para_parameter_table[3,]$block_AIC,6)} \\
+$f^{\invasive}_{S,\unit}$ & \Sexpr{mysignif_ll_AIC(lum_no_para_parameter_table[4,]$ll,5)}& \Sexpr{mysignif_ll_AIC(lum_no_para_parameter_table[4,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(lum_no_para_parameter_table[4,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(lum_no_para_parameter_table[4,]$block_AIC,6)} \\[1ex]
+ \hline
+\end{tabular}
+\end{center}
+\caption{Comparison of model fit and complexity across various configurations of unit-specific parameters within the panelPOMP framework for \textit{D.~lumholtzi}-only dynamics. The unit-specific parameter setting assessed include $f^{\invasive}_{S,\unit}$, $r^{\invasive}_{\unit}$, $\theta^{\invasive}_{S,\unit}$.}
+\label{Table:SRJF_lum_model_comparison}
+\end{table}
+
+The results in the tables indicate that the model configuration with all shared parameters achieves the minimum AIC score for both dynamics, suggesting an optimal balance between model fit and complexity. And this align with our previous analysis as well.
+
+
+\subsection{Simulation}
+The simulation plots (Figures \ref{fig:SRJF_native_simulation_band} to \ref{fig:SRJF_lum_simulation_lines}) collectively demonstrate the SRPF model's capability to capture the complex interactions among various states within the population dynamics of \textit{D.~dentifera} and \textit{D.~lumholtzi}.
+Specifically, the model effectively reproduces the latent patterns for susceptible and infected densities across multiple experimental units, as evidenced by the close alignment between the simulated mean trajectories (depicted by the black and light-blue bands) and the observed experimental data (represented by colorful solid lines).
+Each blue line illustrates an individual simulation case, capturing the stochastic variability across replicates, while the light blue shaded area (where present) denotes the 95\% confidence interval of the simulation results.
+Although juvenile density data were not included in the model fitting process, the model still accurately predicts juvenile density trends (Figures \ref{fig:SRJF_lum_simulation_lines}).
+This performance indicates the model's capacity to generalize underlying ecological processes, as the 95\% confidence intervals largely encompass the observed juvenile data, thereby lending additional support to the model's robustness.
+Concurrently, the depletion of \textit{Ankistrodesmus} algal density over time, reflected in the simulation, further elucidates the behavior of the \textit{Daphnia} populations.
+The decline in algal density at later stages indicates that the system reaches a state of food limitation, a dynamic anticipated by our model.
+The reduction in food availability provides a mechanistic explanation for the observed trends in \textit{Daphnia} densities, as resource scarcity constrains population growth, ultimately affecting the susceptible, infected, and juvenile densities.
+This behavior underscores the model's relevance in ecological forecasting by not only capturing individual population dynamics but also accounting for resource-consumption interactions that shape these dynamics.
+
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{simulation/dent_no_para_simulation/simulation_band.png}
+    \caption{Simulation plots of densities (Individuals$/$Liter) for susceptible, and juvenile \textit{D.~dentifera}, along with alga density ($10^6\cdot$cells$/$Liter) and parasite density  ($10^3\cdot$spores$/$Liter), over time (days). The colorful solid lines represent observed experimental data, showing the variability across different experimental replicates. The black line represents the mean trajectory from the simulation model, capturing the general trend of each density. The light blue shaded area corresponds to the 95\% confidence interval of the simulations, indicating the range of model predictions. Dashed lines illustrate individual simulated trajectories, highlighting the model’s ability to capture fluctuations around the mean trajectory.}
+    \label{fig:SRJF_native_simulation_band}
+\end{figure}
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{simulation/dent_no_para_simulation/simulation_lines.png}
+   \caption{Simulated densities (Individuals$/$Liter) of susceptible \textit{D.~dentifera}, juvenile \textit{D.~dentifera} and alga density ($10^6\cdot$cells$/$Liter) over time (days) for each experimental unit. The blue lines represent individual simulation runs, capturing the variability in susceptible density across replicates, while the red line represents the actual experiment data.}
+    \label{fig:SRJF_dent_simulation_lines}
+\end{figure}
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{simulation/lum_no_para_simulation/simulation_band.png}
+    \caption{Simulation plots of densities (Individuals$/$Liter) for susceptible, and juvenile \textit{D.~lumholtzi}, along with alga density ($10^6\cdot$cells$/$Liter) and parasite density  ($10^3\cdot$spores$/$Liter), over time (days). The colorful solid lines represent observed experimental data, showing the variability across different experimental replicates. The black line represents the mean trajectory from the simulation model, capturing the general trend of each density. The light blue shaded area corresponds to the 95\% confidence interval of the simulations, indicating the range of model predictions. Dashed lines illustrate individual simulated trajectories, highlighting the model’s ability to capture fluctuations around the mean trajectory.}
+    \label{fig:SRJF_invasive_simulation_band}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{simulation/lum_no_para_simulation/simulation_lines.png}
+   \caption{Simulated densities (Individuals$/$Liter) of susceptible \textit{D.~lumholtzi}, juvenile \textit{D.~lumholtzi} and  alga density ($10^6\cdot$cells$/$Liter) ays) for each experimental unit. The blue lines represent individual simulation runs, capturing the variability in susceptible density across replicates, while the red line represents the actual experiment data.}
+    \label{fig:SRJF_lum_simulation_lines}
+\end{figure}
+
+\section{Benchmark Model}
+\subsection{Searle et al.’s model}
+Using the mechanistic model introduced by \citet{searle16}, we conduct predictions of population $\tilde{y}_{\unit,\benchmarktime}$ for susceptible, infected \textit{D.~dentifera} and \textit{D.~lumholtzi} for all time $\benchmarktime \in \{1,2...,N\}$ and units $\unit \in \{1,2...,U\}$.
+In our case, each unit is observed at the same number of time points, so $N_{\unit} = N$ for all $\unit$.
+Then, we obtain the overall log-likelihood by summing the log-probabilities of the observed density of \textit{Daphnia}.
+Specifically, we use the observed densities $y^*_{\unit,\benchmarktime}$ and the predicted means $\tilde{y}_{\unit,\benchmarktime}$ derived from the mechanistic model, along with the dispersion parameter $\tau$ to specify a NBinom distribution and calculate the likelihood:
+\begin{align}
+\ell(\beta, \theta) &= \sum_{\unit=1}^{\Unit}\sum_{\benchmarktime=1}^{N}
+\log P(Y_{\unit,\benchmarktime} = y^*_{\unit,\benchmarktime} \mid \mu_{\unit,\benchmarktime}, \tau),
+\label{eq:total_loglik}
+\end{align}
+
+To obtain the maximum likelihood estimate, we conduct the linear optimization on $\tau$ and choose the $\hat{\tau}$ that yields the highest overall likelihood. 
+With this $\hat{\tau}$, we obtain the likelihood by \ref{eq:total_loglik} for the model on the data. And the result of the model fitting can be found in the Table~2 in the main article.
+\subsection{NBinom Regression}
+Count data from ecological studies often exhibit overdispersion and unit-specific variation.
+The NBinom distribution addresses overdispersion, while random intercepts allow each unit to have its own baseline level.
+As a benchmark model, we employ NBinom generalized linear mixed models (GLMMs) to capture overdispersed count data and correlation across repeated measures within each unit $\unit$.
+Let $i$ denotes units, with $\unit = 1,2,\dots,\Unit$, and let $\benchmarktime_\unit$ index observation times within each unit, with $\benchmarktime_\unit = 1,2,\dots,N_{\unit}$.
+In our case, each unit is observed at the same number of time points, so $N_{\unit} = N$ for all $\unit$.
+The NBinom distribution is parameterized by a mean $\mu_{\unit,\benchmarktime}$ and a dispersion parameter $\theta$.
+
+We present three GLMMs with increasing of order of time factor to capture the trend of these \textit{Daphnia} species in the experiment.
+While a linear model is easy to interpret and straightforward to implementing, observed \textit{Daphnia} data exhibit a non-linear pattern.
+Introducing quadratic or cubic terms to the model enhance the capability of model to capture these non-linear trends in the data.
+By starting with a linear model and then considering quadratic and cubic cases, we can evaluate the complexity of temporal patterns and better approximate the latent process of in the dynamics.
+
+\subsubsection{Model 1 (Linear Model)}
+We start with the simplest GLMM~\ref{model:GLMM_linear} only with linear terms:
+\begin{align}
+Y_{\unit,\benchmarktime} &\sim \text{NBinom}(\mu_{\unit,\benchmarktime}, \tau), \\[6pt]
+\log(\mu_{\unit,\benchmarktime}) &= \beta_0 + \beta_1\, t_{\unit,\benchmarktime} + b_{\unit},
+\label{model:GLMM_linear}
+\end{align}
+We assume $\mu_{\unit,\benchmarktime}$ is the expected count for unit $\unit$ at time $\benchmarktime$.
+The parameter $\beta_0$ represents a vector of log-scale mean density of \textit{Daphnia} classified by species, life stage, and infection status at the start of the experiment, after accounting for random effects.
+The vector coefficient $\beta_1$ measures the effect of time on the log-scale of \textit{Daphnia} density.
+The term $b_\unit$ accounts for the random intercept drawn from a normal distribution with variance $\sigma^2$.
+Conditional on the random intercept $b_\unit$, observations within a unit are assumed independent.
+The dispersion parameter $\tau$ from the NBinom distribution accommodates overdispersion in the count data, which is density in our case.
+
+
+\subsubsection{Model 2 (Quadratic Model)}
+To accommodate the non-linear pattern, we include a quadratic term in time in model~\ref{model:GLMM_quad}:
+\begin{align}
+Y_{\unit,\benchmarktime} &\sim \text{NBinom}(\mu_{\unit,\benchmarktime}, \tau), \\[6pt]
+\log(\mu_{\unit,\benchmarktime}) &= \beta_0 + \beta_1\, t_{\unit,\benchmarktime} + \beta_2\, t_{\unit,\benchmarktime}^2 + b_{\unit}.
+\label{model:GLMM_quad}
+\end{align}
+Here, $\beta_2$ captures curvature in the trend, allowing for a turning point as time progresses.
+
+\subsubsection{Model 3 (Cubic Model)}
+To capture more complex temporal pattern, we further introduce the cubic term in the model~\ref{model:GLMM_cubic}:
+\begin{align}
+Y_{\unit,\benchmarktime} &\sim \text{NBinom}(\mu_{\unit,\benchmarktime}, \tau), \\[6pt]
+\log(\mu_{\unit,\benchmarktime}) &= \beta_0 + \beta_1\, t_{\unit,\benchmarktime} + \beta_2\, t_{\unit,\benchmarktime}^2 + \beta_3\, t_{\unit,\benchmarktime}^3 + b_{\unit}.
+\label{model:GLMM_cubic}
+\end{align}
+The cubic term $\beta_3$ provides additional capability for capturing multiple fluctuation patterns in the \textit{Daphnia} dynamics.
+
+
+The likelihood for these models is constructed by considering the joint distribution of all observations $\{Y_{i,j}\}$, integrating over the random effects $\{b_{\unit}\}_{1:\Unit}$. Letting $\beta = (\beta_0, \beta_1, \dots)$ denote the fixed-effect parameters, the conditional likelihood of the observations for unit $\unit$ given $b_\unit$ is
+\begin{align}
+L_\unit(\beta, \tau, \sigma^2) &= \prod_{\benchmarktime=1}^{N} f_{\text{NB}}\bigl(Y_{\unit,\benchmarktime}; \mu_{\unit,\benchmarktime}(\beta, \sigma^2), \tau\bigr),
+\label{eq:conditional_likelihood}
+\end{align}
+where $f_{\text{NB}}(\cdot;\mu,\tau)$ is the NBinom probability mass function and $\mu_{\unit,\benchmarktime}(\beta, b_\unit) = \exp(\beta_0 + \beta_1 t_{\unit,\benchmarktime} + \dots + b_\unit)$. 
+The total likelihood is then the product over all units due to the independence:
+\begin{align}
+L(\beta, \tau, \sigma^2) &= \prod_{\unit=1}^{\Unit} L_\unit(\beta, \tau, \sigma^2)\\
+                         &= \prod_{\unit=1}^{\Unit} \prod_{\benchmarktime=1}^{N} f_{\text{NB}}\bigl(Y_{\unit,\benchmarktime}; \mu_{\unit,\benchmarktime}(\beta, \sigma^2), \tau\bigr)
+\label{eq:total_likelihood}
+\end{align}
+and the log-likelihood is:
+\begin{align}
+\ell(\beta, \tau, \sigma^2) &= \sum_{\unit=1}^{\Unit} \sum_{\benchmarktime=1}^{N} \log \bigl(f_{\text{NB}}(Y_{\unit,\benchmarktime}; \mu_{i,j}(\beta, \sigma^2), \tau)\bigl).
+\label{eq:log_likelihood}
+\end{align}
+The calculated log-likelihood used to compute the AIC for model comparison. And the result of the model fitting of model~\ref{model:GLMM_linear},~\ref{model:GLMM_quad} and \ref{model:GLMM_cubic} can be found in the Table~2 in the main article.
+
+\subsection{SIRPF2 Model}
+The SIRPF2 model presented here ignores the state of juvenile \textit{Daphnia} and describes the dynamics in each bucket($\unit$) among susceptible individuals ($S^{\species}$), infected individuals ($I^{\species}$), alga as a food resource ($F$), the parasite population ($P$).
+The superscript $\species$ denotes the species, which represents native or invasive species.
+Each stochastic differential equation accounts for various biological and ecological processes, augmented with stochastic terms to capture the inherent randomness within the systems.
+{\small
+\begin{align}
+    dS^{\species}_{\unit}(t) &= r^{\species}_{\unit} \, f^{\species}_{S,{\unit}} \, F_{\unit}(t) \, S^{\species}_{\unit}(t)\, dt -
+    \big\{
+    \theta^{\species}_{S,{\unit}} + p^{\species}_{\unit} \, f^{\species}_{S,{\unit}} \, P_{\unit}(t) + \delta
+    \big\}
+    \, S^{\species}_{\unit}(t)\, dt,\\
+    dI^{\species}_{\unit}(t) &= p^{\species}_{\unit} \, f^{\species}_{S,{\unit}}\,  S^{\species}_{\unit}(t) \, P_{\unit}(t)\, dt -
+    \big\{
+    \theta^{\species}_{I,{\unit}} + \delta
+    \big\}
+    \, I^{\species}_{\unit}(t)\, dt + I^{\species}_{\unit}(t) \, d\zeta^{\species}_{I,{\unit}},\label{eq:SIRPF2_dS}\\
+    dP_{\unit}(t) &= \sum_{\species \in \{\native, \invasive\}} \left(\beta^{\species}_{\unit} \, \theta^{\species}_{I,{\unit}} \,  I^{\species}_{\unit}(t) - f^{\species}_{S,{\unit}} \big\{ S^{\species}_{\unit}(t) + \xi_{\unit} I^{\species}_{\unit}(t) \big\} P_{\unit}(t)\right) dt - \theta_{P,{\unit}} \, P_{\unit}(t)\, dt + P_{\unit}(t)\, d\zeta_{P,{\unit}},\\
+    dF_{\unit}(t) &= - \sum_{\species \in \{\native, \invasive\}} f^{\species}_{S,{\unit}} \, F_{\unit}(t) \left(S^{\species}_{\unit}(t)+\xi_{\unit} \, I^{\species}_{\unit}(t)\right)dt  + \mu \, dt + F_{\unit}(t)\, d\zeta_{F,{\unit}},\label{eq:SIRPF2_dF}\\
+d\zeta^{\species}_{I,{\unit}} \sim \Normal &\big[0, (\sigma^{\species}_{I,{\unit}})^{2}\, dt\big],
+d\zeta_{F,{\unit}} \sim \Normal \big[0, \sigma_{F,{\unit}}^{2}\, dt\big],
+d\zeta_{P,{\unit}} \sim \Normal \big[0, \sigma_{P,{\unit}}^{2}\, dt\big].
+\end{align}
+}
+
+
+Different from SIRJPF2 model, we ignore the maturation process from juvenile to adult in equation \eqref{eq:SIRPF2_dS}. Instead, we use $r^{\species}_{\unit}$ to represent the average rate of growth in density of \textit{Daphnia} adult.
+
+\subsubsection{Flow Diagram}
+The SIRPF2 model illustrates the interdependent dynamics among the Susceptible ($S$), Infected ($I$), Food ($F$), and Parasite ($P$) populations, with transitions representing ecological and biological interactions.
+
+\usetikzlibrary{positioning}
+\usetikzlibrary {arrows.meta}
+\usetikzlibrary{shapes.geometric}
+
+\begin{figure}[H]
+\begin{center}
+\resizebox{8cm}{!}{
+\begin{tikzpicture}[
+  square/.style={rectangle, draw=black, minimum width=0.5cm, minimum height=0.5cm, rounded corners=.1cm, fill=blue!8},
+  rhombus/.style={diamond, draw=black, minimum width=0.1cm, minimum height=0.1cm, fill=purple!8,aspect = 1},
+  travel/.style={circle, draw=black, minimum width=0.5cm, minimum height=0.5cm, fill=green!8},
+  report/.style={shape=regular polygon, regular polygon sides=8, draw, fill=red!8,minimum size=0.6cm,inner sep=0cm},
+  bendy/.style={bend left=10},
+  bendy2/.style={bend left=100},
+  bendy3/.style={bend left=-100},
+  >/.style={shorten >=0.25mm},
+  >/.tip={Stealth[length=1.5mm,width=1.5mm]}
+]
+\tikzset{>={}};
+
+\node (S) at (2.5,0) [square] {$S^{\species}$};
+\node (I) at (5.5,0) [square] {$I^{\species}$};
+\node (R) at (2.5,-2)  [rhombus] {$R$};
+\node (P) at (5.5,-2)[travel] {$P$};
+\node (F) at (-0.5,-2) [report] {$F$};
+
+
+
+\draw [->, bendy] (S) to  (I);
+\draw [->, bendy] (I) to  (S);
+
+
+\draw [->] (P) --  (S);
+\draw [->] (F) --  (R);
+\draw [->] (P) --  (R);
+\draw [->] (S) -- (R);
+\draw [->] (I) -- (R);
+\draw [->] (F) -- (S);
+\draw [->] (F) -- (I);
+\draw (F) edge[loop below] (F);
+
+\draw [->, bendy] (P) to (I);
+\draw [->, bendy] (I) to (P);
+
+
+\end{tikzpicture}
+}
+\end{center}
+\vspace{-5mm}
+\caption{Flow diagram for the SIRPF2 model illustrating population interactions.}
+\label{fig:flow_SIRPF2}
+\end{figure}
+
+\section{Experimental Data on Peak Density}
+\begin{table}[H]
+\centering
+\begin{tabular}{lccccc}
+\toprule
+Mesocosm
+& \shortstack{\textit{D.~dentifera} \\ juvenile} 
+& \shortstack{\textit{D.~dentifera} \\ female adult} 
+& \shortstack{\textit{D.~lumholtzi} \\ juvenile} 
+& \shortstack{\textit{D.~lumholtzi} \\ female adult} 
+& \shortstack{\textit{D.~lumholtzi} \\ male adult} \\
+\midrule
+1 & 22 & 22 & 22 & 27 & 27 \\
+2 & 22 & 32 & 17 & 17 & 22 \\
+3 & 27 & 32 & 27 & 22 & 37 \\
+4 & 22 & 22 & 37 & 17 & 27 \\
+5 & 22 & 22 & 17 & 32 & 27 \\
+6 & 32 & 27 & 27 & 32 & 42 \\
+7 & 27 & 22 & 17 & 17 & 27 \\
+8 & 27 & 32 & 22 & 22 & 42 \\
+\bottomrule
+\end{tabular}
+\caption{This table shows the day on which each species reached its peak density in mesocosms containing mixed \textit{Daphnia} species and a parasite. \textit{D.~dentifera} male adults are excluded because they were almost absent.}
+\end{table}
+
+\section{SIRJPF2-Gamma Model}
+The SIRJPF2-Gamma model differs from the original SIRJPF2 model by its incorporation of gamma noise in transition processes between states, in place of the Gaussian noise used previously. 
+Specifically, in the SIRJPF2-Gamma model, random fluctuations for transitions between states are explained by gamma distributions to represent ecological events occur through one-way transitions which are nonnegative. 
+The use of gamma noise in modeling transitions explicitly enforces that individuals move from one class to another without the artificial creation or destruction of hosts that do not transit to or from another compartment.
+This aligns with the underlying dynamics that the jump-like transitions observed in ecosystem reflect one-directional movements rather than symmetrical fluctuations.
+
+
+
+
+{\small
+\begin{align}
+    dS^{\species}_{\unit}(t) &= \lambda^{\species}_{J,{\unit}} \,  J^{\species}_{\unit}(t)dt -
+    \big\{
+    \theta^{\species}_{S,{\unit}} + \delta
+    \big\}
+    \, S^{\species}_{\unit}(t)\, dt - p^{\species}_{\unit} \, f^{\species}_{S,{\unit}} \, P_{\unit}(t) S^{\species}_{\unit}(t) \, d\Gamma^{\species}_{SI,{\unit}},\\
+    dI^{\species}_{\unit}(t) &= p^{\species}_{\unit} \, f^{\species}_{S,{\unit}}\,  S^{\species}_{\unit}(t) \, P_{\unit}(t)\, d\Gamma^{\species}_{SI,{\unit}} -
+    \theta^{\species}_{I,{\unit}} I^{\species}_{\unit}(t)d\Gamma^{\species}_{IP,{\unit}}- \delta\, I^{\species}_{\unit}(t)\, dt,\\
+    dJ^{\species}_{\unit}(t) &= r^{\species}_{\unit} \, f^{\species}_{S,{\unit}} \, F_{\unit}(t) \, S^{\species}_{\unit}(t)\, d\Gamma^{\species}_{SJ,{\unit}} -
+    \big\{
+    \theta^{\species}_{J,{\unit}}  + \delta
+    \big\} 
+    \, J^{\species}_{\unit}(t)\, dt - \lambda^{\species}_{J,{\unit}} \,  J^{\species}_{\unit}(t)dt, \\
+    dP_{\unit}(t) &= \sum_{\species \in \{\native, \invasive\}} \left(\beta^{\species}_{\unit} \, \theta^{\species}_{I,{\unit}} \,  I^{\species}_{\unit}(t)d\Gamma^{\species}_{IP,{\unit}} - f^{\species}_{S,{\unit}} \big\{ S^{\species}_{\unit}(t) + \xi_{\unit} I^{\species}_{\unit}(t) \big\} P_{\unit}(t)dt\right) - \theta_{P,{\unit}} \, P_{\unit}(t)\, dt,\\
+    dF_{\unit}(t) &= - \sum_{\species \in \{\native, \invasive\}} f^{\species}_{S,{\unit}} \, F_{\unit}(t) \left(S^{\species}_{\unit}(t)+\xi_{J,{\unit}} \, J^{\species}_{\unit}(t) +\xi_{\unit} \, I^{\species}_{\unit}(t)\right)dt  + \mu \, dt + F_{\unit}(t)\, d\Gamma_{F,{\unit}},\\
+d\Gamma^{\species}_{JS,{\unit}} &\sim \Gamma
+  \bigg[\frac{dt}{(\sigma^{\species}_{JS,{\unit}})^{2}}, (\sigma^{\species}_{JS,{\unit}})^{2}\bigg],
+\quad
+d\Gamma^{\species}_{SI,{\unit}} \sim \Gamma
+  \bigg[\frac{dt}{(\sigma^{\species}_{SI,{\unit}})^{2}}, (\sigma^{\species}_{SI,{\unit}})^{2}\bigg],\\
+d\Gamma^{\species}_{IP,{\unit}} &\sim \Gamma
+  \bigg[\frac{dt}{(\sigma^{\species}_{IP,{\unit}})^{2}}, (\sigma^{\species}_{IP,{\unit}})^{2}\bigg],
+\quad
+d\Gamma_{F,{\unit}} \sim \Normal \big[0, \sigma_{F,{\unit}}^{2}\, dt\big].
+\end{align}
+}
+\bibliography{../bib-daphnia}
+\end{document}
