@@ -1,9 +1,7 @@
 *.RData
 */*.RData
-all_specific.RData
 .DS_Store
 *.Rhistory
-Complex_dynamics/Complex_model/Native/Mesocosmdata.xls
 *.synctex.gz
 *.synctex
 *.out
