@@ -207,9 +207,8 @@ This toolbox allows scientists to propose and evaluate scientifically motivated 
   The combination of these two factors complicates data interpretation and analysis in ecological studies.
   Given these inherent properties of ecological systems, it is essential to use models that can account for key latent mechanisms and the stochastic nature of the system when conducting inference \citep{young98,bjornstad01}.
 
-Partially observed Markov process (POMP) models, also known as hidden Markov models or state space models \citep{breto09,auger-methe21}, comprise a class of models suited to the description of such systems.
-These models describe the latent process using a Markovian representation, a reasonable approach in many situations.
-  A POMP model is mechanistic if it provides a causal description of the system, i.e., if it can explain the consequence of interventions to the system.
+Partially observed Markov process (POMP) models, also known as hidden Markov models or state space models \citep{breto09,auger-methe21}, comprise a class of models suited to the description of such systems, which describe the latent process using a Markovian representation.
+  A POMP model is mechanistic if it provides a causal description of the system, i.e., if it can explain the consequence of interventions to the system \jwc{I'm not sure I agree with the i.e. statement as a definition of mechanistic models}.
   Statistical inferences on mechanistic models can provide insight into key latent mechanisms.
   Further, statistical tests between rival mechanistic hypotheses can inform qualitative understanding about suitable model structures.
   Thus, mechanistic models are invaluable tools for addressing challenges in ecology \citep{mouquet15}.
@@ -218,7 +217,7 @@ These models describe the latent process using a Markovian representation, a rea
   Each component system is called a unit, and the units may be sites in a field study (e.g., plots, lakes) or independent mesocosms or microcosms in a controlled laboratory setting.
   Studying the entire panel may allow precision in statistical conclusions that is unattainable from a single unit.
   Alternatively, scientists may be interested in specific differences between the units, requiring the investigation of the entire panel of data.
-  For either of these goals, investigation of panel data leads to the challenging statistical task of fitting a collection of related nonlinear non-Gaussian vector-valued POMP models, called a PanelPOMP model \citep{breto20}.
+  For either of these goals, investigation of panel data leads to the challenging statistical task of fitting a collection of related nonlinear or non-Gaussian vector-valued POMP models, called a PanelPOMP model \citep{breto20}.
   In this article, we demonstrate how recent methodological advances can facilitate data analysis for such models in a multi-species system.
   We use data from a controlled experiment involving the population dynamics of two freshwater plankton species ({\it Daphnia dentifera} and {\it Daphnia lumholtzi}) together with an alga, \textit{Ankistrodesmus falcatus}, as food and a fungal parasite, \textit{Metschnikowia bicuspidata}, that can infect both {\it Daphnia} species.
   These data were collected by \citet{searle16} to investigate how the competition between the North American native {\it D.~dentifera} and the invasive {\it D.~lumholtzi} is modified by their differing susceptibility to the parasite.
@@ -474,7 +473,7 @@ The experimentally determined sampling rate, $\delta = 0.013$ per liter per day,
     \big\{
     \theta^{\species}_{S,{\unit}} + p^{\species}_{\unit} \, f^{\species}_{S,{\unit}} \, P_{\unit}(t) + \delta
     \big\}
-    \, S^{\species}_{\unit}(t)\, dt + S^{\species}_{\unit}(t) \, d\zeta^{\species}_{S,{\unit}},\\
+    \, S^{\species}_{\unit}(t)\, dt,\\
     dI^{\species}_{\unit}(t) &= p^{\species}_{\unit} \, f^{\species}_{S,{\unit}}\,  S^{\species}_{\unit}(t) \, P_{\unit}(t)\, dt -
     \big\{
     \theta^{\species}_{I,{\unit}} + \delta
@@ -487,9 +486,7 @@ The experimentally determined sampling rate, $\delta = 0.013$ per liter per day,
     \, J^{\species}_{\unit}(t)\, dt + J^{\species}_{\unit}(t)\, d\zeta^{\species}_{J,{\unit}}, \\
     dP_{\unit}(t) &= \hspace{-1mm} \sum_{\species \in \{\native, \invasive\}} \hspace{-1mm} \left(\beta^{\species}_{\unit} \, \theta^{\species}_{I,{\unit}} \,  I^{\species}_{\unit}(t) - f^{\species}_{S,{\unit}} \big\{ S^{\species}_{\unit}(t) + \xi_{\unit} I^{\species}_{\unit}(t) \big\} P_{\unit}(t)\right) \! dt - \theta_{P,{\unit}} \, P_{\unit}(t)\, dt + P_{\unit}(t)\, d\zeta_{P,{\unit}},\\
     dF_{\unit}(t) &= - \hspace{-1mm} \sum_{\species \in \{\native, \invasive\}} f^{\species}_{S,{\unit}} \, F_{\unit}(t) \left(S^{\species}_{\unit}(t)+\xi_{J,{\unit}} \, J^{\species}_{\unit}(t) +\xi_{\unit} \, I^{\species}_{\unit}(t)\right)dt  + \mu \, dt + F_{\unit}(t)\, d\zeta_{F,{\unit}},\\
-d\zeta^{\species}_{S,{\unit}} &\sim \Normal \big[0, (\sigma^{\species}_{S,{\unit}})^{2}\, dt\big],
-\quad
-d\zeta^{\species}_{I,{\unit}} \sim \Normal \big[0, (\sigma^{\species}_{I,{\unit}})^{2}\, dt\big],
+d\zeta^{\species}_{I,{\unit}} &\sim \Normal \big[0, (\sigma^{\species}_{I,{\unit}})^{2}\, dt\big],
 \quad
 d\zeta^{\species}_{J,{\unit}} \sim \Normal \big[0, (\sigma^{\species}_{J,{\unit}})^{2}\, dt\big],\\
 d\zeta_{F,{\unit}} &\sim \Normal \big[0, \sigma_{F,{\unit}}^{2}\, dt\big],
@@ -549,7 +546,7 @@ We start by setting up some general notation that we use to describe PIF, a vari
 
 Time series data are collected on $\Unit$ units, labeled $1,2,\dots,\Unit$.
 Unit $\unit$ is observed at $N_u$ measurement times, denoted by $t_{\unit,1},t_{\unit,2},\dots,t_{\unit,N_\unit}$ which we write as $t_{\unit,1:N_\unit}$.
-For our example, $N_{\unit}=N=10$, and $t_{\unit,n}=t_n=5n+2$ days, though the algorithms and software do not need regular observation times.
+For our example, $N_{\unit}=N=10$, and $t_{\unit,n}=t_n=5n+2$ days, though the algorithms and software used do not need regular observation times.
 The observation on unit $\unit$ at time $t_{\unit,n}$ is denoted by $y^*_{\unit,n}$,
 and in our example this corresponds to a vector of measured densities of {\it Daphnia} classified by species, life stage, and infection status.
 The data are modeled by a stochastic process $\{Y_{\unit,n}, \unit\in \seq{1}{\Unit}, n\in \seq{1}{N_\unit}\}$.
@@ -570,10 +567,11 @@ Y_{\unit,n}&=&\big(
 The time at which the latent process for unit $u$ is initialized is $t_{u,0}$, and in our specific example $t_{u,0}=t_0=0$.
 We write $X_{\unit,n}=X_{\unit}(t_{\unit,n})$, and we note that the collection of these discrete-time latent state values is sufficient to describe the model for the data.
 Nevertheless, in many situations (including this case study) it is scientifically helpful to construct the latent process in continuous time.
+
 The PanelPOMP model depends on a parameter vector, $\theta$, which we write as $\theta=(\phi,\psi_{1:\Unit})$ where $\phi$ is the vector of parameters shared between all units and $\psi_\unit$ is a vector of parameters specific to unit $\unit$.
 We can then define a general PanelPOMP model in terms of the transition density $f_{X_{\unit,n}|X_{\unit,n-1}}(x_{\unit,n}|x_{\unit,n-1};\phi,\psi_{\unit})$, the initial density $f_{X_{\unit,0}}(x_{\unit,0};\phi,\psi_{\unit})$, and the measurement density $f_{Y_{\unit,n}|X_{\unit,n}}(y_{\unit,n}|x_{\unit,n};\phi,\psi_{\unit})$ of each unit $\unit$ in the panel.
 For a model such as ours, the transition density is defined implicitly by the model equations (\ref{eq:model:first}--\ref{eq:model:last}).
-The plug-and-play property means that we never require explicit evaluation of this density, only the ability to obtain simulated trajectories satisfying {eq:model:first}.
+The plug-and-play property means that we never require explicit evaluation of this density, only the ability to obtain simulated trajectories satisfying Eq.~\ref{eq:model:first}.
 We do that using Euler's method \citep{kloeden99}.
 
 A defining feature of a PanelPOMP is that the latent processes are modeled as independent across units, so the data generating models for each unit are linked only via the shared parameter vector, $\phi$.
@@ -685,19 +683,19 @@ However, AIC has earned widespread use due to its clear theoretical motivation a
 
 
 <<Results, include=FALSE,echo=FALSE,results='hide', cache=cache_option>>=
-load('data/all_shared_parameter.rda')
+load('../data/Target_dynamics/para/best_result.rds')
 mif.estimate = as.data.frame(t(mif.estimate))
 se_target = s.e.of.pf.loglik.of.mif.estimate
 loglik_target = pf.loglik.of.mif.estimate
 parms = mif.estimate
-AIC_target = -2 * loglik_target + 2 * length(parms)
+AIC_target = -2 * loglik_target + 2 * (length(parms)-2)
 
 f_Sn = parms$f_Sn
 f_Si = parms$f_Si
 theta_Jn = parms$theta_Jn
 theta_Ji = parms$theta_Ji
 probi = parms$probi
-probn = parms$probi
+probn = parms$probn
 ri = parms$ri
 rn = parms$rn
 theta_Ii = parms$theta_Ii
@@ -707,9 +705,7 @@ theta_Sn = parms$theta_Sn
 theta_P = parms$theta_P
 xi_J = 1.00
 xi = parms$xi
-sigSn = parms$sigSn
 sigIn = parms$sigIn
-sigSi = parms$sigSi
 sigIi = parms$sigIi
 sigJn = parms$sigJn
 sigJi = parms$sigJi
@@ -765,8 +761,6 @@ $\beta^{\native}$       & Spores produced per infected native individual     &  
 $\beta^{\invasive}$       & Spores produced per infected invasive individual   &  $10^3 \cdot \mathrm{spores} \cdot \mathrm{individual}^{-1} \cdot \mathrm{day}^{-1}$  & \Sexpr{mysignif(beta_i,2)} & \\
 $\mu$           & Alga refilling rate                                &  $10^6 \cdot \mathrm{cell} \cdot \mathrm{L} ^{-1} \cdot \mathrm{day}^{-1}$                 & \Sexpr{mysignif(mu,2)} & \\
 $\delta$        & Sampling rate                                      &  $\mathrm{day}^{-1}$                                                                         & \Sexpr{mysignif(delta,2)} & \\
-$\sigma^{\native}_{S}$ & Standard deviation of Brownian motion of susceptible native adults &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigSn,2)}  & (\Sexpr{0},\Sexpr{mysignif(ci_table$sigSn[2],2)})\\
-$\sigma^{\invasive}_{S}$ & Standard deviation of Brownian motion of susceptible invasive adult    &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigSi,2)}  & (\Sexpr{0},\Sexpr{mysignif(ci_table$sigSi[2],2)})\\
 $\sigma^{\native}_{I}$ & Standard deviation of Brownian motion of infected native adult         &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigIn,2)}  & (\Sexpr{0},$\infty$)\\
 $\sigma^{\invasive}_{I}$ & Standard deviation of Brownian motion of infected invasive adult       &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigIi,2)}  & (\Sexpr{0},\Sexpr{mysignif(ci_table$sigIi[2],2)})\\
 $\sigma^{\native}_{J}$ & Standard deviation of Brownian motion of native juvenile               &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigJn,2)}  & (\Sexpr{mysignif(ci_table$sigJn[1],2)},\Sexpr{mysignif(ci_table$sigJn[2],2)})\\
