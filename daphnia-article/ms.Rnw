@@ -208,7 +208,7 @@ This toolbox allows scientists to propose and evaluate scientifically motivated 
   Given these inherent properties of ecological systems, it is essential to use models that can account for key latent mechanisms and the stochastic nature of the system when conducting inference \citep{young98,bjornstad01}.
 
 Partially observed Markov process (POMP) models, also known as hidden Markov models or state space models \citep{breto09,auger-methe21}, comprise a class of models suited to the description of such systems, which describe the latent process using a Markovian representation.
-  A POMP model is mechanistic if it provides a causal description of the system, i.e., if it can explain the consequence of interventions to the system \jwc{I'm not sure I agree with the i.e. statement as a definition of mechanistic models}.
+ A POMP model is mechanistic if it is based on scientific principles, which is usually equivalent to providing a causal description of the system that can explain the consequence of interventions.
   Statistical inferences on mechanistic models can provide insight into key latent mechanisms.
   Further, statistical tests between rival mechanistic hypotheses can inform qualitative understanding about suitable model structures.
   Thus, mechanistic models are invaluable tools for addressing challenges in ecology \citep{mouquet15}.
@@ -217,7 +217,7 @@ Partially observed Markov process (POMP) models, also known as hidden Markov mod
   Each component system is called a unit, and the units may be sites in a field study (e.g., plots, lakes) or independent mesocosms or microcosms in a controlled laboratory setting.
   Studying the entire panel may allow precision in statistical conclusions that is unattainable from a single unit.
   Alternatively, scientists may be interested in specific differences between the units, requiring the investigation of the entire panel of data.
-  For either of these goals, investigation of panel data leads to the challenging statistical task of fitting a collection of related nonlinear or non-Gaussian vector-valued POMP models, called a PanelPOMP model \citep{breto20}.
+  For either of these goals, investigation of panel data leads to the challenging statistical task of fitting a collection of related nonlinear or non-Gaussian vector-valued POMP models, called a PanelPOMP model \citep{breto20, king16}.
   In this article, we demonstrate how recent methodological advances can facilitate data analysis for such models in a multi-species system.
   We use data from a controlled experiment involving the population dynamics of two freshwater plankton species ({\it Daphnia dentifera} and {\it Daphnia lumholtzi}) together with an alga, \textit{Ankistrodesmus falcatus}, as food and a fungal parasite, \textit{Metschnikowia bicuspidata}, that can infect both {\it Daphnia} species.
   These data were collected by \citet{searle16} to investigate how the competition between the North American native {\it D.~dentifera} and the invasive {\it D.~lumholtzi} is modified by their differing susceptibility to the parasite.
@@ -373,7 +373,7 @@ This hypothesis is related to resource depletion, since shortage of food and hig
 However, resource depletion affects parthenogenetic reproduction as well influencing a switch to sexual reproduction, and we investigate the hypothesis that explicit modeling of resource depletion can help to explain the observed dynamics.
 This led us to introduce a latent food variable, and we found that including age structure via a juvenile stage also helps to improve the statistical fit of the model.
 Our paradigm is to assess models that represent known or hypothesized biological mechanisms in terms of their ability to explain observed data, quantified by likelihood penalized by model complexity.
-Our hypothesized model is supported so far as it is the best available model according to this criterion; our model and data are available at \eic{IT'S TIME TO PUT A CLEAN VERSION OF THE REPO IN PUBLIC; LET'S DISCUSS THIS} to facilitate further investigations.
+Our hypothesized model is supported so far as it is the best available model according to this criterion; our model and data are available at \href{https://github.com/Megumi-ybb/Daphnia-ms}{github} to facilitate further investigations.
 
 \section{The Susceptible-Infected-Removed-Juvenile-Parasite-Food 2-species model (SIRJPF2)}
 \label{sec:mecmod}

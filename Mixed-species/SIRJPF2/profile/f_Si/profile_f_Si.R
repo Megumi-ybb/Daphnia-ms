@@ -267,9 +267,9 @@ shared_parameter = c(
 
 panelfood = panelPomp(pomplist, shared=shared_parameter)
 generate_parameter_profile <- function(prof_name, nprof = 80) {
-  shared_ub <- shared_parameter * 1000
+  shared_ub <- shared_parameter * 10
   
-  shared_lb <- shared_ub / 1000
+  shared_lb <- shared_ub / 100
   
   ub_unit <- log(shared_ub[prof_name])
   lb_unit <- log(shared_lb[prof_name])
@@ -293,6 +293,19 @@ generate_parameter_profile <- function(prof_name, nprof = 80) {
   
   return(parameter_shared)
 }
+
+
+# profile_design(p=1:10,lower=c(a=0,b=0),upper=c(a=1,b=5),nprof=20)
+pomp::profile_design(
+  lower = shared_lb,
+  upper = shared_ub,
+  type = 'runif',
+  nprof = nprof
+  
+)
+
+
+
 
 generate_sd <- function(x = 0.05, profile_name){
   sd_list = c(
