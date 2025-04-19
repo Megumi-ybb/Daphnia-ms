@@ -474,7 +474,7 @@ The experimentally determined sampling rate, $\delta = 0.013$ per liter per day,
     \big\{
     \theta^{\species}_{S,{\unit}} + p^{\species}_{\unit} \, f^{\species}_{S,{\unit}} \, P_{\unit}(t) + \delta
     \big\}
-    \, S^{\species}_{\unit}(t)\, dt,\\
+    \, S^{\species}_{\unit}(t)\, dt + S^{\species}_{\unit}(t)\, d\zeta^{\species}_{S,{\unit}},\\
     dI^{\species}_{\unit}(t) &= p^{\species}_{\unit} \, f^{\species}_{S,{\unit}}\,  S^{\species}_{\unit}(t) \, P_{\unit}(t)\, dt -
     \big\{
     \theta^{\species}_{I,{\unit}} + \delta
@@ -487,7 +487,9 @@ The experimentally determined sampling rate, $\delta = 0.013$ per liter per day,
     \, J^{\species}_{\unit}(t)\, dt + J^{\species}_{\unit}(t)\, d\zeta^{\species}_{J,{\unit}}, \\
     dP_{\unit}(t) &= \hspace{-1mm} \sum_{\species \in \{\native, \invasive\}} \hspace{-1mm} \left(\beta^{\species}_{\unit} \, \theta^{\species}_{I,{\unit}} \,  I^{\species}_{\unit}(t) - f^{\species}_{S,{\unit}} \big\{ S^{\species}_{\unit}(t) + \xi_{\unit} I^{\species}_{\unit}(t) \big\} P_{\unit}(t)\right) \! dt - \theta_{P,{\unit}} \, P_{\unit}(t)\, dt + P_{\unit}(t)\, d\zeta_{P,{\unit}},\\
     dF_{\unit}(t) &= - \hspace{-1mm} \sum_{\species \in \{\native, \invasive\}} f^{\species}_{S,{\unit}} \, F_{\unit}(t) \left(S^{\species}_{\unit}(t)+\xi_{J,{\unit}} \, J^{\species}_{\unit}(t) +\xi_{\unit} \, I^{\species}_{\unit}(t)\right)dt  + \mu \, dt + F_{\unit}(t)\, d\zeta_{F,{\unit}},\\
-d\zeta^{\species}_{I,{\unit}} &\sim \Normal \big[0, (\sigma^{\species}_{I,{\unit}})^{2}\, dt\big],
+d\zeta^{\species}_{S,{\unit}} &\sim \Normal \big[0, (\sigma^{\species}_{S,{\unit}})^{2}\, dt\big],
+\quad
+d\zeta^{\species}_{I,{\unit}} \sim \Normal \big[0, (\sigma^{\species}_{I,{\unit}})^{2}\, dt\big],
 \quad
 d\zeta^{\species}_{J,{\unit}} \sim \Normal \big[0, (\sigma^{\species}_{J,{\unit}})^{2}\, dt\big],\\
 d\zeta_{F,{\unit}} &\sim \Normal \big[0, \sigma_{F,{\unit}}^{2}\, dt\big],
@@ -510,7 +512,7 @@ We therefore fix $\beta^{\species}_{\unit}=3\times 10^3$ for $\species\in\{\nati
 Maturation and death of juvenile individuals are modeled to occur at rate  $\lambda^{\species}_{J,{\unit}}$ and  $\theta^{\species}_{J,{\unit}}$ respectively.
 
 The model's effectiveness at statistically describing the variation in \textit{Daphnia} population dynamics depends critically on its ability to account for overdispersion, a phenomenon which is overlooked in the common practice of using binomial and Poisson variation to add stochasticity to deterministic models \citep{breto11}.
-For the process model, this overdispersion is implemented by the noise parameters, $\sigma^{\species}_{I,{\unit}}$,  $\sigma^{\species}_{J,{\unit}}$, $\sigma^{}_{F,\unit}$, $\sigma^{}_{P,{\unit}}$.
+For the process model, this overdispersion is implemented by the noise parameters, $\sigma^{\species}_{S,{\unit}}$, $\sigma^{\species}_{I,{\unit}}$,  $\sigma^{\species}_{J,{\unit}}$, $\sigma^{}_{F,\unit}$, $\sigma^{}_{P,{\unit}}$.
 For the measurement model, we obtain overdispersion by using a negative binomial model for the observed counts.
 \begin{align}
 N^{\species}_{S,{\unit},n} &\sim \operatorname{NBinomial}\big(
@@ -764,6 +766,8 @@ $\beta^{\native}$       & Spores produced per infected native individual     &  
 $\beta^{\invasive}$       & Spores produced per infected invasive individual   &  $10^3 \cdot \mathrm{spores} \cdot \mathrm{individual}^{-1} \cdot \mathrm{day}^{-1}$  & \Sexpr{mysignif(beta_i,2)} & \\
 $\mu$           & Alga refilling rate                                &  $10^6 \cdot \mathrm{cell} \cdot \mathrm{L} ^{-1} \cdot \mathrm{day}^{-1}$                 & \Sexpr{mysignif(mu,2)} & \\
 $\delta$        & Sampling rate                                      &  $\mathrm{day}^{-1}$                                                                         & \Sexpr{mysignif(delta,2)} & \\
+$\sigma^{\native}_{S}$ & Standard deviation of Brownian motion of susceptible native adult         &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & 0  & \\
+$\sigma^{\invasive}_{S}$ & Standard deviation of Brownian motion of susceptible invasive adult         &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & 0  & \\
 $\sigma^{\native}_{I}$ & Standard deviation of Brownian motion of infected native adult         &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigIn,2)}  & (\Sexpr{0},$\infty$)\\
 $\sigma^{\invasive}_{I}$ & Standard deviation of Brownian motion of infected invasive adult       &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigIi,2)}  & (\Sexpr{0},\Sexpr{mysignif(ci_table$sigIi[2],2)})\\
 $\sigma^{\native}_{J}$ & Standard deviation of Brownian motion of native juvenile               &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigJn,2)}  & (\Sexpr{mysignif(ci_table$sigJn[1],2)},\Sexpr{mysignif(ci_table$sigJn[2],2)})\\
@@ -851,6 +855,7 @@ In our selected model, the native {\it Daphnia} species was found to have a high
 Our results indicate that stochasticity in the juvenile stage ($\sigma^{\native}_{J}$ and $\sigma^{\invasive}_{J}$) is an important model feature, needed to adequately describe the data (the corresponding confidence intervals in Table~\ref{tab:estimates} exclude zero; see also the profiles in Fig.~S1).
 That suggests the juvenile stage is particularly sensitive to unmodeled phenomena, such as lower fitness resulting from resource depletion, since unmodeled phenomena can be explained by the model as stochastic uncertainty.
 Noise in other stages is small, and often insignificantly different from zero, as shown by flat profile likelihood plots for $\sigma^{\native}_{S}$, $\sigma^{\invasive}_{S}$, $\sigma^{\native}_{I}$, $\sigma^{\invasive}_{I}$ and $\sigma_F$ in Figure~S1.
+Hence, we fixed the $\sigma^{\native}_{S}$ and $\sigma^{\invasive}_{S}$ to be zero.
 The proposed model is flexible enough to describe the predictability and uncertainty inherent in the system in various ways, and the data have come down in favor of $\sigma^{\native}_{J}$ and $\sigma^{\invasive}_{J}$.
 This indicates that the model might be recalibrated after fixing some or all of the other noise intensities to zero, but there is no pressing need to do so.
 The noise term is helpful when describing other dynamics, for example, dynamics with two species of \textit{Daphnia} and no parasite as shown in Supplement~S5.

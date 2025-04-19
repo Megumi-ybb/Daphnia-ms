@@ -322,12 +322,13 @@ The superscript $\species$ denotes the species, which represents native or invas
 Each stochastic differential equation accounts for various biological and ecological processes, augmented with stochastic terms to capture the inherent randomness within the systems.
 {\small
 \begin{align}
-    dS^{\species}_{\unit}(t) &= \lambda^{\species}_{J,{\unit}} J^{\species}_{\unit}(t) \, dt - \big\{\theta^{\species}_{S,{\unit}} + p^{\species}_{\unit} f^{\species}_{S,{\unit}} P_{\unit}(t) + \delta \big\} S^{\species}_{\unit}(t)\, dt, \label{eq:SIRJPF_dS}\\
+    dS^{\species}_{\unit}(t) &= \lambda^{\species}_{J,{\unit}} J^{\species}_{\unit}(t) \, dt - \big\{\theta^{\species}_{S,{\unit}} + p^{\species}_{\unit} f^{\species}_{S,{\unit}} P_{\unit}(t) + \delta \big\} S^{\species}_{\unit}(t)\, dt  + S^{\species}_{\unit}(t)\, d\zeta^{\species}_{S,{\unit}}, \label{eq:SIRJPF_dS}\\
     dJ^{\species}_{\unit}(t) &= r^{\species}_{\unit}f^{\species}_{S,{\unit}}F_{\unit}(t) S^{\species}_{\unit}(t)\, dt - \theta^{\species}_{J,{\unit}} J^{\species}_{\unit}(t)\, dt - \delta J^{\species}_{\unit}(t)\, dt - \lambda^{\species}_{J,{\unit}} J^{\species}_{\unit}(t)\, dt + J^{\species}_{\unit}(t)\, d\zeta^{\species}_{J,{\unit}}, \label{eq:SIRJPF_dJ}\\
     dI^{\species}_{\unit}(t) &= p^{\species}_{\unit} f^{\species}_{S,{\unit}} S^{\species}_{\unit}(t) P_{\unit}(t)\, dt - \big\{\theta^{\species}_{I,{\unit}} + \delta \big\} I^{\species}_{\unit}(t)\, dt + I^{\species}_{\unit}(t) \, d\zeta^{\species}_{I,{\unit}}, \label{eq:SIRJPF_dI}\\
     dP_{\unit}(t) &= \beta^{\species}_{\unit} \theta^{\species}_{I,{\unit}} I^{\species}_{\unit}(t)dt - f^{\species}_{S,{\unit}} ( S^{\species}_{\unit}(t) + \xi_{\unit} I^{\species}_{\unit}(t))P_{\unit}(t) dt - \theta_{p,{\unit}} P_{\unit}(t)\, dt + P_{\unit}(t)\, d\zeta_{P,{\unit}}, \label{eq:SIRJPF_dP}\\
     dF_{\unit}(t) &= - f^{\species}_{S,{\unit}} F_{\unit}(t) \left(S^{\species}_{\unit}(t)+\xi_{J,{\unit}}J^{\species}_{\unit}(t) +\xi_{\unit} I^{\species}_{\unit}(t)\right)dt  + \mu \, dt + F_{\unit}(t)\, d\zeta_{F,{\unit}}, \label{eq:SIRJPF_dF}\\
-d\zeta^{\species}_{I,{\unit}} &\sim \Normal \big[0, (\sigma^{\species}_{I,{\unit}})^{2}\, dt\big],
+d\zeta^{\species}_{S,{\unit}} &\sim \Normal \big[0, (\sigma^{\species}_{S,{\unit}})^{2}\, dt\big],
+d\zeta^{\species}_{I,{\unit}} \sim \Normal \big[0, (\sigma^{\species}_{I,{\unit}})^{2}\, dt\big],
 d\zeta^{\species}_{J,{\unit}} \sim \Normal \big[0, (\sigma^{\species}_{J,{\unit}})^{2}\, dt\big],\\
 d\zeta_{F,{\unit}} &\sim \Normal \big[0, (\sigma_{F,{\unit}})^{2}\, dt\big],
 d\zeta_{P,{\unit}} \sim \Normal \big[0, (\sigma_{P,{\unit}})^{2}\, dt\big].
@@ -358,7 +359,8 @@ Stochastic fluctuations are represented by the term $P_{\unit}(t) \, d\zeta_{P,\
 Finally, Equation \eqref{eq:SIRJPF_dF} models the \textit{A.} alga population $F_{\unit}(t)$. The algae are consumed by susceptible individuals, juveniles, and infected individuals, scaled by consumption rate $f_S$ and ratio of filtering rate $\xi_{J,\unit}$ and $\xi_{\unit}$. Algae gets manually refilled at rate $\mu$, with $F_{\unit}(t) \, d\zeta_{F,\unit}$ representing stochastic noise.
 \parskip 3mm
 
-The stochastic terms $d\zeta^{\species}_{J,{\unit}}$, $d\zeta^{\species}_{I,{\unit}}$, $d\zeta_{P,{\unit}}$, and $d\zeta_{F,{\unit}}$ represent Brownian motion affecting each population, modeled as Gaussian white noise with mean zero and variances $(\sigma^{\species}_{S,{\unit}})^{2}\, dt$, $(\sigma^{\species}_{J,{\unit}})^{2}\, dt$, $(\sigma^{\species}_{I,{\unit}})^{2}\, dt$, $(\sigma_{P,{\unit}})^{2}\, dt$, and $(\sigma_{F,{\unit}})^{2}\, dt$, respectively.
+The stochastic terms $d\zeta^{\species}_{S,{\unit}}$, $d\zeta^{\species}_{J,{\unit}}$, $d\zeta^{\species}_{I,{\unit}}$, $d\zeta_{P,{\unit}}$, and $d\zeta_{F,{\unit}}$ represent Brownian motion affecting each population, modeled as Gaussian white noise with mean zero and variances $(\sigma^{\species}_{S,{\unit}})^{2}\, dt$, $(\sigma^{\species}_{J,{\unit}})^{2}\, dt$, $(\sigma^{\species}_{I,{\unit}})^{2}\, dt$, $(\sigma_{P,{\unit}})^{2}\, dt$, and $(\sigma_{F,{\unit}})^{2}\, dt$, respectively.
+Similar to the SIRJPF2 model, we fixed the $\sigma^{\species}_{S}$ to be zero due to its flat profile plot.
 \parskip 3mm
 
 This model intricately details the interactions and feedback mechanisms among the populations under study.
@@ -652,6 +654,7 @@ $\xi_J$         & Ratio of juvenile individual filtering rate &     $\mathrm{Uni
 $\beta^{\native}$       & Spores produced by death per infected individual     &  $10^3 \cdot \mathrm{spore} \cdot \mathrm{individual}^{-1} \cdot \mathrm{day}^{-1}$  & \Sexpr{mysignif(beta_n,2)} & \\
 $\mu$           & Algae refilling rate                                &  $10^6 \cdot \mathrm{cell} \cdot \mathrm{L} ^{-1} \cdot \mathrm{day}^{-1}$                 & \Sexpr{mysignif(mu,2)} & \\
 $\delta$        & Sampling rate                                      &  $day ^{-1}$                                                                         & \Sexpr{mysignif(delta,2)} & \\
+$\sigma^{\native}_{S}$ & Standard deviation of Brownian motion of susceptible adult         &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & 0  & \\
 $\sigma^{\native}_{I}$ & Standard deviation of Brownian motion of infected adult         &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigIn,2)}  & (\Sexpr{0},\,$\infty$)\\
 $\sigma^{\native}_{J}$ & Standard deviation of Brownian motion of juvenile               &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigJn,2)}  & (\Sexpr{mysignif(ci_table$sigJn[1],2)},\,\Sexpr{mysignif(ci_table$sigJn[2],2)})\\
 $\sigma_{F}$   & Standard deviation of Brownian motion of alga                          &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigF,2)}  & (\Sexpr{0},\,\Sexpr{mysignif(ci_table$sigF[2],2)})\\
@@ -717,6 +720,7 @@ $\xi_J$         & Ratio of juvenile individual filtering rate &     $\mathrm{Uni
 $\beta^{\invasive}$       & Spores produced by death per infected individual     &  $10^3 \cdot \mathrm{spore} \cdot \mathrm{individual}^{-1} \cdot \mathrm{day}^{-1}$  & \Sexpr{mysignif(beta_i,2)} & \\
 $\mu$           & Algae refilling rate                                &  $10^6 \cdot \mathrm{cell} \cdot \mathrm{L} ^{-1} \cdot \mathrm{day}^{-1}$                 & \Sexpr{mysignif(mu,2)} & \\
 $\delta$        & Sampling rate                                      &  $day ^{-1}$                                                                         & \Sexpr{mysignif(delta,2)} & \\
+$\sigma^{\invasive}_{S}$ & Standard deviation of Brownian motion of susceptible adult         &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & 0  & \\
 $\sigma^{\invasive}_{I}$ & Standard deviation of Brownian motion of infected adult         &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigIi,2)}  & (\Sexpr{0},$\infty$)\\
 $\sigma^{\invasive}_{J}$ & Standard deviation of Brownian motion of juvenile               &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigJi,2)}  & (\Sexpr{0},$\infty$)\\
 $\sigma_{F}$   & Standard deviation of Brownian motion of alga                          &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigF,2)}  & (\Sexpr{0},$\infty$)\\
@@ -857,10 +861,11 @@ The stochastic differential equations governing the system are:
 
 {\small
 \begin{align}
-    dS^{\species}_{\unit}(t) &= \lambda^{\species}_{J,{\unit}} J^{\species}_{\unit}(t) \, dt - (\theta^{\species}_{S,{\unit}} + \delta) S^{\species}_{\unit}(t)\, dt , \label{eq:SRJF2_dS}\\
+    dS^{\species}_{\unit}(t) &= \lambda^{\species}_{J,{\unit}} J^{\species}_{\unit}(t) \, dt - (\theta^{\species}_{S,{\unit}} + \delta) S^{\species}_{\unit}(t)\, dt + S^{\species}_{\unit}(t)\, d\zeta^{\species}_{S,{\unit}}, \label{eq:SRJF2_dS}\\
     dJ^{\species}_{\unit}(t) &= r^{\species}_{\unit}f^{\species}_{S,{\unit}}F_{\unit}(t) S^{\species}_{\unit}(t)\, dt - \theta^{\species}_{J,{\unit}} J^{\species}_{\unit}(t)\, dt - \delta J^{\species}_{\unit}(t)\, dt - \lambda^{\species}_{J,{\unit}} J^{\species}_{\unit}(t)\, dt + J^{\species}_{\unit}(t)\, d\zeta^{\species}_{J,{\unit}}, \label{eq:SRJF2_dJ}\\
     dF_{\unit}(t) &= - \sum_{\species \in \{\native, \invasive\}} f^{\species}_{S,{\unit}} F_{\unit}(t) \left(S^{\species}_{\unit}(t)+\xi_{J,{\unit}}J^{\species}_{\unit}(t)\right)dt  + \mu \, dt + F_{\unit}(t)\, d\zeta_{F,{\unit}}, \label{eq:SRJF2_dF}\\
-d\zeta^{\species}_{J,{\unit}} &\sim \Normal \big[0, (\sigma^{\species}_{J,{\unit}})^{2}\, dt\big]\,
+d\zeta^{\species}_{S,{\unit}} &\sim \Normal \big[0, (\sigma^{\species}_{S,{\unit}})^{2}\, dt\big]\,
+d\zeta^{\species}_{J,{\unit}} \sim \Normal \big[0, (\sigma^{\species}_{J,{\unit}})^{2}\, dt\big]\,
 d\zeta_{F,{\unit}} \sim \Normal \big[0, \sigma_{F,{\unit}}^{2}\, dt\big]\label{eq:SRJF2_dzetaS}.
 \end{align}
 }
@@ -869,6 +874,7 @@ d\zeta_{F,{\unit}} \sim \Normal \big[0, \sigma_{F,{\unit}}^{2}\, dt\big]\label{e
 Equation~\eqref{eq:SRJF2_dS} models the rate of change of the specific species' susceptible population $S^{\species}_{\unit}(t)$.
 The term $\lambda^{\species}_{J,\unit} J^{\species}_{\unit}(t) \, dt$ represents the maturation of juveniles into susceptible adults at rate $\lambda^{\species}_{J,\unit}$.
 The mortality term $-\left(\theta^{\species}_{S,\unit} + \delta\right) S^{\species}_{\unit}(t) \, dt$ accounts for natural death at rate $\theta^{\species}_{S,\unit}$ and the sampling rate $\delta$.
+For consistency with the SIRJPF2 and SIRJPF model, we further fix $\sigma^{\species}_{S,{\unit}}$ to be zero for specific analysis of this dynamics.
 \parskip 3mm
 
 Equation~\eqref{eq:SRJF2_dJ} describes the dynamics of the juvenile population $J^{\species}_{\unit}(t)$.
@@ -1091,6 +1097,8 @@ $\beta^{\native}$       & Spores produced per infected native individual     &  
 $\beta^{\invasive}$       & Spores produced per infected invasive individual   &  $10^3 \cdot \mathrm{spore} \cdot \mathrm{individual}^{-1} \cdot \mathrm{day}^{-1}$  & \Sexpr{mysignif(beta_i,2)} & \\
 $\mu$           & Alga refilling rate                                &  $10^6 \cdot \mathrm{cell} \cdot \mathrm{L} ^{-1} \cdot \mathrm{day}^{-1}$                 & \Sexpr{mysignif(mu,2)} & \\
 $\delta$        & Sampling rate                                      &  $day ^{-1}$                                                                         & \Sexpr{mysignif(delta,2)} & \\
+$\sigma^{\native}_{S}$ & Standard deviation of Brownian motion of native susceptible adult             &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & 0  & \\
+$\sigma^{\invasive}_{S}$ & Standard deviation of Brownian motion of invasive susceptible adult              &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & 0  & \\
 $\sigma^{\native}_{J}$ & Standard deviation of Brownian motion of native juvenile               &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigJn,2)}  & (\Sexpr{mysignif(ci_table$sigJn[1],2)},$\infty$)\\
 $\sigma^{\invasive}_{J}$ & Standard deviation of Brownian motion of invasive juvenile             &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigJi,2)}  & (\Sexpr{0},\Sexpr{mysignif(ci_table$sigJi[2],2)})\\
 $\sigma_{F}$   & Standard deviation of Brownian motion of alga                          &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigF,2)}  & (\Sexpr{mysignif(ci_table$sigF[1],2)},\Sexpr{mysignif(ci_table$sigF[2],2)})\\
@@ -1176,10 +1184,11 @@ In this section, we introduce the SRJF model, which formalizes the dynamics amon
 
 {\small
 \begin{align}
-    dS^{\species}_{\unit}(t) &= \lambda^{\species}_{J,{\unit}} J^{\species}_{\unit}(t) \, dt - (\theta^{\species}_{S,{\unit}} + \delta) S^{\species}_{\unit}(t)\, dt , \label{eq:SRJF_dS}\\
+    dS^{\species}_{\unit}(t) &= \lambda^{\species}_{J,{\unit}} J^{\species}_{\unit}(t) \, dt - (\theta^{\species}_{S,{\unit}} + \delta) S^{\species}_{\unit}(t)\, dt + S^{\species}_{\unit}(t)\, d\zeta^{\species}_{S,{\unit}} , \label{eq:SRJF_dS}\\
     dJ^{\species}_{\unit}(t) &= r^{\species}_{\unit}f^{\species}_{S,{\unit}}F_{\unit}(t) S^{\species}_{\unit}(t)\, dt - \theta^{\species}_{J,{\unit}} J^{\species}_{\unit}(t)\, dt - \delta J^{\species}_{\unit}(t)\, dt - \lambda^{\species}_{J,{\unit}} J^{\species}_{\unit}(t)\, dt + J^{\species}_{\unit}(t)\, d\zeta^{\species}_{J,{\unit}}, \label{eq:SRJF_dJ}\\
     dF_{\unit}(t) &= - f^{\species}_{S,{\unit}} F_{\unit}(t) \left(S^{\species}_{\unit}(t)+\xi_{J,{\unit}}J^{\species}_{\unit}(t)\right)dt  + \mu \, dt + F_{\unit}(t)\, d\zeta_{F,{\unit}}, \label{eq:SRJF_dF}\\
-d\zeta^{\species}_{J,{\unit}} &\sim \Normal \big[0, (\sigma^{\species}_{J,{\unit}})^{2}\, dt\big]\,
+d\zeta^{\species}_{S,{\unit}} &\sim \Normal \big[0, (\sigma^{\species}_{S,{\unit}})^{2}\, dt\big]\,
+d\zeta^{\species}_{J,{\unit}} \sim \Normal \big[0, (\sigma^{\species}_{J,{\unit}})^{2}\, dt\big]\,
 d\zeta_{F,{\unit}} \sim \Normal \big[0, \sigma_{F,{\unit}}^{2}\, dt\big].\label{eq:SRJF_dzetaS}
 \end{align}
 }
@@ -1187,6 +1196,7 @@ d\zeta_{F,{\unit}} \sim \Normal \big[0, \sigma_{F,{\unit}}^{2}\, dt\big].\label{
 Equation~\eqref{eq:SRJF_dS} describes the rate of change of the susceptible population $S^{\species}_{\unit}(t)$. The term $\lambda^{\species}_{J,\unit} J^{\species}(t) \, dt$ represents the growth of susceptible individuals from the maturation of juvenile population at a rate $\lambda^{\species}_{J,\unit}$.
 The loss term $-\left(\theta^{\species}_{S,{\unit}}+ \delta\right) S^{\species}_{\unit}(t) \, dt$ accounts for the mortality of susceptible individuals due to natural causes at rate $\theta^{\species}_{S,\unit}$ and sampling at rate $\delta$.
 The stochastic component $S^{\species}_{\unit}(t) \, d\zeta^{\species}_{S,\unit}$ introduces random fluctuations into the susceptible population dynamics, with $d\zeta^{\species}_{S,\unit}$ being a Brownian motion characterized by variance $(\sigma^{\species}_{S,{\unit}})^{2}\, dt$.
+For consistency with the SIRJPF2 and SIRJPF model, we further fix $\sigma^{\species}_{S,{\unit}}$ to be zero for specific analysis of this dynamics.
 \parskip 3mm
 
 In Equation~\eqref{eq:SRJF_dJ}, the dynamics of the juvenile population $J^{\species}_{\unit}(t)$ are modeled. The growth term $r^{\species}_{\unit} f^{\species}_{S,\unit} F^{\species}_{\unit}(t) S^{\species}_{\unit}(t) \, dt$ signifies the increase in juveniles resulting from feeding on alga, where $r^{\species}_{\unit}$ is the growth efficiency factor and $f^{\species}_{S,\unit}$ is the filtering rate of susceptible individuals.
@@ -1461,6 +1471,7 @@ $\xi_J$         & Ratio of juvenile individual filtering rate &     $\mathrm{Uni
 $\beta^{\native}$       & Spores produced by death per infected individual     &  $10^3 \cdot \mathrm{spore} \cdot \mathrm{individual}^{-1} \cdot \mathrm{day}^{-1}$  & \Sexpr{mysignif(beta_n,2)} & \\
 $\mu$           & Algae refilling rate                                &  $10^6 \cdot \mathrm{cell} \cdot \mathrm{L} ^{-1} \cdot \mathrm{day}^{-1}$                 & \Sexpr{mysignif(mu,2)} & \\
 $\delta$        & Sampling rate                                      &  $day ^{-1}$                                                                         & \Sexpr{mysignif(delta,2)} & \\
+$\sigma^{\native}_{S}$ & Standard deviation of Brownian motion of susceptible adult               &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & 0  & \\
 $\sigma^{\native}_{J}$ & Standard deviation of Brownian motion of juvenile               &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigJn,2)}  & (\Sexpr{mysignif(ci_table$sigJn[1],2)},\Sexpr{mysignif(ci_table$sigJn[2],2)})\\
 $\sigma_{F}$   & Standard deviation of Brownian motion of alga                          &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigF,2)}  & (\Sexpr{0},\Sexpr{mysignif(ci_table$sigF[2],2)})\\
 $\tau^{\native}_{S}$      &  Measurement dispersion for susceptible adult          &$\mathrm{Unitless}$           & \Sexpr{mysignif(k_Sn,2)}  & (\Sexpr{mysignif(ci_table$k_Sn[1],2)},\Sexpr{mysignif(ci_table$k_Sn[2],2)})\\
@@ -1509,6 +1520,7 @@ $\xi_J$         & Ratio of juvenile individual filtering rate &     $\mathrm{Uni
 $\beta^{\invasive}$       & Spores produced by death per infected individual     &  $10^3 \cdot \mathrm{spore} \cdot \mathrm{individual}^{-1} \cdot \mathrm{day}^{-1}$  & \Sexpr{mysignif(beta_i,2)} & \\
 $\mu$           & Algae refilling rate                                &  $10^6 \cdot \mathrm{cell} \cdot \mathrm{L} ^{-1} \cdot \mathrm{day}^{-1}$                 & \Sexpr{mysignif(mu,2)} & \\
 $\delta$        & Sampling rate                                      &  $day ^{-1}$                                                                         & \Sexpr{mysignif(delta,2)} & \\
+$\sigma^{\invasive}_{S}$ & Standard deviation of Brownian motion of susceptible adult               &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & 0  & \\
 $\sigma^{\invasive}_{J}$ & Standard deviation of Brownian motion of juvenile               &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigJi,2)}  & (\Sexpr{mysignif(ci_table$sigJi[1],2)},\Sexpr{mysignif(ci_table$sigJi[2],2)})\\
 $\sigma^{\invasive}_{F}$   & Standard deviation of Brownian motion of alga                          &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigF,2)}  & (\Sexpr{0},\Sexpr{mysignif(ci_table$sigF[2],2)})\\
 $\tau^{\invasive}_{S}$      &  Measurement dispersion for susceptible adult           &$\mathrm{Unitless}$           & \Sexpr{mysignif(k_Si,2)}  & (\Sexpr{mysignif(ci_table$k_Si[1],2)},\Sexpr{mysignif(ci_table$k_Si[2],2)})\\
