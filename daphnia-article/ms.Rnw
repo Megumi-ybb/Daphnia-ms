@@ -915,19 +915,18 @@ In the original study, \citet{searle16} collected juvenile data but did not incl
 We make our analysis comparable to \citet{searle16} by fitting to the same data, and therefore do not include a measurement model for juveniles.
 Instead, the juvenile data are available to use as model validation, which is done by comparing simulations from the fitted model to the unmodeled data in Fig.~\ref{fig:sim_plot}.
 
-\jwc{This is a fairly long paragraph, let's consider shortening it or breaking it up.}
 Knowing that the average body length of juvenile \textit{Daphnia} is shorter than the average body size of adult \textit{Daphnia} for both species, we expect that juvenile individuals will have a lower filtering rate.
 Yet, without fitting to juvenile data, it is unclear whether that question is identifiable from the model at hand.
-To explore this assumption, we compared the value $\xi_{J,{\unit}} = 1$ (juveniles and adults filter at the same rate) with the extreme value $\xi_{J,{\unit}} = 0.001$ (juveniles filter much slower than adults).
-We then maximized the log-likelihood over the remaining parameters subject to this constraint, and we compared the conditional maximized log-likelihood at each time for each observation category for the different $\xi_{J,{\unit}}$ values, as shown in Fig.~S3(a).
+To explore this assumption, we compared the model using the value $\xi_{J,{\unit}} = 1$ (juveniles and adults filter at the same rate) against the extreme value $\xi_{J,{\unit}} = 0.001$ (juveniles filter much slower than adults).
+We maximized the log-likelihood over the remaining parameters subject to this constraint, and compared the conditional maximized log-likelihood at each time for each observation category for the different $\xi_{J,{\unit}}$ values, as shown in Fig.~S3(a).
 These results show that setting $\xi_{J,{\unit}} = 1$ leads to only a slightly higher maximized log-likelihood ($-881.13$) than $\xi_{J,{\unit}} = 0.001$ ($-882.24$), indicating that the parameter is weakly identified.
 Moreover, plotting the conditional log-likelihood for each state at each time, we observe that the log-likelihood components for susceptible and infected \textit{D. dentifera} and \textit{D. lumholtzi} are nearly the same between the two parameter settings.
-Thus, the similar log-likelihoods are not a consequence of a tradeoff between fitting different features of the data, but simply provide indistinguishable explanations of the fitted data.
-However, the choice of $\xi_{J,{\unit}}$ nevertheless affects the interpretation of the model: the maximum likelihood estimates constrained to different values of $\xi_{J,{\unit}}$ lead to distinct behavior of juvenile \textit{Daphnia} in simulations, as shown in Fig.~S3(b).
+These results suggest that both parameter values provide indistinguishable explanations of the observed data.
+
+The choice of $\xi_{J,{\unit}}$ nevertheless affects the interpretation of the fitted model: the maximum likelihood estimates constrained to different values of $\xi_{J,{\unit}}$ lead to distinct behavior of juvenile \textit{Daphnia} in simulations, as shown in Fig.~S3(b).
 If $\xi_{J,{\unit}}$ is set to be lower than is biologically plausible, simulated trajectories from the fitted model have far fewer juveniles than was observed, which is shown in Fig.~S3(b) as well.
 This indicates model misspecification which could bias the estimates of $r^{\species}_{\unit}, p^{\species}_{\unit}$ and $ f^{\species}_{S,\unit}$.
 When a weakly identified parameter has consequences for the biological interpretation of the model, it is appropriate to fix that parameter at a biologically plausible value consistent with previous studies \citep{ebert05}, and we therefore fixed $\xi_{J,{\unit}} = 1$ for subsequent analysis.
-When a weakly identified parameter has consequences for the biological interpretation of the model, it is appropriate to fix that parameter at a biologically plausible value, while bearing in mind that decision corresponds to an extra modeling assumption about which the data being fitted are agnostic.
 
 \subsection{Simulations}
 \begin{figure}[t]
@@ -1039,9 +1038,6 @@ p6 = ggplot() +
   scale_x_continuous(limits = c(0, 52), breaks = c(0, 25, 50))
 
 
-
-
-
 all_sims_summary <- all_sims %>%
   group_by(day) %>%
   summarise(lower = quantile(F, 0.1),   # 2.5% quantile
@@ -1088,7 +1084,6 @@ suppressWarnings(
 )
 @
   % \includegraphics[width=1\textwidth]{"Density_plot.png"}
-
 \caption{\label{fig:sim_plot}
 Simulated \textit{Daphnia} densities (Individuals$/$Liter), alga density ($10^6\cdot$cells$/$Liter) and parasite density ($10^3\cdot$spores$/$Liter), over time (days), in the mixed species parasitized dynamics with parameters from Table~\ref{Table:Model_comparison}. 
 Blue bands are $95\%$ pointwise confidence intervals; black lines show the mean; solid color lines are the experimental data.
@@ -1096,18 +1091,20 @@ The parasite and food densities were not observed, and the dashed colored lines 
 }
 \end{figure}
 
+\jwc{I don't think I understand the next sentence. What are we referring to here when we say parameter swarm? Do we mean that we use AIC to pick model structure and the number of unit-specific parameters? Perhaps we can just remove the sentence.}
 Based on AIC comparisons, we identified the optimal parameter swarm that reaches the best balance between fit and parsimony among unit-specific models and benchmark models. 
-In addition to comparing model fit using information criterion, we further validate the calibrated SIRJPF2 model via a simulation study.
-We generate 1000 simulations from the model and compare these simulations to the data (Figure \ref{fig:sim_plot}).
+In addition to comparing model fit using AIC, we further validate the calibrated SIRJPF2 model via a simulation study.
+We generate 1000 simulations from the model and compare these simulations to the data (Figure~\ref{fig:sim_plot}).
 Unit level simulation plots are shown in Fig.~S2.
 
+\jwc{Check for consistency between the use of Figure and Fig. in the manuscript.}
 The simulation bands presented in Figure \ref{fig:sim_plot} closely align with the empirical data curves from the actual experiment, underscoring the model's capability to replicate the observed dynamics.
 Notably, the model captures not only the trends but also the variability of the experimental data.
 Supplementary Fig.~S2 further illustrate the fluctuation behavior of each states within the dynamics.
 Simulations from other models considered are included in the supplementary Figure~S9--S12, S16, S17, S23--S26.
 
-
-With added $J^{\species}_{\unit}$ states based on SIRPF2 model, our model provides an improved statistical fit and high coverage in observed juvenile population dynamics, even without inclusion of juvenile data.
+\jwc{Rework this paragraph.}
+With added $J^{\species}_{\unit}$ states based on SIRPF2 model, our model provides an improved statistical fit and high coverage in observed juvenile population dynamics, even without directly calibrating the model using juvenile data.
 As juveniles show rare infection by the parasite and gradually mature, this imposes limits on the growth speed of susceptible \textit{Daphnia} and further constrains the density growth rate of infecteds.
 Further, juveniles compete with adults for available food resources.
 While we have shown the relevance of age-structured dynamics for understanding the data on adults, future work could identify the juvenile dynamics more precisely (for example, improving identifiability of $\xi_{J,\unit}$) by fitting directly to juvenile data.
