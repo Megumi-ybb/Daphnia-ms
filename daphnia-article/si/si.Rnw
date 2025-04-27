@@ -172,6 +172,8 @@ The MCAP method's reliance on Monte Carlo simulations allows for a flexible asse
 \citet{ionides17} demonstrate the MCAP method's efficacy in dynamic system models, where traditional methods often fail to capture the intricate dependencies between parameters.
 \parskip 3mm
 
+\eic{TO DO:  I think the red horizontal lines on the profiles can be removed. They raise questions. At face value, they are evidence of inadequate maximization in the profiles. We know that MCAP profiles can still have good coverage even when there is shortfall, but readers may not know that. We have to explain, but they might miss the explanation or not believe it. So, I think we should both (i) add explanation in Sec S1; (ii) not draw more attention to this than necessary, giving the reader full information without leading them astray. Of course, the profiles would ideally all attain something close to the red dot, but practical computational considerations prevent putting that much computer time into every profile point.
+}
 
 \section{Panel Iterated Filter}
 
@@ -1633,8 +1635,8 @@ This behavior underscores the model's relevance in ecological forecasting by not
     \label{fig:SRJF_lum_simulation_lines}
 \end{figure}
 
-\section{Benchmark Model}
-\subsection{Searle et al.’s model}
+\section{Benchmark Models}
+\subsection{Searle et al.’s Model}
 Using the mechanistic model introduced by \citet{searle16}, we conduct predictions of population $\tilde{y}_{\unit,\benchmarktime}$ for susceptible, infected \textit{D.~dentifera} and \textit{D.~lumholtzi} for all time $\benchmarktime \in \{1,2...,N\}$ and units $\unit \in \{1,2...,U\}$.
 In our case, each unit is observed at the same number of time points, so $N_{\unit} = N$ for all $\unit$.
 Then, we obtain the overall log-likelihood by summing the log-probabilities of the observed density of \textit{Daphnia}.
@@ -1647,7 +1649,7 @@ Specifically, we use the observed densities $y^*_{\unit,\benchmarktime}$ and the
 
 To obtain the maximum likelihood estimate, we conduct the linear optimization on $\tau$ and choose the $\hat{\tau}$ that yields the highest overall likelihood. 
 With this $\hat{\tau}$, we obtain the likelihood by \ref{eq:total_loglik} for the model on the data. And the result of the model fitting can be found in the Table~2 in the main article.
-\subsection{NBinom Regression}
+\subsection{Negative Binomial Regression}
 Count data from ecological studies often exhibit overdispersion and unit-specific variation.
 The NBinom distribution addresses overdispersion, while random intercepts allow each unit to have its own baseline level.
 As a benchmark model, we employ NBinom generalized linear mixed models (GLMMs) to capture overdispersed count data and correlation across repeated measures within each unit $\unit$.

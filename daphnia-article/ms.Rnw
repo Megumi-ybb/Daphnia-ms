@@ -77,7 +77,8 @@
 
 <<Debug, include=FALSE>>=
 library(knitr)
-# Set global caching
+# Set global caching to FALSE for editing code, and TRUE for editing text
+# cache_option = TRUE 
 cache_option = FALSE
 opts_chunk$set(echo = TRUE, cache = cache_option)
 @
@@ -243,10 +244,9 @@ Iterated filtering techniques apply to a more general class of POMP models, but 
   We calculate Akaike's Information Criterion (AIC) to compare the overall fit of rival mechanistic models \citep{aic74}.
 We compute profile likelihood confidence intervals, making appropriate adjustment for Monte Carlo uncertainty \citep{ionides17,ning21}.
 All these techniques are predicated on an ability to evaluate and maximize the log-likelihood function.
-This ability was unlocked by panel iterated filtering \citep{breto20} and further strengthened by the marginalized panel iterated filtering algorithm that we develop and demonstrate here \jwc{Should we discuss the relationship between this paper and the MPIF methods paper? Both are coming out at roughly the same time, should we put one (or both) on ArXiv to be able to cite it?}.
-These algorithms are discussed in more detail in Section~\ref{sec:meth}.
-First, we discuss the experimental system in Section~\ref{sec:studysystem}.
-Then, we present our models and their fitted parameter values in Section~\ref{sec:mecmod}.
+This ability was unlocked by panel iterated filtering \citep{breto20} and we demonstrate empirically that this further strengthened by a new marginalized panel iterated filtering algorithm.
+A contemporaneous investigation of marginalized panel iterated filtering from a theory and methodology perspective is provided by \cite{wheeler25}.
+These algorithms are discussed in more detail in Section~\ref{sec:meth}, after description of the experimental system in Section~\ref{sec:studysystem} and presentation of our models and their fitted parameter values in Section~\ref{sec:mecmod}.
 Section~\ref{sec:res} presents additional results showing that our stochastic model, that describes depletion of the algal food resource together with age-structured population dynamics, provides a better statistical explanation of the data than the previous deterministic model by \citet{searle16} that supposed the dynamics are driven by a switch of reproductive strategies from the asexual production of juveniles to the sexual production of long-lasting dormant eggs.
 Our findings have consequences for the interpretation of this experiment and the planning of future experiments.
 Section~\ref{sec:dis} is a concluding discussion.
@@ -272,7 +272,7 @@ Infection leads to sterility and reduced feeding, and an opaque body cavity whic
 
 \citet{searle16} conducted an experiment involving a collection of mesocosms, each consisting of 15 liter of growth medium in a bucket, initialized with  2.5 $\times$ $10^8$ cells of green alga, {\it A.~falcatus}, and with one or two species of {\it Daphnia}.
 Six treaments were carried out, comprised of three levels of the host ({\it D.\ dentifera} or {\it D. lumholtzi} or both) factored with two levels of the parasite (present or absent).
-The experimental units are replicates of the treatments; the design consisted of 10 replicates for single-host treatments and 9 replicates for two-host treatments.
+The experimental units are replicates of the treatments; the design consisted of 8, 9 or 10 units for each treatment.
 The initial {\it Daphnia} population consisted of 45 adult females, which in two-host treatments consisted of 35 native \textit{Daphnia} and 10 invasives.
 After a four day acclimatization period, spores of the fungal parasite, {\it M.~bicuspidata} were added at a concentration of 25 per \text{mL} if the mesocosm was assigned to the parasite exposure treatment.
 Every five days, a well-mixed sample of 1 liter was removed, and the species (native or invasive), infection status, sex, and age (juvenile or adult) were identified for each \textit{Daphnia} using a microscope.
@@ -366,15 +366,17 @@ Columns are buckets corresponding to replications with same treatment setting.
 
 Here, we focus on the most complex experimental treatment, namely, the four species treatment with both host species, the alga and the parasite.
 The simpler treatments are presented in Supplementary Sections~S4,~S5 and~S6.
-Data from the four species treatment are displayed in Figure~\ref{fig:data_vis}.
+Data from the four species treatment are displayed in Fig.~\ref{fig:data_vis}.
 The females and juveniles show a population peak around day 25, typically followed by a collapse and a mild resurgence around day 50.
 The males arise predominantly later in the experiment as shown in Table S12.
 The hypothesis that motivated the model of \citet{searle16} is that the arrival of the males, and the subsequent switch to the generation of ephippia by sexually reproduction, explains the decay of the other populations.
 This hypothesis is related to resource depletion, since shortage of food and high population density are both triggers for a change in reproductive strategy \citep{radzikowski18,searle16salinization}.
-However, resource depletion affects parthenogenetic reproduction as well influencing a switch to sexual reproduction, and we investigate the hypothesis that explicit modeling of resource depletion can help to explain the observed dynamics.
-This led us to introduce a latent food compartment, and we found that including age structure via a juvenile stage also helps to improve the statistical fit of the model.
+However, resource depletion affects parthenogenetic reproduction as well influencing a switch to sexual reproduction
+Therefore, we investigate the hypothesis that explicit modeling of resource depletion can help to explain the observed dynamics, via the introduction of a latent food compartment.
+We also hypothesizes that the inclusion of age structure, via a juvenile stage, could help to explain the population dynamics even though very juveniles show disease.
 Our paradigm is to assess models that represent known or hypothesized biological mechanisms in terms of their ability to explain observed data, quantified by likelihood penalized by model complexity.
-Our hypothesized model is supported so far as it is the best available model according to this criterion; our model and data are available at \href{https://github.com/Megumi-ybb/Daphnia-ms}{github} to facilitate further investigations \jwc{Is including a link the appropriate thing here? I think making a Zenodo (or similar) repository, and just mentioning their existance and including more details at the end of the document.}
+Our hypothesized model is supported so far as it is the best available model according to this criterion; our model and data are available at \href{https://github.com/Megumi-ybb/Daphnia-ms}{https://github.com/Megumi-ybb/Daphnia-ms}.
+\eic{To be made public, and archived on Zenodo, when the ms is submitted and put on arxiv}
 
 \section{The Susceptible-Infected-Removed-Juvenile-Parasite-Food 2-species model (SIRJPF2)}
 \label{sec:mecmod}
@@ -451,7 +453,7 @@ Transition to the $R$ state represents death or removal of any species.
 \label{fig:flow_SIRJPF2}
 \end{figure}
 
-Figure~\ref{fig:flow_SIRJPF2} shows a flow diagram for a two-species model where the \textit{Daphnia} are susceptible adult (S), infected adult (I), or juvenile (J), with a superscript $\invasive$ for invasive and $\native$ for native.
+Fig.~\ref{fig:flow_SIRJPF2} shows a flow diagram for a two-species model where the \textit{Daphnia} are susceptible adult (S), infected adult (I), or juvenile (J), with a superscript $\invasive$ for invasive and $\native$ for native.
 We also keep track of the aquatic parasite spore density (P) and the food density (F).
 Removal (i.e., death, consumption or destructive sampling) for any species is described by transition to class R.
 Similar to many epidemiological models, this description of the dynamic system extends the basic SIR model \citep{weiss13}.
@@ -463,9 +465,8 @@ A version of SIRJPF2 with gamma noise, called SIRJPF2-Gamma, is presented in Sec
 
 The nonlinearity and intrinsic stochasticity of the SIRPF2 model are characteristic features of dynamics in biological systems \citep{coulson04,wilkinson18}.
 In the following equations, the superscript $\species$ describes the species of \textit{Daphnia}, taking value ${\native}$ for native (\textit{D.~dentifera}) and ${\invasive}$ for invasive  (\textit{D.~lumholtzi}).
-The subscript $u$ ranges in $\seq{1}{U}$ with $U=8,9,10$ depending on the specific treatment \jwc{Is the treatment not fixed for the SIRPF2 model?}.
-Most parameters are written with potential dependence on $u$ to enable investigation of factors explaining differences between replicates.
-We will later establish that this dependence is not needed; random dynamic noise is sufficient to explain the observed differences.
+The subscript $u$ ranges in $\seq{1}{U}$, and most parameters are written with potential dependence on $u$ to enable investigation of factors explaining differences between replicates.
+We will later establish that this dependence is not needed; random dynamic noise is sufficient to explain the observed differences between units.
 The experimentally determined sampling rate, $\delta = 0.013$ per liter per day, and food replenishment rate, $\mu = 0.37 \times 10^5$ cells per liter per day, are fixed parameter values that are shared between units based on the experimental protocol.
 {\small
 \begin{align}
@@ -525,7 +526,7 @@ N^{\species}_{I,{\unit},n} &\sim \operatorname{NBinomial}\big(
 \end{align}
 where $\operatorname{NBinomial}(\mu,\tau)$ is the negative binomial distribution with mean $\mu$ and variance $\mu+ \frac{\mu^2}{\tau}$.
 Since the sampled volume is $1$ liter, the densities $S^{\species}_{\unit}(t_n)$ and $I^{\species}_{\unit}(t_n)$ are on the same scale as the respective counts, $N^{\species}_{S,{\unit},n}$ and  $N^{\species}_{I,{\unit},n}$.
-We do not include the data on juveniles during the model fitting process, following the approach of \citet{searle16}.
+We do not include the data on juveniles during the model fitting process, to keep our approach comparable to the investigation by \citet{searle16}.
 Therefore, these data are available for an out-of-sample model validation.
 
 Simpler treatments with a single \textit{Dapnia} species (SIRJPF) and without the parasite (SRJF and SRJF2) arise as special cases of SIRJPF2, with appropriate states and parameters set to zero.
@@ -539,9 +540,9 @@ By isolating the food variable in the absence of parasites and/or inter-species 
 The applications of POMP models span various fields, including epidemiology \citep{mietchen2024,fox22,wen2024}, ecology \citep{auger-methe21,marino19,blackwood13}, and finance \citep{breto14}, among others.
 In epidemiological studies, POMP models are instrumental in estimating disease transmission rates and predicting future outbreaks by modeling the spread of infectious diseases when only a fraction of cases are observed \citep{subramanian21}.
 Similarly, POMP models help in understanding animal population dynamics and migration patterns based on limited or sporadic sighting data \citep{auger-methe21}.
-Latent state estimation and parameter inference \jwc{In what way for parameter inference, isn't this difficult enough to require IF2 rather than just the PF?} in POMP models is commonly carried out using the particle filter, also known as sequential Monte Carlo \citep{arulampalam02}.
+Widely used latent state estimation and parameter inference methods for nonlinear non-Gaussian POMP models build on the particle filter, also known as sequential Monte Carlo \citep{arulampalam02}.
 Particle filters involve simulating a large number of potential realizations of the latent process and updating these simulations as new observations become available, thereby approximating the conditional distribution of the state given the data.
-Plug-and-play inference methods including iterated filtering, particle Markov chain Monte Carlo, and approximate Bayesian computing (ABC) are available using software such as pomp \citep{king16} or NIMBLE \citep{de17}.
+Various plug-and-play inference methods including iterated filtering, particle Markov chain Monte Carlo, and approximate Bayesian computing (ABC) are available using software such as pomp \citep{king16} or NIMBLE \citep{de17}.
 
 Algorithms and software for vector-valued POMP models could in principle be applied to PanelPOMP models, but in practice the high dimensionality of panel data requires modified algorithms.
 The panel iterated filter (PIF) algorithm of \citet{breto20} enables plug-and-play likelihood-based inference for general PanelPOMP models.
@@ -825,8 +826,6 @@ Comparing a mechanistic model to a simple statistical benchmark model is a usefu
 The negative binomial models with polynomial (quadratic or cubic) terms fit the dynamics better than a linear trend.
 Although these more flexible polynomial expansions do not represent latent biological processes directly, they better capture the non-linearlity of the system, leading to a higher log-likelihood and a lower AIC than the linear model.
 
-\jwc{I made some larger edits to the next two paragraphs.}
-
 Table~\ref{Table:Model_comparison} includes the log-likelihood and AIC values for the fitted model and the deterministic ODE model of \citet{searle16}, which served as a starting point for our model.
 Although the mechanistic model of \citet{searle16} was successfully used to provide scientific insight into the ecological dynamics of the experiment, we found it does not provide a competitive statistical fit to the data compared to simple alternatives.
 We also consider several variants of the SIRJPF2 model described here, namely a model that excludes the juvenile state (SIRPF2, described in Supplement~S7.3), and a version of the SIRJPF2 model where the Gaussian noise has been replaced with Gamma noise (SIRJPF2-Gamma). 
@@ -854,11 +853,12 @@ For field data, one may expect the need for unit-specific parameters describing 
 For example, in a PanelPOMP analysis of pre-vaccine polio transmission dynamics for state-level data in USA, \citet{breto20} used unit-specific parameters to describe variations in the seasonality of transmission across units.
 Modeling decisions concerning shared and unit-specific parameters are testable hypotheses that are of scientific interest in the quest for a parsimonious understanding of the dynamics, and for understanding sources of variation.
 
-In our selected model, the native {\it Daphnia} species was found to have a higher feeding rate ($f^{\native}_{S}> f^{\invasive}_{S}$) and a lower rate of infection per consumed spore ($p^{\native} < p^{\invasive}$), consistent with Figure~1C of \citet{searle16}.
+In our selected model, the native {\it Daphnia} species was found to have a higher feeding rate ($f^{\native}_{S}> f^{\invasive}_{S}$) and a lower rate of infection per consumed spore ($p^{\native} < p^{\invasive}$), consistent with Fig.~1C of \citet{searle16}.
 Our results indicate that stochasticity in the juvenile stage ($\sigma^{\native}_{J}$ and $\sigma^{\invasive}_{J}$) is an important model feature, needed to adequately describe the data (see the corresponding confidence intervals in Table~\ref{tab:estimates} and the profile likelihood plots in Fig.~S1).
 That suggests the juvenile stage is particularly sensitive to unmodeled phenomena, such as lower fitness resulting from resource depletion, since unmodeled phenomena can be explained by the model as stochastic uncertainty.
-Noise in other stages is small, and often insignificantly different from zero, as shown by flat profile likelihood plots for $\sigma^{\native}_{S}$, $\sigma^{\invasive}_{S}$, $\sigma^{\native}_{I}$, $\sigma^{\invasive}_{I}$ and $\sigma_F$ in Figure~S1.
+Noise in other stages is small, and often insignificantly different from zero, as shown by flat profile likelihood plots for $\sigma^{\native}_{S}$, $\sigma^{\invasive}_{S}$, $\sigma^{\native}_{I}$, $\sigma^{\invasive}_{I}$ and $\sigma_F$ in Fig.~S1.
 Hence, we fixed the $\sigma^{\native}_{S}$ and $\sigma^{\invasive}_{S}$ to be zero \jwc{The other plots also look to be flat. Were they set to zero? (I don't think so, but this appears to be the justification). Also, I think the figures in the supplement are too small. I can help strategies alternative solutions if need be. It should also be possible to match parameter names exactly, using the blackboard-bold characters for $\invasive$ and $\native$}.
+\eic{Even after Bo's new set of results, some weak identifiability remains. We may have to explain better that additional constraints could lead to stronger conclusions about some things at the cost of stronger assumptions; our results here focus on seeing what aspects are identifiable under minimal assumptions; the model immediately permits additional what-if investigations which are practically easy for others to do only if the code is presented as software --- what we call extendability.}
 The proposed model is flexible enough to describe the predictability and uncertainty inherent in the system in various ways, and the data have come down in favor of $\sigma^{\native}_{J}$ and $\sigma^{\invasive}_{J}$.
 This indicates that the model might be recalibrated after fixing some or all of the other noise intensities to zero, but there is no pressing need to do so.
 The noise term is helpful when describing other dynamics, for example, dynamics with two species of \textit{Daphnia} and no parasite as shown in Supplement~S5.
@@ -928,7 +928,6 @@ If $\xi_{J,{\unit}}$ is set to be lower than is biologically plausible, simulate
 This indicates model misspecification which could bias the estimates of $r^{\species}_{\unit}, p^{\species}_{\unit}$ and $ f^{\species}_{S,\unit}$.
 When a weakly identified parameter has consequences for the biological interpretation of the model, it is appropriate to fix that parameter at a biologically plausible value consistent with previous studies \citep{ebert05}, and we therefore fixed $\xi_{J,{\unit}} = 1$ for subsequent analysis.
 
-\subsection{Simulations}
 \begin{figure}[t]
 \centering
 <<SimulationPlot,echo=FALSE, fig.width=7,fig.height=4,out.width="\\textwidth", cache=cache_option>>=
@@ -1091,23 +1090,13 @@ The parasite and food densities were not observed, and the dashed colored lines 
 }
 \end{figure}
 
-\jwc{I don't think I understand the next sentence. What are we referring to here when we say parameter swarm? Do we mean that we use AIC to pick model structure and the number of unit-specific parameters? Perhaps we can just remove the sentence.}
-Based on AIC comparisons, we identified the optimal parameter swarm that reaches the best balance between fit and parsimony among unit-specific models and benchmark models. 
 In addition to comparing model fit using AIC, we further validate the calibrated SIRJPF2 model via a simulation study.
-We generate 1000 simulations from the model and compare these simulations to the data (Figure~\ref{fig:sim_plot}).
+We generate 1000 simulations from the model and compare these simulations to the data (Fig.~\ref{fig:sim_plot}).
 Unit level simulation plots are shown in Fig.~S2.
-
-\jwc{Check for consistency between the use of Figure and Fig. in the manuscript.}
-The simulation bands presented in Figure \ref{fig:sim_plot} closely align with the empirical data curves from the actual experiment, underscoring the model's capability to replicate the observed dynamics.
+The simulation bands presented in Fig.~\ref{fig:sim_plot} closely align with the empirical data curves from the actual experiment, underscoring the model's capability to replicate the observed dynamics.
 Notably, the model captures not only the trends but also the variability of the experimental data.
-Supplementary Fig.~S2 further illustrate the fluctuation behavior of each states within the dynamics.
-Simulations from other models considered are included in the supplementary Figure~S9--S12, S16, S17, S23--S26.
+Simulations from other models considered are included in the supplementary Figs.~S9--S12, S16, S17, S23--S26.
 
-\jwc{Rework this paragraph.}
-With added $J^{\species}_{\unit}$ states based on SIRPF2 model, our model provides an improved statistical fit and high coverage in observed juvenile population dynamics, even without directly calibrating the model using juvenile data.
-As juveniles show rare infection by the parasite and gradually mature, this imposes limits on the growth speed of susceptible \textit{Daphnia} and further constrains the density growth rate of infecteds.
-Further, juveniles compete with adults for available food resources.
-While we have shown the relevance of age-structured dynamics for understanding the data on adults, future work could identify the juvenile dynamics more precisely (for example, improving identifiability of $\xi_{J,\unit}$) by fitting directly to juvenile data.
 
 The consistency of simulated data with the empirical data provides a qualitative indicator of the fit of the model that complements a comparison of log-likelihood values.
 Our simulations from  the fitted SIRJPF2 model align with the observed data for the susceptible and infected species of \textit{Daphnia}, and from the out-of fit juvenile data.
@@ -1131,6 +1120,13 @@ Despite the complexity of our SIRJPF2 model, there are various ways in which fur
 Our general plug-and-play framework can be further extended, and information criteria can be used to assess the importance of the proposed extension.
 For example, we could have incorporated the phenomenon that \textit{Daphnia} with advanced infection have reduced feeding rate, or we could have allowed for the possibility that recently infected \textit{Daphnia} can continue to reproduce.
 Additional residual analysis can search for patterns suggesting model improvements, following a similar approach to the residual analysis carried out here.
+
+Although we did not calibrate the model using juvenile data, the addition of latent $J^{\species}_{\unit}$ states leads to an improved statistical fit.
+This could arise because the juvenile stage provides a delay in the {\em Daphnia} population growth dynamics, and because juveniles compete with adults for available food resources.
+Juveniles rarely show disease, perhaps because of the latency in the parasite's development within its host, but they nevertheless play a significant role in the infection dynamics.
+While we have shown the relevance of age-structured dynamics for understanding the data on adults, future work could identify the role of juveniles in the system dynamics more precisely.
+Adding juvenile data to the measurement model in the fitting procedure would enable higher statistical resolution on these dynamics.
+Our general POMP modeling and inference framework allows for the possibility of additional measurements or alternative model hypotheses.
 
 Fitting a mechanistic model can provide a coherent explanation of system dynamics, but one must remain cautious about the possibility of confounding factors: mechanisms that are omitted from the model and which provide alternative (and perhaps scientifically pertinent) explanations of the observed phenomena \citep{li24,wheeler24}.
 We have an external test of our data by showing that it fits the juvenile data even though it was not fit to them, but this validation does not guarantee that all conclusions from the fitted model are correct.
