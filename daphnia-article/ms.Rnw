@@ -376,7 +376,6 @@ Therefore, we investigate the hypothesis that explicit modeling of resource depl
 We also hypothesizes that the inclusion of age structure, via a juvenile stage, could help to explain the population dynamics even though very juveniles show disease.
 Our paradigm is to assess models that represent known or hypothesized biological mechanisms in terms of their ability to explain observed data, quantified by likelihood penalized by model complexity.
 Our hypothesized model is supported so far as it is the best available model according to this criterion; our model and data are available at \href{https://github.com/Megumi-ybb/Daphnia-ms}{https://github.com/Megumi-ybb/Daphnia-ms}.
-\eic{To be made public, and archived on Zenodo, when the ms is submitted and put on arxiv}
 
 \section{The Susceptible-Infected-Removed-Juvenile-Parasite-Food 2-species model (SIRJPF2)}
 \label{sec:mecmod}
@@ -687,7 +686,9 @@ Thus, AIC penalizes complexity only so far as it affects generalization error fo
 Various other information criteria have been proposed and used in ecological data analysis, in addition to likelihood ratio hypothesis tests \cite{johnson04}.
 However, AIC has earned widespread use due to its clear theoretical motivation and its applicability for evaluating collections of non-nested hypotheses, including comparing mechanistic models to non-mechanistic benchmark models.
 
-
+Profile likelihood provides a useful approach for constructing confidence intervals in nonlinear stochastic systems \citep{simpson23}.
+Calculation of the profiles can validate that sufficient computational effort was conducted in order for the Monte Carlo optimization to converge: by increasing Monte Carlo replications, consistent convergence to the same maximum of the profile likelihood curve confirms adequate numerical effort for optimization.
+To obtain confidence intervals, we correct for the Monte Carlo uncertainty in the profile likelihood evaluations by using the Monte Carlo Adjusted Profile (MCAP) method of \citet{ionides17}.
 <<Results, include=FALSE,echo=FALSE,results='hide', cache=cache_option>>=
 load('../data/Target_dynamics/para/best_result.rds')
 mif.estimate = as.data.frame(t(mif.estimate))
@@ -857,8 +858,7 @@ In our selected model, the native {\it Daphnia} species was found to have a high
 Our results indicate that stochasticity in the juvenile stage ($\sigma^{\native}_{J}$ and $\sigma^{\invasive}_{J}$) is an important model feature, needed to adequately describe the data (see the corresponding confidence intervals in Table~\ref{tab:estimates} and the profile likelihood plots in Fig.~S1).
 That suggests the juvenile stage is particularly sensitive to unmodeled phenomena, such as lower fitness resulting from resource depletion, since unmodeled phenomena can be explained by the model as stochastic uncertainty.
 Noise in other stages is small, and often insignificantly different from zero, as shown by flat profile likelihood plots for $\sigma^{\native}_{S}$, $\sigma^{\invasive}_{S}$, $\sigma^{\native}_{I}$, $\sigma^{\invasive}_{I}$ and $\sigma_F$ in Fig.~S1.
-Hence, we fixed the $\sigma^{\native}_{S}$ and $\sigma^{\invasive}_{S}$ to be zero \jwc{The other plots also look to be flat. Were they set to zero? (I don't think so, but this appears to be the justification). Also, I think the figures in the supplement are too small. I can help strategies alternative solutions if need be. It should also be possible to match parameter names exactly, using the blackboard-bold characters for $\invasive$ and $\native$}.
-\eic{Even after Bo's new set of results, some weak identifiability remains. We may have to explain better that additional constraints could lead to stronger conclusions about some things at the cost of stronger assumptions; our results here focus on seeing what aspects are identifiable under minimal assumptions; the model immediately permits additional what-if investigations which are practically easy for others to do only if the code is presented as software --- what we call extendability.}
+Hence, we fixed the $\sigma^{\native}_{S}$ and $\sigma^{\invasive}_{S}$ to be zero.
 The proposed model is flexible enough to describe the predictability and uncertainty inherent in the system in various ways, and the data have come down in favor of $\sigma^{\native}_{J}$ and $\sigma^{\invasive}_{J}$.
 This indicates that the model might be recalibrated after fixing some or all of the other noise intensities to zero, but there is no pressing need to do so.
 The noise term is helpful when describing other dynamics, for example, dynamics with two species of \textit{Daphnia} and no parasite as shown in Supplement~S5.
@@ -889,14 +889,7 @@ The log-likelihood estimates and corresponding AIC values for these models are p
 These results suggest that introducing unit-specific parameters increased model complexity without significantly improving model performance.
 Similar results hold for the other treatments (Tables~S4, S5, S7, S10, S11).
 Consequently, we choose to select the model with all shared parameters, as it offers a more parsimonious and robust representation of the system dynamics without substantially compromising the explanatory power.
-
-Profile likelihood provides a useful approach for constructing confidence intervals in nonlinear stochastic systems \citep{simpson23}.
-Calculation of the profiles can validate that sufficient computational effort was conducted in order for the Monte Carlo optimization to converge: by increasing Monte Carlo replications, consistent convergence to the same maximum of the profile likelihood curve confirms adequate numerical effort for optimization.
-To obtain confidence intervals, we correct for the Monte Carlo uncertainty in the profile likelihood evaluations by using the Monte Carlo Adjusted Profile (MCAP) method of \citet{ionides17} (see Fig.~S1 for the SIRJPF2 model, and Figs.~S7, S8, S15, S21, S22 for other treatments).
-
-\jwc{This paragraph feels a bit out of place to me.}
-As shown in Table~\ref{tab:estimates}, the estimated values of $p^{\native}$ and $p^{\invasive}$ differ significantly, suggesting that the parasite influences the proportion of individuals becoming infected within each species in distinct scale.
-This difference, in turn, affects the interactions between the two species.
+And the confidence intervals are obtained by the MCAP are shown in Fig.~S1 for the SIRJPF2 model, and Figs.~S7, S8, S15, S21, S22 for other treatments.
 
 Our estimated value of the filtration rate factor for infected {\it Daphnia} is $\xi > 1$, which is superficially incompatible with previous empirical observations that infection leads to reduced filtration, especially as disease progresses \citep{searle16,penczykowski14}.
 One way to reconcile these results is the possibility that \textit{Daphnia} which filter faster are exposed to more spores and are consequently more likely to become infected.
@@ -907,8 +900,10 @@ However, the direction can be reversed at the individual level.
 $\xi > 1$ could also be a result of reverse causation due to unmodeled heterogeneity: infected \textit{Daphnia} may statistically have a higher filtration rate even though infection decreases the filtration rate.
 A subsequent investigation extending the model and measurements to include \textit{Daphna} size and genotype could help to clarify this.
 
-\subsection{Model diagnostics}
+As shown in Table~\ref{tab:estimates}, the estimated values of $p^{\native}$ and $p^{\invasive}$ differ significantly, suggesting that the parasite influences the proportion of individuals becoming infected within each species in distinct scale.
+This difference, in turn, affects the interactions between the two species.
 
+\section{Model diagnostics}
 The model that we found to have the best statistical fit to the data includes explicit modeling of juveniles and their maturation, a feature not present in the model of \citet{searle16}. 
 The extra delay in the adult dynamics introduced by the juvenile stage appears to be necessary for the model to provide a strong statistical fit to the data.
 In the original study, \citet{searle16} collected juvenile data but did not include it as part of the data analysis. 
@@ -918,7 +913,10 @@ Instead, the juvenile data are available to use as model validation, which is do
 Knowing that the average body length of juvenile \textit{Daphnia} is shorter than the average body size of adult \textit{Daphnia} for both species, we expect that juvenile individuals will have a lower filtering rate.
 Yet, without fitting to juvenile data, it is unclear whether that question is identifiable from the model at hand.
 To explore this assumption, we compared the model using the value $\xi_{J,{\unit}} = 1$ (juveniles and adults filter at the same rate) against the extreme value $\xi_{J,{\unit}} = 0.001$ (juveniles filter much slower than adults).
-We maximized the log-likelihood over the remaining parameters subject to this constraint, and compared the conditional maximized log-likelihood at each time for each observation category for the different $\xi_{J,{\unit}}$ values, as shown in Fig.~S3(a).
+
+In particular, likelihood residual analysis is especially effective in identifying model misspecification or weak parameter identifiability \citep{wheeler24,li24}.
+We maximized the log-likelihood over the remaining parameters subject to this constraint to conduct the residual analysis.
+The conditional maximized log-likelihood at each time for each observation category were compared for the different $\xi_{J,{\unit}}$ values, as shown in Fig.~S3(a).
 These results show that setting $\xi_{J,{\unit}} = 1$ leads to only a slightly higher maximized log-likelihood ($-881.13$) than $\xi_{J,{\unit}} = 0.001$ ($-882.24$), indicating that the parameter is weakly identified.
 Moreover, plotting the conditional log-likelihood for each state at each time, we observe that the log-likelihood components for susceptible and infected \textit{D. dentifera} and \textit{D. lumholtzi} are nearly the same between the two parameter settings.
 These results suggest that both parameter values provide indistinguishable explanations of the observed data.
