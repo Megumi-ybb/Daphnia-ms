@@ -76,7 +76,8 @@
 <<Debug, include=FALSE>>=
 library(knitr)
 # Set global caching
-cache_option = FALSE
+# cache_option = FALSE
+cache_option = TRUE # only use when editing text
 opts_chunk$set(echo = TRUE, cache = cache_option)
 @
 
@@ -157,27 +158,18 @@ else{
 \tableofcontents
 \newpage
 \section{Monte Carlo Adjusted Profile}
-The Monte Carlo Adjusted Profile (MCAP) method represents an advancement in the realm of statistical estimation, particularly in scenarios involving complex models with large number of parameters.
-This technique, which incorporates Monte Carlo simulation into profile analysis, is designed to refine the estimation of confidence intervals of estimated parameters.
+
+Monte Carlo Adjusted Profile (MCAP) methods \citep{ionides17,ning21} provide confidence intervals for situations where the likelihood is evaluated and maximized by Monte Carlo algorithms.
+A smoothed estimate of the profile likelihood is used to reduce Monte Carlo error, quantify this error, and adjust the confidence intervals accordingly to maintain their coverage.
+
 \parskip 3mm
 
-At its core, the MCAP method relies on generating a large number of replicated data sets through Monte Carlo simulation.
-Each data set is adjusted to reflect the profile of interest and analyzed separately. The implementation of MCAP involves several steps.
-Initially, the parameter space is explored through a fine grid over which the likelihood is computed. For each point on the grid, Monte Carlo simulations are used to generate replicates of the data under the null hypothesis.
-These replicates are then subjected to statistical analysis, and the resulting estimates are used to construct adjusted confidence profiles.
-\parskip 3mm
+MCAP is particularly useful for high-dimensional situations, such as arise in panel data analysis, since it becomes practically impossible to apply sufficient computational effort to make Monte Carlo error negligible.
+MCAP has previously been demonstrated for panel iterated filtering by \citet{breto20}.
 
-When comparing to other profile analysis methods, MCAP offers a particularly effective way in handling high-dimensional data or time series.
-The MCAP method's reliance on Monte Carlo simulations allows for a flexible assessment of the statistical properties of estimators under various model specifications and conditions \citep{breto20}.
-\citet{ionides17} demonstrate the MCAP method's efficacy in dynamic system models, where traditional methods often fail to capture the intricate dependencies between parameters.
-\parskip 3mm
+\section{The Panel Iterated Filtering Algorithm}
 
-\eic{TO DO:  I think the red horizontal lines on the profiles can be removed. They raise questions. At face value, they are evidence of inadequate maximization in the profiles. We know that MCAP profiles can still have good coverage even when there is shortfall, but readers may not know that. We have to explain, but they might miss the explanation or not believe it. So, I think we should both (i) add explanation in Sec S1; (ii) not draw more attention to this than necessary, giving the reader full information without leading them astray. Of course, the profiles would ideally all attain something close to the red dot, but practical computational considerations prevent putting that much computer time into every profile point.
-}
-
-\section{Panel Iterated Filter}
-
-\begin{algorithm}[H]
+\begin{algorithm}[h]
 \caption{Panel iterated filter (PIF)}
 \label{alg:pif}
 %\SetAlgoLined
@@ -224,18 +216,20 @@ By gradually reducing the size of these parameter random walks, the algorithm re
 When $\mathrm{MARGINALIZE}=\mathrm{TRUE}$, the estimate of the unit-specific parameter $\psi_u$ belonging to particle $j$ is unchanged when filtering throuth a unit $\tilde u\neq u$. 
 The unmarginalized PIF was proposed by \cite{breto20} and was provided with theoretical convergence results that are not yet available for MPIF.
 However, our results demonstrate that MPIF has superior empirical performance on the ecological model considered here.
-Theoretical support for MPIF will be published elsewhere.
+Theoretical support for MPIF will be published elsewhere \citep{wheeler25}.
 
 To briefly review, the model is specified by the initial condition, $ f_{X_{u,0}}(\, \cdot \, \params \phi,\psi_u)$, the latent state transition density, $f_{X_{u,n} | X_{u,n-1}}\big(\, \cdot \mid \,  \params \phi,\psi_u \big)$, and the measurement density, $f_{Y_{u,n} | X_{u,n}}\big(\, \cdot \mid \cdot \params \phi,\psi_u\big)$, for $u = \seq{1}{U}$ and $n=\seq{1}{N_u}$.
 The full parameter vector is written as $\theta=(\phi,\psi_{1:U})$.
 For notational convenience, we define $u=0$ to be an empty panel with $N_0=0$.
 Algorithm~\ref{alg:pif} supposes Gaussian perturbations of the parameters, which is a common practical choice but may require re-parameterizing to avoid boundaries.
 For example, non-negative parameters are typically log-transformed.
-Additional generality is provided by the pseudocode in \cite{breto24} that is implemented in the \texttt{mif2} function of the R package \texttt{panelPomp}.
+Additional generality is provided by the pseudocode in \cite{breto25} that is implemented in the \texttt{mif2} function of the R package \texttt{panelPomp}.
+
+\clearpage
 
 \section{SIRJPF2 Model}
 \subsection{Results}
-\subsubsection{MCAP Result}
+\subsubsection{MCAP Results}
 \begin{figure}[H]
     \centering
     \includegraphics[width=\linewidth]{profile/Target_dynamics/para/Profile_plot.png}
@@ -602,7 +596,7 @@ Columns are buckets corresponding to replications with same treatment setting.
 }
 \end{figure}
 
-\subsection{Result}
+\subsection{Results}
 <<LoadSIRJPFdatanative, include=FALSE, cache=cache_option>>=
 load("profile/Simple_dynamics/Dent/para/profile_ci_table.rda")
 load('profile/Simple_dynamics/Dent/para/estimation_parameters.rds')
@@ -813,13 +807,14 @@ The simulation plots (Figures \ref{fig:SIRJPF_native_simulation_band} to \ref{fi
 Specifically, the model captures the latent pattern for susceptible and infected densities across multiple experimental units, as evidenced by the close alignment between the simulated mean trajectories (depicted by the black and light-blue bands) and the observed experimental data (colorful solid lines).
 Each blue line represents an individual simulation case, capturing the stochastic variability across replicates, while the light blue shaded area (where present) denotes the 95\% confidence interval of the simulation results.
 Remarkably, although juvenile density data were not included in the model fitting process, the model still effectively predicts juvenile density trends.
-The promising performance of the model indicates the model's capacity to generalize underlying ecological processes, as the 95\% confidence intervals largely cover the observed juvenile data, thereby lending additional support to the model's robustness.
+The promising performance of the model indicates the model's capacity to generalize underlying ecological processes, as the 95\% confidence intervals largely cover the observed juvenile data.
+
 \parskip 3mm
 
-At the same time, the depletion of \textit{A.} algal density over time, reflected in the simulation further explains the behavior of the \textit{Daphnia}.
+At the same time, the depletion of  algal density over time, reflected in the simulation further explains the behavior of the \textit{Daphnia}.
 The decline in algal density at later stages indicates that the system reaches a state of food limitation, which is a dynamic anticipated by our model.
 The reduction in food availability provides a mechanistic explanation for the observed trends in \textit{Daphnia} densities, as resource scarcity constrains population growth, ultimately affecting the susceptible, infected, and juvenile densities.
-This behavior underscores the model’s relevance in ecological forecasting by not only capturing individual population dynamics but also accounting for resource-consumption interactions that shape these dynamics.
+Thus, the model captures not only the reproductive dynamics but also the resource-consumption interactions that shape these dynamics.
 The model’s ability to reproduce these patterns accurately highlights its potential utility in explaining and predicting empirical trends in complex ecological systems.
 
 
@@ -899,10 +894,10 @@ In the following sections, we will present the flow diagram and parameter estima
 
 
 \subsection{Flow Diagram}
-The following Figure~\ref{fig:SRJF2} presents the flow diagram of the SRJF2 model, illustrating the interactions among susceptible individuals ($S^{\native}$, $S^{\invasive}$), juveniles ($J^{\native}$,$J^{\invasive}$), \textit{A.} algae as a food resource ($F$), and mortality ($R$).
+The following Figure~\ref{fig:SRJF2} presents the flow diagram of the SRJF2 model, illustrating the interactions among susceptible individuals ($S^{\native}$, $S^{\invasive}$), juveniles ($J^{\native}$,$J^{\invasive}$), algae as a food resource ($F$), and mortality ($R$).
 The bidirectional arrows between $J^{\species}$ and $S^{\species}$, represent the maturation of juveniles into susceptible individuals and the reproduction of susceptible individuals into juveniles.
-Both susceptible individuals and juveniles, consume resources from the algae population $F$, as indicated by the arrows from $F$ to each population node.
-The algae $F$ is refilled over time, depicted by the recycling loop, and contributes to the growth of both susceptible individuals and juveniles.
+Both susceptible individuals and juveniles, consume resources from the alga population $F$, as indicated by the arrows from $F$ to each population node.
+The algal food resource is regularly replenished, depicted by the recycling loop, and contributes to the growth of both susceptible individuals and juveniles.
 All populations have pathways leading to the mortality state $R$, representing natural death and disease-induced mortality.
 Two species of \textit{Daphnia} are competing through the food resources in this model.
 
@@ -1041,7 +1036,7 @@ Columns are buckets corresponding to replications with same treatment setting.
 }
 \end{figure}
 
-\subsection{Result}
+\subsection{Results}
 \subsubsection{Parameter Estimation}
 <<LoadSRJF2, include=FALSE, cache=TRUE>>=
 load("profile/Target_dynamics/no_para/profile_ci_table.rda")
@@ -1148,34 +1143,33 @@ We employed MCAP methods to estimate the maximum log-likelihood and AIC for each
 The models assessed include those with unit-specific parameters for the mortality rates ($\theta^{\species}_{S,\unit}$), filter rates ($f^{\species}_{S,\unit}$), and growth efficiency factors ($r^{\species}_{\unit}$) for $\species \in \{\native,\invasive\}$.
 The model with all parameters shared (no unit-specific parameters) achieves the minimum AIC, indicating the best balance between model fit and complexity.
 This outcome suggests that introducing unit-specific parameters does not significantly enhance the model's performance and may unnecessarily increase complexity.
-Consequently, we choose to retain the model with all shared parameters, as it offers a more parsimonious and robust representation of the system dynamics without compromising the explanatory power.
+Consequently, we choose to retain the model with all shared parameters, as it offers a more parsimonious representation of the system dynamics without compromising the explanatory power.
 
 \subsection{Simulation}
 The simulation results presented in Figures \ref{fig:SRJF2_simulation_band} to \ref{fig:SRJF2_simulation_lines} showcase our model's ability to represent the complex population interactions between \textit{D.~dentifera} and \textit{D.~lumholtzi}.
 The model captures the patterns of susceptible and juvenile densities across multiple experimental units, as evidenced by the close alignment of the simulated mean trajectories (illustrated by the black line and light blue confidence bands) with the experimental data (shown by the colorful solid lines).
 Despite the fact that juvenile density data were not used in calibrating the model, the model accurately predicts juvenile density trends, indicating its capability to generalize ecological processes effectively.
-The inclusion of the 95\% confidence intervals, which largely encompass the observed juvenile data, further supports the robustness of the model's predictions.
+The 95\% confidence intervals largely encompass the observed juvenile data, supporting the construction of the model's latent process.
+
 \parskip 3mm
 
 Figure \ref{fig:SRJF2_simulation_lines} provides further insight into the dynamics of algal depletion over time, an aspect that is integral to the model’s predictions for \textit{Daphnia} populations.
 The observed decrease in algal density at later stages, captured in the simulations, suggests a shift to a resource-limited environment—a behavior that aligns well with our model's assumptions.
 As algae availability declines, population growth of both susceptible and juvenile \textit{Daphnia} becomes constrained, providing a mechanistic explanation for the observed patterns in their densities.
-By incorporating resource-consumption feedback into the population dynamics, the model demonstrates not only an ability to simulate individual population trends but also to capture critical ecological feedback loops.
-This predictive accuracy enhances the model's utility for understanding and forecasting trends in complex ecological systems.
-
+By incorporating resource-consumption feedback into the population dynamics, the model demonstrates not only an ability to simulate individual population trends but also to capture this ecological feedback loop.
 
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\linewidth]{simulation/target_no_para_simulation/simulation_band.png}
-    \caption{Simulation plots of densities (Individuals$/$Liter) for susceptible and juvenile populations of both native \textit{D.~dentifera} and invasive \textit{D.~lumholtzi}, along with alga density ($10^6\cdot$cells$/$Liter) over time (days). Colorful solid lines represent observed experimental data for each experimental replicate, showcasing variability across replicates. The black line represents the mean simulation trajectory, while the light blue shaded area corresponds to the 95\% confidence interval of the simulation. Dashed lines indicate individual simulation cases, illustrating the model's capacity to capture fluctuations around the mean trajectory.}
+    \caption{Simulation plots of densities (Individuals$/$Liter) for susceptible and juvenile populations of both native \textit{D.~dentifera} and invasive \textit{D.~lumholtzi}, along with alga density ($10^6\,$cells$/$Liter) over time (days). Colorful solid lines represent observed experimental data for each experimental replicate, showcasing variability across replicates. The black line represents the mean simulation trajectory, while the light blue shaded area corresponds to the 95\% confidence interval of the simulation. Dashed lines indicate individual simulation cases, illustrating the model's capacity to capture fluctuations around the mean trajectory.}
     \label{fig:SRJF2_simulation_band}
 \end{figure}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\linewidth]{simulation/target_no_para_simulation/simulation_lines.png}
-    \caption{Simulated density ($10^6\cdot$cells$/$Liter) of susceptible native \textit{D.~dentifera}, susceptible invasive \textit{D.~lumholtzi}, juvenile native \textit{D.~dentifera}, invasive \textit{D.~lumholtzi}, and alga density ($F$) over time (days) for each experimental unit. The blue lines represent individual simulation cases, while the red line denotes observed experimental data, showing how simulated variability compares to actual data.}
+    \caption{Simulated density ($10^6\,$cells$/$Liter) of susceptible native \textit{D.~dentifera}, susceptible invasive \textit{D.~lumholtzi}, juvenile native \textit{D.~dentifera}, invasive \textit{D.~lumholtzi}, and alga density ($F$) over time (days) for each experimental unit. The blue lines represent individual simulation cases, while the red line denotes observed experimental data, showing how simulated variability compares to actual data.}
     \label{fig:SRJF2_simulation_lines}
 \end{figure}
 
@@ -1597,18 +1591,15 @@ The simulation plots (Figures \ref{fig:SRJF_native_simulation_band} to \ref{fig:
 Specifically, the model effectively reproduces the latent patterns for susceptible and infected densities across multiple experimental units, as evidenced by the close alignment between the simulated mean trajectories (depicted by the black and light-blue bands) and the observed experimental data (represented by colorful solid lines).
 Each blue line illustrates an individual simulation case, capturing the stochastic variability across replicates, while the light blue shaded area (where present) denotes the 95\% confidence interval of the simulation results.
 Although juvenile density data were not included in the model fitting process, the model still accurately predicts juvenile density trends (Figures \ref{fig:SRJF_lum_simulation_lines}).
-This performance indicates the model's capacity to generalize underlying ecological processes, as the 95\% confidence intervals largely encompass the observed juvenile data, thereby lending additional support to the model's robustness.
-Concurrently, the depletion of \textit{Ankistrodesmus} algal density over time, reflected in the simulation, further elucidates the behavior of the \textit{Daphnia} populations.
-The decline in algal density at later stages indicates that the system reaches a state of food limitation, a dynamic anticipated by our model.
-The reduction in food availability provides a mechanistic explanation for the observed trends in \textit{Daphnia} densities, as resource scarcity constrains population growth, ultimately affecting the susceptible, infected, and juvenile densities.
-This behavior underscores the model's relevance in ecological forecasting by not only capturing individual population dynamics but also accounting for resource-consumption interactions that shape these dynamics.
-
+This performance indicates the model's capacity to generalize underlying ecological processes, as the 95\% confidence intervals largely encompass the observed juvenile data.
+The model also predicts a decline in algal density as the experiment progresses.
+This predicted reduction in food availability provides a mechanistic explanation for the observed trends in \textit{Daphnia} densities, as resource scarcity constrains population growth, ultimately affecting the susceptible, infected, and juvenile densities.
 
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\linewidth]{simulation/dent_no_para_simulation/simulation_band.png}
-    \caption{Simulation plots of densities (Individuals$/$Liter) for susceptible, and juvenile \textit{D.~dentifera}, along with alga density ($10^6\cdot$cells$/$Liter) and parasite density  ($10^3\cdot$spores$/$Liter), over time (days). The colorful solid lines represent observed experimental data, showing the variability across different experimental replicates. The black line represents the mean trajectory from the simulation model, capturing the general trend of each density. The light blue shaded area corresponds to the 95\% confidence interval of the simulations, indicating the range of model predictions. Dashed lines illustrate individual simulated trajectories, highlighting the model’s ability to capture fluctuations around the mean trajectory.}
+    \caption{Simulation plots of densities (Individuals$/$Liter) for susceptible, and juvenile \textit{D.~dentifera}, along with alga density ($10^6\,$cells$/$Liter) and parasite density  ($10^3\,$spores$/$Liter), over time (days). The colorful solid lines represent observed experimental data, showing the variability across different experimental replicates. The black line represents the mean trajectory from the simulation model, capturing the general trend of each density. The light blue shaded area corresponds to the 95\% confidence interval of the simulations, indicating the range of model predictions. Dashed lines illustrate individual simulated trajectories, highlighting the model’s ability to capture fluctuations around the mean trajectory.}
     \label{fig:SRJF_native_simulation_band}
 \end{figure}
 
@@ -1616,7 +1607,7 @@ This behavior underscores the model's relevance in ecological forecasting by not
 \begin{figure}[H]
     \centering
     \includegraphics[width=\linewidth]{simulation/dent_no_para_simulation/simulation_lines.png}
-   \caption{Simulated densities (Individuals$/$Liter) of susceptible \textit{D.~dentifera}, juvenile \textit{D.~dentifera} and alga density ($10^6\cdot$cells$/$Liter) over time (days) for each experimental unit. The blue lines represent individual simulation runs, capturing the variability in susceptible density across replicates, while the red line represents the actual experiment data.}
+   \caption{Simulated densities (Individuals$/$Liter) of susceptible \textit{D.~dentifera}, juvenile \textit{D.~dentifera} and alga density ($10^6\,$cells$/$Liter) over time (days) for each experimental unit. The blue lines represent individual simulation runs, capturing the variability in susceptible density across replicates, while the red line represents the actual experiment data.}
     \label{fig:SRJF_dent_simulation_lines}
 \end{figure}
 
@@ -1637,7 +1628,8 @@ This behavior underscores the model's relevance in ecological forecasting by not
 
 \section{Benchmark Models}
 \subsection{Searle et al.’s Model}
-Using the mechanistic model introduced by \citet{searle16}, we conduct predictions of population $\tilde{y}_{\unit,\benchmarktime}$ for susceptible, infected \textit{D.~dentifera} and \textit{D.~lumholtzi} for all time $\benchmarktime \in \{1,2...,N\}$ and units $\unit \in \{1,2...,U\}$.
+
+Using the mechanistic model introduced by \citet{searle16}, we conduct predictions of population $\tilde{y}_{\unit,\benchmarktime}$ for susceptible, infected \textit{D.~dentifera} and \textit{D.~lumholtzi} for all time $\benchmarktime \in \{1,2,\dots,N_{\unit}\}$ and units $\unit \in \{1,2,\dots,U\}$.
 In our case, each unit is observed at the same number of time points, so $N_{\unit} = N$ for all $\unit$.
 Then, we obtain the overall log-likelihood by summing the log-probabilities of the observed density of \textit{Daphnia}.
 Specifically, we use the observed densities $y^*_{\unit,\benchmarktime}$ and the predicted means $\tilde{y}_{\unit,\benchmarktime}$ derived from the mechanistic model, along with the dispersion parameter $\tau$ to specify a NBinom distribution and calculate the likelihood:
@@ -1649,12 +1641,12 @@ Specifically, we use the observed densities $y^*_{\unit,\benchmarktime}$ and the
 
 To obtain the maximum likelihood estimate, we conduct the linear optimization on $\tau$ and choose the $\hat{\tau}$ that yields the highest overall likelihood. 
 With this $\hat{\tau}$, we obtain the likelihood by \ref{eq:total_loglik} for the model on the data. And the result of the model fitting can be found in the Table~2 in the main article.
+
 \subsection{Negative Binomial Regression}
+
 Count data from ecological studies often exhibit overdispersion and unit-specific variation.
 The NBinom distribution addresses overdispersion, while random intercepts allow each unit to have its own baseline level.
 As a benchmark model, we employ NBinom generalized linear mixed models (GLMMs) to capture overdispersed count data and correlation across repeated measures within each unit $\unit$.
-Let $i$ denotes units, with $\unit = 1,2,\dots,\Unit$, and let $\benchmarktime_\unit$ index observation times within each unit, with $\benchmarktime_\unit = 1,2,\dots,N_{\unit}$.
-In our case, each unit is observed at the same number of time points, so $N_{\unit} = N$ for all $\unit$.
 The NBinom distribution is parameterized by a mean $\mu_{\unit,\benchmarktime}$ and a dispersion parameter $\theta$.
 
 We present three GLMMs with increasing of order of time factor to capture the trend of these \textit{Daphnia} species in the experiment.
@@ -1662,22 +1654,22 @@ While a linear model is easy to interpret and straightforward to implementing, o
 Introducing quadratic or cubic terms to the model enhance the capability of model to capture these non-linear trends in the data.
 By starting with a linear model and then considering quadratic and cubic cases, we can evaluate the complexity of temporal patterns and better approximate the latent process of in the dynamics.
 
-\subsubsection{Model 1 (Linear Model)}
-We start with the simplest GLMM~\ref{model:GLMM_linear} only with linear terms:
+\subsubsection{Model 1 (Linear Trend Model)}
+We start with a simple GLMM having only with linear terms:
 \begin{align}
 Y_{\unit,\benchmarktime} &\sim \text{NBinom}(\mu_{\unit,\benchmarktime}, \tau), \\[6pt]
 \log(\mu_{\unit,\benchmarktime}) &= \beta_0 + \beta_1\, t_{\unit,\benchmarktime} + b_{\unit},
 \label{model:GLMM_linear}
 \end{align}
-We assume $\mu_{\unit,\benchmarktime}$ is the expected count for unit $\unit$ at time $\benchmarktime$.
-The parameter $\beta_0$ represents a vector of log-scale mean density of \textit{Daphnia} classified by species, life stage, and infection status at the start of the experiment, after accounting for random effects.
+where $\mu_{\unit,\benchmarktime}$ is the expected count for unit $\unit$ at time $\benchmarktime$.
+We fit this model independently for each {\it Daphnia} species, life stage, and infection status, and so the total log-likelihood is the sum over these categories.
 The vector coefficient $\beta_1$ measures the effect of time on the log-scale of \textit{Daphnia} density.
 The term $b_\unit$ accounts for the random intercept drawn from a normal distribution with variance $\sigma^2$.
 Conditional on the random intercept $b_\unit$, observations within a unit are assumed independent.
 The dispersion parameter $\tau$ from the NBinom distribution accommodates overdispersion in the count data, which is density in our case.
 
 
-\subsubsection{Model 2 (Quadratic Model)}
+\subsubsection{Model 2 (Quadratic Trend Model)}
 To accommodate the non-linear pattern, we include a quadratic term in time in model~\ref{model:GLMM_quad}:
 \begin{align}
 Y_{\unit,\benchmarktime} &\sim \text{NBinom}(\mu_{\unit,\benchmarktime}, \tau), \\[6pt]
@@ -1686,7 +1678,7 @@ Y_{\unit,\benchmarktime} &\sim \text{NBinom}(\mu_{\unit,\benchmarktime}, \tau), 
 \end{align}
 Here, $\beta_2$ captures curvature in the trend, allowing for a turning point as time progresses.
 
-\subsubsection{Model 3 (Cubic Model)}
+\subsubsection{Model 3 (Cubic Trend Model)}
 To capture more complex temporal pattern, we further introduce the cubic term in the model~\ref{model:GLMM_cubic}:
 \begin{align}
 Y_{\unit,\benchmarktime} &\sim \text{NBinom}(\mu_{\unit,\benchmarktime}, \tau), \\[6pt]
@@ -1696,7 +1688,7 @@ Y_{\unit,\benchmarktime} &\sim \text{NBinom}(\mu_{\unit,\benchmarktime}, \tau), 
 The cubic term $\beta_3$ provides additional capability for capturing multiple fluctuation patterns in the \textit{Daphnia} dynamics.
 
 
-The likelihood for these models is constructed by considering the joint distribution of all observations $\{Y_{i,j}\}$, integrating over the random effects $\{b_{\unit}\}_{1:\Unit}$. Letting $\beta = (\beta_0, \beta_1, \dots)$ denote the fixed-effect parameters, the conditional likelihood of the observations for unit $\unit$ given $b_\unit$ is
+The likelihood for these models is constructed by considering the joint distribution of all observations $\{Y_{u,n}\}$, integrating over the random effects, $b_{1:\Unit}$. Letting $\beta = (\beta_0, \beta_1, \dots)$ denote the fixed-effect parameters, the conditional likelihood of the observations for unit $\unit$ given $b_\unit$ is
 \begin{align}
 L_\unit(\beta, \tau, \sigma^2) &= \prod_{\benchmarktime=1}^{N} f_{\text{NB}}\bigl(Y_{\unit,\benchmarktime}; \mu_{\unit,\benchmarktime}(\beta, \sigma^2), \tau\bigr),
 \label{eq:conditional_likelihood}
@@ -1716,7 +1708,8 @@ and the log-likelihood is:
 The calculated log-likelihood used to compute the AIC for model comparison. And the result of the model fitting of model~\ref{model:GLMM_linear},~\ref{model:GLMM_quad} and \ref{model:GLMM_cubic} can be found in the Table~2 in the main article.
 
 \subsection{SIRPF2 Model}
-The SIRPF2 model presented here ignores the state of juvenile \textit{Daphnia} and describes the dynamics in each bucket($\unit$) among susceptible individuals ($S^{\species}$), infected individuals ($I^{\species}$), alga as a food resource ($F$), the parasite population ($P$).
+
+The SIRPF2 model presented here ignores the state of juvenile \textit{Daphnia} and describes the dynamics in each bucket ($\unit$) among susceptible individuals ($S^{\species}$), infected individuals ($I^{\species}$), alga as a food resource ($F$), the parasite population ($P$).
 The superscript $\species$ denotes the species, which represents native or invasive species.
 Each stochastic differential equation accounts for various biological and ecological processes, augmented with stochastic terms to capture the inherent randomness within the systems.
 {\small
@@ -1734,13 +1727,16 @@ Each stochastic differential equation accounts for various biological and ecolog
     dP_{\unit}(t) &= \sum_{\species \in \{\native, \invasive\}} \left(\beta^{\species}_{\unit} \, \theta^{\species}_{I,{\unit}} \,  I^{\species}_{\unit}(t) - f^{\species}_{S,{\unit}} \big\{ S^{\species}_{\unit}(t) + \xi_{\unit} I^{\species}_{\unit}(t) \big\} P_{\unit}(t)\right) dt - \theta_{P,{\unit}} \, P_{\unit}(t)\, dt + P_{\unit}(t)\, d\zeta_{P,{\unit}},\\
     dF_{\unit}(t) &= - \sum_{\species \in \{\native, \invasive\}} f^{\species}_{S,{\unit}} \, F_{\unit}(t) \left(S^{\species}_{\unit}(t)+\xi_{\unit} \, I^{\species}_{\unit}(t)\right)dt  + \mu \, dt + F_{\unit}(t)\, d\zeta_{F,{\unit}},\label{eq:SIRPF2_dF}\\
 d\zeta^{\species}_{I,{\unit}} \sim \Normal &\big[0, (\sigma^{\species}_{I,{\unit}})^{2}\, dt\big],
+\hspace{5mm}
 d\zeta_{F,{\unit}} \sim \Normal \big[0, \sigma_{F,{\unit}}^{2}\, dt\big],
+\hspace{5mm}
 d\zeta_{P,{\unit}} \sim \Normal \big[0, \sigma_{P,{\unit}}^{2}\, dt\big].
 \end{align}
 }
 
 
-Different from SIRJPF2 model, we ignore the maturation process from juvenile to adult in equation \eqref{eq:SIRPF2_dS}. Instead, we use $r^{\species}_{\unit}$ to represent the average rate of growth in density of \textit{Daphnia} adult.
+Unlike the SIRJPF2 model, we ignore the maturation process from juvenile to adult in equation \eqref{eq:SIRPF2_dS}.
+Instead, this model uses $r^{\species}_{\unit}$ to represent the average rate of growth in density of \textit{Daphnia} adult.
 
 \subsubsection{Flow Diagram}
 The SIRPF2 model illustrates the interdependent dynamics among the Susceptible ($S$), Infected ($I$), Food ($F$), and Parasite ($P$) populations, with transitions representing ecological and biological interactions.

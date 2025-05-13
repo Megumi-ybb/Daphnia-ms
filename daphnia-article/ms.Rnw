@@ -218,7 +218,7 @@ Partially observed Markov process (POMP) models, also known as hidden Markov mod
   Each component system is called a unit, and the units may be sites in a field study (e.g., plots, lakes) or independent mesocosms or microcosms in a controlled laboratory setting.
   Studying the entire panel may allow precision in statistical conclusions that is unattainable from a single unit.
   Alternatively, scientists may be interested in specific differences between the units, requiring the investigation of the entire panel of data.
-  For either of these goals, investigation of panel data leads to the challenging statistical task of fitting a collection of related nonlinear or non-Gaussian vector-valued POMP models, called a PanelPOMP model \citep{breto20, king16}.
+  For either of these goals, investigation of panel data leads to the challenging statistical task of fitting a collection of related nonlinear or non-Gaussian vector-valued POMP models, called a PanelPOMP model \citep{breto20,breto25}.
   In this article, we demonstrate how recent methodological advances can facilitate data analysis for such models in a multi-species system.
   We use data from a controlled experiment involving the population dynamics of two freshwater plankton species ({\it Daphnia dentifera} and {\it Daphnia lumholtzi}) together with an alga, \textit{Ankistrodesmus falcatus}, as food and a fungal parasite, \textit{Metschnikowia bicuspidata}, that can infect both {\it Daphnia} species.
   These data were collected by \citet{searle16} to investigate how the competition between the North American native {\it D.~dentifera} and the invasive {\it D.~lumholtzi} is modified by their differing susceptibility to the parasite.
