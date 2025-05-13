@@ -185,7 +185,7 @@ load("data/raw_data.rda")
 Each process may correspond to a spatial location for field data, or to an experimental ecosystem in a designed experiment.
 Statistical models for ecological panel data should capture the high levels of nonlinearity, stochasticity, and measurement uncertainty inherent in ecological systems.
 Furthermore, the system dynamics may depend on unobservable variables.
-This study applies iterated filtering techniques to explore new possibilities for likelihood-based statistical analysis of these complex systems.
+This study applies iterated particle filtering techniques to explore new possibilities for likelihood-based statistical analysis of these complex systems.
 We analyze data from a mesocosm experiment in which two species of the freshwater planktonic crustacean genus, {\it Daphnia}, coexist with an alga and a fungal parasite.
 Time series data are collected on replicated mesocosms under six treatment conditions.
 Iterated filtering enables maximization of the likelihood for scientifically motivated nonlinear partially observed Markov process models, providing access to standard likelihood-based methods for parameter estimation, confidence intervals, hypothesis testing, model selection and diagnostics.
@@ -371,11 +371,12 @@ The females and juveniles show a population peak around day 25, typically follow
 The males arise predominantly later in the experiment as shown in Table S12.
 The hypothesis that motivated the model of \citet{searle16} is that the arrival of the males, and the subsequent switch to the generation of ephippia by sexually reproduction, explains the decay of the other populations.
 This hypothesis is related to resource depletion, since shortage of food and high population density are both triggers for a change in reproductive strategy \citep{radzikowski18,searle16salinization}.
-However, resource depletion affects parthenogenetic reproduction as well influencing a switch to sexual reproduction
+However, resource depletion affects parthenogenetic reproduction as well influencing a switch to sexual reproduction.
 Therefore, we investigate the hypothesis that explicit modeling of resource depletion can help to explain the observed dynamics, via the introduction of a latent food compartment.
 We also hypothesizes that the inclusion of age structure, via a juvenile stage, could help to explain the population dynamics even though very juveniles show disease.
 Our paradigm is to assess models that represent known or hypothesized biological mechanisms in terms of their ability to explain observed data, quantified by likelihood penalized by model complexity.
-Our hypothesized model is supported so far as it is the best available model according to this criterion; our model and data are available at \href{https://github.com/Megumi-ybb/Daphnia-ms}{https://github.com/Megumi-ybb/Daphnia-ms}.
+Our hypothesized model is supported so far as it is the best model for the available data according to this criterion.
+The source code and data for this article are available at \href{https://github.com/Megumi-ybb/Daphnia-ms}{https://github.com/Megumi-ybb/Daphnia-ms}.
 
 \section{The Susceptible-Infected-Removed-Juvenile-Parasite-Food 2-species model (SIRJPF2)}
 \label{sec:mecmod}
@@ -596,7 +597,7 @@ The parameter values are the heritable DNA belonging to each particle.
 The parameter perturbations are analogous to mutations, and the resampling is analogous to natural selection which preferentially favors the fittest particles, i.e., those with parameter values most consistent with the data.
 \citet{kitagawa98} noticed that this favorable property of a particle filter, with perturbed parameters, can be empirically shown to move the population of these parameter values toward a region of increasing likelihood.
 \citet{ionides06} and \citet{ionides15} found ways to iterate this process that lead to concentration around the MLE.
-A recently developed panel extension of iterated filtering \citep{breto20} applies the same principle to PanelPOMP models.
+The panel extension of iterated filtering by \citet{breto20} applies the same principle to PanelPOMP models.
 A flow diagram for a panel iterated filtering (PIF) algorithm is shown in Fig.~\ref{fig:pif}, and full details are given in Section~S2.
 At each iteration, $m=\seq{1}{M}$, the magnitude of the perturbations is reduced, and we use geometric ``cooling'' with a reduction factor $\rho<1$.
 By providing likelihood-based inference for a general class of nonlinear, non-Gaussian PanelPOMP models, PIF has the potential to facilitate discoveries in a wide range of scientific domains.
@@ -683,7 +684,7 @@ Therefore, balancing model fit and parsimony becomes essential to avoid overly c
 Here, we use AIC, defined to be twice the number of estimated parameters minus twice the maximized log-likelihood.
 AIC compensates for over-fitting by seeking to optimize out-of-sample forecast skill for a log-likelihood scoring rule \citep{aic74}.
 Thus, AIC penalizes complexity only so far as it affects generalization error for prediction; parsimony has additional scientific benefits, but the scientific value of model simplicity cannot be determined by a purely statistical criterion.
-Various other information criteria have been proposed and used in ecological data analysis, in addition to likelihood ratio hypothesis tests \cite{johnson04}.
+Various other information criteria have been proposed and used in ecological data analysis, in addition to likelihood ratio hypothesis tests \citep{johnson04}.
 However, AIC has earned widespread use due to its clear theoretical motivation and its applicability for evaluating collections of non-nested hypotheses, including comparing mechanistic models to non-mechanistic benchmark models.
 
 Profile likelihood provides a useful approach for constructing confidence intervals in nonlinear stochastic systems \citep{simpson23}.
@@ -904,27 +905,26 @@ As shown in Table~\ref{tab:estimates}, the estimated values of $p^{\native}$ and
 This difference, in turn, affects the interactions between the two species.
 
 \section{Model diagnostics}
-The model that we found to have the best statistical fit to the data includes explicit modeling of juveniles and their maturation, a feature not present in the model of \citet{searle16}. 
+Our best-fitting model includes explicit modeling of juveniles and their maturation, a feature not present in the model of \citet{searle16}. 
 The extra delay in the adult dynamics introduced by the juvenile stage appears to be necessary for the model to provide a strong statistical fit to the data.
 In the original study, \citet{searle16} collected juvenile data but did not include it as part of the data analysis. 
-We make our analysis comparable to \citet{searle16} by fitting to the same data, and therefore do not include a measurement model for juveniles.
+To make our analysis comparable to \citet{searle16}, we fitted to the same data, and therefore did not include a measurement model for juveniles.
 Instead, the juvenile data are available to use as model validation, which is done by comparing simulations from the fitted model to the unmodeled data in Fig.~\ref{fig:sim_plot}.
 
 Knowing that the average body length of juvenile \textit{Daphnia} is shorter than the average body size of adult \textit{Daphnia} for both species, we expect that juvenile individuals will have a lower filtering rate.
 Yet, without fitting to juvenile data, it is unclear whether that question is identifiable from the model at hand.
 To explore this assumption, we compared the model using the value $\xi_{J,{\unit}} = 1$ (juveniles and adults filter at the same rate) against the extreme value $\xi_{J,{\unit}} = 0.001$ (juveniles filter much slower than adults).
 
-In particular, likelihood residual analysis is especially effective in identifying model misspecification or weak parameter identifiability \citep{wheeler24,li24}.
-We maximized the log-likelihood over the remaining parameters subject to this constraint to conduct the residual analysis.
-The conditional maximized log-likelihood at each time for each observation category were compared for the different $\xi_{J,{\unit}}$ values, as shown in Fig.~S3(a).
+Likelihood residual analysis is an effective tool for comparing alternative models by assessing differences in the conditional log-likelihood for each data point \citep{wheeler24,li24}.
+We maximized the log-likelihood subject to the fixed values of $\xi_{J,{\unit}}$, and we compared the conditional log-likelihood for each observation category at each time point for each fixed $\xi_{J,{\unit}}$ value, as shown in Fig.~S3(a).
 These results show that setting $\xi_{J,{\unit}} = 1$ leads to only a slightly higher maximized log-likelihood ($-881.13$) than $\xi_{J,{\unit}} = 0.001$ ($-882.24$), indicating that the parameter is weakly identified.
-Moreover, plotting the conditional log-likelihood for each state at each time, we observe that the log-likelihood components for susceptible and infected \textit{D. dentifera} and \textit{D. lumholtzi} are nearly the same between the two parameter settings.
-These results suggest that both parameter values provide indistinguishable explanations of the observed data.
+Moreover, plotting the conditional log-likelihood for each state at each time, we observe that the log-likelihood components for susceptible and infected \textit{D. dentifera} and \textit{D. lumholtzi} are similar between the two parameter settings.
+These results suggest that both parameter values provide indistinguishable explanations of the observed data, which is a stronger conclusion than obtaining a similar total log-likelihood.
 
 The choice of $\xi_{J,{\unit}}$ nevertheless affects the interpretation of the fitted model: the maximum likelihood estimates constrained to different values of $\xi_{J,{\unit}}$ lead to distinct behavior of juvenile \textit{Daphnia} in simulations, as shown in Fig.~S3(b).
 If $\xi_{J,{\unit}}$ is set to be lower than is biologically plausible, simulated trajectories from the fitted model have far fewer juveniles than was observed, which is shown in Fig.~S3(b) as well.
 This indicates model misspecification which could bias the estimates of $r^{\species}_{\unit}, p^{\species}_{\unit}$ and $ f^{\species}_{S,\unit}$.
-When a weakly identified parameter has consequences for the biological interpretation of the model, it is appropriate to fix that parameter at a biologically plausible value consistent with previous studies \citep{ebert05}, and we therefore fixed $\xi_{J,{\unit}} = 1$ for subsequent analysis.
+When a weakly identified parameter has consequences for the biological interpretation of the model, it is appropriate to fix that parameter at a biologically plausible value, and we therefore fixed $\xi_{J,{\unit}} = 1$ for subsequent analysis, reasoning that larger juveniles should have filtering rates of the same order of magnitude as adults.
 
 \begin{figure}[t]
 \centering
@@ -1130,13 +1130,10 @@ Fitting a mechanistic model can provide a coherent explanation of system dynamic
 We have an external test of our data by showing that it fits the juvenile data even though it was not fit to them, but this validation does not guarantee that all conclusions from the fitted model are correct.
 For example, while our results explain the decrease of \textit{Daphnia} density by resource depletion, data on the exact food level were not available.
 The mechanism, although logical within the model’s framework, remains an unvalidated assumption in the theory rather than being directly supported by data.
-Subsequent experimentation could substantiate or refute this prediction.
+Subsequent experimentation could substantiate or refute this prediction, and our data analysis methodology can assist such investigations.
 
-Deterministic dynamic models continue to be widely used for ecological theory, despite the fact that inclusion of stochastic effects both improves model adequacy and enables diagnosis of model shortcomings \citep{king15}.
-For our case study, the stochastic model has a nice feature that there is no need for mesocosm-specific parameters to explain the difference between the experimental replicates.
-
-The dynamic noise in our models adequately explains the observed variability in the trajectories without postulating systematic differences between the experimental replicates.
-Thus, we have demonstrated that this model class can lead to scientific parsimony compared to deterministic models since the latter require unit-specific parameters to describe the data.
+Deterministic dynamic models continue to be widely used for ecological theory, despite the fact that inclusion of stochasticity can both improve model fit and enable diagnosis of model shortcomings \citep{king15}.
+We demonstrate that including stochasticity can also lead to more parsimonious understanding of the system, since, in our case study, the dynamic stochasticity obviates a need for mesocosm-specific parameters to explain the difference between the experimental replicates.
 
 We have analyzed data collected in a controlled environment, raising the question of the applicability of our methods to field ecosystems. 
 The applicability of our approach is contingent on having panel data of sufficient length and quality to inform interactions between species.
