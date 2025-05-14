@@ -11,13 +11,13 @@ library(tidyverse)
 
 # Mesocosm_data = read_excel("/Users/ybb/Desktop/Research//Daphnia/Mesocosmdata.xls")
 Mesocosm_data = read_excel("/home/ybb/D_P/Mesocosmdata.xlsx",2)
-
+DEBUG = FALSE
 
 sed = 0923
 set.seed(0923)
 
 name_str = "xi"
-run_level <- 2
+run_level <- 3
 
 dentNoPara <- Mesocosm_data[101:190, ]
 dentNoPara <- subset(dentNoPara, select = c(rep, day, lum.adult,lum.adult.inf))
@@ -204,33 +204,33 @@ shared_parameter = c(
 
 panelfood = panelPomp(pomplist, shared=shared_parameter)
 
-generate_parameter_profile <- function(prof_name, nprof = 80) {
-  shared_ub <- shared_parameter * 10
+generate_parameter_profile = function(prof_name, nprof = 80) {
+  shared_ub = shared_parameter * 10
   
-  shared_lb <- shared_ub / 100
+  shared_lb = shared_ub / 100
   
-  ub_unit <- shared_ub[prof_name]
-  lb_unit <- shared_lb[prof_name]
+  ub_unit = log(shared_ub[prof_name])
+  lb_unit = log(shared_lb[prof_name])
   
-  prof_value <- seq(lb_unit, ub_unit, length.out = nprof)
+  shared_lb = shared_lb[ !(names(shared_lb) %in% c("sigSi", prof_name)) ]
+  shared_ub = shared_ub[ !(names(shared_ub) %in% c("sigSi",prof_name)) ]
   
-  prof_cols <- matrix(rep(prof_value, 35), ncol = 1)
-  prof_cols <- as.matrix(sort(prof_cols))
-  colnames(prof_cols) <- prof_name
-  
-  shared_ub <- shared_ub[!names(shared_ub) %in% prof_name]
-  shared_lb <- shared_lb[!names(shared_lb) %in% prof_name]
-  
-  guesses_shared <- runif_design(
-    lower = shared_lb,
-    upper = shared_ub,
-    nseq = nprof * 35
+  parameter_shared = pomp::profile_design(
+    temp = seq(lb_unit, ub_unit, length.out = nprof),
+    lower = log(shared_lb),
+    upper = log(shared_ub),
+    type = 'runif',
+    nprof = nprof
   )
   
-  parameter_shared <- cbind(prof_cols, guesses_shared)
+  parameter_shared = parameter_shared %>% 
+    rename( !!prof_name := temp)  
   
+  parameter_shared = exp(parameter_shared)
+  parameter_shared$sigSi = 0
   return(parameter_shared)
 }
+
 
 generate_sd <- function(x = 0.05, profile_name){
   sd_list = c(
@@ -280,7 +280,7 @@ U = length(panelfood)
       names(guessed.parameter.values) = colnames(parameter_shared)
       mif2(
         panelfood,
-        Nmif = 150,
+        Nmif = 300,
         shared.start = guessed.parameter.values,
         rw.sd = rw_sd(
           sigSi=dent_rw_sd_first['sigSi'],
@@ -308,24 +308,45 @@ U = length(panelfood)
                       unitlogLik(pfilter(m1,
                                          Np = algorithmic.params$Np[run_level])))
       
-      list(mif = m1,
-           ll = panel_logmeanexp(x = ll,
-                                 MARGIN = 1,
-                                 se = TRUE))
+      if(DEBUG){      
+        list(mif = m1,
+             ll = panel_logmeanexp(x = ll,
+                                   MARGIN = 1,
+                                   se = TRUE))
+      }else{
+        list(mif_ceof = coef(m1),
+             ll = panel_logmeanexp(x = ll,
+                                   MARGIN = 1,
+                                   se = TRUE))
+      }
     }
 } -> mf1
 
-log_list = c()
-for ( i in 1:length(mf1)){
-  log_list = c(log_list,mf1[[i]]$ll[1])
+if(DEBUG){
+  log_list = c()
+  for ( i in 1:length(mf1)){
+    log_list = c(log_list,mf1[[i]]$ll[1])
+  }
+  select = order(log_list,decreasing = TRUE)[1:ceiling(length(mf1)/4)]
+  shared_dataframe = data.frame(t(mf1[[select[1]]]$mif@shared))
+  for (i in 1:length(select)){
+    shared_dataframe[i,] = t(mf1[[select[i]]]$mif@shared)
+  }
+  shared_dataframe <- shared_dataframe[rep(1:nrow(shared_dataframe), each = 4), ]
+  dent_rw_sd_second = generate_sd(x = 0.04,profile_name = name_str)
+}else{
+  log_list = c()
+  for ( i in 1:length(mf1)){
+    log_list = c(log_list,mf1[[i]]$ll[1])
+  }
+  select = order(log_list,decreasing = TRUE)[1:ceiling(length(mf1)/4)]
+  shared_dataframe = data.frame(t(mf1[[select[1]]]$mif_ceof))
+  for (i in 1:length(select)){
+    shared_dataframe[i,] = t(mf1[[select[i]]]$mif_ceof)
+  }
+  shared_dataframe <- shared_dataframe[rep(1:nrow(shared_dataframe), each = 4), ]
+  dent_rw_sd_second = generate_sd(x = 0.04,profile_name = name_str)
 }
-select = order(log_list,decreasing = TRUE)[1:ceiling(length(mf1)/4)]
-shared_dataframe = data.frame(t(mf1[[select[1]]]$mif@shared))
-for (i in 1:length(select)){
-  shared_dataframe[i,] = t(mf1[[select[i]]]$mif@shared)
-}
-shared_dataframe <- shared_dataframe[rep(1:nrow(shared_dataframe), each = 4), ]
-dent_rw_sd_second = generate_sd(x = 0.04,profile_name = name_str)
 #round 2
 {
   foreach(
@@ -343,26 +364,26 @@ dent_rw_sd_second = generate_sd(x = 0.04,profile_name = name_str)
         Nmif = 300,
         shared.start = share_para_temp,
         rw.sd = rw_sd(
-          sigSi=dent_rw_sd_first['sigSi'],
-          sigF=dent_rw_sd_first['sigF'],
-          theta_Si=dent_rw_sd_first['theta_Si'],
-          k_Si = dent_rw_sd_first['k_Si'],
-          f_Si=dent_rw_sd_first['f_Si'],
-          ri=dent_rw_sd_first['ri'],
-          sigJi = dent_rw_sd_first['sigJi'],
-          theta_Ji = dent_rw_sd_first['theta_Ji'],
-          xi = dent_rw_sd_first['xi'],
-          sigIi = dent_rw_sd_first['sigIi'],
-          sigP = dent_rw_sd_first['sigP'],
-          k_Ii = dent_rw_sd_first['k_Ii'],
-          theta_P = dent_rw_sd_first['theta_P'],
-          probi = dent_rw_sd_first['probi'],
-          theta_Ii = dent_rw_sd_first['theta_Ii']),
+          sigSi=dent_rw_sd_second['sigSi'],
+          sigF=dent_rw_sd_second['sigF'],
+          theta_Si=dent_rw_sd_second['theta_Si'],
+          k_Si = dent_rw_sd_second['k_Si'],
+          f_Si=dent_rw_sd_second['f_Si'],
+          ri=dent_rw_sd_second['ri'],
+          sigJi = dent_rw_sd_second['sigJi'],
+          theta_Ji = dent_rw_sd_second['theta_Ji'],
+          xi = dent_rw_sd_second['xi'],
+          sigIi = dent_rw_sd_second['sigIi'],
+          sigP = dent_rw_sd_second['sigP'],
+          k_Ii = dent_rw_sd_second['k_Ii'],
+          theta_P = dent_rw_sd_second['theta_P'],
+          probi = dent_rw_sd_second['probi'],
+          theta_Ii = dent_rw_sd_second['theta_Ii']),
         cooling.type = "geometric",
         cooling.fraction.50 = 0.7,
         Np = algorithmic.params$Mp[run_level]
       ) -> m1
-      
+      print(i)
       ll <- replicate(n = algorithmic.params$Np_rep[run_level],
                       unitlogLik(pfilter(m1,
                                          Np = algorithmic.params$Np[run_level])))
@@ -405,14 +426,8 @@ final_params$loglik <- final_likes
 pf.loglik.of.mif.estimate
 s.e.of.pf.loglik.of.mif.estimate
 
-if (run_level == 2){
+if (run_level %in% c(2,3)){
   save(mf,final_params,lls,best,mif.estimate,pf.loglik.of.mif.estimate,
-       s.e.of.pf.loglik.of.mif.estimate,
-       file = paste0(name_str,".RData"))
-}
-
-if (run_level == 3){
-  save(lls,best,mif.estimate,pf.loglik.of.mif.estimate,
        s.e.of.pf.loglik.of.mif.estimate,
        file = paste0(name_str,".RData"))
 }

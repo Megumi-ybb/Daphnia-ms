@@ -12,15 +12,18 @@ library(tidyverse)
 Mesocosm_data = read_excel("/home/ybb/D_P/Mesocosmdata.xlsx",3)
 
 
+DEBUG = FALSE
+
+
 sed = sample(1:1000000,1)
 set.seed(sed)
 
 name_str = "theta_Si"
-run_level <- 2
+run_level = 3
 
-dentNoPara <- Mesocosm_data[91:170, ]
-dentNoPara <- subset(dentNoPara, select = c(rep, day, dent.adult,dent.inf,lum.adult,lum.adult.inf))
-dentNoPara <- dentNoPara[80: 1, ]
+dentNoPara = Mesocosm_data[91:170, ]
+dentNoPara = subset(dentNoPara, select = c(rep, day, dent.adult,dent.inf,lum.adult,lum.adult.inf))
+dentNoPara = dentNoPara[80: 1, ]
 #Convert sampling date to natural date. Samples are collected every 5 days after the #first 7 days.
 dentNoPara$day = (dentNoPara$day - 1) * 5 + 7
 data = list()
@@ -33,7 +36,7 @@ for (i in 1: length(trails)){
 
 #Notice that the unit of S is individuals/L, unit of F is 1e+5 cells/L, unit of P is 1000 spores/L, unit for I is individuals/L
 
-dyn_rpro <- Csnippet("
+dyn_rpro = Csnippet("
                       double Sn_term, In_term, F_term, P_term , Si_term, Ii_term,Jn_term,Ji_term;
                       double noiSn, noiIn, noiSi , noiIi ,noiF, noiP,noiJn,noiJi;
                       double delta = 0.013; //fraction of volume replaced day-1
@@ -191,7 +194,7 @@ rmeas = Csnippet("
                  luminf = rnbinom_mu(k_Ii,T_Ii);
                  ")
 
-pt <- parameter_trans(
+pt = parameter_trans(
   #Without death part
   log = c( "sigSn", "sigIn", "sigSi", "sigIi", "sigF","sigP","f_Sn","f_Si",
            "rn","ri","k_Ii","k_In","k_Sn","k_Si","sigJi","sigJn","probn","probi",
@@ -209,7 +212,7 @@ names(parameters) =  c("xi", "sigSn", "sigIn", "sigSi", "sigIi", "sigF","sigP","
 
 
 for (i in 1:8){
-  colnames(data[[i]]) <- c('day', 'dentadult', 'dentinf','lumadult','luminf')
+  colnames(data[[i]]) = c('day', 'dentadult', 'dentinf','lumadult','luminf')
   pomp(data = data[[i]],
        times = "day",
        t0=1,
@@ -263,35 +266,38 @@ shared_parameter = c(
 
 
 panelfood = panelPomp(pomplist, shared=shared_parameter)
-generate_parameter_profile <- function(prof_name, nprof = 80) {
-  shared_ub <- shared_parameter * 10
+
+generate_parameter_profile = function(prof_name, nprof = 80) {
+  shared_ub = shared_parameter * 10
   
-  shared_lb <- shared_ub / 100
+  shared_lb = shared_ub / 100
   
-  ub_unit <- shared_ub[prof_name]
-  lb_unit <- shared_lb[prof_name]
+  ub_unit = log(shared_ub[prof_name])
+  lb_unit = log(shared_lb[prof_name])
   
-  prof_value <- seq(lb_unit, ub_unit, length.out = nprof)
+  shared_lb = shared_lb[ !(names(shared_lb) %in% c("sigSn", "sigSi",prof_name)) ]
+  shared_ub = shared_ub[ !(names(shared_ub) %in% c("sigSn", "sigSi",prof_name)) ]
   
-  prof_cols <- matrix(rep(prof_value, 35), ncol = 1)
-  prof_cols <- as.matrix(sort(prof_cols))
-  colnames(prof_cols) <- prof_name
-  
-  shared_ub <- shared_ub[!names(shared_ub) %in% prof_name]
-  shared_lb <- shared_lb[!names(shared_lb) %in% prof_name]
-  
-  guesses_shared <- runif_design(
-    lower = shared_lb,
-    upper = shared_ub,
-    nseq = nprof * 35
+  parameter_shared = pomp::profile_design(
+    temp = seq(lb_unit, ub_unit, length.out = nprof),
+    lower = log(shared_lb),
+    upper = log(shared_ub),
+    type = 'runif',
+    nprof = nprof
   )
   
-  parameter_shared <- cbind(prof_cols, guesses_shared)
+  parameter_shared = parameter_shared %>% 
+    rename( !!prof_name := temp)  
   
+  parameter_shared = exp(parameter_shared)
+  parameter_shared$sigSn = 0
+  parameter_shared$sigSi = 0
   return(parameter_shared)
 }
 
-generate_sd <- function(x = 0.05, profile_name){
+
+
+generate_sd = function(x = 0.05, profile_name){
   sd_list = c(
     ri        = x,
     rn        = x,
@@ -325,10 +331,10 @@ generate_sd <- function(x = 0.05, profile_name){
   return(sd_list)
 }
 
-parameter_shared <- generate_parameter_profile(name_str)
+parameter_shared = generate_parameter_profile(name_str)
 # profile_para = profile_design(alpha = 0.0001:0.01,lower= shared_lb,upper = shared_ub,nprof = 100)
 
-algorithmic.params <- list(
+algorithmic.params = list(
   Np =     c(50, 320, 1e4),
   Np_rep = c( 2,  10,  10),
   Mp =     c(50, 400, 1e4),
@@ -347,11 +353,11 @@ U = length(panelfood)
     .options.multicore = list(set.seed = TRUE)
   ) %dopar%
     {
-      guessed.parameter.values <- as.numeric(parameter_shared[i,])
+      guessed.parameter.values = as.numeric(parameter_shared[i,])
       names(guessed.parameter.values) = colnames(parameter_shared)
       mif2(
         panelfood,
-        Nmif = 150,
+        Nmif = 200,
         shared.start = guessed.parameter.values,
         rw.sd = rw_sd(xi=dent_rw_sd_first['xi'],
                       sigSn=dent_rw_sd_first['sigSn'],
@@ -385,28 +391,49 @@ U = length(panelfood)
         
       ) -> m1
       
-      ll <- replicate(n = algorithmic.params$Np_rep[run_level],
-                      unitlogLik(pfilter(m1,
-                                         Np = algorithmic.params$Np[run_level])))
-      
-      list(mif = m1,
-           ll = panel_logmeanexp(x = ll,
-                                 MARGIN = 1,
-                                 se = TRUE))
+      ll = replicate(n = algorithmic.params$Np_rep[run_level],
+                     unitlogLik(pfilter(m1,
+                                        Np = algorithmic.params$Np[run_level])))
+      # No need to save complete pomp object, j
+      if(DEBUG){      
+        list(mif = m1,
+             ll = panel_logmeanexp(x = ll,
+                                   MARGIN = 1,
+                                   se = TRUE))
+      }else{
+        list(mif_ceof = coef(m1),
+             ll = panel_logmeanexp(x = ll,
+                                   MARGIN = 1,
+                                   se = TRUE))
+      }
     }
 } -> mf1
+if(DEBUG){
+  log_list = c()
+  for ( i in 1:length(mf1)){
+    log_list = c(log_list,mf1[[i]]$ll[1])
+  }
+  select = order(log_list,decreasing = TRUE)[1:ceiling(length(mf1)/4)]
+  shared_dataframe = data.frame(t(mf1[[select[1]]]$mif@shared))
+  for (i in 1:length(select)){
+    shared_dataframe[i,] = t(mf1[[select[i]]]$mif@shared)
+  }
+  shared_dataframe = shared_dataframe[rep(1:nrow(shared_dataframe), each = 4), ]
+  dent_rw_sd_second = generate_sd(x = 0.04,profile_name = name_str)
+}else{
+  log_list = c()
+  for ( i in 1:length(mf1)){
+    log_list = c(log_list,mf1[[i]]$ll[1])
+  }
+  select = order(log_list,decreasing = TRUE)[1:ceiling(length(mf1)/4)]
+  shared_dataframe = data.frame(t(mf1[[select[1]]]$mif_ceof))
+  for (i in 1:length(select)){
+    shared_dataframe[i,] = t(mf1[[select[i]]]$mif_ceof)
+  }
+  shared_dataframe = shared_dataframe[rep(1:nrow(shared_dataframe), each = 4), ]
+  dent_rw_sd_second = generate_sd(x = 0.04,profile_name = name_str)
+}
 
-log_list = c()
-for ( i in 1:length(mf1)){
-  log_list = c(log_list,mf1[[i]]$ll[1])
-}
-select = order(log_list,decreasing = TRUE)[1:ceiling(length(mf1)/4)]
-shared_dataframe = data.frame(t(mf1[[select[1]]]$mif@shared))
-for (i in 1:length(select)){
-  shared_dataframe[i,] = t(mf1[[select[i]]]$mif@shared)
-}
-shared_dataframe <- shared_dataframe[rep(1:nrow(shared_dataframe), each = 4), ]
-dent_rw_sd_second = generate_sd(x = 0.04,profile_name = name_str)
 #round 2
 {
   foreach(
@@ -454,9 +481,9 @@ dent_rw_sd_second = generate_sd(x = 0.04,profile_name = name_str)
         Np = algorithmic.params$Mp[run_level]
       ) -> m1
       
-      ll <- replicate(n = algorithmic.params$Np_rep[run_level],
-                      unitlogLik(pfilter(m1,
-                                         Np = algorithmic.params$Np[run_level])))
+      ll = replicate(n = algorithmic.params$Np_rep[run_level],
+                     unitlogLik(pfilter(m1,
+                                        Np = algorithmic.params$Np[run_level])))
       
       list(mif = m1,
            ll = panel_logmeanexp(x = ll,
@@ -467,44 +494,44 @@ dent_rw_sd_second = generate_sd(x = 0.04,profile_name = name_str)
 
 
 
-lls <- matrix(unlist(sapply(mf, getElement, "ll")), nrow = 2)
-best <- which.max(lls[1,])
-mif.estimate <- coef(mf[[best]]$mif)
-pf.loglik.of.mif.estimate <- unname(mf[[best]]$ll[1])
-s.e.of.pf.loglik.of.mif.estimate <- unname(mf[[best]]$ll[2])
+lls = matrix(unlist(sapply(mf, getElement, "ll")), nrow = 2)
+best = which.max(lls[1,])
+mif.estimate = coef(mf[[best]]$mif)
+pf.loglik.of.mif.estimate = unname(mf[[best]]$ll[1])
+s.e.of.pf.loglik.of.mif.estimate = unname(mf[[best]]$ll[2])
 
-trace <- as.data.frame(traces(mf[[1]]$mif))
+trace = as.data.frame(traces(mf[[1]]$mif))
 trace$iter = as.numeric(rownames(trace))
 
 for (i in 2 : length(mf)){
-  tmp_df <- as.data.frame(traces(mf[[i]]$mif))
+  tmp_df = as.data.frame(traces(mf[[i]]$mif))
   tmp_df$iter = as.numeric(rownames(tmp_df))
-  trace <- dplyr::bind_rows(trace,tmp_df)
+  trace = dplyr::bind_rows(trace,tmp_df)
 }
 
-final_likes <- numeric(length(mf))
+final_likes = numeric(length(mf))
 
 for (i in 1: length(mf)){
-  final_likes[i] <- mf[[i]]$ll[1]
+  final_likes[i] = mf[[i]]$ll[1]
 }
 
-final_params <- trace %>%
+final_params = trace %>%
   dplyr::filter(iter == max(iter, na.rm = TRUE))
 
-final_params$loglik <- final_likes
+final_params$loglik = final_likes
 
 pf.loglik.of.mif.estimate
 s.e.of.pf.loglik.of.mif.estimate
 
-if (run_level == 2){
+if (run_level %in% c(2,3)){
   save(mf,final_params,lls,best,mif.estimate,pf.loglik.of.mif.estimate,
        s.e.of.pf.loglik.of.mif.estimate,
        file = paste0(name_str,".RData"))
 }
 
-if (run_level == 3){
-  save(lls,best,mif.estimate,pf.loglik.of.mif.estimate,
-       s.e.of.pf.loglik.of.mif.estimate,
-       file = paste0(name_str,".RData"))
-}
+# if (run_level == 3){
+#   save(lls,best,mif.estimate,pf.loglik.of.mif.estimate,
+#        s.e.of.pf.loglik.of.mif.estimate,
+#        file = paste0(name_str,".RData"))
+# }
 

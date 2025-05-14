@@ -1,1 +1,27 @@
 for d in */; do (cd "$d" && sbatch test.sbat); done
+
+
+TEMPLATE="template.txt"
+for d in */ ; do
+  [[ -d $d ]] || continue
+  name=${d%/}
+  sed -e "s/^name_str *= *\".*\"/name_str = \"${name}\"/" \
+      "$TEMPLATE" > "${d}/profile_${name}.R"
+done
+
+
+
+TEMPLATE="sbat_code_template.txt"  
+
+for dir in */ ; do
+  [[ -d $dir ]] || continue       
+
+  name="${dir%/}"                 
+  cp -- "$TEMPLATE" "${dir}test.sbat"
+
+  sed -i '' "s/^#SBATCH --job-name=.*/#SBATCH --job-name=profile_SIRJPF2_${name}/" \
+           "${dir}test.sbat"
+
+  sed -i '' "s|^Rscript --vanilla .*|Rscript --vanilla profile_${name}.R|" \
+           "${dir}test.sbat"
+done

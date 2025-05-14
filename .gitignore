@@ -5,6 +5,7 @@
 *.synctex.gz
 *.synctex
 *.out
+*.txt
 *.sbat
 *.tex
 */*.tex

@@ -10,7 +10,7 @@ library(tidyverse)
 
 # Mesocosm_data = read_excel("/Users/ybb/Desktop/Research//Daphnia/Mesocosmdata.xls",3)
 Mesocosm_data = read_excel("/home/ybb/D_P/Mesocosmdata.xlsx",3)
-DEBUG_FLAG = FALSE
+DEBUG = FALSE
 
 sed = sample(1:1000000,1)
 set.seed(sed)
@@ -204,31 +204,31 @@ shared_parameter <- c(
 )
 
 
-generate_parameter_profile <- function(prof_name, nprof = 80) {
-  shared_ub <- shared_parameter * 1000
+generate_parameter_profile = function(prof_name, nprof = 80) {
+  shared_ub = shared_parameter * 10
   
-  shared_lb <- shared_ub / 1000
+  shared_lb = shared_ub / 100
   
-  ub_unit <- log(shared_ub[prof_name])
-  lb_unit <- log(shared_lb[prof_name])
+  ub_unit = log(shared_ub[prof_name])
+  lb_unit = log(shared_lb[prof_name])
   
-  prof_value <- seq(lb_unit, ub_unit, length.out = nprof)
-  prof_value = exp(prof_value)
-  prof_cols <- matrix(rep(prof_value, 80), ncol = 1)
-  prof_cols <- as.matrix(sort(prof_cols))
-  colnames(prof_cols) <- prof_name
+  shared_lb = shared_lb[ !(names(shared_lb) %in% c("sigSn", "sigSi",prof_name)) ]
+  shared_ub = shared_ub[ !(names(shared_ub) %in% c("sigSn", "sigSi",prof_name)) ]
   
-  shared_ub <- shared_ub[!names(shared_ub) %in% prof_name]
-  shared_lb <- shared_lb[!names(shared_lb) %in% prof_name]
-  
-  guesses_shared <- runif_design(
-    lower = shared_lb,
-    upper = shared_ub,
-    nseq = nprof * 80
+  parameter_shared = pomp::profile_design(
+    temp = seq(lb_unit, ub_unit, length.out = nprof),
+    lower = log(shared_lb),
+    upper = log(shared_ub),
+    type = 'runif',
+    nprof = nprof
   )
   
-  parameter_shared <- cbind(prof_cols, guesses_shared)
+  parameter_shared = parameter_shared %>% 
+    rename( !!prof_name := temp)  
   
+  parameter_shared = exp(parameter_shared)
+  parameter_shared$sigSn = 0
+  parameter_shared$sigSi = 0
   return(parameter_shared)
 }
 
@@ -280,7 +280,7 @@ U = length(panelfood)
       names(guessed.parameter.values) = colnames(parameter_shared)
       mif2(
         panelfood,
-        Nmif = 300,
+        Nmif = 250,
         shared.start = guessed.parameter.values,
         rw.sd = rw_sd(
                       sigSn=dent_rw_sd_first['sigSn'],
@@ -348,6 +348,7 @@ if(DEBUG){
   dent_rw_sd_second = generate_sd(x = 0.04,profile_name = name_str)
 }
 #round 2
+print(half_finished)
 {
   foreach(
     i = 1:nrow(parameter_shared),
@@ -364,26 +365,26 @@ if(DEBUG){
         Nmif = 300,
         shared.start = share_para_temp,
         rw.sd = rw_sd(
-          sigSn=dent_rw_sd_first['sigSn'],
-          sigSi=dent_rw_sd_first['sigSi'],
-          sigF=dent_rw_sd_first['sigF'],
-          theta_Sn=dent_rw_sd_first['theta_Sn'],
-          theta_Si=dent_rw_sd_first['theta_Si'],
-          k_Sn = dent_rw_sd_first['k_Sn'],
-          k_Si = dent_rw_sd_first['k_Si'],
-          f_Sn=dent_rw_sd_first['f_Sn'],
-          f_Si=dent_rw_sd_first['f_Si'],
-          rn=dent_rw_sd_first['rn'],
-          ri=dent_rw_sd_first['ri'],
-          sigJi = dent_rw_sd_first['sigJi'],
-          sigJn = dent_rw_sd_first['sigJn'],
-          theta_Jn = dent_rw_sd_first['theta_Jn'],
-          theta_Ji = dent_rw_sd_first['theta_Ji']),
+          sigSn=dent_rw_sd_second['sigSn'],
+          sigSi=dent_rw_sd_second['sigSi'],
+          sigF=dent_rw_sd_second['sigF'],
+          theta_Sn=dent_rw_sd_second['theta_Sn'],
+          theta_Si=dent_rw_sd_second['theta_Si'],
+          k_Sn = dent_rw_sd_second['k_Sn'],
+          k_Si = dent_rw_sd_second['k_Si'],
+          f_Sn=dent_rw_sd_second['f_Sn'],
+          f_Si=dent_rw_sd_second['f_Si'],
+          rn=dent_rw_sd_second['rn'],
+          ri=dent_rw_sd_second['ri'],
+          sigJi = dent_rw_sd_second['sigJi'],
+          sigJn = dent_rw_sd_second['sigJn'],
+          theta_Jn = dent_rw_sd_second['theta_Jn'],
+          theta_Ji = dent_rw_sd_second['theta_Ji']),
         cooling.type = "geometric",
         cooling.fraction.50 = 0.7,
         Np = algorithmic.params$Mp[run_level]
       ) -> m1
-      
+      print(i)
       ll <- replicate(n = algorithmic.params$Np_rep[run_level],
                       unitlogLik(pfilter(m1,
                                          Np = algorithmic.params$Np[run_level])))
@@ -426,15 +427,8 @@ final_params$loglik <- final_likes
 pf.loglik.of.mif.estimate
 s.e.of.pf.loglik.of.mif.estimate
 
-if (run_level == 3){
+if (run_level %in% c(2,3)){
   save(mf,final_params,lls,best,mif.estimate,pf.loglik.of.mif.estimate,
        s.e.of.pf.loglik.of.mif.estimate,
        file = paste0(name_str,".RData"))
 }
-
-# if (run_level == 3){
-#   save(lls,best,mif.estimate,pf.loglik.of.mif.estimate,
-#        s.e.of.pf.loglik.of.mif.estimate,
-#        file = paste0(name_str,".RData"))
-# }
-
