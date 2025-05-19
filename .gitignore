@@ -16,3 +16,5 @@
 *.out
 .Rproj.user
 Daphnia.Rproj
+*.txt
+*.sh

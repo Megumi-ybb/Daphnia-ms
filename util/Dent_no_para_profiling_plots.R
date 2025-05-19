@@ -5,16 +5,17 @@ library(dplyr)
 library(pomp)
 library(ggplot2)
 
+#Please set the working to be the 'Daphnia-ms' path
 
-load("data/Simple_dynamics/Dent/no_para/profile_graph_data.rda")
-load("Simple_dynamics/Dent/no_para/model/best_result.RData")
+# load("data/Simple_dynamics/Dent/no_para/profile_graph_data.rda")
+# load("Simple_dynamics/Dent/no_para/model/best_result.RData")
 
 load_option = FALSE
 
 
 
 if(load_option){
-  load("~/Desktop/Research/Daphnia/Simple_dynamics/Dent/no_para/profile/f_Sn/f_Sn.RData")
+  load("./Single-species/Dent/SRJF/profile/f_Sn/f_Sn.RData")
   subset_data_f_Sn <- final_params %>%
     group_by(f_Sn) %>%
     filter(loglik == max(loglik))
@@ -54,7 +55,7 @@ f_Sn_p
 
 
 if(load_option){
-  load("~/Desktop/Research/Daphnia/Simple_dynamics/Dent/no_para/profile/k_Sn/k_Sn.RData")
+  load("./Single-species/Dent/SRJF/profile/k_Sn/k_Sn.RData")
   subset_data_k_Sn <- final_params %>%
     group_by(k_Sn) %>%
     filter(loglik == max(loglik))
@@ -64,7 +65,6 @@ plot(x = log(subset_data_k_Sn$k_Sn), y = subset_data_k_Sn$loglik)
 plot(x = subset_data_k_Sn$k_Sn, y = subset_data_k_Sn$loglik)
 subset_data_k_Sn$log_k_Sn <- log(subset_data_k_Sn$k_Sn)
 
-# subset_data_k_Sn = subset_data_k_Sn[subset_data_k_Sn$log_k_Sn <=3,]
 mcap(subset_data_k_Sn$loglik, subset_data_k_Sn$log_k_Sn,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_k_Sn
 mcap_object_k_Sn$mle -> k_Sn_mle
 k_Sn_p <- ggplot() +
@@ -96,7 +96,7 @@ k_Sn_p
 
 
 if(load_option){
-  load("~/Desktop/Research/Daphnia/Simple_dynamics/Dent/no_para/profile/rn/rn.RData")
+  load("./Single-species/Dent/SRJF/profile/rn/rn.RData")
   subset_data_rn <- final_params %>%
     group_by(rn) %>%
     filter(loglik == max(loglik))
@@ -106,7 +106,6 @@ plot(x = log(subset_data_rn$rn), y = subset_data_rn$loglik)
 plot(x = subset_data_rn$rn, y = subset_data_rn$loglik)
 subset_data_rn$log_rn <- log(subset_data_rn$rn)
 
-# subset_data_rn = subset_data_rn[subset_data_rn$log_rn <=6,]
 mcap(subset_data_rn$loglik, subset_data_rn$log_rn,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_rn
 mcap_object_rn$mle -> rn_mle
 rn_p <- ggplot() +
@@ -125,9 +124,7 @@ rn_p <- ggplot() +
         axis.title = element_text(size = 10)) +
   ylim(-505, -495)+
   theme_bw() +
-  theme(axis.title.y = element_blank(),
-        axis.text.y = element_blank(),
-        axis.ticks.y = element_blank())  + 
+  theme(axis.title.y = element_blank())  + 
   annotate("text", x = mcap_object_rn$mle, y = -900, label = sprintf("rn_mle: %s", formatC(mcap_object_rn$mle, format = 'e', digits = 3)), hjust = 1.05, vjust = -0.5, size = 3)
 
 rn_p
@@ -136,7 +133,7 @@ rn_p
 
 
 if(load_option){
-  load("~/Desktop/Research/Daphnia/Simple_dynamics/Dent/no_para/profile/sigF/sigF.RData")
+  load("./Single-species/Dent/SRJF/profile/sigF/sigF.RData")
   subset_data_sigF <- final_params %>%
     group_by(sigF) %>%
     filter(loglik == max(loglik))
@@ -146,7 +143,6 @@ plot(x = log(subset_data_sigF$sigF), y = subset_data_sigF$loglik)
 plot(x = subset_data_sigF$sigF, y = subset_data_sigF$loglik)
 subset_data_sigF$log_sigF <- log(subset_data_sigF$sigF)
 
-# subset_data_sigF = subset_data_sigF[subset_data_sigF$log_sigF <=0.3,]
 mcap(subset_data_sigF$loglik, subset_data_sigF$log_sigF,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_sigF
 mcap_object_sigF$mle -> sigF_mle
 sigF_p <- ggplot() +
@@ -179,7 +175,7 @@ sigF_p
 
 
 if(load_option){
-  load("~/Desktop/Research/Daphnia/Simple_dynamics/Dent/no_para/profile/sigJn/sigJn.RData")
+  load("./Single-species/Dent/SRJF/profile/sigJn/sigJn.RData")
   subset_data_sigJn <- final_params %>%
     group_by(sigJn) %>%
     filter(loglik == max(loglik))
@@ -189,7 +185,6 @@ plot(x = log(subset_data_sigJn$sigJn), y = subset_data_sigJn$loglik)
 plot(x = subset_data_sigJn$sigJn, y = subset_data_sigJn$loglik)
 subset_data_sigJn$log_sigJn <- log(subset_data_sigJn$sigJn)
 
-# subset_data_sigJn = subset_data_sigJn[subset_data_sigJn$log_sigJn <=0.3,]
 mcap(subset_data_sigJn$loglik, subset_data_sigJn$log_sigJn,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_sigJn
 mcap_object_sigJn$mle -> sigJn_mle
 sigJn_p <- ggplot() +
@@ -209,9 +204,7 @@ sigJn_p <- ggplot() +
   ylim(-505, -495)+
   # xlim(-3,0)+
   theme_bw() +
-  theme(axis.title.y = element_blank(),
-        axis.text.y = element_blank(),
-        axis.ticks.y = element_blank())  + 
+  theme(axis.title.y = element_blank())  + 
   annotate("text", x = mcap_object_sigJn$mle, y = -900, label = sprintf("sigJn_mle: %s", formatC(mcap_object_sigJn$mle, format = 'e', digits = 3)), hjust = 1.05, vjust = -0.5, size = 3)
 
 sigJn_p
@@ -226,7 +219,7 @@ sigJn_p
 
 
 if(load_option){
-  load("~/Desktop/Research/Daphnia/Simple_dynamics/Dent/no_para/profile/theta_Jn/theta_Jn.RData")
+  load("./Single-species/Dent/SRJF/profile/theta_Jn/theta_Jn.RData")
   subset_data_theta_Jn <- final_params %>%
     group_by(theta_Jn) %>%
     filter(loglik == max(loglik))
@@ -235,8 +228,7 @@ if(load_option){
 plot(x = log(subset_data_theta_Jn$theta_Jn), y = subset_data_theta_Jn$loglik)
 plot(x = subset_data_theta_Jn$theta_Jn, y = subset_data_theta_Jn$loglik)
 subset_data_theta_Jn$log_theta_Jn <- log(subset_data_theta_Jn$theta_Jn)
-# 
-# subset_data_theta_Jn = subset_data_theta_Jn[subset_data_theta_Jn$log_theta_Jn <=1,]
+
 mcap(subset_data_theta_Jn$loglik, subset_data_theta_Jn$log_theta_Jn,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_theta_Jn
 mcap_object_theta_Jn$mle -> theta_Jn_mle
 theta_Jn_p <- ggplot() +
@@ -269,7 +261,7 @@ theta_Jn_p
 
 
 if(load_option){
-  load("~/Desktop/Research/Daphnia/Simple_dynamics/Dent/no_para/profile/theta_Sn/theta_Sn.RData")
+  load("./Single-species/Dent/SRJF/profile/theta_Sn/theta_Sn.RData")
   subset_data_theta_Sn <- final_params %>%
     group_by(theta_Sn) %>%
     filter(loglik == max(loglik))
@@ -278,8 +270,7 @@ if(load_option){
 plot(x = log(subset_data_theta_Sn$theta_Sn), y = subset_data_theta_Sn$loglik)
 plot(x = subset_data_theta_Sn$theta_Sn, y = subset_data_theta_Sn$loglik)
 subset_data_theta_Sn$log_theta_Sn <- log(subset_data_theta_Sn$theta_Sn)
-# 
-# subset_data_theta_Sn = subset_data_theta_Sn[subset_data_theta_Sn$log_theta_Sn >=-4.3,]
+
 mcap(subset_data_theta_Sn$loglik, subset_data_theta_Sn$log_theta_Sn,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_theta_Sn
 mcap_object_theta_Sn$mle -> theta_Sn_mle
 theta_Sn_p <- ggplot() +

@@ -3,7 +3,8 @@ library(magrittr)
 library(foreach)
 library(readxl)
 library(doParallel)
-registerDoParallel(cores=36)
+n_cores <- parallel::detectCores(logical = TRUE)
+registerDoParallel(cores = n_cores)
 library(pomp)
 library(panelPomp)
 library(tidyverse)
@@ -267,8 +268,8 @@ shared_parameter = c(
 
 panelfood = panelPomp(pomplist, shared=shared_parameter)
 
-generate_parameter_profile = function(prof_name, nprof = 80) {
-  shared_ub = shared_parameter * 10
+generate_parameter_profile = function(prof_name, nprof = 50) {
+  shared_ub = shared_parameter * 200
   
   shared_lb = shared_ub / 100
   
@@ -335,9 +336,9 @@ parameter_shared = generate_parameter_profile(name_str)
 # profile_para = profile_design(alpha = 0.0001:0.01,lower= shared_lb,upper = shared_ub,nprof = 100)
 
 algorithmic.params = list(
-  Np =     c(50, 320, 1e4),
-  Np_rep = c( 2,  10,  10),
-  Mp =     c(50, 400, 1e4),
+  Np =     c(50, 320, 1000),
+  Np_rep = c( 2,  10,  20),
+  Mp =     c(50, 400, 1000),
   Nmif =   c( 2,  320, 250)
 )
 
@@ -480,7 +481,7 @@ if(DEBUG){
         cooling.fraction.50 = 0.7,
         Np = algorithmic.params$Mp[run_level]
       ) -> m1
-      
+      print(i)
       ll = replicate(n = algorithmic.params$Np_rep[run_level],
                      unitlogLik(pfilter(m1,
                                         Np = algorithmic.params$Np[run_level])))
@@ -528,10 +529,3 @@ if (run_level %in% c(2,3)){
        s.e.of.pf.loglik.of.mif.estimate,
        file = paste0(name_str,".RData"))
 }
-
-# if (run_level == 3){
-#   save(lls,best,mif.estimate,pf.loglik.of.mif.estimate,
-#        s.e.of.pf.loglik.of.mif.estimate,
-#        file = paste0(name_str,".RData"))
-# }
-

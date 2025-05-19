@@ -3,7 +3,8 @@ library(magrittr)
 library(foreach)
 library(readxl)
 library(doParallel)
-registerDoParallel(cores=36)
+n_cores = parallel::detectCores(logical = TRUE)
+registerDoParallel(cores = n_cores)
 library(pomp)
 library(panelPomp)
 library(tidyverse)
@@ -162,10 +163,10 @@ shared_parameter = c(
 
 panelfood = panelPomp(pomplist, shared=shared_parameter)
 
-generate_parameter_profile = function(prof_name, nprof = 80) {
+generate_parameter_profile = function(prof_name, nprof = 50) {
   shared_ub = shared_parameter * 10
   
-  shared_lb = shared_ub / 100
+  shared_lb = shared_ub / 300
   
   ub_unit = log(shared_ub[prof_name])
   lb_unit = log(shared_lb[prof_name])
@@ -207,10 +208,10 @@ generate_sd <- function(x = 0.05, profile_name){
 
 parameter_shared <- generate_parameter_profile(name_str)
 
-algorithmic.params <- list(
-  Np =     c(50, 320, 1e4),
-  Np_rep = c( 2,  10,  10),
-  Mp =     c(50, 400, 1e4),
+algorithmic.params = list(
+  Np =     c(50, 320, 1e3),
+  Np_rep = c( 2,  10,  20),
+  Mp =     c(50, 400, 1000),
   Nmif =   c( 2,  320, 250)
 )
 

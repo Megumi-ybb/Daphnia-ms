@@ -4,7 +4,8 @@ library(magrittr)
 library(foreach)
 library(readxl)
 library(doParallel)
-registerDoParallel(cores=36)
+n_cores = parallel::detectCores(logical = TRUE)
+registerDoParallel(cores = n_cores)
 library(pomp)
 library(panelPomp)
 library(tidyverse)
@@ -188,7 +189,7 @@ shared_parameter = c(
   sigSi    = 0.000000e+00,
   sigIi    = 9.026266e-02,
   sigF     = 2.076948e-05,
-  sigP     = 8.004437e-08,
+  sigP     = 8.004437e-07,
   f_Si     = 3.790612e-04,
   ri       = 4.827858e+02,
   k_Ii     = 1.117515e+00,
@@ -204,10 +205,10 @@ shared_parameter = c(
 
 panelfood = panelPomp(pomplist, shared=shared_parameter)
 
-generate_parameter_profile = function(prof_name, nprof = 80) {
-  shared_ub = shared_parameter * 10
+generate_parameter_profile = function(prof_name, nprof = 50) {
+  shared_ub = shared_parameter * 100
   
-  shared_lb = shared_ub / 100
+  shared_lb = shared_ub / 10
   
   ub_unit = log(shared_ub[prof_name])
   lb_unit = log(shared_lb[prof_name])
@@ -257,13 +258,12 @@ generate_sd <- function(x = 0.05, profile_name){
 
 parameter_shared <- generate_parameter_profile(name_str)
 
-algorithmic.params <- list(
-  Np =     c(50, 320, 1e4),
-  Np_rep = c( 2,  10,  10),
-  Mp =     c(50, 400, 1e4),
+algorithmic.params = list(
+  Np =     c(50, 320, 1e3),
+  Np_rep = c( 2,  10,  20),
+  Mp =     c(50, 400, 1000),
   Nmif =   c( 2,  320, 250)
 )
-
 
 dent_rw_sd_first = generate_sd(x = 0.05,profile_name = name_str)
 

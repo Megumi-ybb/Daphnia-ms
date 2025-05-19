@@ -11,7 +11,7 @@ done
 
 
 
-TEMPLATE="sbat_code_template.txt"  
+TEMPLATE="sbatch_code_template.txt"  
 
 for dir in */ ; do
   [[ -d $dir ]] || continue       

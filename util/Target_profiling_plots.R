@@ -6,31 +6,25 @@ library(pomp)
 library(ggplot2)
 
 
-load("data/Target_dynamics/para/profile_graph_data.rda")
-load("Target_dynamics/para/model_no_sigS/best_result.RData")
+#Please set the working to be the 'Daphnia-ms' path
+
+# load("data/Target_dynamics/para/profile_graph_data.rda")
+load("./Mixed-species/SIRJPF2/model/best_result.RData")
 
 load_option = FALSE
 
+
+
+
 if(load_option){
-load("~/Desktop/Research/Daphnia/Target_dynamics/para/nosigS_model_profile/f_Si/f_Si.RData")
+load("./Mixed-species/SIRJPF2/profile/f_Si/f_Si.RData")
 subset_data_f_Si <- final_params %>%
   group_by(f_Si) %>%
   filter(loglik == max(loglik))
 }
-subset_data_f_Si = subset_data_f_Si[subset_data_f_Si$loglik > -2000,]
 plot(x = log(subset_data_f_Si$f_Si), y = subset_data_f_Si$loglik)
 plot(x = subset_data_f_Si$f_Si, y = subset_data_f_Si$loglik)
 subset_data_f_Si$log_f_Si <- log(subset_data_f_Si$f_Si)
-# subset_data_f_Si = subset_data_f_Si[subset_data_f_Si$log_f_Si <=-7,]
-
-subset_data_f_Si$log_f_Si_bin <- cut(subset_data_f_Si$log_f_Si, breaks = 50)
-
-subset_data_f_Si <- subset_data_f_Si %>%
-  group_by(log_f_Si_bin) %>%
-  filter(loglik == max(loglik)) %>%
-  ungroup()
-
-subset_data_f_Si = subset_data_f_Si[subset_data_f_Si$loglik > -895,]
 
 mcap(subset_data_f_Si$loglik, subset_data_f_Si$log_f_Si,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_f_Si
 mcap_object_f_Si$mle -> f_Si_mle
@@ -65,7 +59,7 @@ f_Si_p
 
 
 if(load_option){
-load("~/Desktop/Research/Daphnia/Target_dynamics/para/nosigS_model_profile/f_Sn/f_Sn.RData")
+load("./Mixed-species/SIRJPF2/profile/f_Sn/f_Sn.RData")
 subset_data_f_Sn <- final_params %>%
   group_by(f_Sn) %>%
   filter(loglik == max(loglik))
@@ -105,7 +99,7 @@ f_Sn_p
 
 
 if(load_option){
-load("~/Desktop/Research/Daphnia/Target_dynamics/para/nosigS_model_profile/k_Ii/k_Ii.RData")
+load("./Mixed-species/SIRJPF2/profile/k_Ii/k_Ii.RData")
 subset_data_k_Ii <- final_params %>%
   group_by(k_Ii) %>%
   filter(loglik == max(loglik))
@@ -146,7 +140,7 @@ k_Ii_p
 
 
 if(load_option){
-load("~/Desktop/Research/Daphnia/Target_dynamics/para/nosigS_model_profile/k_In/k_In.RData")
+load("./Mixed-species/SIRJPF2/profile/k_In/k_In.RData")
 subset_data_k_In <- final_params %>%
   group_by(k_In) %>%
   filter(loglik == max(loglik))
@@ -187,7 +181,7 @@ k_In_p
 
 
 if(load_option){
-load("~/Desktop/Research/Daphnia/Target_dynamics/para/nosigS_model_profile/k_Si/k_Si.RData")
+load("./Mixed-species/SIRJPF2/profile/k_Si/k_Si.RData")
 subset_data_k_Si <- final_params %>%
   group_by(k_Si) %>%
   filter(loglik == max(loglik))
@@ -197,7 +191,6 @@ plot(x = log(subset_data_k_Si$k_Si), y = subset_data_k_Si$loglik)
 plot(x = subset_data_k_Si$k_Si, y = subset_data_k_Si$loglik)
 subset_data_k_Si$log_k_Si <- log(subset_data_k_Si$k_Si)
 
-subset_data_k_Si = subset_data_k_Si[subset_data_k_Si$log_k_Si <=3,]
 mcap(subset_data_k_Si$loglik, subset_data_k_Si$log_k_Si,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_k_Si
 mcap_object_k_Si$mle -> k_Si_mle
 k_Si_p <- ggplot() +
@@ -224,8 +217,13 @@ k_Si_p <- ggplot() +
 k_Si_p
 
 
+
+
+
+
+
 if(load_option){
-load("~/Desktop/Research/Daphnia/Target_dynamics/para/nosigS_model_profile/k_Sn/k_Sn.RData")
+load("./Mixed-species/SIRJPF2/profile/k_Sn/k_Sn.RData")
 subset_data_k_Sn <- final_params %>%
   group_by(k_Sn) %>%
   filter(loglik == max(loglik))
@@ -235,7 +233,6 @@ plot(x = log(subset_data_k_Sn$k_Sn), y = subset_data_k_Sn$loglik)
 plot(x = subset_data_k_Sn$k_Sn, y = subset_data_k_Sn$loglik)
 subset_data_k_Sn$log_k_Sn <- log(subset_data_k_Sn$k_Sn)
 
-subset_data_k_Sn = subset_data_k_Sn[subset_data_k_Sn$log_k_Sn <=3,]
 mcap(subset_data_k_Sn$loglik, subset_data_k_Sn$log_k_Sn,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_k_Sn
 mcap_object_k_Sn$mle -> k_Sn_mle
 k_Sn_p <- ggplot() +
@@ -263,18 +260,19 @@ k_Sn_p
 
 
 
+
+
+
 if(load_option){
-load("~/Desktop/Research/Daphnia/Target_dynamics/para/nosigS_model_profile/probi/probi.RData")
+load("./Mixed-species/SIRJPF2/profile/probi/probi.RData")
 subset_data_probi <- final_params %>%
   group_by(probi) %>%
   filter(loglik == max(loglik))
 }
-subset_data_probi = subset_data_probi[subset_data_probi$loglik > -900,]
 plot(x = log(subset_data_probi$probi), y = subset_data_probi$loglik)
 plot(x = subset_data_probi$probi, y = subset_data_probi$loglik)
 subset_data_probi$log_probi <- log(subset_data_probi$probi)
 
-subset_data_probi = subset_data_probi[subset_data_probi$log_probi >= 6.8,]
 mcap(subset_data_probi$loglik, subset_data_probi$log_probi,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_probi
 mcap_object_probi$mle -> probi_mle
 probi_p <- ggplot() +
@@ -301,8 +299,17 @@ probi_p <- ggplot() +
 probi_p
 
 
+
+
+
+
+
+
+
+
+
 if(load_option){
-load("~/Desktop/Research/Daphnia/Target_dynamics/para/nosigS_model_profile/probn/probn.RData")
+load("./Mixed-species/SIRJPF2/profile/probn/probn.RData")
 subset_data_probn <- final_params %>%
   group_by(probn) %>%
   filter(loglik == max(loglik))
@@ -312,7 +319,6 @@ plot(x = log(subset_data_probn$probn), y = subset_data_probn$loglik)
 plot(x = subset_data_probn$probn, y = subset_data_probn$loglik)
 subset_data_probn$log_probn <- log(subset_data_probn$probn)
 
-subset_data_probn = subset_data_probn[subset_data_probn$log_probn <=0.3,]
 mcap(subset_data_probn$loglik, subset_data_probn$log_probn,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_probn
 mcap_object_probn$mle -> probn_mle
 probn_p <- ggplot() +
@@ -341,7 +347,7 @@ probn_p
 
 
 if(load_option){
-load("~/Desktop/Research/Daphnia/Target_dynamics/para/nosigS_model_profile/ri/ri.RData")
+load("./Mixed-species/SIRJPF2/profile/ri/ri.RData")
 subset_data_ri <- final_params %>%
   group_by(ri) %>%
   filter(loglik == max(loglik))
@@ -351,7 +357,6 @@ plot(x = log(subset_data_ri$ri), y = subset_data_ri$loglik)
 plot(x = subset_data_ri$ri, y = subset_data_ri$loglik)
 subset_data_ri$log_ri <- log(subset_data_ri$ri)
 
-# subset_data_ri = subset_data_ri[subset_data_ri$log_ri <=0.3,]
 mcap(subset_data_ri$loglik, subset_data_ri$log_ri,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_ri
 mcap_object_ri$mle -> ri_mle
 ri_p <- ggplot() +
@@ -383,7 +388,7 @@ ri_p
 
 
 if(load_option){
-load("~/Desktop/Research/Daphnia/Target_dynamics/para/nosigS_model_profile/rn/rn.RData")
+load("./Mixed-species/SIRJPF2/profile/rn/rn.RData")
 subset_data_rn <- final_params %>%
   group_by(rn) %>%
   filter(loglik == max(loglik))
@@ -393,7 +398,6 @@ plot(x = log(subset_data_rn$rn), y = subset_data_rn$loglik)
 plot(x = subset_data_rn$rn, y = subset_data_rn$loglik)
 subset_data_rn$log_rn <- log(subset_data_rn$rn)
 
-subset_data_rn = subset_data_rn[subset_data_rn$log_rn <=6,]
 mcap(subset_data_rn$loglik, subset_data_rn$log_rn,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_rn
 mcap_object_rn$mle -> rn_mle
 rn_p <- ggplot() +
@@ -412,9 +416,7 @@ rn_p <- ggplot() +
         axis.title = element_text(size = 10)) +
   ylim(-890, -880)+
   theme_bw() +
-  theme(axis.title.y = element_blank(),
-        axis.text.y = element_blank(),
-        axis.ticks.y = element_blank())  + 
+  theme(axis.title.y = element_blank())  + 
   annotate("text", x = mcap_object_rn$mle, y = -900, label = sprintf("rn_mle: %s", formatC(mcap_object_rn$mle, format = 'e', digits = 3)), hjust = 1.05, vjust = -0.5, size = 3)
 
 rn_p
@@ -423,7 +425,7 @@ rn_p
 
 
 if(load_option){
-load("~/Desktop/Research/Daphnia/Target_dynamics/para/nosigS_model_profile/sigF/sigF.RData")
+load("./Mixed-species/SIRJPF2/profile/sigF/sigF.RData")
 subset_data_sigF <- final_params %>%
   group_by(sigF) %>%
   filter(loglik == max(loglik))
@@ -433,7 +435,6 @@ plot(x = log(subset_data_sigF$sigF), y = subset_data_sigF$loglik)
 plot(x = subset_data_sigF$sigF, y = subset_data_sigF$loglik)
 subset_data_sigF$log_sigF <- log(subset_data_sigF$sigF)
 
-# subset_data_sigF = subset_data_sigF[subset_data_sigF$log_sigF <=0.3,]
 mcap(subset_data_sigF$loglik, subset_data_sigF$log_sigF,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_sigF
 mcap_object_sigF$mle -> sigF_mle
 sigF_p <- ggplot() +
@@ -465,7 +466,7 @@ sigF_p
 
 
 if(load_option){
-load("~/Desktop/Research/Daphnia/Target_dynamics/para/nosigS_model_profile/sigIi/sigIi.RData")
+load("./Mixed-species/SIRJPF2/profile/sigIi/sigIi.RData")
 subset_data_sigIi <- final_params %>%
   group_by(sigIi) %>%
   filter(loglik == max(loglik))
@@ -481,8 +482,7 @@ subset_data_sigIi <- subset_data_sigIi %>%
   group_by(log_sigIi_bin) %>%
   filter(loglik == max(loglik)) %>%
   ungroup()
-subset_data_sigIi = subset_data_sigIi[subset_data_sigIi$loglik > -885,]
-# subset_data_sigIi = subset_data_sigIi[subset_data_sigIi$log_sigIi <=0.3,]
+
 mcap(subset_data_sigIi$loglik, subset_data_sigIi$log_sigIi,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_sigIi
 mcap_object_sigIi$mle -> sigIi_mle
 sigIi_p <- ggplot() +
@@ -515,7 +515,7 @@ sigIi_p
 
 if(load_option){
 
-load("~/Desktop/Research/Daphnia/Target_dynamics/para/nosigS_model_profile/sigIn/sigIn.RData")
+load("./Mixed-species/SIRJPF2/profile/sigIn/sigIn.RData")
 subset_data_sigIn <- final_params %>%
   group_by(sigIn) %>%
   filter(loglik == max(loglik))
@@ -525,7 +525,6 @@ plot(x = log(subset_data_sigIn$sigIn), y = subset_data_sigIn$loglik)
 plot(x = subset_data_sigIn$sigIn, y = subset_data_sigIn$loglik)
 subset_data_sigIn$log_sigIn <- log(subset_data_sigIn$sigIn)
 
-# subset_data_sigIn = subset_data_sigIn[subset_data_sigIn$log_sigIn <=0.3,]
 mcap(subset_data_sigIn$loglik, subset_data_sigIn$log_sigIn,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_sigIn
 mcap_object_sigIn$mle -> sigIn_mle
 sigIn_p <- ggplot() +
@@ -544,9 +543,7 @@ sigIn_p <- ggplot() +
         axis.title = element_text(size = 10)) +
   ylim(-890, -880)+
   theme_bw() +
-  theme(axis.title.y = element_blank(),
-        axis.text.y = element_blank(),
-        axis.ticks.y = element_blank())  + 
+  theme(axis.title.y = element_blank())  + 
   annotate("text", x = mcap_object_sigIn$mle, y = -900, label = sprintf("sigIn_mle: %s", formatC(mcap_object_sigIn$mle, format = 'e', digits = 3)), hjust = 1.05, vjust = -0.5, size = 3)
 
 sigIn_p
@@ -556,7 +553,7 @@ sigIn_p
 
 
 if(load_option){
-load("~/Desktop/Research/Daphnia/Target_dynamics/para/nosigS_model_profile/sigJi/sigJi.RData")
+load("./Mixed-species/SIRJPF2/profile/sigJi/sigJi.RData")
 subset_data_sigJi <- final_params %>%
   group_by(sigJi) %>%
   filter(loglik == max(loglik))
@@ -566,7 +563,6 @@ plot(x = log(subset_data_sigJi$sigJi), y = subset_data_sigJi$loglik)
 plot(x = subset_data_sigJi$sigJi, y = subset_data_sigJi$loglik)
 subset_data_sigJi$log_sigJi <- log(subset_data_sigJi$sigJi)
 
-# subset_data_sigJi = subset_data_sigJi[subset_data_sigJi$log_sigJi <=0.3,]
 mcap(subset_data_sigJi$loglik, subset_data_sigJi$log_sigJi,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_sigJi
 mcap_object_sigJi$mle -> sigJi_mle
 sigJi_p <- ggplot() +
@@ -600,7 +596,7 @@ sigJi_p
 
 
 if(load_option){
-load("~/Desktop/Research/Daphnia/Target_dynamics/para/nosigS_model_profile/sigJn/sigJn.RData")
+load("./Mixed-species/SIRJPF2/profile/sigJn/sigJn.RData")
 subset_data_sigJn <- final_params %>%
   group_by(sigJn) %>%
   filter(loglik == max(loglik))
@@ -610,7 +606,6 @@ plot(x = log(subset_data_sigJn$sigJn), y = subset_data_sigJn$loglik)
 plot(x = subset_data_sigJn$sigJn, y = subset_data_sigJn$loglik)
 subset_data_sigJn$log_sigJn <- log(subset_data_sigJn$sigJn)
 
-# subset_data_sigJn = subset_data_sigJn[subset_data_sigJn$log_sigJn <=0.3,]
 mcap(subset_data_sigJn$loglik, subset_data_sigJn$log_sigJn,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_sigJn
 mcap_object_sigJn$mle -> sigJn_mle
 sigJn_p <- ggplot() +
@@ -641,7 +636,7 @@ sigJn_p
 
 
 if(load_option){
-load("~/Desktop/Research/Daphnia/Target_dynamics/para/nosigS_model_profile/sigP/sigP.RData")
+load("./Mixed-species/SIRJPF2/profile/sigP/sigP.RData")
 subset_data_sigP <- final_params %>%
   group_by(sigP) %>%
   filter(loglik == max(loglik))
@@ -651,7 +646,6 @@ plot(x = log(subset_data_sigP$sigP), y = subset_data_sigP$loglik)
 plot(x = subset_data_sigP$sigP, y = subset_data_sigP$loglik)
 subset_data_sigP$log_sigP <- log(subset_data_sigP$sigP)
 
-# subset_data_sigP = subset_data_sigP[subset_data_sigP$log_sigP <=0.3,]
 mcap(subset_data_sigP$loglik, subset_data_sigP$log_sigP,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_sigP
 mcap_object_sigP$mle -> sigP_mle
 sigP_p <- ggplot() +
@@ -679,8 +673,12 @@ sigP_p
 
 
 
+
+
+
+
 if(load_option){
-load("~/Desktop/Research/Daphnia/Target_dynamics/para/nosigS_model_profile/theta_Ii/theta_Ii.RData")
+load("./Mixed-species/SIRJPF2/profile/theta_Ii/theta_Ii.RData")
 subset_data_theta_Ii <- final_params %>%
   group_by(theta_Ii) %>%
   filter(loglik == max(loglik))
@@ -690,7 +688,6 @@ plot(x = log(subset_data_theta_Ii$theta_Ii), y = subset_data_theta_Ii$loglik)
 plot(x = subset_data_theta_Ii$theta_Ii, y = subset_data_theta_Ii$loglik)
 subset_data_theta_Ii$log_theta_Ii <- log(subset_data_theta_Ii$theta_Ii)
 
-subset_data_theta_Ii = subset_data_theta_Ii[subset_data_theta_Ii$log_theta_Ii <=0.3,]
 mcap(subset_data_theta_Ii$loglik, subset_data_theta_Ii$log_theta_Ii,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_theta_Ii
 mcap_object_theta_Ii$mle -> theta_Ii_mle
 theta_Ii_p <- ggplot() +
@@ -723,7 +720,7 @@ theta_Ii_p
 
 
 if(load_option){
-load("~/Desktop/Research/Daphnia/Target_dynamics/para/nosigS_model_profile/theta_In/theta_In.RData")
+load("./Mixed-species/SIRJPF2/profile/theta_In/theta_In.RData")
 subset_data_theta_In <- final_params %>%
   group_by(theta_In) %>%
   filter(loglik == max(loglik))
@@ -732,8 +729,7 @@ subset_data_theta_In <- final_params %>%
 plot(x = log(subset_data_theta_In$theta_In), y = subset_data_theta_In$loglik)
 plot(x = subset_data_theta_In$theta_In, y = subset_data_theta_In$loglik)
 subset_data_theta_In$log_theta_In <- log(subset_data_theta_In$theta_In)
-# 
-subset_data_theta_In = subset_data_theta_In[subset_data_theta_In$log_theta_In <=1,]
+
 mcap(subset_data_theta_In$loglik, subset_data_theta_In$log_theta_In,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_theta_In
 mcap_object_theta_In$mle -> theta_In_mle
 theta_In_p <- ggplot() +
@@ -765,17 +761,15 @@ theta_In_p
 
 
 if(load_option){
-load("~/Desktop/Research/Daphnia/Target_dynamics/para/nosigS_model_profile/theta_Ji/theta_Ji.RData")
+load("./Mixed-species/SIRJPF2/profile/theta_Ji/theta_Ji.RData")
 subset_data_theta_Ji <- final_params %>%
   group_by(theta_Ji) %>%
   filter(loglik == max(loglik))
 }
-subset_data_theta_Ji = subset_data_theta_Ji[subset_data_theta_Ji$loglik > -1000,]
 plot(x = log(subset_data_theta_Ji$theta_Ji), y = subset_data_theta_Ji$loglik)
-# plot(x = subset_data_theta_Ji$theta_Ji, y = subset_data_theta_Ji$loglik)
+plot(x = subset_data_theta_Ji$theta_Ji, y = subset_data_theta_Ji$loglik)
 subset_data_theta_Ji$log_theta_Ji <- log(subset_data_theta_Ji$theta_Ji)
-# 
-# subset_data_theta_Ji = subset_data_theta_Ji[subset_data_theta_Ji$log_theta_Ji <=1,]
+
 mcap(subset_data_theta_Ji$loglik, subset_data_theta_Ji$log_theta_Ji,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_theta_Ji
 mcap_object_theta_Ji$mle -> theta_Ji_mle
 theta_Ji_p <- ggplot() +
@@ -792,8 +786,7 @@ theta_Ji_p <- ggplot() +
   labs(x =  TeX("$\\log(\\theta^i_{J})$"), y = "log likelihood") +
   theme(axis.text = element_text(size = 8),
         axis.title = element_text(size = 10)) +
-  # ylim(-890, -880)+
-  # xlim(-2.2,0)+
+  ylim(-890, -880)+
   theme_bw() +
   theme(axis.title.y = element_blank(),
         axis.text.y = element_blank(),
@@ -806,7 +799,7 @@ theta_Ji_p
 
 
 if(load_option){
-load("~/Desktop/Research/Daphnia/Target_dynamics/para/nosigS_model_profile/theta_Jn/theta_Jn.RData")
+load("./Mixed-species/SIRJPF2/profile/theta_Jn/theta_Jn.RData")
 subset_data_theta_Jn <- final_params %>%
   group_by(theta_Jn) %>%
   filter(loglik == max(loglik))
@@ -815,8 +808,7 @@ subset_data_theta_Jn <- final_params %>%
 plot(x = log(subset_data_theta_Jn$theta_Jn), y = subset_data_theta_Jn$loglik)
 plot(x = subset_data_theta_Jn$theta_Jn, y = subset_data_theta_Jn$loglik)
 subset_data_theta_Jn$log_theta_Jn <- log(subset_data_theta_Jn$theta_Jn)
-# 
-# subset_data_theta_Jn = subset_data_theta_Jn[subset_data_theta_Jn$log_theta_Jn <=1,]
+
 mcap(subset_data_theta_Jn$loglik, subset_data_theta_Jn$log_theta_Jn,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_theta_Jn
 mcap_object_theta_Jn$mle -> theta_Jn_mle
 theta_Jn_p <- ggplot() +
@@ -849,7 +841,7 @@ theta_Jn_p
 
 
 if(load_option){
-load("~/Desktop/Research/Daphnia/Target_dynamics/para/nosigS_model_profile/theta_P/theta_P.RData")
+load("./Mixed-species/SIRJPF2/profile/theta_P/theta_P.RData")
 subset_data_theta_P <- final_params %>%
   group_by(theta_P) %>%
   filter(loglik == max(loglik))
@@ -858,8 +850,7 @@ subset_data_theta_P <- final_params %>%
 plot(x = log(subset_data_theta_P$theta_P), y = subset_data_theta_P$loglik)
 plot(x = subset_data_theta_P$theta_P, y = subset_data_theta_P$loglik)
 subset_data_theta_P$log_theta_P <- log(subset_data_theta_P$theta_P)
-# 
-# subset_data_theta_P = subset_data_theta_P[subset_data_theta_P$log_theta_P <=1,]
+
 mcap(subset_data_theta_P$loglik, subset_data_theta_P$log_theta_P,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_theta_P
 mcap_object_theta_P$mle -> theta_P_mle
 theta_P_p <- ggplot() +
@@ -877,11 +868,8 @@ theta_P_p <- ggplot() +
   theme(axis.text = element_text(size = 8),
         axis.title = element_text(size = 10)) +
   ylim(-890, -880)+
-  # xlim(-2.2,0)+
   theme_bw() +
-  theme(axis.title.y = element_blank(),
-        axis.text.y = element_blank(),
-        axis.ticks.y = element_blank())  + 
+  theme(axis.title.y = element_blank())  + 
   annotate("text", x = mcap_object_theta_P$mle, y = -900, label = sprintf("theta_P_mle: %s", formatC(mcap_object_theta_P$mle, format = 'e', digits = 3)), hjust = 1.05, vjust = -0.5, size = 3)
 
 theta_P_p
@@ -894,7 +882,7 @@ theta_P_p
 
 
 if(load_option){
-load("~/Desktop/Research/Daphnia/Target_dynamics/para/nosigS_model_profile/theta_Si/theta_Si.RData")
+load("./Mixed-species/SIRJPF2/profile/theta_Si/theta_Si.RData")
 subset_data_theta_Si <- final_params %>%
   group_by(theta_Si) %>%
   filter(loglik == max(loglik))
@@ -904,15 +892,6 @@ plot(x = log(subset_data_theta_Si$theta_Si), y = subset_data_theta_Si$loglik)
 plot(x = subset_data_theta_Si$theta_Si, y = subset_data_theta_Si$loglik)
 subset_data_theta_Si$log_theta_Si <- log(subset_data_theta_Si$theta_Si)
 
-# subset_data_theta_Si$log_theta_Si_bin <- cut(subset_data_theta_Si$log_theta_Si, breaks = 80)
-
-# subset_data_theta_Si <- subset_data_theta_Si %>%
-#   group_by(log_theta_Si_bin) %>%
-#   filter(loglik == max(loglik)) %>%
-#   ungroup()
-
-
-subset_data_theta_Si = subset_data_theta_Si[subset_data_theta_Si$log_theta_Si < -2,]
 mcap(subset_data_theta_Si$loglik, subset_data_theta_Si$log_theta_Si,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_theta_Si
 mcap_object_theta_Si$mle -> theta_Si_mle
 theta_Si_p <- ggplot() +
@@ -929,8 +908,7 @@ theta_Si_p <- ggplot() +
   labs(x =  TeX("$\\log(\\theta^i_{S})$"), y = "log likelihood") +
   theme(axis.text = element_text(size = 8),
         axis.title = element_text(size = 10)) +
-  # ylim(-890, -880)+
-  # xlim(-2.2,0)+
+  ylim(-890, -880)+
   theme_bw() +
   theme(axis.title.y = element_blank(),
         axis.text.y = element_blank(),
@@ -940,8 +918,10 @@ theta_Si_p
 
 
 
+
+
 if(load_option){
-load("~/Desktop/Research/Daphnia/Target_dynamics/para/nosigS_model_profile/theta_Sn/theta_Sn.RData")
+load("./Mixed-species/SIRJPF2/profile/theta_Sn/theta_Sn.RData")
 subset_data_theta_Sn <- final_params %>%
   group_by(theta_Sn) %>%
   filter(loglik == max(loglik))
@@ -950,8 +930,7 @@ subset_data_theta_Sn <- final_params %>%
 plot(x = log(subset_data_theta_Sn$theta_Sn), y = subset_data_theta_Sn$loglik)
 plot(x = subset_data_theta_Sn$theta_Sn, y = subset_data_theta_Sn$loglik)
 subset_data_theta_Sn$log_theta_Sn <- log(subset_data_theta_Sn$theta_Sn)
-# 
-subset_data_theta_Sn = subset_data_theta_Sn[subset_data_theta_Sn$log_theta_Sn >=-4.3,]
+
 mcap(subset_data_theta_Sn$loglik, subset_data_theta_Sn$log_theta_Sn,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_theta_Sn
 mcap_object_theta_Sn$mle -> theta_Sn_mle
 theta_Sn_p <- ggplot() +
@@ -969,19 +948,20 @@ theta_Sn_p <- ggplot() +
   theme(axis.text = element_text(size = 8),
         axis.title = element_text(size = 10)) +
   ylim(-890, -880)+
-  # xlim(-2.2,0)+
   theme_bw() +
-  theme(axis.title.y = element_blank(),
-        axis.text.y = element_blank(),
-        axis.ticks.y = element_blank())  + 
+  theme(axis.title.y = element_blank())  + 
   annotate("text", x = mcap_object_theta_Sn$mle, y = -900, label = sprintf("theta_Sn_mle: %s", formatC(mcap_object_theta_Sn$mle, format = 'e', digits = 3)), hjust = 1.05, vjust = -0.5, size = 3)
 
 theta_Sn_p
 
 
 
+
+
+
+
 if(load_option){
-load("~/Desktop/Research/Daphnia/Target_dynamics/para/nosigS_model_profile/xi/xi.RData")
+load("./Mixed-species/SIRJPF2/profile/xi/xi.RData")
 subset_data_xi <- final_params %>%
   group_by(xi) %>%
   filter(loglik == max(loglik))
@@ -990,8 +970,7 @@ subset_data_xi <- final_params %>%
 plot(x = log(subset_data_xi$xi), y = subset_data_xi$loglik)
 plot(x = subset_data_xi$xi, y = subset_data_xi$loglik)
 subset_data_xi$log_xi <- log(subset_data_xi$xi)
-# 
-subset_data_xi = subset_data_xi[subset_data_xi$log_xi <=4.5,]
+
 mcap(subset_data_xi$loglik, subset_data_xi$log_xi,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_xi
 mcap_object_xi$mle -> xi_mle
 xi_p <- ggplot() +
@@ -1009,7 +988,6 @@ xi_p <- ggplot() +
   theme(axis.text = element_text(size = 8),
         axis.title = element_text(size = 10)) +
   ylim(-890, -880)+
-  # xlim(-2.2,0)+
   theme_bw() +
   theme(axis.title.y = element_blank(),
         axis.text.y = element_blank(),

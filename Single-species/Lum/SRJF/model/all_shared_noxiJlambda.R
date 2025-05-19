@@ -14,8 +14,8 @@ Mesocosm_data = read_excel("/home/ybb/D_P/Mesocosmdata.xlsx",2)
 sed = 0923
 set.seed(0923)
 
-name_str = "all_shared_no_xiJ"
-run_level <- 2
+name_str = "all_shared"
+run_level <- 3
 
 dentNoPara <- Mesocosm_data[1:100, ]
 dentNoPara <- subset(dentNoPara, select = c(rep, day, lum.adult))
@@ -156,9 +156,9 @@ panelfood = panelPomp(pomplist, shared=shared_parameter)
 
 
 algorithmic.params <- list(
-  Np =     c(50, 500, 1e4),
-  Np_rep = c( 2,  10,  10),
-  Mp =     c(50, 500, 1e4),
+  Np =     c(50, 500, 1e3),
+  Np_rep = c( 2,  10,  20),
+  Mp =     c(50, 500, 1e3),
   Nmif =   c( 2,  320, 250)
 )
 
@@ -331,7 +331,7 @@ if (run_level == 2){
 }
 
 if (run_level == 3){
-  save(lls,best,mif.estimate,pf.loglik.of.mif.estimate,
+  save(mf, lls,best,mif.estimate,pf.loglik.of.mif.estimate,
        s.e.of.pf.loglik.of.mif.estimate,
        file = paste0(name_str,".RData"))
 }
