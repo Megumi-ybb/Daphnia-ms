@@ -187,29 +187,29 @@ names(pomplist)=paste("u", 1:8,sep = "")
 
 
 shared_parameter <- c(
-  rn        = 5.501388e+01,
-  f_Sn      = 7.916426e-04,
-  probn     = 2.649304e-01,
-  xi        = 9.014567e+00,
-  theta_Sn  = 4.052730e-06,
-  theta_In  = 4.902417e-01,
-  theta_P   = 2.229068e-05,
-  theta_Jn  = 1.805693e-03,
-  sigSn     = 0.000000e+00,
-  sigIn     = 3.928851e-01,
-  sigJn     = 3.405309e-01,
-  sigF      = 5.594631e-02,
-  sigP      = 4.305083e-01,
-  k_In      = 1.066859e+00,
-  k_Sn      = 1.993349e+01
+  probn     = 3.064947e-01,
+  rn        = 5.518965e+01,
+  f_Sn      = 7.637907e-04,
+  xi        = 1.126948e+01,
+  theta_Sn  = 9.298461e-07,
+  theta_In  = 4.540923e-01,
+  theta_P   = 1.181882e-04,
+  theta_Jn  = 7.685173e-05,
+  sigIn     = 5.737740e-01,
+  sigJn     = 3.412636e-01,
+  sigF      = 6.972475e-02,
+  sigP      = 4.603065e-01,
+  k_In      = 1.127786e+00,
+  k_Sn      = 1.501000e+01,
+  sigSn     = 0.0
 )
 
 panelfood = panelPomp(pomplist, shared=shared_parameter)
 
-generate_parameter_profile = function(prof_name, nprof = 50) {
-  shared_ub = shared_parameter * 100
+generate_parameter_profile = function(prof_name, nprof = 80) {
+  shared_ub = shared_parameter * 10
   
-  shared_lb = shared_ub / 10
+  shared_lb = shared_ub / 100
   
   ub_unit = log(shared_ub[prof_name])
   lb_unit = log(shared_lb[prof_name])
@@ -261,7 +261,7 @@ parameter_shared <- generate_parameter_profile(name_str)
 algorithmic.params = list(
   Np =     c(50, 320, 1e3),
   Np_rep = c( 2,  10,  20),
-  Mp =     c(50, 400, 1000),
+  Mp =     c(50, 400, 500),
   Nmif =   c( 2,  320, 250)
 )
 

@@ -7,8 +7,8 @@ library(ggplot2)
 
 #Please set the working to be the 'Daphnia-ms' path
 
-# load("data/Simple_dynamics/Dent/no_para/profile_graph_data.rda")
-# load("Simple_dynamics/Dent/no_para/model/best_result.RData")
+load("data/Simple_dynamics/Dent/no_para/profile_graph_data.rda")
+load("Single-species/Dent/SRJF/model/best_result.rda")
 
 load_option = FALSE
 
@@ -234,7 +234,7 @@ mcap_object_theta_Jn$mle -> theta_Jn_mle
 theta_Jn_p <- ggplot() +
   geom_point(data = subset_data_theta_Jn, aes(x = log_theta_Jn, y = loglik)) +
   geom_line(data = mcap_object_theta_Jn$fit, aes(x = parameter, y = smoothed), col = 'red') +
-  geom_vline(xintercept = mcap_object_theta_Jn$ci[1], linetype = 'dashed') +
+  # geom_vline(xintercept = mcap_object_theta_Jn$ci[1], linetype = 'dashed') +
   geom_vline(xintercept = mcap_object_theta_Jn$ci[2], linetype = 'dashed') +
   geom_vline(xintercept = mcap_object_theta_Jn$mle, col = 'blue') +
   geom_vline(xintercept = log(mif.estimate[['theta_Jn']]), col = 'red') +
@@ -250,9 +250,7 @@ theta_Jn_p <- ggplot() +
   theme_bw() +
   theme(axis.title.y = element_blank(),
         axis.text.y = element_blank(),
-        axis.ticks.y = element_blank())  + 
-  annotate("text", x = mcap_object_theta_Jn$mle, y = -900, label = sprintf("theta_Jn_mle: %s", formatC(mcap_object_theta_Jn$mle, format = 'e', digits = 3)), hjust = 1.05, vjust = -0.5, size = 3)
-
+        axis.ticks.y = element_blank())  
 theta_Jn_p
 
 

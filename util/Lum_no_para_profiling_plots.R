@@ -7,10 +7,10 @@ library(ggplot2)
 
 #Please set the working to be the 'Daphnia-ms' path
 
-# load("data/Simple_dynamics/Lum/no_para/profile_graph_data.rda")
-# load("Simple_dynamics/Lum/no_para/model/best_result.RData")
+load("data/Simple_dynamics/Lum/no_para/profile_graph_data.rda")
+load('Single-species/Lum/SRJF/model/best_result.rda')
 
-load_option = TRUE
+load_option = FALSE
 
 if(load_option){
   load("./Single-species/Lum/SRJF/profile/f_Si/f_Si.RData")
@@ -80,9 +80,7 @@ k_Si_p <- ggplot() +
   theme_bw() +
   theme(axis.title.y = element_blank(),
         axis.text.y = element_blank(),
-        axis.ticks.y = element_blank())  + 
-  annotate("text", x = mcap_object_k_Si$mle, y = -900, label = sprintf("k_Si_mle: %s", formatC(mcap_object_k_Si$mle, format = 'e', digits = 3)), hjust = 1.05, vjust = -0.5, size = 3)
-
+        axis.ticks.y = element_blank())
 k_Si_p
 
 
@@ -174,7 +172,7 @@ if(load_option){
 plot(x = log(subset_data_sigJi$sigJi), y = subset_data_sigJi$loglik)
 plot(x = subset_data_sigJi$sigJi, y = subset_data_sigJi$loglik)
 subset_data_sigJi$log_sigJi <- log(subset_data_sigJi$sigJi)
-# subset_data_sigJi = subset_data_sigJi[subset_data_sigJi$log_sigJi >= -2,]
+subset_data_sigJi = subset_data_sigJi[subset_data_sigJi$loglik > -400,]
 mcap(subset_data_sigJi$loglik, subset_data_sigJi$log_sigJi,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_sigJi
 mcap_object_sigJi$mle -> sigJi_mle
 sigJi_p <- ggplot() +
@@ -272,7 +270,7 @@ theta_Si_p <- ggplot() +
   labs(x =  TeX("$\\log(\\theta^i_{S})$"), y = "log likelihood") +
   theme(axis.text = element_text(size = 8),
         axis.title = element_text(size = 10)) +
-  # ylim(-375, -370)+
+  ylim(-375, -370)+
   # xlim(-2.2,0)+
   theme_bw() +
   theme(axis.title.y = element_blank(),

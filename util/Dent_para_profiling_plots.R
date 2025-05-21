@@ -8,10 +8,10 @@ library(ggplot2)
 
 #Please set the working to be the 'Daphnia-ms' path
 
-# load("data/Simple_dynamics/Dent/para/profile_graph_data.rda")
-# load("Simple_dynamics/Dent/para/model/best_result.RData")
+load("data/Simple_dynamics/Dent/para/profile_graph_data.rda")
+load("./Single-species/Dent/SIRJPF/model/best_result.rda")
 
-load_option = TRUE
+load_option = FALSE
 
 
 if(load_option){
@@ -262,7 +262,6 @@ sigF_p
 
 
 if(load_option){
-  
   load("./Single-species/Dent/SIRJPF/profile/sigIn/sigIn.RData")
   subset_data_sigIn <- final_params %>%
     group_by(sigIn) %>%
@@ -293,8 +292,7 @@ sigIn_p <- ggplot() +
   theme_bw() +
   theme(axis.title.y = element_blank(),
         axis.text.y = element_blank(),
-        axis.ticks.y = element_blank())  + 
-  annotate("text", x = mcap_object_sigIn$mle, y = -900, label = sprintf("sigIn_mle: %s", formatC(mcap_object_sigIn$mle, format = 'e', digits = 3)), hjust = 1.05, vjust = -0.5, size = 3)
+        axis.ticks.y = element_blank())
 
 sigIn_p
 
@@ -352,7 +350,7 @@ if(load_option){
 plot(x = log(subset_data_sigP$sigP), y = subset_data_sigP$loglik)
 plot(x = subset_data_sigP$sigP, y = subset_data_sigP$loglik)
 subset_data_sigP$log_sigP <- log(subset_data_sigP$sigP)
-
+subset_data_sigP = subset_data_sigP[subset_data_sigP$loglik > -600,]
 mcap(subset_data_sigP$loglik, subset_data_sigP$log_sigP,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_sigP
 mcap_object_sigP$mle -> sigP_mle
 sigP_p <- ggplot() +
@@ -373,9 +371,7 @@ sigP_p <- ggplot() +
   theme_bw() +
   theme(axis.title.y = element_blank(),
         axis.text.y = element_blank(),
-        axis.ticks.y = element_blank())  + 
-  annotate("text", x = mcap_object_sigP$mle, y = -900, label = sprintf("sigP_mle: %s", formatC(mcap_object_sigP$mle, format = 'e', digits = 3)), hjust = 1.05, vjust = -0.5, size = 3)
-
+        axis.ticks.y = element_blank())
 sigP_p
 
 

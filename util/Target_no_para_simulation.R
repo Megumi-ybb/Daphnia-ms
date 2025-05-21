@@ -177,7 +177,7 @@ shared_parameter = c( "sigSn" = 0.1, "sigSi"= 0.1,"sigF"= 0.1,"f_Sn"= 0.1,"f_Si"
 
 panelfood = panelPomp(pomplist, shared=shared_parameter)
 
-load("./Target_dynamics/no_para/all_shared_no_sigS.RData")
+load("./Mixed-species/SRJF2/best_result.rda")
 
 dentNoPara <- Mesocosm_data[1:90, ]
 dentNoPara <- subset(dentNoPara, select = c(rep, day, dent.adult,lum.adult,
@@ -194,18 +194,12 @@ for (i in 1: length(trails)){
 }
 
 
-lls <- matrix(unlist(sapply(mf, getElement, "ll")), nrow = 2)
-best <- which.max(lls[1,])
-mif.estimate <- coef(mf[[best]]$mif)
-pf.loglik.of.mif.estimate <- unname(mf[[best]]$ll[1])
-s.e.of.pf.loglik.of.mif.estimate <- unname(mf[[best]]$ll[2])
-
-coef(panelfood) <- coef(mf[[best]]$mif)
+coef(panelfood) <- mif.estimate
 # all_params <- pparams(mf[[best]]$mif)
 
 foreach(u = names(panelfood), .combine = rbind) %do% {
   unit_model <- unit_objects(panelfood)[[u]]
-  shared <- coef(mf[[best]]$mif)
+  shared <- mif.estimate
   pomp::simulate(
     unit_model, 
     nsim = 1000,
@@ -218,12 +212,6 @@ foreach(u = names(panelfood), .combine = rbind) %do% {
 } -> all_sims
 
 
-# Remove unrealistic scenario
-bad_ids <- unique(all_sims$.id[all_sims$Jn > 1000])
-all_sims <- subset(all_sims, !(.id %in% bad_ids))
-
-bad_ids <- unique(all_sims$.id[all_sims$Ji > 1000])
-all_sims <- subset(all_sims, !(.id %in% bad_ids))
 
 data_df <- data[[1]]
 data_df$unit <- "u1"

@@ -9,8 +9,8 @@ library(ggplot2)
 #Please set the working to be the 'Daphnia-ms' path
 
 
-# load("data/Target_dynamics/no_para/profile_graph_data.rda")
-# load("Target_dynamics/no_para/best_result.RData")
+load("data/Target_dynamics/no_para/profile_graph_data.rda")
+load("./Mixed-species/SRJF2/best_result.rda")
 
 
 load_option = FALSE
@@ -154,7 +154,7 @@ if(load_option){
 plot(x = log(subset_data_k_Sn$k_Sn), y = subset_data_k_Sn$loglik)
 plot(x = subset_data_k_Sn$k_Sn, y = subset_data_k_Sn$loglik)
 subset_data_k_Sn$log_k_Sn <- log(subset_data_k_Sn$k_Sn)
-
+subset_data_k_Sn = subset_data_k_Sn[subset_data_k_Sn$log_k_Sn <=5,]
 mcap(subset_data_k_Sn$loglik, subset_data_k_Sn$log_k_Sn,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_k_Sn
 mcap_object_k_Sn$mle -> k_Sn_mle
 k_Sn_p <- ggplot() +
@@ -334,7 +334,6 @@ sigJi_p <- ggplot() +
   theme(axis.text = element_text(size = 8),
         axis.title = element_text(size = 10)) +
   ylim(-720, -700)+
-  # xlim(-3,-0)+
   theme_bw() +
   theme(axis.title.y = element_blank(),
         axis.text.y = element_blank(),

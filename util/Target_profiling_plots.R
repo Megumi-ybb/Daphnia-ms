@@ -8,8 +8,8 @@ library(ggplot2)
 
 #Please set the working to be the 'Daphnia-ms' path
 
-# load("data/Target_dynamics/para/profile_graph_data.rda")
-load("./Mixed-species/SIRJPF2/model/best_result.RData")
+load("data/Target_dynamics/para/profile_graph_data.rda")
+load("./Mixed-species/SIRJPF2/model/best_result.rda")
 
 load_option = FALSE
 
@@ -476,13 +476,6 @@ plot(x = log(subset_data_sigIi$sigIi), y = subset_data_sigIi$loglik)
 plot(x = subset_data_sigIi$sigIi, y = subset_data_sigIi$loglik)
 subset_data_sigIi$log_sigIi <- log(subset_data_sigIi$sigIi)
 
-subset_data_sigIi$log_sigIi_bin <- cut(subset_data_sigIi$log_sigIi, breaks = 50)
-
-subset_data_sigIi <- subset_data_sigIi %>%
-  group_by(log_sigIi_bin) %>%
-  filter(loglik == max(loglik)) %>%
-  ungroup()
-
 mcap(subset_data_sigIi$loglik, subset_data_sigIi$log_sigIi,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_sigIi
 mcap_object_sigIi$mle -> sigIi_mle
 sigIi_p <- ggplot() +
@@ -503,9 +496,7 @@ sigIi_p <- ggplot() +
   theme_bw() +
   theme(axis.title.y = element_blank(),
         axis.text.y = element_blank(),
-        axis.ticks.y = element_blank())  + 
-  annotate("text", x = mcap_object_sigIi$mle, y = -900, label = sprintf("sigIi_mle: %s", formatC(mcap_object_sigIi$mle, format = 'e', digits = 3)), hjust = 1.05, vjust = -0.5, size = 3)
-
+        axis.ticks.y = element_blank())
 sigIi_p
 
 
@@ -539,12 +530,12 @@ sigIn_p <- ggplot() +
                  y = pf.loglik.of.mif.estimate), 
              color = "red", size = 2) + 
   labs(x =  TeX("$\\log(\\sigma^n_{I})$"), y = "log likelihood") +
-  theme(axis.text = element_text(size = 8),
-        axis.title = element_text(size = 10)) +
+  xlim(-13,-8)+
   ylim(-890, -880)+
+  theme(axis.text = element_text(size = 8),
+        axis.title = element_text(size = 10))+
   theme_bw() +
-  theme(axis.title.y = element_blank())  + 
-  annotate("text", x = mcap_object_sigIn$mle, y = -900, label = sprintf("sigIn_mle: %s", formatC(mcap_object_sigIn$mle, format = 'e', digits = 3)), hjust = 1.05, vjust = -0.5, size = 3)
+  theme(axis.title.y = element_blank())
 
 sigIn_p
 
@@ -787,6 +778,7 @@ theta_Ji_p <- ggplot() +
   theme(axis.text = element_text(size = 8),
         axis.title = element_text(size = 10)) +
   ylim(-890, -880)+
+  xlim(-16,-10)+
   theme_bw() +
   theme(axis.title.y = element_blank(),
         axis.text.y = element_blank(),
@@ -826,7 +818,7 @@ theta_Jn_p <- ggplot() +
   theme(axis.text = element_text(size = 8),
         axis.title = element_text(size = 10)) +
   ylim(-890, -880)+
-  # xlim(-2.2,0)+
+  xlim(-10,-4)+
   theme_bw() +
   theme(axis.title.y = element_blank(),
         axis.text.y = element_blank(),
@@ -887,7 +879,7 @@ subset_data_theta_Si <- final_params %>%
   group_by(theta_Si) %>%
   filter(loglik == max(loglik))
 }
-subset_data_theta_Si = subset_data_theta_Si[subset_data_theta_Si$loglik > -900,]
+
 plot(x = log(subset_data_theta_Si$theta_Si), y = subset_data_theta_Si$loglik)
 plot(x = subset_data_theta_Si$theta_Si, y = subset_data_theta_Si$loglik)
 subset_data_theta_Si$log_theta_Si <- log(subset_data_theta_Si$theta_Si)

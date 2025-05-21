@@ -241,7 +241,7 @@ shared_parameter = c(
 
 
 panelfood = panelPomp(pomplist, shared=shared_parameter)
-load('Target_dynamics/para/model_no_sigS/best_result.RData')
+load('./Mixed-species/SIRJPF2/model/best_result.rda')
 
 pf.loglik.of.mif.estimate
 s.e.of.pf.loglik.of.mif.estimate
@@ -261,11 +261,11 @@ for (i in 1: length(trails)){
 
 
 
-coef(panelfood) <- coef(mf[[best]]$mif)
+coef(panelfood) <- mif.estimate
 
 foreach(u = names(panelfood), .combine = rbind) %do% {
   unit_model <- unit_objects(panelfood)[[u]]
-  shared <- coef(mf[[best]]$mif)
+  shared <-  mif.estimate
   pomp::simulate(
     unit_model, 
     nsim = 1000,
@@ -277,8 +277,6 @@ foreach(u = names(panelfood), .combine = rbind) %do% {
   sims
 } -> all_sims
 
-# bad_ids <- unique(all_sims$.id[all_sims$Jn > 1000])
-# all_sims <- subset(all_sims, !(.id %in% bad_ids))
 
 
 data_df <- data[[1]]

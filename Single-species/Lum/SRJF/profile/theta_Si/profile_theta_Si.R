@@ -151,19 +151,19 @@ names(pomplist)=paste("u", 1:10,sep = "")
 
 
 shared_parameter = c(
-  theta_Ji  = 6.366139e-02,
-  sigSi     = 0,
-  sigF      = 3.580001e-03,
-  f_Si      = 3.973271e-04,
-  ri        = 4.909026e+02,
-  k_Si      = 2.726407e+00,
-  sigJi     = 3.856341e-01,
-  theta_Si  = 6.647845e-01
+  ri        = 9.772309e+02,
+  f_Si      = 2.669165e-04,
+  theta_Si  = 5.988434e-01,
+  theta_Ji  = 2.977110e-01,
+  sigSi     = 0.0,
+  sigJi     = 3.779391e-01,
+  sigF      = 4.730740e-02,
+  k_Si      = 2.353241e+00
 )
 
 panelfood = panelPomp(pomplist, shared=shared_parameter)
 
-generate_parameter_profile = function(prof_name, nprof = 50) {
+generate_parameter_profile = function(prof_name, nprof = 80) {
   shared_ub = shared_parameter * 10
   
   shared_lb = shared_ub / 100
@@ -211,7 +211,7 @@ parameter_shared <- generate_parameter_profile(name_str)
 algorithmic.params = list(
   Np =     c(50, 320, 1e3),
   Np_rep = c( 2,  10,  20),
-  Mp =     c(50, 400, 1000),
+  Mp =     c(50, 400, 500),
   Nmif =   c( 2,  320, 250)
 )
 

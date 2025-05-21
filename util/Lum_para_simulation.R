@@ -186,7 +186,7 @@ shared_parameter = c( "sigSi" = 0.1, "sigIi"= 0.1, "sigF"= 0.1,"sigP"= 0.1,"f_Si
 panelfood = panelPomp(pomplist, shared=shared_parameter)
 
 
-load("Simple_dynamics/Lum/para/model/best_result.RData")
+load("./Single-species/Lum/SIRJPF/model/best_result.rda")
 
 dentNoPara <- Mesocosm_data[101:190, ]
 dentNoPara <- subset(dentNoPara, select = c(rep, day, lum.adult,lum.adult.inf,lum.juv))
@@ -200,13 +200,6 @@ for (i in 1: length(trails)){
                    dentNoPara$rep == trails[i])
 }
 
-
-
-lls <- matrix(unlist(sapply(mf, getElement, "ll")), nrow = 2)
-best <- which.max(lls[1,])
-mif.estimate <- coef(mf[[best]]$mif)
-pf.loglik.of.mif.estimate <- unname(mf[[best]]$ll[1])
-s.e.of.pf.loglik.of.mif.estimate <- unname(mf[[best]]$ll[2])
 
 coef(panelfood) <- mif.estimate
 
@@ -224,10 +217,6 @@ foreach(u = names(panelfood), .combine = rbind) %do% {
   sims
 } -> all_sims
 
-
-#Remove unrealistic scenario
-bad_ids <- unique(all_sims$.id[all_sims$Ji > 1000])
-all_sims <- subset(all_sims, !(.id %in% bad_ids))
 
 
 

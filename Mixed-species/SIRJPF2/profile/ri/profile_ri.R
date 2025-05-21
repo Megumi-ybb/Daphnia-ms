@@ -235,41 +235,40 @@ names(pomplist)=paste("u", 1:8,sep = "")
 
 
 shared_parameter = c(
-  f_Si     = 1.980785e-04,
-  f_Sn     = 1.033392e-03,
-  theta_Jn = 9.511384e-04,
-  theta_Ji = 1.198650e-06,
-  probi    = 1.697204e+00,
-  probn    = 2.933072e-01,
-  ri       = 2.561561e+02,
-  rn       = 4.958747e+01,
-  theta_Ii = 3.942674e-01,
-  theta_In = 4.986904e-01,
-  theta_Si = 7.410951e-04,
-  theta_Sn = 3.369496e-02,
-  theta_P  = 1.499839e-03,
-  xi       = 1.889229e+01,
-  sigSn    = 0,
-  sigIn    = 3.327712e-05,
-  sigSi    = 0,
-  sigIi    = 1.323957e-05,
-  sigF     = 1.233165e-01,
-  k_Ii     = 1.202892e+00,
-  k_In     = 8.369364e-01,
-  k_Sn     = 3.923281e+00,
-  k_Si     = 6.019108e+00,
-  sigP     = 2.972195e-01,
-  sigJi    = 2.453938e-01,
-  sigJn    = 2.235086e-01
+  ri        = 2.152877e+05,
+  rn        = 4.082784e+01,
+  f_Si      = 2.419416e-07,
+  f_Sn      = 1.100347e-03,
+  probi     = 1.341780e+03,
+  probn     = 2.715528e-01,
+  xi        = 2.223829e+01,
+  theta_Sn  = 8.478459e-04,
+  theta_Si  = 2.524539e-03,
+  theta_Ii  = 3.854897e-01,
+  theta_In  = 5.837784e-01,
+  theta_P   = 9.477111e-04,
+  theta_Ji  = 5.620201e-04,
+  theta_Jn  = 1.868651e-05,
+  sigSn     = 0.000000e+00,
+  sigSi     = 0.000000e+00,
+  sigIn     = 2.930410e-04,
+  sigIi     = 1.727540e-07,
+  sigJi     = 3.021246e-01,
+  sigJn     = 2.840041e-01,
+  sigF      = 1.436943e-01,
+  sigP      = 2.714232e-01,
+  k_Ii      = 1.387153e+00,
+  k_In      = 9.020138e-01,
+  k_Si      = 5.262009e+00,
+  k_Sn      = 4.103463e+00
 )
-
 
 
 
 panelfood = panelPomp(pomplist, shared=shared_parameter)
 
-generate_parameter_profile = function(prof_name, nprof = 50) {
-  shared_ub = shared_parameter * 200
+generate_parameter_profile = function(prof_name, nprof = 80) {
+  shared_ub = shared_parameter * 10
   
   shared_lb = shared_ub / 100
   
@@ -338,7 +337,7 @@ parameter_shared = generate_parameter_profile(name_str)
 algorithmic.params = list(
   Np =     c(50, 320, 1000),
   Np_rep = c( 2,  10,  20),
-  Mp =     c(50, 400, 1000),
+  Mp =     c(50, 400, 500),
   Nmif =   c( 2,  320, 250)
 )
 
