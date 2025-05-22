@@ -229,12 +229,32 @@ names(pomplist)=paste("u", 1:8,sep = "")
 
 
 shared_parameter = c(
-  f_Si = 3.275316e-05, f_Sn = 1.105668e-03, theta_Jn = 7.833849e-06, theta_Ji = 2.599044e-04,
-  probi = 3.419323e+01, probn = 3.660066e-01, ri = 1.307683e+04, rn = 7.360543e+01,
-  theta_Ii = 3.531879e-01, theta_In = 5.489315e-01, theta_Si = 3.186040e-02, theta_Sn = 1.479834e-01,
-  theta_P = 2.024991e-02, xi = 2.865620e+01,sigSn = 2.073521e-02, sigIn = 5.171328e-04, sigSi = 3.631343e-06, sigIi = 6.836503e-06, 
-  sigF = 1.346211e-01,k_Ii = 1.317484e+00, k_In = 1.428054e+00, k_Sn = 3.580089e+00, 
-  k_Si = 5.623301e+00, sigP = 5.278157e-02, sigJi = 2.878004e-01, sigJn = 2.641643e-01
+  ri        = 2.152877e+05,
+  rn        = 4.082784e+01,
+  f_Si      = 2.419416e-07,
+  f_Sn      = 1.100347e-03,
+  probi     = 1.341780e+03,
+  probn     = 2.715528e-01,
+  xi        = 2.223829e+01,
+  theta_Sn  = 8.478459e-04,
+  theta_Si  = 2.524539e-03,
+  theta_Ii  = 3.854897e-01,
+  theta_In  = 5.837784e-01,
+  theta_P   = 9.477111e-04,
+  theta_Ji  = 5.620201e-04,
+  theta_Jn  = 1.868651e-05,
+  sigSn     = 0.000000e+00,
+  sigSi     = 0.000000e+00,
+  sigIn     = 2.930410e-04,
+  sigIi     = 1.727540e-07,
+  sigJi     = 3.021246e-01,
+  sigJn     = 2.840041e-01,
+  sigF      = 1.436943e-01,
+  sigP      = 2.714232e-01,
+  k_Ii      = 1.387153e+00,
+  k_In      = 9.020138e-01,
+  k_Si      = 5.262009e+00,
+  k_Sn      = 4.103463e+00
 )
 
 
@@ -286,7 +306,7 @@ for (i in 2:length(data)) {
 }
 all_sims[all_sims$error_count == 0,] -> all_sims001
 
-load('Target_dynamics/para/model/all_shared.RData')
+load('./Mixed-species/SIRJPF2/model/best_result.RData')
 pf.loglik.of.mif.estimate
 s.e.of.pf.loglik.of.mif.estimate
 dentNoPara = Mesocosm_data[91:170, ]

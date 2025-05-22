@@ -148,7 +148,6 @@ mcap_object_sigF$mle -> sigF_mle
 sigF_p <- ggplot() +
   geom_point(data = subset_data_sigF, aes(x = log_sigF, y = loglik)) +
   geom_line(data = mcap_object_sigF$fit, aes(x = parameter, y = smoothed), col = 'red') +
-  geom_vline(xintercept = mcap_object_sigF$ci[1], linetype = 'dashed') +
   geom_vline(xintercept = mcap_object_sigF$ci[2], linetype = 'dashed') +
   geom_vline(xintercept = mcap_object_sigF$mle, col = 'blue') +
   geom_vline(xintercept = log(mif.estimate[['sigF']]), col = 'red') +

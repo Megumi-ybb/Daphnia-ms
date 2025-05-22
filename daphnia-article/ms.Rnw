@@ -691,7 +691,7 @@ Profile likelihood provides a useful approach for constructing confidence interv
 Calculation of the profiles can validate that sufficient computational effort was conducted in order for the Monte Carlo optimization to converge: by increasing Monte Carlo replications, consistent convergence to the same maximum of the profile likelihood curve confirms adequate numerical effort for optimization.
 To obtain confidence intervals, we correct for the Monte Carlo uncertainty in the profile likelihood evaluations by using the Monte Carlo Adjusted Profile (MCAP) method of \citet{ionides17}.
 <<Results, include=FALSE,echo=FALSE,results='hide', cache=cache_option>>=
-load('../data/Target_dynamics/para/best_result.rds')
+load('../Mixed-species/SIRJPF2/model/best_result.rda')
 mif.estimate = as.data.frame(t(mif.estimate))
 se_target = s.e.of.pf.loglik.of.mif.estimate
 loglik_target = pf.loglik.of.mif.estimate
@@ -805,7 +805,7 @@ The superscript $\native$ and $\invasive$ represents native (\textit{D.~dentifer
 Model & Parameters & Max log-likelihood & AIC \\ [0.5ex]
  \hline\hline
 SIRJPF2 & \Sexpr{length(parms)} & \Sexpr{mysignif_ll_AIC(loglik_target,5)} & \Sexpr{mysignif_ll_AIC(AIC_target,6)} \\
-SIRPF2 & \Sexpr{length(parms)} & \Sexpr{mysignif_ll_AIC(benchmark_model_summary$Model_no_juv[1],5)} & \Sexpr{mysignif_ll_AIC(benchmark_model_summary$Model_no_juv[2],6)} \\
+SIRPF2 & 20 & \Sexpr{mysignif_ll_AIC(benchmark_model_summary$Model_no_juv[1],5)} & \Sexpr{mysignif_ll_AIC(benchmark_model_summary$Model_no_juv[2],6)} \\
 SIRJPF2-Gamma & \Sexpr{length(parms)} & \Sexpr{mysignif_ll_AIC(benchmark_model_summary$SIRJPF2_gamma[1],5)} & \Sexpr{mysignif_ll_AIC(benchmark_model_summary$SIRJPF2_gamma[2],6)} \\
 Negative Binomial (Cubic) & 24 & \Sexpr{mysignif_ll_AIC(benchmark_model_summary$NB_cubic[1],5)} & \Sexpr{mysignif_ll_AIC(benchmark_model_summary$NB_cubic[2],6)} \\
 Negative Binomial (Quadratic) & 20 & \Sexpr{mysignif_ll_AIC(benchmark_model_summary$NB_quad[1],5)} & \Sexpr{mysignif_ll_AIC(benchmark_model_summary$NB_quad[2],6)} \\
@@ -866,24 +866,6 @@ The noise term is helpful when describing other dynamics, for example, dynamics 
 Other model parameters are found to be weakly estimable.
 Natural death rates, ($\theta^{\native}_{S}$, $\theta^{\invasive}_{S}$, $\theta^{\native}_{J}$ and $\theta^{\invasive}_{J}$), are poorly identified in the presence of the parasite since most death comes through the infection process.
 By contrast, these parameters are better identified in the treatments without the parasite (Fig.~S15).
-
-<<Result2, include=FALSE,echo=FALSE,results='hide'>>=
-  load('data/estimate_comparison.rda')
-
-
-surviv_dent_target_para = target_para_parameter[["rn"]]/(target_para_parameter[["probn"]]*target_para_parameter[["f_Sn"]])
-surviv_lum_target_para = target_para_parameter[["ri"]]/(target_para_parameter[["probi"]]*target_para_parameter[["f_Si"]])
-
-surviv_dent_single_para = dent_para_parameter[["rn"]]/(dent_para_parameter[["probn"]]*dent_para_parameter[["f_Sn"]])
-surviv_lum_single_para = lum_para_parameter[["ri"]]/(lum_para_parameter[["probi"]]*lum_para_parameter[["f_Si"]])
-
-# surviv_dent_single_no_para = dent_no_para_parameter[["rn"]]/(dent_no_para_parameter[["pn"]]*dent_no_para_parameter[["f_Sn"]])
-# surviv_lum_single_no_para = lum_no_para_parameter[["ri"]]/(lum_no_para_parameter[["pi"]]*lum_no_para_parameter[["f_Si"]])
-#
-# surviv_dent_target_no_para = target_no_para_parameter[["rn"]]/(target_no_para_parameter[["pn"]]*target_no_para_parameter[["f_Sn"]])
-# surviv_lum_target_no_para = target_no_para_parameter[["ri"]]/(target_no_para_parameter[["pi"]]*target_no_para_parameter[["f_Si"]])
-
-@
 
 Alternative  SIRJPF2 model specifications were fitted with various parameters taken to be unit-specific.
 The log-likelihood estimates and corresponding AIC values for these models are presented in Supplementary Table~S1.

@@ -126,9 +126,7 @@ k_Si_p <- ggplot() +
   theme_bw() +
   theme(axis.title.y = element_blank(),
         axis.text.y = element_blank(),
-        axis.ticks.y = element_blank())  + 
-  annotate("text", x = mcap_object_k_Si$mle, y = -900, label = sprintf("k_Si_mle: %s", formatC(mcap_object_k_Si$mle, format = 'e', digits = 3)), hjust = 1.05, vjust = -0.5, size = 3)
-
+        axis.ticks.y = element_blank())
 k_Si_p
 
 
@@ -199,9 +197,7 @@ ri_p <- ggplot() +
         axis.title = element_text(size = 10)) +
   ylim(-435, -425)+
   theme_bw() +
-  theme(axis.title.y = element_blank(),
-        axis.text.y = element_blank(),
-        axis.ticks.y = element_blank())  + 
+  theme(axis.title.y = element_blank())  + 
   annotate("text", x = mcap_object_ri$mle, y = -900, label = sprintf("ri_mle: %s", formatC(mcap_object_ri$mle, format = 'e', digits = 3)), hjust = 1.05, vjust = -0.5, size = 3)
 
 ri_p
@@ -226,7 +222,6 @@ mcap_object_sigF$mle -> sigF_mle
 sigF_p <- ggplot() +
   geom_point(data = subset_data_sigF, aes(x = log_sigF, y = loglik)) +
   geom_line(data = mcap_object_sigF$fit, aes(x = parameter, y = smoothed), col = 'red') +
-  geom_vline(xintercept = mcap_object_sigF$ci[1], linetype = 'dashed') +
   geom_vline(xintercept = mcap_object_sigF$ci[2], linetype = 'dashed') +
   geom_vline(xintercept = mcap_object_sigF$mle, col = 'blue') +
   geom_vline(xintercept = log(mif.estimate[['sigF']]), col = 'red') +
@@ -451,9 +446,7 @@ theta_Ji_p <- ggplot() +
   ylim(-435, -425)+
   # xlim(-2.2,0)+
   theme_bw() +
-  theme(axis.title.y = element_blank(),
-        axis.text.y = element_blank(),
-        axis.ticks.y = element_blank())  + 
+  theme(axis.title.y = element_blank())  + 
   annotate("text", x = mcap_object_theta_Ji$mle, y = -900, label = sprintf("theta_Ji_mle: %s", formatC(mcap_object_theta_Ji$mle, format = 'e', digits = 3)), hjust = 1.05, vjust = -0.5, size = 3)
 
 theta_Ji_p
@@ -493,9 +486,7 @@ theta_P_p <- ggplot() +
   ylim(-435, -425)+
   # xlim(-2.2,0)+
   theme_bw() +
-  theme(axis.title.y = element_blank(),
-        axis.text.y = element_blank(),
-        axis.ticks.y = element_blank())  + 
+  theme(axis.title.y = element_blank())  + 
   annotate("text", x = mcap_object_theta_P$mle, y = -900, label = sprintf("theta_P_mle: %s", formatC(mcap_object_theta_P$mle, format = 'e', digits = 3)), hjust = 1.05, vjust = -0.5, size = 3)
 
 theta_P_p

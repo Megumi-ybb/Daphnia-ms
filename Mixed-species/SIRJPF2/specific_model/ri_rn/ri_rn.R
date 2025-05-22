@@ -36,17 +36,13 @@ create_specific_name <- function(parameter_names) {
 }
 
 
-# Mesocosm_data = read_excel("/Users/ybb/Desktop/Research//Daphnia/Mesocosmdata.xls",3)
 Mesocosm_data = read_excel("/home/ybb/D_P/Mesocosmdata.xlsx",3)
-
-sed = 0923
-set.seed(0923)
 
 specific_names = c('ri','rn')
 
 
 name_str = create_specific_name(specific_names)
-run_level <- 2
+run_level <- 3
 
 dentNoPara <- Mesocosm_data[91:170, ]
 dentNoPara <- subset(dentNoPara, select = c(rep, day, dent.adult,dent.inf,lum.adult,lum.adult.inf))
@@ -269,7 +265,7 @@ panelfood = panelPomp(pomplist, shared=shared_parameter,specific = specific_mat)
 algorithmic.params <- list(
   Np =     c(50, 500, 1e4),
   Np_rep = c( 2,  10,  10),
-  Mp =     c(50, 500, 1e4),
+  Mp =     c(50, 500, 1e3),
   Nmif =   c( 2,  300, 250)
 )
 

@@ -356,7 +356,6 @@ subset_data_ri <- final_params %>%
 plot(x = log(subset_data_ri$ri), y = subset_data_ri$loglik)
 plot(x = subset_data_ri$ri, y = subset_data_ri$loglik)
 subset_data_ri$log_ri <- log(subset_data_ri$ri)
-
 mcap(subset_data_ri$loglik, subset_data_ri$log_ri,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_ri
 mcap_object_ri$mle -> ri_mle
 ri_p <- ggplot() +
@@ -476,6 +475,9 @@ plot(x = log(subset_data_sigIi$sigIi), y = subset_data_sigIi$loglik)
 plot(x = subset_data_sigIi$sigIi, y = subset_data_sigIi$loglik)
 subset_data_sigIi$log_sigIi <- log(subset_data_sigIi$sigIi)
 
+subset_data_sigIi = subset_data_sigIi[subset_data_sigIi$log_sigIi < -12,]
+subset_data_sigIi = subset_data_sigIi[subset_data_sigIi$log_sigIi > -17,]
+
 mcap(subset_data_sigIi$loglik, subset_data_sigIi$log_sigIi,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_sigIi
 mcap_object_sigIi$mle -> sigIi_mle
 sigIi_p <- ggplot() +
@@ -516,6 +518,7 @@ plot(x = log(subset_data_sigIn$sigIn), y = subset_data_sigIn$loglik)
 plot(x = subset_data_sigIn$sigIn, y = subset_data_sigIn$loglik)
 subset_data_sigIn$log_sigIn <- log(subset_data_sigIn$sigIn)
 
+subset_data_sigIn = subset_data_sigIn[subset_data_sigIn$log_sigIn <=-7.5,]
 mcap(subset_data_sigIn$loglik, subset_data_sigIn$log_sigIn,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_sigIn
 mcap_object_sigIn$mle -> sigIn_mle
 sigIn_p <- ggplot() +
@@ -530,7 +533,7 @@ sigIn_p <- ggplot() +
                  y = pf.loglik.of.mif.estimate), 
              color = "red", size = 2) + 
   labs(x =  TeX("$\\log(\\sigma^n_{I})$"), y = "log likelihood") +
-  xlim(-13,-8)+
+  # xlim(-13,-8)+
   ylim(-890, -880)+
   theme(axis.text = element_text(size = 8),
         axis.title = element_text(size = 10))+
@@ -760,7 +763,7 @@ subset_data_theta_Ji <- final_params %>%
 plot(x = log(subset_data_theta_Ji$theta_Ji), y = subset_data_theta_Ji$loglik)
 plot(x = subset_data_theta_Ji$theta_Ji, y = subset_data_theta_Ji$loglik)
 subset_data_theta_Ji$log_theta_Ji <- log(subset_data_theta_Ji$theta_Ji)
-
+subset_data_theta_Ji = subset_data_theta_Ji[subset_data_theta_Ji$log_theta_Ji > -11,]
 mcap(subset_data_theta_Ji$loglik, subset_data_theta_Ji$log_theta_Ji,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_theta_Ji
 mcap_object_theta_Ji$mle -> theta_Ji_mle
 theta_Ji_p <- ggplot() +
@@ -778,7 +781,7 @@ theta_Ji_p <- ggplot() +
   theme(axis.text = element_text(size = 8),
         axis.title = element_text(size = 10)) +
   ylim(-890, -880)+
-  xlim(-16,-10)+
+  xlim(-9,-5)+
   theme_bw() +
   theme(axis.title.y = element_blank(),
         axis.text.y = element_blank(),
@@ -818,7 +821,7 @@ theta_Jn_p <- ggplot() +
   theme(axis.text = element_text(size = 8),
         axis.title = element_text(size = 10)) +
   ylim(-890, -880)+
-  xlim(-10,-4)+
+  xlim(-13,-4)+
   theme_bw() +
   theme(axis.title.y = element_blank(),
         axis.text.y = element_blank(),
@@ -922,6 +925,23 @@ subset_data_theta_Sn <- final_params %>%
 plot(x = log(subset_data_theta_Sn$theta_Sn), y = subset_data_theta_Sn$loglik)
 plot(x = subset_data_theta_Sn$theta_Sn, y = subset_data_theta_Sn$loglik)
 subset_data_theta_Sn$log_theta_Sn <- log(subset_data_theta_Sn$theta_Sn)
+subset_data_theta_Sn <- subset_data_theta_Sn %>% 
+  ungroup() %>%                       
+  mutate(log_theta_Sn = log(theta_Sn)) %>% 
+  mutate(
+    bin = cut(
+      log_theta_Sn,
+      breaks = seq(min(log_theta_Sn, na.rm = TRUE),
+                   max(log_theta_Sn, na.rm = TRUE),
+                   length.out = 51), 
+      include.lowest = TRUE, right = FALSE
+    )
+  ) %>% 
+  group_by(bin, .drop = TRUE) %>%     
+  slice_max(loglik, n = 1, with_ties = FALSE) %>% 
+  ungroup() %>% 
+  select(-bin)
+subset_data_theta_Sn = subset_data_theta_Sn[subset_data_theta_Sn$log_theta_Sn > -7.5,]
 
 mcap(subset_data_theta_Sn$loglik, subset_data_theta_Sn$log_theta_Sn,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_theta_Sn
 mcap_object_theta_Sn$mle -> theta_Sn_mle
