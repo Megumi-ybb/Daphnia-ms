@@ -925,23 +925,6 @@ subset_data_theta_Sn <- final_params %>%
 plot(x = log(subset_data_theta_Sn$theta_Sn), y = subset_data_theta_Sn$loglik)
 plot(x = subset_data_theta_Sn$theta_Sn, y = subset_data_theta_Sn$loglik)
 subset_data_theta_Sn$log_theta_Sn <- log(subset_data_theta_Sn$theta_Sn)
-subset_data_theta_Sn <- subset_data_theta_Sn %>% 
-  ungroup() %>%                       
-  mutate(log_theta_Sn = log(theta_Sn)) %>% 
-  mutate(
-    bin = cut(
-      log_theta_Sn,
-      breaks = seq(min(log_theta_Sn, na.rm = TRUE),
-                   max(log_theta_Sn, na.rm = TRUE),
-                   length.out = 51), 
-      include.lowest = TRUE, right = FALSE
-    )
-  ) %>% 
-  group_by(bin, .drop = TRUE) %>%     
-  slice_max(loglik, n = 1, with_ties = FALSE) %>% 
-  ungroup() %>% 
-  select(-bin)
-subset_data_theta_Sn = subset_data_theta_Sn[subset_data_theta_Sn$log_theta_Sn > -7.5,]
 
 mcap(subset_data_theta_Sn$loglik, subset_data_theta_Sn$log_theta_Sn,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_theta_Sn
 mcap_object_theta_Sn$mle -> theta_Sn_mle
@@ -961,13 +944,8 @@ theta_Sn_p <- ggplot() +
         axis.title = element_text(size = 10)) +
   ylim(-890, -880)+
   theme_bw() +
-  theme(axis.title.y = element_blank())  + 
-  annotate("text", x = mcap_object_theta_Sn$mle, y = -900, label = sprintf("theta_Sn_mle: %s", formatC(mcap_object_theta_Sn$mle, format = 'e', digits = 3)), hjust = 1.05, vjust = -0.5, size = 3)
-
+  theme(axis.title.y = element_blank())
 theta_Sn_p
-
-
-
 
 
 
