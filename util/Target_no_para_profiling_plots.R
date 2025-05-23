@@ -566,7 +566,19 @@ grid.arrange( rn_p, ri_p, f_Sn_p, f_Si_p,theta_Sn_p,
               sigF_p,k_Sn_p,k_Si_p,
               nrow = 3, ncol = 5)
 
+g <- arrangeGrob( rn_p, ri_p, f_Sn_p, f_Si_p,theta_Sn_p,
+              theta_Si_p, theta_Jn_p,theta_Ji_p,sigJn_p,sigJi_p,
+              sigF_p,k_Sn_p,k_Si_p,
+              nrow = 3, ncol = 5)
 
+ggsave(
+  filename = "./daphnia-article/si/profile/Target_dynamics/no_para/Profile_plot.png",
+  plot     = g,         
+  width    = 16,        
+  height   = 8,         
+  dpi      = 300,       
+  units    = "in"
+)
 
 save(subset_data_ri,
      subset_data_rn,

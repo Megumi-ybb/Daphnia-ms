@@ -25,6 +25,24 @@ subset_data_f_Si <- final_params %>%
 plot(x = log(subset_data_f_Si$f_Si), y = subset_data_f_Si$loglik)
 plot(x = subset_data_f_Si$f_Si, y = subset_data_f_Si$loglik)
 subset_data_f_Si$log_f_Si <- log(subset_data_f_Si$f_Si)
+subset_data_f_Si <- subset_data_f_Si %>%
+  ungroup() %>%
+  mutate(
+    bin = cut(
+      log_f_Si,
+      breaks = seq(
+        min(log_f_Si, na.rm = TRUE),
+        max(log_f_Si, na.rm = TRUE),
+        length.out = 51
+      ),
+      include.lowest = TRUE,
+      right = FALSE
+    )
+  ) %>%
+  group_by(bin) %>%
+  slice_max(loglik, n = 1, with_ties = FALSE) %>%
+  ungroup() %>%
+  select(-bin)
 
 mcap(subset_data_f_Si$loglik, subset_data_f_Si$log_f_Si,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_f_Si
 mcap_object_f_Si$mle -> f_Si_mle
@@ -273,6 +291,24 @@ plot(x = log(subset_data_probi$probi), y = subset_data_probi$loglik)
 plot(x = subset_data_probi$probi, y = subset_data_probi$loglik)
 subset_data_probi$log_probi <- log(subset_data_probi$probi)
 
+subset_data_probi <- subset_data_probi %>%
+  ungroup() %>%
+  mutate(
+    bin = cut(
+      log_probi,
+      breaks = seq(
+        min(log_probi, na.rm = TRUE),
+        max(log_probi, na.rm = TRUE),
+        length.out = 51
+      ),
+      include.lowest = TRUE,
+      right = FALSE
+    )
+  ) %>%
+  group_by(bin) %>%
+  slice_max(loglik, n = 1, with_ties = FALSE) %>%
+  ungroup() %>%
+  select(-bin)
 mcap(subset_data_probi$loglik, subset_data_probi$log_probi,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_probi
 mcap_object_probi$mle -> probi_mle
 probi_p <- ggplot() +
@@ -356,6 +392,25 @@ subset_data_ri <- final_params %>%
 plot(x = log(subset_data_ri$ri), y = subset_data_ri$loglik)
 plot(x = subset_data_ri$ri, y = subset_data_ri$loglik)
 subset_data_ri$log_ri <- log(subset_data_ri$ri)
+
+subset_data_ri = subset_data_ri %>%
+  ungroup() %>%
+  mutate(
+    bin = cut(
+      log_ri,
+      breaks = seq(
+        min(log_ri, na.rm = TRUE),
+        max(log_ri, na.rm = TRUE),
+        length.out = 51 
+      ),
+      include.lowest = TRUE,
+      right = FALSE
+    )
+  ) %>%
+  group_by(bin) %>%
+  slice_max(loglik, n = 1, with_ties = FALSE) %>%
+  ungroup() %>%
+  select(-bin)
 mcap(subset_data_ri$loglik, subset_data_ri$log_ri,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_ri
 mcap_object_ri$mle -> ri_mle
 ri_p <- ggplot() +
@@ -475,9 +530,6 @@ plot(x = log(subset_data_sigIi$sigIi), y = subset_data_sigIi$loglik)
 plot(x = subset_data_sigIi$sigIi, y = subset_data_sigIi$loglik)
 subset_data_sigIi$log_sigIi <- log(subset_data_sigIi$sigIi)
 
-subset_data_sigIi = subset_data_sigIi[subset_data_sigIi$log_sigIi < -12,]
-subset_data_sigIi = subset_data_sigIi[subset_data_sigIi$log_sigIi > -17,]
-
 mcap(subset_data_sigIi$loglik, subset_data_sigIi$log_sigIi,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_sigIi
 mcap_object_sigIi$mle -> sigIi_mle
 sigIi_p <- ggplot() +
@@ -519,7 +571,27 @@ plot(x = subset_data_sigIn$sigIn, y = subset_data_sigIn$loglik)
 subset_data_sigIn$log_sigIn <- log(subset_data_sigIn$sigIn)
 
 subset_data_sigIn = subset_data_sigIn[subset_data_sigIn$log_sigIn <=-7.5,]
-mcap(subset_data_sigIn$loglik, subset_data_sigIn$log_sigIn,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_sigIn
+
+subset_data_sigIn <- subset_data_sigIn %>%
+  ungroup() %>%
+  mutate(
+    bin = cut(
+      log_sigIn,
+      breaks = seq(
+        min(log_sigIn, na.rm = TRUE),
+        max(log_sigIn, na.rm = TRUE),
+        length.out = 51
+      ),
+      include.lowest = TRUE,
+      right = FALSE
+    )
+  ) %>%
+  group_by(bin) %>%
+  slice_max(loglik, n = 1, with_ties = FALSE) %>%
+  ungroup() %>%
+  select(-bin)
+
+mcap(subset_data_sigIn$loglik, subset_data_sigIn$log_sigIn,  level = 0.8, span = 0.95, Ngrid = 1000) -> mcap_object_sigIn
 mcap_object_sigIn$mle -> sigIn_mle
 sigIn_p <- ggplot() +
   geom_point(data = subset_data_sigIn, aes(x = log_sigIn, y = loglik)) +
@@ -825,9 +897,7 @@ theta_Jn_p <- ggplot() +
   theme_bw() +
   theme(axis.title.y = element_blank(),
         axis.text.y = element_blank(),
-        axis.ticks.y = element_blank())  + 
-  annotate("text", x = mcap_object_theta_Jn$mle, y = -900, label = sprintf("theta_Jn_mle: %s", formatC(mcap_object_theta_Jn$mle, format = 'e', digits = 3)), hjust = 1.05, vjust = -0.5, size = 3)
-
+        axis.ticks.y = element_blank())
 theta_Jn_p
 
 
@@ -845,8 +915,8 @@ subset_data_theta_P <- final_params %>%
 plot(x = log(subset_data_theta_P$theta_P), y = subset_data_theta_P$loglik)
 plot(x = subset_data_theta_P$theta_P, y = subset_data_theta_P$loglik)
 subset_data_theta_P$log_theta_P <- log(subset_data_theta_P$theta_P)
-
-mcap(subset_data_theta_P$loglik, subset_data_theta_P$log_theta_P,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_theta_P
+subset_data_theta_P = subset_data_theta_P[subset_data_theta_P$loglik > max(subset_data_theta_P$loglik) - 7,]
+mcap(subset_data_theta_P$loglik, subset_data_theta_P$log_theta_P,  level = 0.8, span = 0.95, Ngrid = 1000) -> mcap_object_theta_P
 mcap_object_theta_P$mle -> theta_P_mle
 theta_P_p <- ggplot() +
   geom_point(data = subset_data_theta_P, aes(x = log_theta_P, y = loglik)) +
@@ -886,8 +956,29 @@ subset_data_theta_Si <- final_params %>%
 plot(x = log(subset_data_theta_Si$theta_Si), y = subset_data_theta_Si$loglik)
 plot(x = subset_data_theta_Si$theta_Si, y = subset_data_theta_Si$loglik)
 subset_data_theta_Si$log_theta_Si <- log(subset_data_theta_Si$theta_Si)
+subset_data_theta_Si = subset_data_theta_Si[subset_data_theta_Si$log_theta_Si < -3.6,]
+subset_data_theta_Si = subset_data_theta_Si[subset_data_theta_Si$log_theta_Si > max(subset_data_theta_Si$loglik) - 5,]
+subset_data_theta_Si <- subset_data_theta_Si %>%
+  ungroup() %>%
+  mutate(
+    bin = cut(
+      log_theta_Si,
+      breaks = seq(
+        min(log_theta_Si, na.rm = TRUE),
+        max(log_theta_Si, na.rm = TRUE),
+        length.out = 51
+      ),
+      include.lowest = TRUE,
+      right = FALSE
+    )
+  ) %>%
+  group_by(bin) %>%
+  slice_max(loglik, n = 1, with_ties = FALSE) %>%
+  ungroup() %>%
+  select(-bin)
 
-mcap(subset_data_theta_Si$loglik, subset_data_theta_Si$log_theta_Si,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_theta_Si
+
+mcap(subset_data_theta_Si$loglik, subset_data_theta_Si$log_theta_Si,  level = 0.8, span = 0.95, Ngrid = 1000) -> mcap_object_theta_Si
 mcap_object_theta_Si$mle -> theta_Si_mle
 theta_Si_p <- ggplot() +
   geom_point(data = subset_data_theta_Si, aes(x = log_theta_Si, y = loglik)) +
@@ -996,7 +1087,20 @@ grid.arrange( rn_p, ri_p, f_Sn_p, f_Si_p,probn_p, probi_p,
               theta_P_p,xi_p,k_Sn_p,k_Si_p,k_In_p,k_Ii_p,
               nrow = 4, ncol = 6)
 
+g <- arrangeGrob( rn_p, ri_p, f_Sn_p, f_Si_p,probn_p, probi_p,
+              theta_Sn_p, theta_Si_p, theta_In_p, theta_Ii_p,  theta_Jn_p,theta_Ji_p,
+              sigIn_p,sigIi_p,sigJn_p,sigJi_p,sigF_p,sigP_p,
+              theta_P_p,xi_p,k_Sn_p,k_Si_p,k_In_p,k_Ii_p,
+              nrow = 4, ncol = 6)
 
+ggsave(
+  filename = "./daphnia-article/si/profile/Target_dynamics/para/Profile_plot.png",
+  plot     = g,         
+  width    = 16,        
+  height   = 8,         
+  dpi      = 300,       
+  units    = "in"
+)
 
 save(subset_data_ri,
      subset_data_rn,

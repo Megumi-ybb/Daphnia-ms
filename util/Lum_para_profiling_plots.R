@@ -141,7 +141,7 @@ plot(x = log(subset_data_probi$probi), y = subset_data_probi$loglik)
 plot(x = subset_data_probi$probi, y = subset_data_probi$loglik)
 subset_data_probi$log_probi <- log(subset_data_probi$probi)
 
-mcap(subset_data_probi$loglik, subset_data_probi$log_probi,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_probi
+mcap(subset_data_probi$loglik, subset_data_probi$log_probi,  level = 0.8, span = 0.95, Ngrid = 1000) -> mcap_object_probi
 mcap_object_probi$mle -> probi_mle
 probi_p <- ggplot() +
   geom_point(data = subset_data_probi, aes(x = log_probi, y = loglik)) +
@@ -266,7 +266,6 @@ sigIi_p <- ggplot() +
   geom_vline(xintercept = mcap_object_sigIi$ci[2], linetype = 'dashed') +
   geom_vline(xintercept = mcap_object_sigIi$mle, col = 'blue') +
   geom_vline(xintercept = log(mif.estimate[['sigIi']]), col = 'red') +
-  geom_vline(xintercept = log(2.729188e-01), col = 'red') +
   geom_hline(yintercept = pf.loglik.of.mif.estimate, col = 'red',linetype = "longdash") +
   geom_point(aes(x = log(mif.estimate[['sigIi']]), 
                  y = pf.loglik.of.mif.estimate), 
@@ -317,7 +316,7 @@ sigJi_p <- ggplot() +
   theme(axis.text = element_text(size = 8),
         axis.title = element_text(size = 10)) +
   ylim(-435, -425)+
-  xlim(-3,-0)+
+  xlim(-2,-0)+
   theme_bw() +
   theme(axis.title.y = element_blank(),
         axis.text.y = element_blank(),
@@ -588,8 +587,23 @@ grid.arrange( ri_p,  f_Si_p,probi_p,
               nrow = 3, ncol = 5)
 
 
+g <- arrangeGrob(  ri_p,  f_Si_p,probi_p,
+              theta_Si_p,  theta_Ii_p,  theta_Ji_p,
+              sigIi_p,sigJi_p,sigF_p,sigP_p,
+              theta_P_p,xi_p,k_Si_p,k_Ii_p,
+              nrow = 3, ncol = 5)
 
-save(subset_data_ri,
+ggsave(
+  filename = "./daphnia-article/si/profile/Simple_dynamics/Lum/para/Profile_plot.png",
+  plot     = g,         
+  width    = 16,        
+  height   = 8,         
+  dpi      = 300,       
+  units    = "in"
+)
+
+
+ save(subset_data_ri,
      subset_data_f_Si,
      subset_data_probi,
      subset_data_xi,

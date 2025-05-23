@@ -95,7 +95,7 @@ plot(x = log(subset_data_ri$ri), y = subset_data_ri$loglik)
 plot(x = subset_data_ri$ri, y = subset_data_ri$loglik)
 subset_data_ri$log_ri <- log(subset_data_ri$ri)
 
-mcap(subset_data_ri$loglik, subset_data_ri$log_ri,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_ri
+mcap(subset_data_ri$loglik, subset_data_ri$log_ri,  level = 0.8, span = 0.95, Ngrid = 1000) -> mcap_object_ri
 mcap_object_ri$mle -> ri_mle
 ri_p <- ggplot() +
   geom_point(data = subset_data_ri, aes(x = log_ri, y = loglik)) +
@@ -130,8 +130,8 @@ if(load_option){
 plot(x = log(subset_data_sigF$sigF), y = subset_data_sigF$loglik)
 plot(x = subset_data_sigF$sigF, y = subset_data_sigF$loglik)
 subset_data_sigF$log_sigF <- log(subset_data_sigF$sigF)
-
-mcap(subset_data_sigF$loglik, subset_data_sigF$log_sigF,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_sigF
+subset_data_sigF = subset_data_sigF[subset_data_sigF$loglik > max(subset_data_sigF$loglik) - 15,]
+mcap(subset_data_sigF$loglik, subset_data_sigF$log_sigF,  level = 0.8, span = 0.95, Ngrid = 1000) -> mcap_object_sigF
 mcap_object_sigF$mle -> sigF_mle
 sigF_p <- ggplot() +
   geom_point(data = subset_data_sigF, aes(x = log_sigF, y = loglik)) +
@@ -171,7 +171,8 @@ plot(x = log(subset_data_sigJi$sigJi), y = subset_data_sigJi$loglik)
 plot(x = subset_data_sigJi$sigJi, y = subset_data_sigJi$loglik)
 subset_data_sigJi$log_sigJi <- log(subset_data_sigJi$sigJi)
 subset_data_sigJi = subset_data_sigJi[subset_data_sigJi$loglik > -400,]
-mcap(subset_data_sigJi$loglik, subset_data_sigJi$log_sigJi,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_sigJi
+subset_data_sigJi = subset_data_sigJi[subset_data_sigJi$log_sigJi > -2.5,]
+mcap(subset_data_sigJi$loglik, subset_data_sigJi$log_sigJi,  level = 0.8, span = 0.95, Ngrid = 1000) -> mcap_object_sigJi
 mcap_object_sigJi$mle -> sigJi_mle
 sigJi_p <- ggplot() +
   geom_point(data = subset_data_sigJi, aes(x = log_sigJi, y = loglik)) +
@@ -190,8 +191,7 @@ sigJi_p <- ggplot() +
   ylim(-375, -370)+
   # xlim(-1.5,-0)+
   theme_bw() +
-  theme(axis.title.y = element_blank())  + 
-  annotate("text", x = mcap_object_sigJi$mle, y = -900, label = sprintf("sigJi_mle: %s", formatC(mcap_object_sigJi$mle, format = 'e', digits = 3)), hjust = 1.05, vjust = -0.5, size = 3)
+  theme(axis.title.y = element_blank()) 
 
 sigJi_p
 
@@ -252,7 +252,7 @@ plot(x = log(subset_data_theta_Si$theta_Si), y = subset_data_theta_Si$loglik)
 plot(x = subset_data_theta_Si$theta_Si, y = subset_data_theta_Si$loglik)
 subset_data_theta_Si$log_theta_Si <- log(subset_data_theta_Si$theta_Si)
 
-mcap(subset_data_theta_Si$loglik, subset_data_theta_Si$log_theta_Si,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_theta_Si
+mcap(subset_data_theta_Si$loglik, subset_data_theta_Si$log_theta_Si,  level = 0.8, span = 0.95, Ngrid = 1000) -> mcap_object_theta_Si
 mcap_object_theta_Si$mle -> theta_Si_mle
 theta_Si_p <- ggplot() +
   geom_point(data = subset_data_theta_Si, aes(x = log_theta_Si, y = loglik)) +
@@ -286,7 +286,19 @@ grid.arrange( ri_p,  f_Si_p,
              sigJi_p,sigF_p,k_Si_p,
               nrow = 2, ncol = 4)
 
+g <- arrangeGrob( ri_p,  f_Si_p,
+              theta_Si_p, theta_Ji_p,
+              sigJi_p,sigF_p,k_Si_p,
+              nrow = 2, ncol = 4)
 
+ggsave(
+  filename = "./daphnia-article/si/profile/Simple_dynamics/Lum/no_para/Profile_plot.png",
+  plot     = g,         
+  width    = 16,        
+  height   = 8,         
+  dpi      = 300,       
+  units    = "in"
+)
 
 save(subset_data_ri,
      subset_data_f_Si,

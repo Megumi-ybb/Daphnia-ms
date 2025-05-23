@@ -270,7 +270,7 @@ plot(x = log(subset_data_sigIn$sigIn), y = subset_data_sigIn$loglik)
 plot(x = subset_data_sigIn$sigIn, y = subset_data_sigIn$loglik)
 subset_data_sigIn$log_sigIn <- log(subset_data_sigIn$sigIn)
 
-mcap(subset_data_sigIn$loglik, subset_data_sigIn$log_sigIn,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_sigIn
+mcap(subset_data_sigIn$loglik, subset_data_sigIn$log_sigIn,  level = 0.8, span = 0.95, Ngrid = 1000) -> mcap_object_sigIn
 mcap_object_sigIn$mle -> sigIn_mle
 sigIn_p <- ggplot() +
   geom_point(data = subset_data_sigIn, aes(x = log_sigIn, y = loglik)) +
@@ -348,7 +348,7 @@ if(load_option){
 plot(x = log(subset_data_sigP$sigP), y = subset_data_sigP$loglik)
 plot(x = subset_data_sigP$sigP, y = subset_data_sigP$loglik)
 subset_data_sigP$log_sigP <- log(subset_data_sigP$sigP)
-subset_data_sigP = subset_data_sigP[subset_data_sigP$loglik > -600,]
+subset_data_sigP = subset_data_sigP[subset_data_sigP$loglik > max(subset_data_sigP$loglik) - 15,]
 mcap(subset_data_sigP$loglik, subset_data_sigP$log_sigP,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_sigP
 mcap_object_sigP$mle -> sigP_mle
 sigP_p <- ggplot() +
@@ -430,7 +430,28 @@ plot(x = log(subset_data_theta_Jn$theta_Jn), y = subset_data_theta_Jn$loglik)
 plot(x = subset_data_theta_Jn$theta_Jn, y = subset_data_theta_Jn$loglik)
 subset_data_theta_Jn$log_theta_Jn <- log(subset_data_theta_Jn$theta_Jn)
 
-mcap(subset_data_theta_Jn$loglik, subset_data_theta_Jn$log_theta_Jn,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_theta_Jn
+
+subset_data_theta_Jn <- subset_data_theta_Jn %>% 
+  ungroup() %>%                                  
+  mutate(
+    bin = cut(
+      log_theta_Jn,
+      breaks = seq(
+        min(log_theta_Jn, na.rm = TRUE),
+        max(log_theta_Jn, na.rm = TRUE),
+        length.out = 51          
+      ),
+      include.lowest = TRUE,
+      right = FALSE
+    )
+  ) %>%                          
+  group_by(bin) %>%                     
+  slice_max(loglik, n = 1, with_ties = FALSE) %>%  
+  ungroup() %>% 
+  select(-bin)
+
+
+mcap(subset_data_theta_Jn$loglik, subset_data_theta_Jn$log_theta_Jn,  level = 0.8, span = 0.95, Ngrid = 1000) -> mcap_object_theta_Jn
 mcap_object_theta_Jn$mle -> theta_Jn_mle
 theta_Jn_p <- ggplot() +
   geom_point(data = subset_data_theta_Jn, aes(x = log_theta_Jn, y = loglik)) +
@@ -587,7 +608,19 @@ grid.arrange( rn_p,  f_Sn_p, probn_p, theta_Sn_p, theta_In_p,
               theta_P_p,xi_p,k_Sn_p,k_In_p,
               nrow = 3, ncol = 5)
 
+g <- arrangeGrob( rn_p,  f_Sn_p, probn_p, theta_Sn_p, theta_In_p,
+              theta_Jn_p, sigIn_p,sigJn_p,sigF_p,sigP_p,
+              theta_P_p,xi_p,k_Sn_p,k_In_p,
+              nrow = 3, ncol = 5)
 
+ggsave(
+  filename = "./daphnia-article/si/profile/Simple_dynamics/Dent/para/Profile_plot.png",
+  plot     = g,         
+  width    = 16,        
+  height   = 8,         
+  dpi      = 300,       
+  units    = "in"
+)
 
 save( subset_data_rn,
      subset_data_f_Sn,

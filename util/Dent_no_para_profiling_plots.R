@@ -245,7 +245,7 @@ plot(x = log(subset_data_theta_Jn$theta_Jn), y = subset_data_theta_Jn$loglik)
 plot(x = subset_data_theta_Jn$theta_Jn, y = subset_data_theta_Jn$loglik)
 subset_data_theta_Jn$log_theta_Jn <- log(subset_data_theta_Jn$theta_Jn)
 
-mcap(subset_data_theta_Jn$loglik, subset_data_theta_Jn$log_theta_Jn,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_theta_Jn
+mcap(subset_data_theta_Jn$loglik, subset_data_theta_Jn$log_theta_Jn,  level = 0.8, span = 0.95, Ngrid = 1000) -> mcap_object_theta_Jn
 mcap_object_theta_Jn$mle -> theta_Jn_mle
 theta_Jn_p <- ggplot() +
   geom_point(data = subset_data_theta_Jn, aes(x = log_theta_Jn, y = loglik)) +
@@ -318,6 +318,19 @@ grid.arrange( rn_p,f_Sn_p,
               nrow = 2, ncol = 4)
 
 
+g <- arrangeGrob( rn_p,f_Sn_p,
+              theta_Sn_p,theta_Jn_p,sigJn_p,sigF_p,k_Sn_p,
+              nrow = 2, ncol = 4)
+
+ggsave(
+  filename = "./daphnia-article/si/profile/Simple_dynamics/Dent/no_para/Profile_plot.png",
+  plot     = g,         
+  width    = 16,        
+  height   = 8,         
+  dpi      = 300,       
+  units    = "in"
+)
+
 
 save(subset_data_rn,
      subset_data_f_Sn,
@@ -358,83 +371,5 @@ rownames(ci_table) = c("2.5%","97.5%","MLE")
 colnames(ci_table) = c('rn','f_Sn','theta_Sn','theta_Jn','sigJn','sigF','k_Sn')
 ci_table = as.data.frame(ci_table)
 save(ci_table, file = 'data/Simple_dynamics/Dent/no_para/profile_ci_table.rda')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
