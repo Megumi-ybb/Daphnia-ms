@@ -64,6 +64,25 @@ if(load_option){
 plot(x = log(subset_data_k_Sn$k_Sn), y = subset_data_k_Sn$loglik)
 plot(x = subset_data_k_Sn$k_Sn, y = subset_data_k_Sn$loglik)
 subset_data_k_Sn$log_k_Sn <- log(subset_data_k_Sn$k_Sn)
+# subset_data_k_Sn = subset_data_k_Sn[subset_data_k_Sn$log_k_Sn < 4,]
+subset_data_k_Sn <- subset_data_k_Sn %>%
+  ungroup()%>%
+  mutate(log_k_Sn = log(k_Sn)) %>%
+  mutate(bin = cut(
+    log_k_Sn,
+    breaks = seq(
+      min(log_k_Sn, na.rm = TRUE),
+      max(log_k_Sn, na.rm = TRUE),
+      length.out = 51 
+    ),
+    include.lowest = TRUE,
+    right = FALSE
+  )) %>%
+  group_by(bin) %>%
+  slice_max(loglik, n = 1, with_ties = FALSE) %>%
+  ungroup() %>%
+  select(-bin)
+
 
 mcap(subset_data_k_Sn$loglik, subset_data_k_Sn$log_k_Sn,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_k_Sn
 mcap_object_k_Sn$mle -> k_Sn_mle
@@ -85,9 +104,7 @@ k_Sn_p <- ggplot() +
   theme_bw() +
   theme(axis.title.y = element_blank(),
         axis.text.y = element_blank(),
-        axis.ticks.y = element_blank())  + 
-  annotate("text", x = mcap_object_k_Sn$mle, y = -900, label = sprintf("k_Sn_mle: %s", formatC(mcap_object_k_Sn$mle, format = 'e', digits = 3)), hjust = 1.05, vjust = -0.5, size = 3)
-
+        axis.ticks.y = element_blank())
 k_Sn_p
 
 

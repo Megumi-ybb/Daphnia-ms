@@ -9,8 +9,7 @@ library(pomp)
 library(panelPomp)
 library(tidyverse)
 
-# Mesocosm_data = read_excel("/Users/ybb/Desktop/Research//Daphnia/Mesocosmdata.xls",3)
-Mesocosm_data = read_excel("/home/ybb/D_P/Mesocosmdata.xlsx",3)
+Mesocosm_data = read_excel("./Mesocosmdata.xlsx",3)
 
 
 DEBUG = FALSE

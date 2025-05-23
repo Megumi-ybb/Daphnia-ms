@@ -1,72 +1,75 @@
+
+#Set Daphnia-ms as the directory
+
 #################################Target model########################################################
-load("~/Desktop/Research/Daphnia/Target_dynamics/para/model/all_shared.RData")
+load("./Mixed-species/SIRJPF2/model/best_result.rda")
 all_shared_ll = pf.loglik.of.mif.estimate
 all_shared_ll_se = s.e.of.pf.loglik.of.mif.estimate
 parameters = mif.estimate
 
 # -------------------------------------Specific------------------------------------------------
-load("./Target_dynamics/para/specific_model/xi/specific_xi.RData")
+load("./Mixed-species/SIRJPF2/specific_model/xi/specific_xi.RData")
 xi_ll = pf.loglik.of.mif.estimate
 xi_ll_se = s.e.of.pf.loglik.of.mif.estimate
 
-load("./Target_dynamics/para/specific_model/theta_Si_theta_Sn/specific_theta_Si_theta_Sn.RData")
+load("./Mixed-species/SIRJPF2/specific_model/theta_Si_theta_Sn/specific_theta_Si_theta_Sn.RData")
 theta_Si_theta_Sn_ll = pf.loglik.of.mif.estimate
 theta_Si_theta_Sn_ll_se = s.e.of.pf.loglik.of.mif.estimate
 
-load("./Target_dynamics/para/specific_model/theta_P/specific_theta_P.RData")
+load("./Mixed-species/SIRJPF2/specific_model/theta_P/specific_theta_P.RData")
 theta_P_ll = pf.loglik.of.mif.estimate
 theta_P_ll_se = s.e.of.pf.loglik.of.mif.estimate
 
-load("./Target_dynamics/para/specific_model/theta_Ii_theta_Ii/specific_theta_Ii_theta_Ii.RData")
+load("./Mixed-species/SIRJPF2/specific_model/theta_Ii_theta_In/specific_theta_Ii_theta_In.RData")
 theta_Ii_theta_Ii_ll = pf.loglik.of.mif.estimate
 theta_Ii_theta_Ii_ll_se = s.e.of.pf.loglik.of.mif.estimate
 
-load("./Target_dynamics/para/specific_model/ri_rn/specific_ri_rn.RData")
+load("./Mixed-species/SIRJPF2/specific_model/ri_rn/specific_ri_rn.RData")
 ri_rn_ll = pf.loglik.of.mif.estimate
 ri_rn_ll_se = s.e.of.pf.loglik.of.mif.estimate
 
-load("./Target_dynamics/para/specific_model/probi_probn/specific_probi_probn.RData")
+load("./Mixed-species/SIRJPF2/specific_model/probi_probn/specific_probi_probn.RData")
 probi_probn_ll = pf.loglik.of.mif.estimate
 probi_probn_ll_se = s.e.of.pf.loglik.of.mif.estimate
 
-load("./Target_dynamics/para/specific_model/f_Si_f_Sn/specific_f_Si_f_Sn.RData")
+load("./Mixed-species/SIRJPF2/specific_model/f_Si_f_Sn/specific_f_Si_f_Sn.RData")
 f_Si_f_Sn_ll = pf.loglik.of.mif.estimate
 f_Si_f_Sn_ll_se = s.e.of.pf.loglik.of.mif.estimate
 
 
 # -------------------------------------Specific Block------------------------------------------------
-load("./Target_dynamics/para/specific_model_block/xi/specific_xi.RData")
+load("./Mixed-species/SIRJPF2/specific_model_block/xi/specific_xi.RData")
 xi_block_ll = pf.loglik.of.mif.estimate
 xi_block_ll_se = s.e.of.pf.loglik.of.mif.estimate
 
-load("./Target_dynamics/para/specific_model_block/theta_Si_theta_Sn/specific_theta_Si_theta_Sn.RData")
+load("./Mixed-species/SIRJPF2/specific_model_block/theta_Si_theta_Sn/specific_theta_Si_theta_Sn.RData")
 theta_Si_theta_Sn_block_ll = pf.loglik.of.mif.estimate
 theta_Si_theta_Sn_block_ll_se = s.e.of.pf.loglik.of.mif.estimate
 
-load("./Target_dynamics/para/specific_model_block/theta_P/specific_theta_P.RData")
+load("./Mixed-species/SIRJPF2/specific_model_block/theta_P/specific_theta_P.RData")
 theta_P_block_ll = pf.loglik.of.mif.estimate
 theta_P_block_ll_se = s.e.of.pf.loglik.of.mif.estimate
 
-load("./Target_dynamics/para/specific_model_block/theta_Ii_theta_Ii/specific_theta_Ii_theta_Ii.RData")
+load("./Mixed-species/SIRJPF2/specific_model_block/theta_Ii_theta_In/specific_theta_Ii_theta_In.RData")
 theta_Ii_theta_Ii_block_ll = pf.loglik.of.mif.estimate
 theta_Ii_theta_Ii_block_ll_se = s.e.of.pf.loglik.of.mif.estimate
 
-load("./Target_dynamics/para/specific_model_block/ri_rn/specific_ri_rn.RData")
+load("./Mixed-species/SIRJPF2/specific_model_block/ri_rn/specific_ri_rn.RData")
 ri_rn_block_ll = pf.loglik.of.mif.estimate
 ri_rn_block_ll_se = s.e.of.pf.loglik.of.mif.estimate
 
-load("./Target_dynamics/para/specific_model_block/probi_probn/specific_probi_probn.RData")
+load("./Mixed-species/SIRJPF2/specific_model_block/probi_probn/specific_probi_probn.RData")
 probi_probn_block_ll = pf.loglik.of.mif.estimate
 probi_probn_block_ll_se = s.e.of.pf.loglik.of.mif.estimate
 
-load("./Target_dynamics/para/specific_model_block/f_Si_f_Sn/specific_f_Si_f_Sn.RData")
+load("./Mixed-species/SIRJPF2/specific_model_block/f_Si_f_Sn/specific_f_Si_f_Sn.RData")
 f_Si_f_Sn_block_ll = pf.loglik.of.mif.estimate
 f_Si_f_Sn_block_ll_se = s.e.of.pf.loglik.of.mif.estimate
 
 
-K_all = length(parameters)
-K_two = length(parameters) - 2 + 2 * 8
-K_one = length(parameters) - 1 + 1 * 8
+K_all = length(parameters) - 2
+K_two = length(parameters) - 4 + 2 * 8
+K_one = length(parameters) - 3 + 1 * 8
 
 
 target_para_ll_df =  list(
@@ -110,44 +113,44 @@ save(target_para_ll_df = target_para_ll_df,target_para_parameter_table = target_
 
 
 #################################Target no para model########################################################
-load("./Target_dynamics/no_para/new_profile/f_Sn/f_Sn.RData")
+load("./Mixed-species/SRJF2/best_result.rda")
 all_shared_ll = pf.loglik.of.mif.estimate
 all_shared_ll_se = s.e.of.pf.loglik.of.mif.estimate
 parameters = mif.estimate
 
 # -------------------------------------Specific------------------------------------------------
-load("./Target_dynamics/no_para/specific_model/theta_Sn_theta_Si/specific_theta_Sn_theta_Si.RData")
+load("./Mixed-species/SRJF2/specific_model/theta_Sn_theta_Si/specific_theta_Sn_theta_Si.RData")
 theta_Si_theta_Sn_ll = pf.loglik.of.mif.estimate
 theta_Si_theta_Sn_ll_se = s.e.of.pf.loglik.of.mif.estimate
 
-load("./Target_dynamics/no_para/specific_model/rn_ri/specific_rn_ri.RData")
+load("./Mixed-species/SRJF2/specific_model/rn_ri/specific_rn_ri.RData")
 ri_rn_ll = pf.loglik.of.mif.estimate
 ri_rn_ll_se = s.e.of.pf.loglik.of.mif.estimate
 
 
-load("./Target_dynamics/no_para/specific_model/f_Si_f_Sn/specific_f_Si_f_Sn.RData")
+load("./Mixed-species/SRJF2/specific_model/f_Si_f_Sn/specific_f_Si_f_Sn.RData")
 f_Si_f_Sn_ll = pf.loglik.of.mif.estimate
 f_Si_f_Sn_ll_se = s.e.of.pf.loglik.of.mif.estimate
 
 
 # -------------------------------------Specific Block------------------------------------------------
-load("./Target_dynamics/no_para/specific_model_block/theta_Sn_theta_Si/specific_theta_Sn_theta_Si.RData")
+load("./Mixed-species/SRJF2/specific_model_block/theta_Sn_theta_Si/specific_theta_Sn_theta_Si.RData")
 theta_Si_theta_Sn_block_ll = pf.loglik.of.mif.estimate
 theta_Si_theta_Sn_block_ll_se = s.e.of.pf.loglik.of.mif.estimate
 
-load("./Target_dynamics/no_para/specific_model_block/rn_ri/specific_rn_ri.RData")
+load("./Mixed-species/SRJF2/specific_model_block/rn_ri/specific_rn_ri.RData")
 ri_rn_block_ll = pf.loglik.of.mif.estimate
 ri_rn_block_ll_se = s.e.of.pf.loglik.of.mif.estimate
 
 
-load("./Target_dynamics/no_para/specific_model_block/f_Si_f_Sn/specific_f_Si_f_Sn.RData")
+load("./Mixed-species/SRJF2/specific_model_block/f_Si_f_Sn/specific_f_Si_f_Sn.RData")
 f_Si_f_Sn_block_ll = pf.loglik.of.mif.estimate
 f_Si_f_Sn_block_ll_se = s.e.of.pf.loglik.of.mif.estimate
 
 
-K_all = length(parameters)
-K_two = length(parameters) - 2 + 2 * 9
-K_one = length(parameters) - 1 + 1 * 9
+K_all = length(parameters) - 2
+K_two = length(parameters) - 4 + 2 * 9
+K_one = length(parameters) - 3 + 1 * 9
 
 
 target_no_para_ll_df =  list(
@@ -184,74 +187,74 @@ save(target_no_para_ll_df = target_no_para_ll_df,target_no_para_parameter_table 
 
 
 #######################################################################Dent para model########################################################
-load("./Simple_dynamics/Dent/para/profile/sigP/sigP.RData")
+load("./Single-species/Dent/SIRJPF/model/best_result.rda")
 all_shared_ll = pf.loglik.of.mif.estimate
 all_shared_ll_se = s.e.of.pf.loglik.of.mif.estimate
 parameters = mif.estimate
-# load("Simple_dynamics/Dent/para/profile/sigP/sigP.RData")
+
 # -------------------------------------Specific------------------------------------------------
-load("./Simple_dynamics/Dent/para/specific_model/xi/specific_xi.RData")
+load("./Single-species/Dent/SIRJPF/specific_model/xi/specific_xi.RData")
 xi_ll = pf.loglik.of.mif.estimate
 xi_ll_se = s.e.of.pf.loglik.of.mif.estimate
 
-load("./Simple_dynamics/Dent/para/specific_model/theta_Sn/specific_theta_Sn.RData")
+load("./Single-species/Dent/SIRJPF/specific_model/theta_Sn/specific_theta_Sn.RData")
 theta_Sn_ll = pf.loglik.of.mif.estimate
 theta_Sn_ll_se = s.e.of.pf.loglik.of.mif.estimate
 
-load("./Simple_dynamics/Dent/para/specific_model/theta_P/specific_theta_P.RData")
+load("./Single-species/Dent/SIRJPF/specific_model/theta_P/specific_theta_P.RData")
 theta_P_ll = pf.loglik.of.mif.estimate
 theta_P_ll_se = s.e.of.pf.loglik.of.mif.estimate
 
-load("./Simple_dynamics/Dent/para/specific_model/theta_In/specific_theta_In.RData")
+load("./Single-species/Dent/SIRJPF/specific_model/theta_In/specific_theta_In.RData")
 theta_In_ll = pf.loglik.of.mif.estimate
 theta_In_ll_se = s.e.of.pf.loglik.of.mif.estimate
 
-load("./Simple_dynamics/Dent/para/specific_model/rn/specific_rn.RData")
+load("./Single-species/Dent/SIRJPF/specific_model/rn/specific_rn.RData")
 ri_rn_ll = pf.loglik.of.mif.estimate
 ri_rn_ll_se = s.e.of.pf.loglik.of.mif.estimate
 
-load("./Simple_dynamics/Dent/para/specific_model/probn/specific_probn.RData")
+load("./Single-species/Dent/SIRJPF/specific_model/probn/specific_probn.RData")
 probn_ll = pf.loglik.of.mif.estimate
 probn_ll_se = s.e.of.pf.loglik.of.mif.estimate
 
-load("./Simple_dynamics/Dent/para/specific_model/f_Sn/specific_f_Sn.RData")
+load("./Single-species/Dent/SIRJPF/specific_model/f_Sn/specific_f_Sn.RData")
 f_Sn_ll = pf.loglik.of.mif.estimate
 f_Sn_ll_se = s.e.of.pf.loglik.of.mif.estimate
 
 
 # -------------------------------------Specific Block------------------------------------------------
-load("./Simple_dynamics/Dent/para/specific_model_block/xi/specific_xi.RData")
+load("./Single-species/Dent/SIRJPF/specific_model_block/xi/specific_xi.RData")
 xi_block_ll = pf.loglik.of.mif.estimate
 xi_block_ll_se = s.e.of.pf.loglik.of.mif.estimate
 
-load("./Simple_dynamics/Dent/para/specific_model_block/theta_Sn/specific_theta_Sn.RData")
+load("./Single-species/Dent/SIRJPF/specific_model_block/theta_Sn/specific_theta_Sn.RData")
 theta_Sn_block_ll = pf.loglik.of.mif.estimate
 theta_Sn_block_ll_se = s.e.of.pf.loglik.of.mif.estimate
 
-load("./Simple_dynamics/Dent/para/specific_model_block/theta_P/specific_theta_P.RData")
+load("./Single-species/Dent/SIRJPF/specific_model_block/theta_P/specific_theta_P.RData")
 theta_P_block_ll = pf.loglik.of.mif.estimate
 theta_P_block_ll_se = s.e.of.pf.loglik.of.mif.estimate
 
-load("./Simple_dynamics/Dent/para/specific_model_block/theta_In/specific_theta_In.RData")
+load("./Single-species/Dent/SIRJPF/specific_model_block/theta_In/specific_theta_In.RData")
 theta_In_block_ll = pf.loglik.of.mif.estimate
 theta_In_block_ll_se = s.e.of.pf.loglik.of.mif.estimate
 
-load("./Simple_dynamics/Dent/para/specific_model_block/rn/specific_rn.RData")
+load("./Single-species/Dent/SIRJPF/specific_model_block/rn/specific_rn.RData")
 rn_block_ll = pf.loglik.of.mif.estimate
 rn_block_ll_se = s.e.of.pf.loglik.of.mif.estimate
 
-load("./Simple_dynamics/Dent/para/specific_model_block/probn/specific_probn.RData")
+load("./Single-species/Dent/SIRJPF/specific_model_block/probn/specific_probn.RData")
 probn_block_ll = pf.loglik.of.mif.estimate
 probn_block_ll_se = s.e.of.pf.loglik.of.mif.estimate
 
-load("./Simple_dynamics/Dent/para/specific_model_block/f_Sn/specific_f_Sn.RData")
+load("./Single-species/Dent/SIRJPF/specific_model_block/f_Sn/specific_f_Sn.RData")
 f_Sn_block_ll = pf.loglik.of.mif.estimate
 f_Sn_block_ll_se = s.e.of.pf.loglik.of.mif.estimate
 
 
-K_all = length(parameters)
-K_two = length(parameters) - 2 + 2 * 8
-K_one = length(parameters) - 1 + 1 * 8
+K_all = length(parameters) - 1
+K_two = length(parameters) - 3 + 2 * 8
+K_one = length(parameters) - 2 + 1 * 8
 
 
 dent_para_ll_df <- list(
@@ -291,7 +294,7 @@ dent_para_parameter_table <- dent_para_parameter_table[order(dent_para_parameter
 dent_para_parameter_table$max_AIC <- NULL
 print(dent_para_parameter_table)
 
-save(dent_para_ll_df = dent_para_ll_df,dent_para_parameter_table = dent_para_parameter_table,file = './data/Simple_dynamics/Dent/para/Dent_para_loglik_df.rds')
+save(dent_para_ll_df = dent_para_ll_df,dent_para_parameter_table = dent_para_parameter_table,file = './data/Single-species/Dent/SRJF/para/Dent_para_loglik_df.rds')
 
 
 
@@ -299,43 +302,41 @@ save(dent_para_ll_df = dent_para_ll_df,dent_para_parameter_table = dent_para_par
 
 
 #######################################################################Dent no para model########################################################
-load("./Simple_dynamics/Dent/no_para/profile/f_Sn/f_Sn.RData")
+load("./Single-species/Dent/SRJF/model/best_result.rda")
 all_shared_ll = pf.loglik.of.mif.estimate
 all_shared_ll_se = s.e.of.pf.loglik.of.mif.estimate
 parameters = mif.estimate
-# drop sigSn
-parameters =  parameters[names(parameters) != "sigSn"]
 # -------------------------------------Specific------------------------------------------------
-load("./Simple_dynamics/Dent/no_para/specific_model/theta_Sn/specific_theta_Sn.RData")
+load("./Single-species/Dent/SRJF/specific_model/theta_Sn/specific_theta_Sn.RData")
 theta_Sn_ll = pf.loglik.of.mif.estimate
 theta_Sn_ll_se = s.e.of.pf.loglik.of.mif.estimate
 
-load("./Simple_dynamics/Dent/no_para/specific_model/rn/specific_rn.RData")
+load("./Single-species/Dent/SRJF/specific_model/rn/specific_rn.RData")
 ri_rn_ll = pf.loglik.of.mif.estimate
 ri_rn_ll_se = s.e.of.pf.loglik.of.mif.estimate
 
-load("./Simple_dynamics/Dent/no_para/specific_model/f_Sn/specific_f_Sn.RData")
+load("./Single-species/Dent/SRJF/specific_model/f_Sn/specific_f_Sn.RData")
 f_Sn_ll = pf.loglik.of.mif.estimate
 f_Sn_ll_se = s.e.of.pf.loglik.of.mif.estimate
 
 
 # -------------------------------------Specific Block------------------------------------------------
-load("./Simple_dynamics/Dent/no_para/specific_model_block/theta_Sn/specific_theta_Sn.RData")
+load("./Single-species/Dent/SRJF/specific_model_block/theta_Sn/specific_theta_Sn.RData")
 theta_Sn_block_ll = pf.loglik.of.mif.estimate
 theta_Sn_block_ll_se = s.e.of.pf.loglik.of.mif.estimate
 
-load("./Simple_dynamics/Dent/no_para/specific_model_block/rn/specific_rn.RData")
+load("./Single-species/Dent/SRJF/specific_model_block/rn/specific_rn.RData")
 rn_block_ll = pf.loglik.of.mif.estimate
 rn_block_ll_se = s.e.of.pf.loglik.of.mif.estimate
 
-load("./Simple_dynamics/Dent/no_para/specific_model_block/f_Sn/specific_f_Sn.RData")
+load("./Single-species/Dent/SRJF/specific_model_block/f_Sn/specific_f_Sn.RData")
 f_Sn_block_ll = pf.loglik.of.mif.estimate
 f_Sn_block_ll_se = s.e.of.pf.loglik.of.mif.estimate
 
 
-K_all = length(parameters)
-K_two = length(parameters) - 2 + 2 * 10
-K_one = length(parameters) - 1 + 1 * 10
+K_all = length(parameters) - 1
+K_two = length(parameters) - 3 + 2 * 10
+K_one = length(parameters) - 2 + 1 * 10
 
 
 dent_no_para_ll_df <- list(
@@ -374,75 +375,75 @@ save(dent_no_para_ll_df = dent_no_para_ll_df,dent_no_para_parameter_table = dent
 
 
 #######################################################################Lum para model########################################################
-load("./Simple_dynamics/Lum/para/model/all_shared.RData")
+load("./Single-species/Lum/SIRJPF/model/best_result.rda")
 all_shared_ll = pf.loglik.of.mif.estimate
 all_shared_ll_se = s.e.of.pf.loglik.of.mif.estimate
 parameters = mif.estimate
 
 # -------------------------------------Specific------------------------------------------------
-load("./Simple_dynamics/Lum/para/specific_model/xi/specific_xi.RData")
+load("./Single-species/Lum/SIRJPF/specific_model/xi/specific_xi.RData")
 xi_ll = pf.loglik.of.mif.estimate
 xi_ll_se = s.e.of.pf.loglik.of.mif.estimate
 
-load("./Simple_dynamics/Lum/para/specific_model/theta_Si/specific_theta_Si.RData")
+load("./Single-species/Lum/SIRJPF/specific_model/theta_Si/specific_theta_Si.RData")
 theta_Si_ll = pf.loglik.of.mif.estimate
 theta_Si_ll_se = s.e.of.pf.loglik.of.mif.estimate
 
-load("./Simple_dynamics/Lum/para/specific_model/theta_P/specific_theta_P.RData")
+load("./Single-species/Lum/SIRJPF/specific_model/theta_P/specific_theta_P.RData")
 theta_P_ll = pf.loglik.of.mif.estimate
 theta_P_ll_se = s.e.of.pf.loglik.of.mif.estimate
 
-load("./Simple_dynamics/Lum/para/specific_model/theta_Ii/specific_theta_Ii.RData")
+load("./Single-species/Lum/SIRJPF/specific_model/theta_Ii/specific_theta_Ii.RData")
 theta_Ii_ll = pf.loglik.of.mif.estimate
 theta_Ii_ll_se = s.e.of.pf.loglik.of.mif.estimate
 
-load("./Simple_dynamics/Lum/para/specific_model/ri/specific_ri.RData")
+load("./Single-species/Lum/SIRJPF/specific_model/ri/specific_ri.RData")
 ri_rn_ll = pf.loglik.of.mif.estimate
 ri_rn_ll_se = s.e.of.pf.loglik.of.mif.estimate
 
-load("./Simple_dynamics/Lum/para/specific_model/probi/specific_probi.RData")
+load("./Single-species/Lum/SIRJPF/specific_model/probi/specific_probi.RData")
 probi_ll = pf.loglik.of.mif.estimate
 probi_ll_se = s.e.of.pf.loglik.of.mif.estimate
 
-load("./Simple_dynamics/Lum/para/specific_model/f_Si/specific_f_Si.RData")
+load("./Single-species/Lum/SIRJPF/specific_model/f_Si/specific_f_Si.RData")
 f_Si_ll = pf.loglik.of.mif.estimate
 f_Si_ll_se = s.e.of.pf.loglik.of.mif.estimate
 
 
 
 # -------------------------------------Specific Block------------------------------------------------
-load("./Simple_dynamics/Lum/para/specific_model_block/xi/specific_xi.RData")
+load("./Single-species/Lum/SIRJPF/specific_model_block/xi/specific_xi.RData")
 xi_block_ll = pf.loglik.of.mif.estimate
 xi_block_ll_se = s.e.of.pf.loglik.of.mif.estimate
 
-load("./Simple_dynamics/Lum/para/specific_model_block/theta_Si/specific_theta_Si.RData")
+load("./Single-species/Lum/SIRJPF/specific_model_block/theta_Si/specific_theta_Si.RData")
 theta_Si_block_ll = pf.loglik.of.mif.estimate
 theta_Si_block_ll_se = s.e.of.pf.loglik.of.mif.estimate
 
-load("./Simple_dynamics/Lum/para/specific_model_block/theta_P/specific_theta_P.RData")
+load("./Single-species/Lum/SIRJPF/specific_model_block/theta_P/specific_theta_P.RData")
 theta_P_block_ll = pf.loglik.of.mif.estimate
 theta_P_block_ll_se = s.e.of.pf.loglik.of.mif.estimate
 
-load("./Simple_dynamics/Lum/para/specific_model_block/theta_Ii/specific_theta_Ii.RData")
+load("./Single-species/Lum/SIRJPF/specific_model_block/theta_Ii/specific_theta_Ii.RData")
 theta_Ii_block_ll = pf.loglik.of.mif.estimate
 theta_Ii_block_ll_se = s.e.of.pf.loglik.of.mif.estimate
 
-load("./Simple_dynamics/Lum/para/specific_model_block/ri/specific_ri.RData")
+load("./Single-species/Lum/SIRJPF/specific_model_block/ri/specific_ri.RData")
 ri_block_ll = pf.loglik.of.mif.estimate
 ri_block_ll_se = s.e.of.pf.loglik.of.mif.estimate
 
-load("./Simple_dynamics/Lum/para/specific_model_block/probi/specific_probi.RData")
+load("./Single-species/Lum/SIRJPF/specific_model_block/probi/specific_probi.RData")
 probi_block_ll = pf.loglik.of.mif.estimate
 probi_block_ll_se = s.e.of.pf.loglik.of.mif.estimate
 
-load("./Simple_dynamics/Lum/para/specific_model_block/f_Si/specific_f_Si.RData")
+load("./Single-species/Lum/SIRJPF/specific_model_block/f_Si/specific_f_Si.RData")
 f_Si_block_ll = pf.loglik.of.mif.estimate
 f_Si_block_ll_se = s.e.of.pf.loglik.of.mif.estimate
 
 
-K_all = length(parameters)
-K_two = length(parameters) - 2 + 2 * 9
-K_one = length(parameters) - 1 + 1 * 9
+K_all = length(parameters) - 1
+K_two = length(parameters) - 3 + 2 * 9
+K_one = length(parameters) - 2 + 1 * 9
 
 
 lum_para_ll_df <- list(
@@ -490,43 +491,43 @@ save(lum_para_ll_df = lum_para_ll_df,lum_para_parameter_table = lum_para_paramet
 
 
 #######################################################################Lum no para model########################################################
-load("./Simple_dynamics/Lum/no_para/model/all_shared_no_xiJ.RData")
+load("./Single-species/Lum/SRJF/model/best_result.rda")
 all_shared_ll = pf.loglik.of.mif.estimate
 all_shared_ll_se = s.e.of.pf.loglik.of.mif.estimate
 parameters = mif.estimate
 
 # -------------------------------------Specific------------------------------------------------
-load("./Simple_dynamics/Lum/no_para/specific_model/theta_Si/specific_theta_Si.RData")
+load("./Single-species/Lum/SRJF/specific_model/theta_Si/specific_theta_Si.RData")
 theta_Si_ll = pf.loglik.of.mif.estimate
 theta_Si_ll_se = s.e.of.pf.loglik.of.mif.estimate
 
-load("./Simple_dynamics/Lum/no_para/specific_model/ri/specific_ri.RData")
+load("./Single-species/Lum/SRJF/specific_model/ri/specific_ri.RData")
 ri_rn_ll = pf.loglik.of.mif.estimate
 ri_rn_ll_se = s.e.of.pf.loglik.of.mif.estimate
 
-load("./Simple_dynamics/Lum/no_para/specific_model/f_Si/specific_f_Si.RData")
+load("./Single-species/Lum/SRJF/specific_model/f_Si/specific_f_Si.RData")
 f_Si_ll = pf.loglik.of.mif.estimate
 f_Si_ll_se = s.e.of.pf.loglik.of.mif.estimate
 
 
 
 # -------------------------------------Specific Block------------------------------------------------
-load("./Simple_dynamics/Lum/no_para/specific_model_block/theta_Si/specific_theta_Si.RData")
+load("./Single-species/Lum/SRJF/specific_model_block/theta_Si/specific_theta_Si.RData")
 theta_Si_block_ll = pf.loglik.of.mif.estimate
 theta_Si_block_ll_se = s.e.of.pf.loglik.of.mif.estimate
 
-load("./Simple_dynamics/Lum/no_para/specific_model_block/ri/specific_ri.RData")
+load("./Single-species/Lum/SRJF/specific_model_block/ri/specific_ri.RData")
 ri_block_ll = pf.loglik.of.mif.estimate
 ri_block_ll_se = s.e.of.pf.loglik.of.mif.estimate
 
-load("./Simple_dynamics/Lum/no_para/specific_model_block/f_Si/specific_f_Si.RData")
+load("./Single-species/Lum/SRJF/specific_model_block/f_Si/specific_f_Si.RData")
 f_Si_block_ll = pf.loglik.of.mif.estimate
 f_Si_block_ll_se = s.e.of.pf.loglik.of.mif.estimate
 
 
-K_all = length(parameters)
-K_two = length(parameters) - 2 + 2 * 10
-K_one = length(parameters) - 1 + 1 * 10
+K_all = length(parameters) - 1
+K_two = length(parameters) - 3 + 2 * 10
+K_one = length(parameters) - 2 + 1 * 10
 
 
 lum_no_para_ll_df <- list(

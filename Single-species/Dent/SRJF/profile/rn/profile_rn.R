@@ -9,14 +9,12 @@ library(pomp)
 library(panelPomp)
 library(tidyverse)
 
-# Mesocosm_data = read_excel("~/Desktop/Research/D_P/Mesocosmdata.xlsx")
-Mesocosm_data = read_excel("/home/ybb/D_P/Mesocosmdata.xlsx")
+Mesocosm_data = read_excel("./Mesocosmdata.xlsx")
 
 DEBUG = FALSE
 
-sed = 0923
-set.seed(0923)
-
+ 
+ 
 name_str = "rn"
 run_level <- 3
 

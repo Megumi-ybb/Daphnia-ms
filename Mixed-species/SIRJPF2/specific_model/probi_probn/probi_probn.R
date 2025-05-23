@@ -35,10 +35,9 @@ create_specific_name <- function(parameter_names) {
   return(specific_name)
 }
 
-Mesocosm_data = read_excel("/home/ybb/D_P/Mesocosmdata.xlsx",3)
 
+Mesocosm_data = read_excel("./Mesocosmdata.xlsx",3)
 specific_names = c('probi','probn')
-
 
 name_str = create_specific_name(specific_names)
 run_level <- 3
@@ -46,7 +45,6 @@ run_level <- 3
 dentNoPara <- Mesocosm_data[91:170, ]
 dentNoPara <- subset(dentNoPara, select = c(rep, day, dent.adult,dent.inf,lum.adult,lum.adult.inf))
 dentNoPara <- dentNoPara[80: 1, ]
-#Convert sampling date to natural date. Samples are collected every 5 days after the #first 7 days.
 dentNoPara$day = (dentNoPara$day - 1) * 5 + 7
 data = list()
 trails = c("K","L","M","N","O","P","Q","S")

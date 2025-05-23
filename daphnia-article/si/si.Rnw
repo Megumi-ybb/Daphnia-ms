@@ -265,8 +265,8 @@ $\theta^{\species}_{I,\unit}$ & \Sexpr{mysignif_ll_AIC(target_para_parameter_tab
 $p^{\species}_{\unit}$ & \Sexpr{mysignif_ll_AIC(target_para_parameter_table[3,]$ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[3,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[3,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[3,]$block_AIC,6)} \\
 $\theta_{P,\unit}$ & \Sexpr{mysignif_ll_AIC(target_para_parameter_table[4,]$ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[4,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[4,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[4,]$block_AIC,6)} \\
 $\xi_{\unit}$ & \Sexpr{mysignif_ll_AIC(target_para_parameter_table[5,]$ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[5,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[5,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[5,]$block_AIC,6)} \\
-$f^{\species}_{S,\unit}$ & \Sexpr{mysignif_ll_AIC(target_para_parameter_table[6,]$ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[6,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[6,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[6,]$block_AIC,6)} \\
-$\theta^{\species}_{S,\unit}$ & \Sexpr{mysignif_ll_AIC(target_para_parameter_table[7,]$ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[7,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[7,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[7,]$block_AIC,6)} \\
+$\theta^{\species}_{S,\unit}$ & \Sexpr{mysignif_ll_AIC(target_para_parameter_table[6,]$ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[6,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[6,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[6,]$block_AIC,6)} \\
+$f^{\species}_{S,\unit}$ & \Sexpr{mysignif_ll_AIC(target_para_parameter_table[7,]$ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[7,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[7,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[7,]$block_AIC,6)} \\
 $r^{\species}_{\unit}$ & \Sexpr{mysignif_ll_AIC(target_para_parameter_table[8,]$ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[8,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[8,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[8,]$block_AIC,6)} \\[1ex]
  \hline
 \end{tabular}
@@ -598,8 +598,9 @@ Columns are buckets corresponding to replications with same treatment setting.
 
 \subsection{Results}
 <<LoadSIRJPFdatanative, include=FALSE, cache=cache_option>>=
-load("profile/Simple_dynamics/Dent/para/profile_ci_table.rda")
-load('profile/Simple_dynamics/Dent/para/estimation_parameters.rds')
+load("../../data/Simple_dynamics/Dent/para/profile_ci_table.rda")
+load('../../Single-species/Dent/SIRJPF/model/best_result.rda')
+dent_para_parameters = mif.estimate
 load('../../data/Simple_dynamics/Dent/para/Dent_para_loglik_df.rds')
 ci_table = exp(ci_table)
 rn = dent_para_parameters[['rn']]
@@ -640,7 +641,7 @@ $P$   & Spore density                             & $10^3 \cdot \mathrm{spore} \
 $r^{\native}$ &  Birth rate of juvenile                        & $\mathrm{individual} \cdot 10^{-6}\cdot \mathrm{cell}^{-1}$ & \Sexpr{mysignif(rn,2)}  & (\Sexpr{mysignif(ci_table$rn[1],2)},\Sexpr{mysignif(ci_table$rn[2],2)})\\
 $f^{\native}_{S}$ & Susceptible adult host filtering rate   &  $\mathrm{L} \cdot \mathrm{individual}^{-1} \cdot \mathrm{day}^{-1}$   & \Sexpr{mysignif(f_Sn,2)}  & (\Sexpr{mysignif(ci_table$f_Sn[1],2)},\,\Sexpr{mysignif(ci_table$f_Sn[2],2)})\\
 $p^{\native}$          & Number of infection per spore            &     $10^{-3} \cdot \mathrm{individual} \cdot \mathrm{spore}^{-1} $ & \Sexpr{mysignif(probn,2)}  & (\Sexpr{mysignif(ci_table$probn[1],2)},\,\Sexpr{mysignif(ci_table$probn[2],2)})\\
-$\theta^{\native}_{S}$ & Susceptible adult host mortality rate     &     $  \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Sn,2)}  & (\Sexpr{0},\,\Sexpr{mysignif(ci_table$theta_Sn[2],2)})\\
+$\theta^{\native}_{S}$ & Susceptible adult host mortality rate     &     $  \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Sn,2)}  & (\Sexpr{0},\,$\infty$)\\
 $\theta^{\native}_{I}$ & Infected adult host mortality rate        &     $  \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_In,2)}  & (\Sexpr{mysignif(ci_table$theta_In[1],2)},\,\Sexpr{mysignif(ci_table$theta_In[2],2)})\\
 $\theta^{\native}_{J}$ & Juvenile mortality rate        &     $ \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Jn,2)}  & (\Sexpr{0},\,\Sexpr{mysignif(ci_table$theta_Jn[2],2)})\\
 $\theta_{P}$   & Spore degradation rate                           &     $ \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_P,2)}   & (\Sexpr{0},\,$\infty$)\\
@@ -664,8 +665,9 @@ $\tau^{\native}_{I}$      &  Measurement dispersion for infected adult          
 \end{table}
 
 <<LoadSIRJPFdatainvaisve, include=FALSE, cache=cache_option>>=
-load("profile/Simple_dynamics/Lum/para/profile_ci_table.rda")
-load('profile/Simple_dynamics/Lum/para/estimation_parameters.rds')
+load("../../data//Simple_dynamics/Lum/para/profile_ci_table.rda")
+load('../../Single-species/Lum/SIRJPF/model/best_result.rda')
+lum_para_parameters = mif.estimate
 load('../../data/Simple_dynamics/Lum/para/Lum_para_loglik_df.rds')
 ci_table = exp(ci_table)
 ri = lum_para_parameters[['ri']]
@@ -707,9 +709,9 @@ $r^{\invasive}$ &  Birth rate of juvenile                        & $\mathrm{indi
 $f^{\invasive}_{S}$ & Susceptible adult host filtering rate   &  $\mathrm{L} \cdot \mathrm{individual}^{-1} \cdot \mathrm{day}^{-1}$   & \Sexpr{mysignif(f_Si,2)}  & (\Sexpr{mysignif(ci_table$f_Si[1],2)},\Sexpr{mysignif(ci_table$f_Si[2],2)})\\
 $p^{\invasive}$          & Number of infection per spore            &     $10^{-3} \cdot \mathrm{individual} \cdot \mathrm{spore}^{-1} $ & \Sexpr{mysignif(probi,2)}  & (\Sexpr{mysignif(ci_table$probi[1],2)},\Sexpr{mysignif(ci_table$probi[2],2)})\\
 $\theta^{\invasive}_{S}$ & Susceptible adult host mortality rate     &     $ \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Si,2)}  & (\Sexpr{mysignif(ci_table$theta_Si[1],2)},\Sexpr{mysignif(ci_table$theta_Si[2],2)})\\
-$\theta^{\invasive}_{I}$ & Infected adult host mortality rate        &     $ \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Ii,2)}  & (\Sexpr{mysignif(ci_table$theta_Ii[1],2)},\Sexpr{mysignif(ci_table$theta_Ii[2],2)})\\
+$\theta^{\invasive}_{I}$ & Infected adult host mortality rate        &     $ \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Ii,2)}  & (\Sexpr{0},$\infty$)\\
 $\theta^{\invasive}_{J}$ & Juvenile mortality rate        &     $  \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Ji,2)}  & (\Sexpr{0},$\infty$)\\
-$\theta_{P}$   & Spore degradation rate                           &     $ \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_P,2)}   & (\Sexpr{0},$\infty$)\\
+$\theta_{P}$   & Spore degradation rate                           &     $ \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_P,2)}   & (\Sexpr{0},\Sexpr{mysignif(ci_table$theta_P[2],2)})\\
 $\lambda^{\invasive}_{J}$ & Mature rate of the juvenile                  &     $ \mathrm{day}^{-1} $                  & \Sexpr{mysignif(lambda_Jn,2)}  & \\
 $\xi$           & Ratio of infected host filtering rate       &     $\mathrm{Unitless}$                    & \Sexpr{mysignif(xi,2)}         & (\Sexpr{mysignif(ci_table$xi[1],2)},\Sexpr{mysignif(ci_table$xi[2],2)})\\
 $\xi_J$         & Ratio of juvenile individual filtering rate &     $\mathrm{Unitless}$                    & \Sexpr{mysignif(xi_J,2)} & \\
@@ -717,12 +719,12 @@ $\beta^{\invasive}$       & Spores produced by death per infected individual    
 $\mu$           & Algae refilling rate                                &  $10^6 \cdot \mathrm{cell} \cdot \mathrm{L} ^{-1} \cdot \mathrm{day}^{-1}$                 & \Sexpr{mysignif(mu,2)} & \\
 $\delta$        & Sampling rate                                      &  $day ^{-1}$                                                                         & \Sexpr{mysignif(delta,2)} & \\
 $\sigma^{\invasive}_{S}$ & Standard deviation of Brownian motion of susceptible adult         &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & 0  & \\
-$\sigma^{\invasive}_{I}$ & Standard deviation of Brownian motion of infected adult         &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigIi,2)}  & (\Sexpr{0},$\infty$)\\
-$\sigma^{\invasive}_{J}$ & Standard deviation of Brownian motion of juvenile               &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigJi,2)}  & (\Sexpr{0},$\infty$)\\
+$\sigma^{\invasive}_{I}$ & Standard deviation of Brownian motion of infected adult         &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigIi,2)}  & (\Sexpr{0}, \Sexpr{mysignif(ci_table$sigIi[2],2)})\\
+$\sigma^{\invasive}_{J}$ & Standard deviation of Brownian motion of juvenile               &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigJi,2)}  & (\Sexpr{mysignif(ci_table$sigJi[1],2)}, \Sexpr{mysignif(ci_table$sigJi[2],2)})\\
 $\sigma_{F}$   & Standard deviation of Brownian motion of alga                          &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigF,2)}  & (\Sexpr{0},$\infty$)\\
 $\sigma_{P}$   & Standard deviation of Brownian motion of parasite                      &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigP,2)}  & (\Sexpr{0},$\infty$)\\
-$\tau^{\invasive}_{S}$      &  Measurement dispersion for susceptible adult                  &$\mathrm{Unitless}$           & \Sexpr{mysignif(k_Si,2)}  & (\Sexpr{mysignif(ci_table$k_Si[1],2)},$\infty$)\\
-$\tau^{\invasive}_{I}$      &  Measurement dispersion for infected adult                 &$\mathrm{Unitless}$            & \Sexpr{mysignif(k_Ii,2)}  & (\Sexpr{0},$\infty$)\\
+$\tau^{\invasive}_{S}$      &  Measurement dispersion for susceptible adult                  &$\mathrm{Unitless}$           & \Sexpr{mysignif(k_Si,2)}  & (\Sexpr{0},$\infty$)\\
+$\tau^{\invasive}_{I}$      &  Measurement dispersion for infected adult                 &$\mathrm{Unitless}$            & \Sexpr{mysignif(k_Ii,2)}  & (\Sexpr{mysignif(ci_table$k_Ii[1],2)},$\infty$)\\
 \hline
 \end{tabular}}
 \caption{Variables and parameter definitions and estimates of SIRJPF model for \textit{D.~lumholtzi}-only dynamics. The confidence interval is generated by the Monte Carlo Adjusted Profile.}
@@ -758,12 +760,12 @@ Specific parameters  & Max log-likelihood & AIC & \makecell[c]{Max log-likelihoo
  \hline\hline
 $\theta^{\native}_{I,\unit}$ & \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[1,]$ll,5)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[1,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[1,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[1,]$block_AIC,6)} \\
 $\varnothing$  & \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[2,]$ll,5)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[2,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[2,]$ll,5)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[2,]$AIC,6)} \\
-$\xi_{\unit}$ & \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[3,]$ll,5)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[3,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[3,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[3,]$block_AIC,6)} \\
+ $r^{\native}_{\unit}$ & \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[3,]$ll,5)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[3,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[3,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[3,]$block_AIC,6)} \\
 $p^{\native}_{\unit}$ & \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[4,]$ll,5)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[4,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[4,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[4,]$block_AIC,6)} \\
-$r^{\native}_{\unit}$ & \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[5,]$ll,5)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[5,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[5,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[5,]$block_AIC,6)} \\
+$\xi_{\unit}$ & \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[5,]$ll,5)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[5,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[5,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[5,]$block_AIC,6)} \\
 $\theta^{\native}_{S,\unit}$ & \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[6,]$ll,5)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[6,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[6,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[6,]$block_AIC,6)} \\
-$\theta_{P,\unit}$ & \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[7,]$ll,5)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[7,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[7,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[7,]$block_AIC,6)} \\
-$f^{\native}_{S,\unit}$ & \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[8,]$ll,5)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[8,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[8,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[8,]$block_AIC,6)} \\[1ex]
+$f^{\native}_{S,\unit}$ & \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[7,]$ll,5)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[7,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[7,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[7,]$block_AIC,6)} \\
+$\theta_{P,\unit}$& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[8,]$ll,5)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[8,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[8,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[8,]$block_AIC,6)} \\[1ex]
  \hline
 \end{tabular}
 \end{center}
@@ -783,9 +785,9 @@ $\varnothing$  & \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[2,]$ll,5)}& \Se
 $p^{\invasive}_{\unit}$ & \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[3,]$ll,5)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[3,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[3,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[3,]$block_AIC,6)} \\
 $\theta^{\invasive}_{I,\unit}$ & \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[4,]$ll,5)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[4,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[4,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[4,]$block_AIC,6)} \\
 $f^{\invasive}_{S,\unit}$ & \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[5,]$ll,5)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[5,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[5,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[5,]$block_AIC,6)} \\
-$p^{\invasive}_{\unit}$ & \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[6,]$ll,5)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[6,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[6,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[6,]$block_AIC,6)} \\
-$\theta_{P,\unit}$ & \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[7,]$ll,5)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[7,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[7,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[7,]$block_AIC,6)} \\
-$r^{\invasive}_{\unit}$ & \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[8,]$ll,5)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[8,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[8,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[8,]$block_AIC,6)} \\[1ex]
+$\theta_{P,\unit}$ & \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[6,]$ll,5)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[6,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[6,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[6,]$block_AIC,6)} \\
+$r^{\invasive}_{\unit}$ & \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[7,]$ll,5)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[7,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[7,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[7,]$block_AIC,6)} \\
+$\theta^{\invasive}_{S,\unit}$ & \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[8,]$ll,5)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[8,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[8,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[8,]$block_AIC,6)} \\[1ex]
  \hline
 \end{tabular}
 \end{center}
@@ -1039,8 +1041,9 @@ Columns are buckets corresponding to replications with same treatment setting.
 \subsection{Results}
 \subsubsection{Parameter Estimation}
 <<LoadSRJF2, include=FALSE, cache=TRUE>>=
-load("profile/Target_dynamics/no_para/profile_ci_table.rda")
-load('profile/Target_dynamics/no_para/estimation_parameters.rds')
+load("../../data/Target_dynamics/no_para/profile_ci_table.rda")
+load('../../Mixed-species/SRJF2/best_result.rda')
+target_no_para_parameters = mif.estimate
 load('../../data/Target_dynamics/no_para/Target_no_para_loglik_df.rds')
 ci_table = exp(ci_table)
 
@@ -1085,8 +1088,8 @@ $f^{\native}_{S}$ & Native susceptible adult host filtering rate   &  $\mathrm{L
 $f^{\invasive}_{S}$ & Invasive susceptible adult host filtering rate &  $\mathrm{L} \cdot \mathrm{individual}^{-1} \cdot \mathrm{day}^{-1}$   & \Sexpr{mysignif(f_Si,2)}  & (\Sexpr{mysignif(ci_table$f_Si[1],2)},\Sexpr{mysignif(ci_table$f_Si[2],2)})\\
 $\theta^{\native}_{S}$ & Native susceptible adult host mortality rate     &     $  \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Sn,2)}  & (\Sexpr{mysignif(ci_table$theta_Sn[1],2)},\Sexpr{mysignif(ci_table$theta_Sn[2],2)})\\
 $\theta^{\invasive}_{S}$ & Invasive susceptible adult host mortality rate   &     $  \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Si,2)}  & (\Sexpr{mysignif(ci_table$theta_Si[1],2)},\Sexpr{mysignif(ci_table$theta_Si[2],2)})\\
-$\theta^{\native}_{J}$ & Native juvenile mortality rate        &     $   \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Jn,2)}  & (\Sexpr{mysignif(ci_table$theta_Jn[1],2)},$\infty$)\\
-$\theta^{\invasive}_{J}$ & Invasive juvenile mortality rate      &     $  \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Ji,2)}  & (\Sexpr{mysignif(ci_table$theta_Ji[1],2)},$\infty$)\\
+$\theta^{\native}_{J}$ & Native juvenile mortality rate        &     $   \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Jn,2)}  & (\Sexpr{mysignif(ci_table$theta_Jn[1],2)},\Sexpr{mysignif(ci_table$theta_Jn[2],2)})\\
+$\theta^{\invasive}_{J}$ & Invasive juvenile mortality rate      &     $  \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Ji,2)}  & (\Sexpr{mysignif(ci_table$theta_Ji[1],2)},\Sexpr{mysignif(ci_table$theta_Ji[2],2)})\\
 $\lambda^{\native}_{J}$ & Mature rate of native juvenile                  &     $ \mathrm{day}^{-1} $                  & \Sexpr{mysignif(lambda_Jn,2)}  & \\
 $\lambda^{\invasive}_{J}$ & Mature rate of invasive juvenile                &     $ \mathrm{day}^{-1} $                  & \Sexpr{mysignif(lambda_Ji,2)}  & \\
 $\xi_J$         & Ratio of juvenile individual filtering rate &     $\mathrm{Unitless}$                    & \Sexpr{mysignif(xi_J,2)} & \\
@@ -1096,7 +1099,7 @@ $\mu$           & Alga refilling rate                                &  $10^6 \c
 $\delta$        & Sampling rate                                      &  $day ^{-1}$                                                                         & \Sexpr{mysignif(delta,2)} & \\
 $\sigma^{\native}_{S}$ & Standard deviation of Brownian motion of native susceptible adult             &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & 0  & \\
 $\sigma^{\invasive}_{S}$ & Standard deviation of Brownian motion of invasive susceptible adult              &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & 0  & \\
-$\sigma^{\native}_{J}$ & Standard deviation of Brownian motion of native juvenile               &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigJn,2)}  & (\Sexpr{mysignif(ci_table$sigJn[1],2)},$\infty$)\\
+$\sigma^{\native}_{J}$ & Standard deviation of Brownian motion of native juvenile               &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigJn,2)}  & (\Sexpr{mysignif(ci_table$sigJn[1],2)},\Sexpr{mysignif(ci_table$sigJn[2],2)})\\
 $\sigma^{\invasive}_{J}$ & Standard deviation of Brownian motion of invasive juvenile             &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigJi,2)}  & (\Sexpr{0},\Sexpr{mysignif(ci_table$sigJi[2],2)})\\
 $\sigma_{F}$   & Standard deviation of Brownian motion of alga                          &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigF,2)}  & (\Sexpr{mysignif(ci_table$sigF[1],2)},\Sexpr{mysignif(ci_table$sigF[2],2)})\\
 $\tau^{\native}_{S}$      &  Measurement dispersion for susceptible native adult             &$\mathrm{Unitless}$           & \Sexpr{mysignif(k_Sn,2)}  & (\Sexpr{mysignif(ci_table$k_Sn[1],2)},\Sexpr{mysignif(ci_table$k_Sn[2],2)})\\
@@ -1425,8 +1428,9 @@ Columns are buckets corresponding to replications with same treatment setting.
 
 \subsection{Result}
 <<LoadSRJFdatanative, include=FALSE, cache=cache_option>>=
-load("profile/Simple_dynamics/Dent/no_para/profile_ci_table.rda")
-load('profile/Simple_dynamics/Dent/no_para/estimation_parameters.rds')
+load("../../data/Simple_dynamics/Dent/no_para/profile_ci_table.rda")
+load('../../Single-species/Dent/SRJF/model/best_result.rda')
+dent_no_para_parameters = mif.estimate
 load('../../data/Simple_dynamics/Dent/no_para/Dent_no_para_loglik_df.rds')
 ci_table = exp(ci_table)
 
@@ -1469,8 +1473,8 @@ $\mu$           & Algae refilling rate                                &  $10^6 \
 $\delta$        & Sampling rate                                      &  $day ^{-1}$                                                                         & \Sexpr{mysignif(delta,2)} & \\
 $\sigma^{\native}_{S}$ & Standard deviation of Brownian motion of susceptible adult               &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & 0  & \\
 $\sigma^{\native}_{J}$ & Standard deviation of Brownian motion of juvenile               &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigJn,2)}  & (\Sexpr{mysignif(ci_table$sigJn[1],2)},\Sexpr{mysignif(ci_table$sigJn[2],2)})\\
-$\sigma_{F}$   & Standard deviation of Brownian motion of alga                          &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigF,2)}  & (\Sexpr{0},\Sexpr{mysignif(ci_table$sigF[2],2)})\\
-$\tau^{\native}_{S}$      &  Measurement dispersion for susceptible adult          &$\mathrm{Unitless}$           & \Sexpr{mysignif(k_Sn,2)}  & (\Sexpr{mysignif(ci_table$k_Sn[1],2)},\Sexpr{mysignif(ci_table$k_Sn[2],2)})\\
+$\sigma_{F}$   & Standard deviation of Brownian motion of alga                          &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigF,2)}  & (\Sexpr{0},$\infty$)\\
+$\tau^{\native}_{S}$      &  Measurement dispersion for susceptible adult          &$\mathrm{Unitless}$           & \Sexpr{mysignif(k_Sn,2)}  & (\Sexpr{0},\Sexpr{mysignif(ci_table$k_Sn[2],2)})\\
 \hline
 \end{tabular}}
 \caption{Variables and parameter definitions and estimates of SRJF model for \textit{D.~dentifera}-only dynamics. The confidence interval is generated by the Monte Carlo Adjusted Profile.}
@@ -1478,8 +1482,9 @@ $\tau^{\native}_{S}$      &  Measurement dispersion for susceptible adult       
 \end{table}
 
 <<LoadSSRJFdatainvaisve, include=FALSE, cache=cache_option>>=
-load("profile/Simple_dynamics/Lum/no_para/profile_ci_table.rda")
-load('profile/Simple_dynamics/Lum/no_para/estimation_parameters.rds')
+load("../../data/Simple_dynamics/Lum/no_para/profile_ci_table.rda")
+load('../../Single-species/Lum/SRJF/model/best_result.rda')
+lum_no_para_parameters = mif.estimate
 load('../../data/Simple_dynamics/Lum/no_para/Lum_no_para_loglik_df.rds')
 ci_table = exp(ci_table)
 ri = lum_no_para_parameters[['ri']]
@@ -1508,7 +1513,7 @@ $S^{\invasive}$ & Susceptible host density   & $\mathrm{individual} \cdot L ^{-1
 $J^{\invasive}$ & Juvenile host density    & $ \mathrm{individual} \cdot L ^{-1}$                & Variable                & \\
 $F$   & Alga density                              & $10^6 \cdot \mathrm{cell} \cdot L ^{-1}$             & Variable                & \\
 $r^{\invasive}$ &  Birth rate of juvenile                        & $\mathrm{individual} \cdot 10^{-6}\cdot \mathrm{cell}^{-1}$ & \Sexpr{mysignif(ri,2)}  & (\Sexpr{mysignif(ci_table$ri[1],2)},\Sexpr{mysignif(ci_table$ri[2],2)})\\
-$f^{\invasive}_{S}$ & Susceptible adult host filtering rate   &  $\mathrm{L} \cdot \mathrm{individual}^{-1} \cdot \mathrm{day}^{-1}$   & \Sexpr{mysignif(f_Si,2)}  & (\Sexpr{mysignif(ci_table$f_Si[1],2)},\Sexpr{mysignif(ci_table$f_Si[2],2)})\\
+$f^{\invasive}_{S}$ & Susceptible adult host filtering rate   &  $\mathrm{L} \cdot \mathrm{individual}^{-1} \cdot \mathrm{day}^{-1}$   & \Sexpr{mysignif(f_Si,2)}  & (\Sexpr{0},\Sexpr{mysignif(ci_table$f_Si[2],2)})\\
 $\theta^{\invasive}_{S}$ & Susceptible adult host mortality rate     &     $ \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Si,2)}  & (\Sexpr{mysignif(ci_table$theta_Si[1],2)},\Sexpr{mysignif(ci_table$theta_Si[2],2)})\\
 $\theta^{\invasive}_{J}$ & Juvenile mortality rate        &     $ \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Ji,2)}  & (\Sexpr{0},\Sexpr{mysignif(ci_table$theta_Ji[2],2)})\\
 $\lambda^{\invasive}_{J}$ & Mature rate of the juvenile                  &     $ \mathrm{day}^{-1} $                  & \Sexpr{mysignif(lambda_Jn,2)}  & \\
@@ -1517,7 +1522,7 @@ $\beta^{\invasive}$       & Spores produced by death per infected individual    
 $\mu$           & Algae refilling rate                                &  $10^6 \cdot \mathrm{cell} \cdot \mathrm{L} ^{-1} \cdot \mathrm{day}^{-1}$                 & \Sexpr{mysignif(mu,2)} & \\
 $\delta$        & Sampling rate                                      &  $day ^{-1}$                                                                         & \Sexpr{mysignif(delta,2)} & \\
 $\sigma^{\invasive}_{S}$ & Standard deviation of Brownian motion of susceptible adult               &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & 0  & \\
-$\sigma^{\invasive}_{J}$ & Standard deviation of Brownian motion of juvenile               &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigJi,2)}  & (\Sexpr{mysignif(ci_table$sigJi[1],2)},\Sexpr{mysignif(ci_table$sigJi[2],2)})\\
+$\sigma^{\invasive}_{J}$ & Standard deviation of Brownian motion of juvenile               &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigJi,2)}  & (\Sexpr{0},\Sexpr{mysignif(ci_table$sigJi[2],2)})\\
 $\sigma^{\invasive}_{F}$   & Standard deviation of Brownian motion of alga                          &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigF,2)}  & (\Sexpr{0},\Sexpr{mysignif(ci_table$sigF[2],2)})\\
 $\tau^{\invasive}_{S}$      &  Measurement dispersion for susceptible adult           &$\mathrm{Unitless}$           & \Sexpr{mysignif(k_Si,2)}  & (\Sexpr{mysignif(ci_table$k_Si[1],2)},\Sexpr{mysignif(ci_table$k_Si[2],2)})\\
 \hline

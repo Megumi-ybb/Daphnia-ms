@@ -730,7 +730,7 @@ beta_i = 30.00
 delta = 0.013
 mu = 0.37
 
-load('data/profile_ci_table.rda')
+load('../data/Target_dynamics/para/profile_ci_table.rda')
 ci_table = exp(ci_table)
 load('data/benchmark_model_summary.rda')
 @
@@ -750,16 +750,16 @@ $F$   & Alga density                              & $10^6 \cdot \mathrm{cell} \c
 $P$   & Spore density                             & $10^3 \cdot \mathrm{spore} \cdot L ^{-1}$            & Variable                & \\
 $r^{\native}$ & Native growth rate                        & $\mathrm{individual} \cdot 10^{-6}\cdot \mathrm{cell}^{-1}$ & \Sexpr{mysignif(rn,2)}  & (\Sexpr{mysignif(ci_table$rn[1],2)},\Sexpr{mysignif(ci_table$rn[2],2)})\\
 $r^{\invasive}$ & Invasive growth rate                      & $\mathrm{individual} \cdot 10^{-6}\cdot \mathrm{cell}^{-1}$ & \Sexpr{mysignif(ri,2)}  & (\Sexpr{mysignif(ci_table$ri[1],2)}, $\infty$)\\
-$f_{S^{\native}}$ & Native susceptible adult host filtering rate   &  $\mathrm{L} \cdot \mathrm{individual}^{-1} \cdot \mathrm{day}^{-1}$   & \Sexpr{mysignif(f_Sn,2)}  & (\Sexpr{mysignif(ci_table$f_Sn[1],2)},\Sexpr{mysignif(ci_table$f_Sn[2],2)})\\
+$f_{S^{\native}}$ & Native susceptible adult host filtering rate   &  $\mathrm{L} \cdot \mathrm{individual}^{-1} \cdot \mathrm{day}^{-1}$   & \Sexpr{mysignif(f_Sn,2)}  & (\Sexpr{0},\Sexpr{mysignif(ci_table$f_Sn[2],2)})\\
 $f_{S^{\invasive}}$ & Invasive susceptible adult host filtering rate &  $\mathrm{L} \cdot \mathrm{individual}^{-1} \cdot \mathrm{day}^{-1}$   & \Sexpr{mysignif(f_Si,2)}  & (\Sexpr{0},\Sexpr{mysignif(ci_table$f_Si[2],2)})\\
 $p^{\native}$          & Number of native infections per spore             &     $10^{-3} \cdot \mathrm{individual} \cdot \mathrm{spore}^{-1} $ & \Sexpr{mysignif(probn,2)}  & (\Sexpr{mysignif(ci_table$probn[1],2)},\Sexpr{mysignif(ci_table$probn[2],2)})\\
-$p^{\invasive}$          & Number of invasive infections per spore           &     $10^{-3} \cdot \mathrm{individual} \cdot \mathrm{spore}^{-1} $ & \Sexpr{mysignif(probi,2)}  & (\Sexpr{mysignif(ci_table$probi[1],2)},\Sexpr{mysignif(ci_table$probi[2],2)})\\
+$p^{\invasive}$          & Number of invasive infections per spore           &     $10^{-3} \cdot \mathrm{individual} \cdot \mathrm{spore}^{-1} $ & \Sexpr{mysignif(probi,2)}  & (\Sexpr{mysignif(ci_table$probi[1],2)},$\infty$)\\
 $\theta^{\native}_{S}$ & Native susceptible adult host mortality rate     &     $ \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Sn,2)}  & (\Sexpr{0},\Sexpr{mysignif(ci_table$theta_Sn[2],2)})\\
 $\theta^{\invasive}_{S}$ & Invasive susceptible adult host mortality rate   &     $  \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Si,2)}  & (\Sexpr{0},\Sexpr{mysignif(ci_table$theta_Si[2],2)})\\
 $\theta^{\native}_{I}$ & Native infected adult host mortality rate        &     $  \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_In,2)}  & (\Sexpr{mysignif(ci_table$theta_In[1],2)},\Sexpr{mysignif(ci_table$theta_In[2],2)})\\
 $\theta^{\invasive}_{I}$ & Invasive infected adult host mortality rate      &     $  \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Ii,2)}  & (\Sexpr{mysignif(ci_table$theta_Ii[1],2)},\Sexpr{mysignif(ci_table$theta_Ii[2],2)})\\
 $\theta^{\native}_{J}$ & Native juvenile mortality rate        &     $ \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Jn,2)}  & (\Sexpr{0},\Sexpr{mysignif(ci_table$theta_Jn[2],2)})\\
-$\theta^{\invasive}_{J}$ & Invasive juvenile mortality rate      &     $  \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Ji,2)}  & (\Sexpr{0},\Sexpr{mysignif(ci_table$theta_Ji[2],2)})\\
+$\theta^{\invasive}_{J}$ & Invasive juvenile mortality rate      &     $  \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Ji,2)}  & (\Sexpr{mysignif(ci_table$theta_Ji[1],2)},\Sexpr{mysignif(ci_table$theta_Ji[2],2)})\\
 $\theta_{P}$   & Spore degradation rate                           &     $\mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_P,2)}   & (\Sexpr{0},\Sexpr{mysignif(ci_table$theta_P[2],2)})\\
 $\lambda^{\native}_{J}$ & Maturation rate of native juvenile                  &     $ \mathrm{day}^{-1} $                  & \Sexpr{mysignif(lambda_Jn,2)}  & \\
 $\lambda^{\invasive}_{J}$ & Maturation rate of invasive juvenile                &     $ \mathrm{day}^{-1} $                  & \Sexpr{mysignif(lambda_Ji,2)}  & \\
@@ -772,7 +772,7 @@ $\delta$        & Sampling rate                                      &  $\mathrm
 $\sigma^{\native}_{S}$ & Standard deviation of Brownian motion of susceptible native adult         &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & 0  & \\
 $\sigma^{\invasive}_{S}$ & Standard deviation of Brownian motion of susceptible invasive adult         &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & 0  & \\
 $\sigma^{\native}_{I}$ & Standard deviation of Brownian motion of infected native adult         &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigIn,2)}  & (\Sexpr{0},$\infty$)\\
-$\sigma^{\invasive}_{I}$ & Standard deviation of Brownian motion of infected invasive adult       &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigIi,2)}  & (\Sexpr{0},\Sexpr{mysignif(ci_table$sigIi[2],2)})\\
+$\sigma^{\invasive}_{I}$ & Standard deviation of Brownian motion of infected invasive adult       &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigIi,2)}  & (\Sexpr{0},$\infty$)\\
 $\sigma^{\native}_{J}$ & Standard deviation of Brownian motion of native juvenile               &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigJn,2)}  & (\Sexpr{mysignif(ci_table$sigJn[1],2)},\Sexpr{mysignif(ci_table$sigJn[2],2)})\\
 $\sigma^{\invasive}_{J}$ & Standard deviation of Brownian motion of invasive juvenile             &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigJi,2)}  & (\Sexpr{mysignif(ci_table$sigJi[1],2)},\Sexpr{mysignif(ci_table$sigJi[2],2)})\\
 $\sigma_{F}$   & Standard deviation of Brownian motion of alga                          &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigF,2)}  & (\Sexpr{mysignif(ci_table$sigF[1],2)},\Sexpr{mysignif(ci_table$sigF[2],2)})\\
@@ -911,7 +911,7 @@ When a weakly identified parameter has consequences for the biological interpret
 \begin{figure}[t]
 \centering
 <<SimulationPlot,echo=FALSE, fig.width=7,fig.height=4,out.width="\\textwidth", cache=cache_option>>=
-  load('data/simulation.rds')
+  load('../data/simulation.rds')
 all_sims_summary <- all_sims %>%
   group_by(day) %>%
   summarise(lower = quantile(Sn, 0.025),   # 2.5% quantile

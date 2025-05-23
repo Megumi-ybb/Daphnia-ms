@@ -36,8 +36,8 @@ create_specific_name <- function(parameter_names) {
 }
 
 
-Mesocosm_data = read_excel("/home/ybb/D_P/Mesocosmdata.xlsx",3)
 
+Mesocosm_data = read_excel("./Mesocosmdata.xlsx",3)
 specific_names = c('f_Si','f_Sn')
 
 

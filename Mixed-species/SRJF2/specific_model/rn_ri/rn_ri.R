@@ -35,18 +35,13 @@ create_specific_name <- function(parameter_names) {
   return(specific_name)
 }
 
-
-# Mesocosm_data = read_excel("/Users/ybb/Desktop/Research//Daphnia/Mesocosmdata.xls",3)
-Mesocosm_data = read_excel("/home/ybb/D_P/Mesocosmdata.xlsx",3)
-
-sed = 0923
-set.seed(0923)
+Mesocosm_data = read_excel("./Mesocosmdata.xlsx",3)
 
 specific_names = c('rn','ri')
 
 
 name_str = create_specific_name(specific_names)
-run_level <- 2
+run_level <- 3
 
 dentNoPara <- Mesocosm_data[1:90, ]
 dentNoPara <- subset(dentNoPara, select = c(rep, day, dent.adult,lum.adult))

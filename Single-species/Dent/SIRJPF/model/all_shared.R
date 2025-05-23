@@ -8,11 +8,7 @@ library(pomp)
 library(panelPomp)
 library(tidyverse)
 
-# Mesocosm_data = read_excel("/Users/ybb/Desktop/Research//Daphnia/Mesocosmdata.xls")
-Mesocosm_data = read_excel("/home/ybb/D_P/Mesocosmdata.xlsx")
-
-sed = 0923
-set.seed(0923)
+Mesocosm_data = read_excel("./Mesocosmdata.xlsx")
 
 name_str = "all_shared"
 run_level <- 3
@@ -193,8 +189,8 @@ panelfood = panelPomp(pomplist, shared=shared_parameter)
 
 
 algorithmic.params <- list(
-  Np =     c(50, 500, 1e3),
-  Np_rep = c( 2,  10,  20),
+  Np =     c(50, 500, 1e4),
+  Np_rep = c( 2,  10,  10),
   Mp =     c(50, 500, 1e3),
   Nmif =   c( 2,  320, 250)
 )

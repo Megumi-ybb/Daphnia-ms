@@ -9,21 +9,19 @@ library(pomp)
 library(panelPomp)
 library(tidyverse)
 
-# Mesocosm_data = read_excel("~/Desktop/Research/D_P/Mesocosmdata.xlsx")
-Mesocosm_data = read_excel("/home/ybb/D_P/Mesocosmdata.xlsx")
+Mesocosm_data = read_excel("./Mesocosmdata.xlsx")
 
 DEBUG = FALSE
 
-sed = 0923
-set.seed(0923)
-
+ 
+ 
 name_str = "sigF"
 run_level <- 3
 
 dentNoPara <- Mesocosm_data[1:100, ]
 dentNoPara <- subset(dentNoPara, select = c(rep, day, dent.adult))
 dentNoPara <- dentNoPara[100: 1, ]
-#Convert sampling date to natural date. Samples are collected every 5 days after the #first 7 days.
+#Convert sampling date to natural date. Samples are collected every 5 days after the #first 7 days. 
 dentNoPara$day = (dentNoPara$day - 1) * 5 + 7
 data = list()
 trails = c("A","B","C","D","E","F","G","H","I","J")

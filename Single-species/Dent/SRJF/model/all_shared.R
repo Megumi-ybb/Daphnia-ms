@@ -8,12 +8,7 @@ library(pomp)
 library(panelPomp)
 library(tidyverse)
 
-# Mesocosm_data = read_excel("~/Desktop/Research/D_P/Mesocosmdata.xlsx")
-Mesocosm_data = read_excel("/home/ybb/D_P/Mesocosmdata.xlsx")
-
-sed = 0923
-set.seed(0923)
-
+Mesocosm_data = read_excel("./Mesocosmdata.xlsx")
 name_str = "all_shared"
 run_level <- 3
 

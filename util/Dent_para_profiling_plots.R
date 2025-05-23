@@ -210,9 +210,7 @@ rn_p <- ggplot() +
         axis.title = element_text(size = 10)) +
   ylim(-580, -565)+
   theme_bw() +
-  theme(axis.title.y = element_blank(),
-        axis.text.y = element_blank(),
-        axis.ticks.y = element_blank())  + 
+  theme(axis.title.y = element_blank())  + 
   annotate("text", x = mcap_object_rn$mle, y = -900, label = sprintf("rn_mle: %s", formatC(mcap_object_rn$mle, format = 'e', digits = 3)), hjust = 1.05, vjust = -0.5, size = 3)
 
 rn_p
@@ -451,9 +449,7 @@ theta_Jn_p <- ggplot() +
   ylim(-580, -565)+
   # xlim(-2.2,0)+
   theme_bw() +
-  theme(axis.title.y = element_blank(),
-        axis.text.y = element_blank(),
-        axis.ticks.y = element_blank())  + 
+  theme(axis.title.y = element_blank())  + 
   annotate("text", x = mcap_object_theta_Jn$mle, y = -900, label = sprintf("theta_Jn_mle: %s", formatC(mcap_object_theta_Jn$mle, format = 'e', digits = 3)), hjust = 1.05, vjust = -0.5, size = 3)
 
 theta_Jn_p
@@ -493,9 +489,7 @@ theta_P_p <- ggplot() +
   ylim(-580, -565)+
   # xlim(-2.2,0)+
   theme_bw() +
-  theme(axis.title.y = element_blank(),
-        axis.text.y = element_blank(),
-        axis.ticks.y = element_blank())  + 
+  theme(axis.title.y = element_blank())  + 
   annotate("text", x = mcap_object_theta_P$mle, y = -900, label = sprintf("theta_P_mle: %s", formatC(mcap_object_theta_P$mle, format = 'e', digits = 3)), hjust = 1.05, vjust = -0.5, size = 3)
 
 theta_P_p

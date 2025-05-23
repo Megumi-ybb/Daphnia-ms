@@ -7,12 +7,8 @@ registerDoParallel(cores=36)
 library(pomp)
 library(panelPomp)
 library(tidyverse)
+Mesocosm_data = read_excel("./Mesocosmdata.xlsx",3)
 
-# Mesocosm_data = read_excel("/Users/ybb/Desktop/Research//Daphnia/Mesocosmdata.xls",3)
-Mesocosm_data = read_excel("/home/ybb/D_P/Mesocosmdata.xlsx",3)
-
-sed = 0923
-set.seed(0923)
 
 name_str = "all_shared"
 run_level <- 3
