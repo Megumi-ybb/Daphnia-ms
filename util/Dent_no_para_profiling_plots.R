@@ -64,24 +64,6 @@ if(load_option){
 plot(x = log(subset_data_k_Sn$k_Sn), y = subset_data_k_Sn$loglik)
 plot(x = subset_data_k_Sn$k_Sn, y = subset_data_k_Sn$loglik)
 subset_data_k_Sn$log_k_Sn <- log(subset_data_k_Sn$k_Sn)
-# subset_data_k_Sn = subset_data_k_Sn[subset_data_k_Sn$log_k_Sn < 4,]
-subset_data_k_Sn <- subset_data_k_Sn %>%
-  ungroup()%>%
-  mutate(log_k_Sn = log(k_Sn)) %>%
-  mutate(bin = cut(
-    log_k_Sn,
-    breaks = seq(
-      min(log_k_Sn, na.rm = TRUE),
-      max(log_k_Sn, na.rm = TRUE),
-      length.out = 51 
-    ),
-    include.lowest = TRUE,
-    right = FALSE
-  )) %>%
-  group_by(bin) %>%
-  slice_max(loglik, n = 1, with_ties = FALSE) %>%
-  ungroup() %>%
-  select(-bin)
 
 
 mcap(subset_data_k_Sn$loglik, subset_data_k_Sn$log_k_Sn,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_k_Sn
@@ -160,7 +142,9 @@ plot(x = log(subset_data_sigF$sigF), y = subset_data_sigF$loglik)
 plot(x = subset_data_sigF$sigF, y = subset_data_sigF$loglik)
 subset_data_sigF$log_sigF <- log(subset_data_sigF$sigF)
 
-mcap(subset_data_sigF$loglik, subset_data_sigF$log_sigF,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_sigF
+
+
+mcap(subset_data_sigF$loglik, subset_data_sigF$log_sigF,  level = 0.95, span = 0.5, Ngrid = 1000) -> mcap_object_sigF
 mcap_object_sigF$mle -> sigF_mle
 sigF_p <- ggplot() +
   geom_point(data = subset_data_sigF, aes(x = log_sigF, y = loglik)) +
@@ -245,7 +229,7 @@ plot(x = log(subset_data_theta_Jn$theta_Jn), y = subset_data_theta_Jn$loglik)
 plot(x = subset_data_theta_Jn$theta_Jn, y = subset_data_theta_Jn$loglik)
 subset_data_theta_Jn$log_theta_Jn <- log(subset_data_theta_Jn$theta_Jn)
 
-mcap(subset_data_theta_Jn$loglik, subset_data_theta_Jn$log_theta_Jn,  level = 0.8, span = 0.95, Ngrid = 1000) -> mcap_object_theta_Jn
+mcap(subset_data_theta_Jn$loglik, subset_data_theta_Jn$log_theta_Jn,  level = 0.95, span = 0.6, Ngrid = 1000) -> mcap_object_theta_Jn
 mcap_object_theta_Jn$mle -> theta_Jn_mle
 theta_Jn_p <- ggplot() +
   geom_point(data = subset_data_theta_Jn, aes(x = log_theta_Jn, y = loglik)) +

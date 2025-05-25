@@ -25,31 +25,13 @@ subset_data_f_Si <- final_params %>%
 plot(x = log(subset_data_f_Si$f_Si), y = subset_data_f_Si$loglik)
 plot(x = subset_data_f_Si$f_Si, y = subset_data_f_Si$loglik)
 subset_data_f_Si$log_f_Si <- log(subset_data_f_Si$f_Si)
-subset_data_f_Si <- subset_data_f_Si %>%
-  ungroup() %>%
-  mutate(
-    bin = cut(
-      log_f_Si,
-      breaks = seq(
-        min(log_f_Si, na.rm = TRUE),
-        max(log_f_Si, na.rm = TRUE),
-        length.out = 51
-      ),
-      include.lowest = TRUE,
-      right = FALSE
-    )
-  ) %>%
-  group_by(bin) %>%
-  slice_max(loglik, n = 1, with_ties = FALSE) %>%
-  ungroup() %>%
-  select(-bin)
 
 mcap(subset_data_f_Si$loglik, subset_data_f_Si$log_f_Si,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_f_Si
 mcap_object_f_Si$mle -> f_Si_mle
 f_Si_p <- ggplot() +
   geom_point(data = subset_data_f_Si, aes(x = log_f_Si, y = loglik)) +
   geom_line(data = mcap_object_f_Si$fit, aes(x = parameter, y = smoothed), col = 'red') +
-  geom_vline(xintercept = mcap_object_f_Si$ci[1], linetype = 'dashed') +
+  # geom_vline(xintercept = mcap_object_f_Si$ci[1], linetype = 'dashed') +
   geom_vline(xintercept = mcap_object_f_Si$ci[2], linetype = 'dashed') +
   geom_vline(xintercept = mcap_object_f_Si$mle, col = 'blue') +
   geom_vline(xintercept = log(mif.estimate[['f_Si']]), col = 'red') +
@@ -291,31 +273,13 @@ plot(x = log(subset_data_probi$probi), y = subset_data_probi$loglik)
 plot(x = subset_data_probi$probi, y = subset_data_probi$loglik)
 subset_data_probi$log_probi <- log(subset_data_probi$probi)
 
-subset_data_probi <- subset_data_probi %>%
-  ungroup() %>%
-  mutate(
-    bin = cut(
-      log_probi,
-      breaks = seq(
-        min(log_probi, na.rm = TRUE),
-        max(log_probi, na.rm = TRUE),
-        length.out = 51
-      ),
-      include.lowest = TRUE,
-      right = FALSE
-    )
-  ) %>%
-  group_by(bin) %>%
-  slice_max(loglik, n = 1, with_ties = FALSE) %>%
-  ungroup() %>%
-  select(-bin)
 mcap(subset_data_probi$loglik, subset_data_probi$log_probi,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_probi
 mcap_object_probi$mle -> probi_mle
 probi_p <- ggplot() +
   geom_point(data = subset_data_probi, aes(x = log_probi, y = loglik)) +
   geom_line(data = mcap_object_probi$fit, aes(x = parameter, y = smoothed), col = 'red') +
   geom_vline(xintercept = mcap_object_probi$ci[1], linetype = 'dashed') +
-  geom_vline(xintercept = mcap_object_probi$ci[2], linetype = 'dashed') +
+  # geom_vline(xintercept = mcap_object_probi$ci[2], linetype = 'dashed') +
   geom_vline(xintercept = mcap_object_probi$mle, col = 'blue') +
   geom_vline(xintercept = log(mif.estimate[['probi']]), col = 'red') +
   geom_hline(yintercept = pf.loglik.of.mif.estimate, col = 'red',linetype = "longdash") +
@@ -393,31 +357,13 @@ plot(x = log(subset_data_ri$ri), y = subset_data_ri$loglik)
 plot(x = subset_data_ri$ri, y = subset_data_ri$loglik)
 subset_data_ri$log_ri <- log(subset_data_ri$ri)
 
-subset_data_ri = subset_data_ri %>%
-  ungroup() %>%
-  mutate(
-    bin = cut(
-      log_ri,
-      breaks = seq(
-        min(log_ri, na.rm = TRUE),
-        max(log_ri, na.rm = TRUE),
-        length.out = 51 
-      ),
-      include.lowest = TRUE,
-      right = FALSE
-    )
-  ) %>%
-  group_by(bin) %>%
-  slice_max(loglik, n = 1, with_ties = FALSE) %>%
-  ungroup() %>%
-  select(-bin)
 mcap(subset_data_ri$loglik, subset_data_ri$log_ri,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_ri
 mcap_object_ri$mle -> ri_mle
 ri_p <- ggplot() +
   geom_point(data = subset_data_ri, aes(x = log_ri, y = loglik)) +
   geom_line(data = mcap_object_ri$fit, aes(x = parameter, y = smoothed), col = 'red') +
   geom_vline(xintercept = mcap_object_ri$ci[1], linetype = 'dashed') +
-  geom_vline(xintercept = mcap_object_ri$ci[2], linetype = 'dashed') +
+  # geom_vline(xintercept = mcap_object_ri$ci[2], linetype = 'dashed') +
   geom_vline(xintercept = mcap_object_ri$mle, col = 'blue') +
   geom_vline(xintercept = log(mif.estimate[['ri']]), col = 'red') +
   geom_hline(yintercept = pf.loglik.of.mif.estimate, col = 'red',linetype = "longdash") +
@@ -572,26 +518,8 @@ subset_data_sigIn$log_sigIn <- log(subset_data_sigIn$sigIn)
 
 subset_data_sigIn = subset_data_sigIn[subset_data_sigIn$log_sigIn <=-7.5,]
 
-subset_data_sigIn <- subset_data_sigIn %>%
-  ungroup() %>%
-  mutate(
-    bin = cut(
-      log_sigIn,
-      breaks = seq(
-        min(log_sigIn, na.rm = TRUE),
-        max(log_sigIn, na.rm = TRUE),
-        length.out = 51
-      ),
-      include.lowest = TRUE,
-      right = FALSE
-    )
-  ) %>%
-  group_by(bin) %>%
-  slice_max(loglik, n = 1, with_ties = FALSE) %>%
-  ungroup() %>%
-  select(-bin)
 
-mcap(subset_data_sigIn$loglik, subset_data_sigIn$log_sigIn,  level = 0.8, span = 0.95, Ngrid = 1000) -> mcap_object_sigIn
+mcap(subset_data_sigIn$loglik, subset_data_sigIn$log_sigIn,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_sigIn
 mcap_object_sigIn$mle -> sigIn_mle
 sigIn_p <- ggplot() +
   geom_point(data = subset_data_sigIn, aes(x = log_sigIn, y = loglik)) +
@@ -835,7 +763,7 @@ subset_data_theta_Ji <- final_params %>%
 plot(x = log(subset_data_theta_Ji$theta_Ji), y = subset_data_theta_Ji$loglik)
 plot(x = subset_data_theta_Ji$theta_Ji, y = subset_data_theta_Ji$loglik)
 subset_data_theta_Ji$log_theta_Ji <- log(subset_data_theta_Ji$theta_Ji)
-subset_data_theta_Ji = subset_data_theta_Ji[subset_data_theta_Ji$log_theta_Ji > -11,]
+
 mcap(subset_data_theta_Ji$loglik, subset_data_theta_Ji$log_theta_Ji,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_theta_Ji
 mcap_object_theta_Ji$mle -> theta_Ji_mle
 theta_Ji_p <- ggplot() +
@@ -853,7 +781,6 @@ theta_Ji_p <- ggplot() +
   theme(axis.text = element_text(size = 8),
         axis.title = element_text(size = 10)) +
   ylim(-890, -880)+
-  xlim(-9,-5)+
   theme_bw() +
   theme(axis.title.y = element_blank(),
         axis.text.y = element_blank(),
@@ -916,12 +843,12 @@ plot(x = log(subset_data_theta_P$theta_P), y = subset_data_theta_P$loglik)
 plot(x = subset_data_theta_P$theta_P, y = subset_data_theta_P$loglik)
 subset_data_theta_P$log_theta_P <- log(subset_data_theta_P$theta_P)
 subset_data_theta_P = subset_data_theta_P[subset_data_theta_P$loglik > max(subset_data_theta_P$loglik) - 7,]
-mcap(subset_data_theta_P$loglik, subset_data_theta_P$log_theta_P,  level = 0.8, span = 0.95, Ngrid = 1000) -> mcap_object_theta_P
+mcap(subset_data_theta_P$loglik, subset_data_theta_P$log_theta_P,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_theta_P
 mcap_object_theta_P$mle -> theta_P_mle
 theta_P_p <- ggplot() +
   geom_point(data = subset_data_theta_P, aes(x = log_theta_P, y = loglik)) +
   geom_line(data = mcap_object_theta_P$fit, aes(x = parameter, y = smoothed), col = 'red') +
-  geom_vline(xintercept = mcap_object_theta_P$ci[1], linetype = 'dashed') +
+  # geom_vline(xintercept = mcap_object_theta_P$ci[1], linetype = 'dashed') +
   geom_vline(xintercept = mcap_object_theta_P$ci[2], linetype = 'dashed') +
   geom_vline(xintercept = mcap_object_theta_P$mle, col = 'blue') +
   geom_vline(xintercept = log(mif.estimate[['theta_P']]), col = 'red') +
@@ -956,34 +883,14 @@ subset_data_theta_Si <- final_params %>%
 plot(x = log(subset_data_theta_Si$theta_Si), y = subset_data_theta_Si$loglik)
 plot(x = subset_data_theta_Si$theta_Si, y = subset_data_theta_Si$loglik)
 subset_data_theta_Si$log_theta_Si <- log(subset_data_theta_Si$theta_Si)
-subset_data_theta_Si = subset_data_theta_Si[subset_data_theta_Si$log_theta_Si < -3.6,]
-subset_data_theta_Si = subset_data_theta_Si[subset_data_theta_Si$log_theta_Si > max(subset_data_theta_Si$loglik) - 5,]
-subset_data_theta_Si <- subset_data_theta_Si %>%
-  ungroup() %>%
-  mutate(
-    bin = cut(
-      log_theta_Si,
-      breaks = seq(
-        min(log_theta_Si, na.rm = TRUE),
-        max(log_theta_Si, na.rm = TRUE),
-        length.out = 51
-      ),
-      include.lowest = TRUE,
-      right = FALSE
-    )
-  ) %>%
-  group_by(bin) %>%
-  slice_max(loglik, n = 1, with_ties = FALSE) %>%
-  ungroup() %>%
-  select(-bin)
 
 
-mcap(subset_data_theta_Si$loglik, subset_data_theta_Si$log_theta_Si,  level = 0.8, span = 0.95, Ngrid = 1000) -> mcap_object_theta_Si
+mcap(subset_data_theta_Si$loglik, subset_data_theta_Si$log_theta_Si,  level = 0.95, span = 0.7, Ngrid = 1000) -> mcap_object_theta_Si
 mcap_object_theta_Si$mle -> theta_Si_mle
 theta_Si_p <- ggplot() +
   geom_point(data = subset_data_theta_Si, aes(x = log_theta_Si, y = loglik)) +
   geom_line(data = mcap_object_theta_Si$fit, aes(x = parameter, y = smoothed), col = 'red') +
-  geom_vline(xintercept = mcap_object_theta_Si$ci[1], linetype = 'dashed') +
+  # geom_vline(xintercept = mcap_object_theta_Si$ci[1], linetype = 'dashed') +
   geom_vline(xintercept = mcap_object_theta_Si$ci[2], linetype = 'dashed') +
   geom_vline(xintercept = mcap_object_theta_Si$mle, col = 'blue') +
   geom_vline(xintercept = log(mif.estimate[['theta_Si']]), col = 'red') +
@@ -1022,7 +929,7 @@ mcap_object_theta_Sn$mle -> theta_Sn_mle
 theta_Sn_p <- ggplot() +
   geom_point(data = subset_data_theta_Sn, aes(x = log_theta_Sn, y = loglik)) +
   geom_line(data = mcap_object_theta_Sn$fit, aes(x = parameter, y = smoothed), col = 'red') +
-  geom_vline(xintercept = mcap_object_theta_Sn$ci[1], linetype = 'dashed') +
+  # geom_vline(xintercept = mcap_object_theta_Sn$ci[1], linetype = 'dashed') +
   geom_vline(xintercept = mcap_object_theta_Sn$ci[2], linetype = 'dashed') +
   geom_vline(xintercept = mcap_object_theta_Sn$mle, col = 'blue') +
   geom_vline(xintercept = log(mif.estimate[['theta_Sn']]), col = 'red') +

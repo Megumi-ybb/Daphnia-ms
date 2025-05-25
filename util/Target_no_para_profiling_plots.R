@@ -31,7 +31,7 @@ mcap_object_f_Si$mle -> f_Si_mle
 f_Si_p <- ggplot() +
   geom_point(data = subset_data_f_Si, aes(x = log_f_Si, y = loglik)) +
   geom_line(data = mcap_object_f_Si$fit, aes(x = parameter, y = smoothed), col = 'red') +
-  geom_vline(xintercept = mcap_object_f_Si$ci[1], linetype = 'dashed') +
+  # geom_vline(xintercept = mcap_object_f_Si$ci[1], linetype = 'dashed') +
   geom_vline(xintercept = mcap_object_f_Si$ci[2], linetype = 'dashed') +
   geom_vline(xintercept = mcap_object_f_Si$mle, col = 'blue') +
   geom_vline(xintercept = log(mif.estimate[['f_Si']]), col = 'red') +
@@ -132,6 +132,7 @@ k_Si_p <- ggplot() +
   theme(axis.text = element_text(size = 8),
         axis.title = element_text(size = 10)) +
   ylim(-710, -699)+
+  xlim(-0.5, 2.5)+
   theme_bw() +
   theme(axis.title.y = element_blank(),
         axis.text.y = element_blank(),
@@ -316,13 +317,13 @@ if(load_option){
 plot(x = log(subset_data_sigJi$sigJi), y = subset_data_sigJi$loglik)
 plot(x = subset_data_sigJi$sigJi, y = subset_data_sigJi$loglik)
 subset_data_sigJi$log_sigJi <- log(subset_data_sigJi$sigJi)
-
-mcap(subset_data_sigJi$loglik, subset_data_sigJi$log_sigJi,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_sigJi
+subset_data_sigJi = subset_data_sigJi[subset_data_sigJi$loglik > max(subset_data_sigJi$loglik) - 15,]
+mcap(subset_data_sigJi$loglik, subset_data_sigJi$log_sigJi,  level = 0.95, span = 0.6, Ngrid = 1000) -> mcap_object_sigJi
 mcap_object_sigJi$mle -> sigJi_mle
 sigJi_p <- ggplot() +
   geom_point(data = subset_data_sigJi, aes(x = log_sigJi, y = loglik)) +
   geom_line(data = mcap_object_sigJi$fit, aes(x = parameter, y = smoothed), col = 'red') +
-  geom_vline(xintercept = mcap_object_sigJi$ci[1], linetype = 'dashed') +
+  # geom_vline(xintercept = mcap_object_sigJi$ci[1], linetype = 'dashed') +
   geom_vline(xintercept = mcap_object_sigJi$ci[2], linetype = 'dashed') +
   geom_vline(xintercept = mcap_object_sigJi$mle, col = 'blue') +
   geom_vline(xintercept = log(mif.estimate[['sigJi']]), col = 'red') +
@@ -333,13 +334,11 @@ sigJi_p <- ggplot() +
   labs(x =  TeX("$\\log(\\sigma^i_{J})$"), y = "log likelihood") +
   theme(axis.text = element_text(size = 8),
         axis.title = element_text(size = 10)) +
-  ylim(-720, -700)+
+  ylim(-710, -699)+
   theme_bw() +
   theme(axis.title.y = element_blank(),
         axis.text.y = element_blank(),
-        axis.ticks.y = element_blank())  + 
-  annotate("text", x = mcap_object_sigJi$mle, y = -900, label = sprintf("sigJi_mle: %s", formatC(mcap_object_sigJi$mle, format = 'e', digits = 3)), hjust = 1.05, vjust = -0.5, size = 3)
-
+        axis.ticks.y = element_blank())
 sigJi_p
 
 

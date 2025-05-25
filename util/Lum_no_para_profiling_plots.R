@@ -95,13 +95,13 @@ plot(x = log(subset_data_ri$ri), y = subset_data_ri$loglik)
 plot(x = subset_data_ri$ri, y = subset_data_ri$loglik)
 subset_data_ri$log_ri <- log(subset_data_ri$ri)
 
-mcap(subset_data_ri$loglik, subset_data_ri$log_ri,  level = 0.8, span = 0.95, Ngrid = 1000) -> mcap_object_ri
+mcap(subset_data_ri$loglik, subset_data_ri$log_ri,  level = 0.95, span = 0.6, Ngrid = 1000) -> mcap_object_ri
 mcap_object_ri$mle -> ri_mle
 ri_p <- ggplot() +
   geom_point(data = subset_data_ri, aes(x = log_ri, y = loglik)) +
   geom_line(data = mcap_object_ri$fit, aes(x = parameter, y = smoothed), col = 'red') +
   geom_vline(xintercept = mcap_object_ri$ci[1], linetype = 'dashed') +
-  geom_vline(xintercept = mcap_object_ri$ci[2], linetype = 'dashed') +
+  # geom_vline(xintercept = mcap_object_ri$ci[2], linetype = 'dashed') +
   geom_vline(xintercept = mcap_object_ri$mle, col = 'blue') +
   geom_vline(xintercept = log(mif.estimate[['ri']]), col = 'red') +
   geom_hline(yintercept = pf.loglik.of.mif.estimate, col = 'red',linetype = "longdash") +
@@ -131,7 +131,7 @@ plot(x = log(subset_data_sigF$sigF), y = subset_data_sigF$loglik)
 plot(x = subset_data_sigF$sigF, y = subset_data_sigF$loglik)
 subset_data_sigF$log_sigF <- log(subset_data_sigF$sigF)
 subset_data_sigF = subset_data_sigF[subset_data_sigF$loglik > max(subset_data_sigF$loglik) - 15,]
-mcap(subset_data_sigF$loglik, subset_data_sigF$log_sigF,  level = 0.8, span = 0.95, Ngrid = 1000) -> mcap_object_sigF
+mcap(subset_data_sigF$loglik, subset_data_sigF$log_sigF,  level = 0.95, span = 0.5, Ngrid = 1000) -> mcap_object_sigF
 mcap_object_sigF$mle -> sigF_mle
 sigF_p <- ggplot() +
   geom_point(data = subset_data_sigF, aes(x = log_sigF, y = loglik)) +
@@ -172,7 +172,7 @@ plot(x = subset_data_sigJi$sigJi, y = subset_data_sigJi$loglik)
 subset_data_sigJi$log_sigJi <- log(subset_data_sigJi$sigJi)
 subset_data_sigJi = subset_data_sigJi[subset_data_sigJi$loglik > -400,]
 subset_data_sigJi = subset_data_sigJi[subset_data_sigJi$log_sigJi > -2.5,]
-mcap(subset_data_sigJi$loglik, subset_data_sigJi$log_sigJi,  level = 0.8, span = 0.95, Ngrid = 1000) -> mcap_object_sigJi
+mcap(subset_data_sigJi$loglik, subset_data_sigJi$log_sigJi,  level = 0.95, span = 0.7, Ngrid = 1000) -> mcap_object_sigJi
 mcap_object_sigJi$mle -> sigJi_mle
 sigJi_p <- ggplot() +
   geom_point(data = subset_data_sigJi, aes(x = log_sigJi, y = loglik)) +
@@ -252,7 +252,7 @@ plot(x = log(subset_data_theta_Si$theta_Si), y = subset_data_theta_Si$loglik)
 plot(x = subset_data_theta_Si$theta_Si, y = subset_data_theta_Si$loglik)
 subset_data_theta_Si$log_theta_Si <- log(subset_data_theta_Si$theta_Si)
 
-mcap(subset_data_theta_Si$loglik, subset_data_theta_Si$log_theta_Si,  level = 0.8, span = 0.95, Ngrid = 1000) -> mcap_object_theta_Si
+mcap(subset_data_theta_Si$loglik, subset_data_theta_Si$log_theta_Si,  level = 0.95, span = 0.9, Ngrid = 1000) -> mcap_object_theta_Si
 mcap_object_theta_Si$mle -> theta_Si_mle
 theta_Si_p <- ggplot() +
   geom_point(data = subset_data_theta_Si, aes(x = log_theta_Si, y = loglik)) +
