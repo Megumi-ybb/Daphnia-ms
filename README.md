@@ -29,15 +29,15 @@ Rscript -e "library(knitr); knit2pdf('./daphnia-article/si.Rnw')"
      - **Sheet 1**: Daphnia dentifera dynamics with/without parasite  
      - **Sheet 2**: Daphnia lumholtzi dynamics with/without parasite  
      - **Sheet 3**: Mixed Daphnia dentifera and lumholtzi dynamics with/without parasite  
-   - Refer to `./util/EDA.R` for detailed data exploration, Section 2 in `./daphnia-article/ms.pdf` for data description, and Sections S3–S6 in `./daphnia-article/si.pdf` for supplementary details.
+   - Refer to Section 2 in `./daphnia-article/ms.pdf` for data description, and Sections S3–S6 in `./daphnia-article/si.pdf` for supplementary details.
 
 3. **Model Fitting**:
    - Various mechanistic models are fit under the `panelPOMP` framework. For the mixed-species SIRJPF2 model, see `./Mixed-species/SIRJPF2`, which includes:
      - **model**: Parameter estimation scripts. The `run level` indicates computational intensity:
        - Level 1: Debug
        - Level 2: Local computation (~1 hour on 36 cores, ~50 GB memory)
-       - Level 3: Accurate parameter estimation (higher computational demands)
-     - **profile**: Parameter profiling scripts (MCAP algorithm).
+       - Level 3: Accurate parameter estimation (higher computational demands) (~40 hour on 36 cores, ~50 GB memory)
+     - **profile**: Parameter profiling scripts (MCAP algorithm). We provide profile structure within this repository, while detailed adjustments are needed depend on the situation. Further adjustment instruction will be provided in the tutorial file.
      - **specific_model**: Scripts for parameter estimation allowing certain parameters to be unit-specific (using `mif2`).
      - **specific_model_block**: Similar to `specific_model` but uses blocking with `mif2`.
    - Other models are found in:
