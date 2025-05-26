@@ -72,7 +72,6 @@
 \def\spacingset#1{\renewcommand{\baselinestretch}%
 {#1}\small\normalsize} \spacingset{1}
 
-
 <<Debug, include=FALSE>>=
 library(knitr)
 # Set global caching
@@ -641,10 +640,10 @@ $P$   & Spore density                             & $10^3 \cdot \mathrm{spore} \
 $r^{\native}$ &  Birth rate of juvenile                        & $\mathrm{individual} \cdot 10^{-6}\cdot \mathrm{cell}^{-1}$ & \Sexpr{mysignif(rn,2)}  & (\Sexpr{mysignif(ci_table$rn[1],2)},\Sexpr{mysignif(ci_table$rn[2],2)})\\
 $f^{\native}_{S}$ & Susceptible adult host filtering rate   &  $\mathrm{L} \cdot \mathrm{individual}^{-1} \cdot \mathrm{day}^{-1}$   & \Sexpr{mysignif(f_Sn,2)}  & (\Sexpr{mysignif(ci_table$f_Sn[1],2)},\,\Sexpr{mysignif(ci_table$f_Sn[2],2)})\\
 $p^{\native}$          & Number of infection per spore            &     $10^{-3} \cdot \mathrm{individual} \cdot \mathrm{spore}^{-1} $ & \Sexpr{mysignif(probn,2)}  & (\Sexpr{mysignif(ci_table$probn[1],2)},\,\Sexpr{mysignif(ci_table$probn[2],2)})\\
-$\theta^{\native}_{S}$ & Susceptible adult host mortality rate     &     $  \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Sn,2)}  & (\Sexpr{0},\,$\infty$)\\
+$\theta^{\native}_{S}$ & Susceptible adult host mortality rate     &     $  \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Sn,2)}  & (\Sexpr{0},\,\Sexpr{mysignif(ci_table$theta_Sn[2],2)})\\
 $\theta^{\native}_{I}$ & Infected adult host mortality rate        &     $  \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_In,2)}  & (\Sexpr{mysignif(ci_table$theta_In[1],2)},\,\Sexpr{mysignif(ci_table$theta_In[2],2)})\\
 $\theta^{\native}_{J}$ & Juvenile mortality rate        &     $ \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Jn,2)}  & (\Sexpr{0},\,\Sexpr{mysignif(ci_table$theta_Jn[2],2)})\\
-$\theta_{P}$   & Spore degradation rate                           &     $ \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_P,2)}   & (\Sexpr{0},\,$\infty$)\\
+$\theta_{P}$   & Spore degradation rate                           &     $ \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_P,2)}   & (\Sexpr{0},\,\Sexpr{mysignif(ci_table$theta_P[2],2)})\\
 $\lambda^{\native}_{J}$ & Mature rate of the juvenile                  &     $ \mathrm{day}^{-1} $                  & \Sexpr{mysignif(lambda_Jn,2)}  & \\
 $\xi$           & Ratio of infected host filtering rate       &     $\mathrm{Unitless}$                    & \Sexpr{mysignif(xi,2)}         & (\Sexpr{mysignif(ci_table$xi[1],2)},\,\Sexpr{mysignif(ci_table$xi[2],2)})\\
 $\xi_J$         & Ratio of juvenile individual filtering rate &     $\mathrm{Unitless}$                    & \Sexpr{mysignif(xi_J,2)} & \\
@@ -652,7 +651,7 @@ $\beta^{\native}$       & Spores produced by death per infected individual     &
 $\mu$           & Algae refilling rate                                &  $10^6 \cdot \mathrm{cell} \cdot \mathrm{L} ^{-1} \cdot \mathrm{day}^{-1}$                 & \Sexpr{mysignif(mu,2)} & \\
 $\delta$        & Sampling rate                                      &  $day ^{-1}$                                                                         & \Sexpr{mysignif(delta,2)} & \\
 $\sigma^{\native}_{S}$ & Standard deviation of Brownian motion of susceptible adult         &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & 0  & \\
-$\sigma^{\native}_{I}$ & Standard deviation of Brownian motion of infected adult         &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigIn,2)}  & (\Sexpr{0},\,$\infty$)\\
+$\sigma^{\native}_{I}$ & Standard deviation of Brownian motion of infected adult         &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigIn,2)}  & (\Sexpr{0},\,\Sexpr{mysignif(ci_table$sigIn[2],2)})\\
 $\sigma^{\native}_{J}$ & Standard deviation of Brownian motion of juvenile               &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigJn,2)}  & (\Sexpr{mysignif(ci_table$sigJn[1],2)},\,\Sexpr{mysignif(ci_table$sigJn[2],2)})\\
 $\sigma_{F}$   & Standard deviation of Brownian motion of alga                          &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigF,2)}  & (\Sexpr{0},\,\Sexpr{mysignif(ci_table$sigF[2],2)})\\
 $\sigma_{P}$   & Standard deviation of Brownian motion of parasite                      &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigP,2)}  & (\Sexpr{mysignif(ci_table$sigP[1],2)},\,\Sexpr{mysignif(ci_table$sigP[2],2)})\\
@@ -709,8 +708,8 @@ $r^{\invasive}$ &  Birth rate of juvenile                        & $\mathrm{indi
 $f^{\invasive}_{S}$ & Susceptible adult host filtering rate   &  $\mathrm{L} \cdot \mathrm{individual}^{-1} \cdot \mathrm{day}^{-1}$   & \Sexpr{mysignif(f_Si,2)}  & (\Sexpr{mysignif(ci_table$f_Si[1],2)},\Sexpr{mysignif(ci_table$f_Si[2],2)})\\
 $p^{\invasive}$          & Number of infection per spore            &     $10^{-3} \cdot \mathrm{individual} \cdot \mathrm{spore}^{-1} $ & \Sexpr{mysignif(probi,2)}  & (\Sexpr{mysignif(ci_table$probi[1],2)},\Sexpr{mysignif(ci_table$probi[2],2)})\\
 $\theta^{\invasive}_{S}$ & Susceptible adult host mortality rate     &     $ \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Si,2)}  & (\Sexpr{mysignif(ci_table$theta_Si[1],2)},\Sexpr{mysignif(ci_table$theta_Si[2],2)})\\
-$\theta^{\invasive}_{I}$ & Infected adult host mortality rate        &     $ \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Ii,2)}  & (\Sexpr{0},$\infty$)\\
-$\theta^{\invasive}_{J}$ & Juvenile mortality rate        &     $  \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Ji,2)}  & (\Sexpr{0},$\infty$)\\
+$\theta^{\invasive}_{I}$ & Infected adult host mortality rate        &     $ \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Ii,2)}  & (\Sexpr{mysignif(ci_table$theta_Ii[1],2)},\Sexpr{mysignif(ci_table$theta_Ii[2],2)})\\
+$\theta^{\invasive}_{J}$ & Juvenile mortality rate        &     $  \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Ji,2)}  & (\Sexpr{0},\Sexpr{mysignif(ci_table$theta_Ji[2],2)})\\
 $\theta_{P}$   & Spore degradation rate                           &     $ \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_P,2)}   & (\Sexpr{0},\Sexpr{mysignif(ci_table$theta_P[2],2)})\\
 $\lambda^{\invasive}_{J}$ & Mature rate of the juvenile                  &     $ \mathrm{day}^{-1} $                  & \Sexpr{mysignif(lambda_Jn,2)}  & \\
 $\xi$           & Ratio of infected host filtering rate       &     $\mathrm{Unitless}$                    & \Sexpr{mysignif(xi,2)}         & (\Sexpr{mysignif(ci_table$xi[1],2)},\Sexpr{mysignif(ci_table$xi[2],2)})\\
@@ -721,10 +720,10 @@ $\delta$        & Sampling rate                                      &  $day ^{-
 $\sigma^{\invasive}_{S}$ & Standard deviation of Brownian motion of susceptible adult         &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & 0  & \\
 $\sigma^{\invasive}_{I}$ & Standard deviation of Brownian motion of infected adult         &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigIi,2)}  & (\Sexpr{0}, \Sexpr{mysignif(ci_table$sigIi[2],2)})\\
 $\sigma^{\invasive}_{J}$ & Standard deviation of Brownian motion of juvenile               &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigJi,2)}  & (\Sexpr{mysignif(ci_table$sigJi[1],2)}, \Sexpr{mysignif(ci_table$sigJi[2],2)})\\
-$\sigma_{F}$   & Standard deviation of Brownian motion of alga                          &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigF,2)}  & (\Sexpr{0},$\infty$)\\
-$\sigma_{P}$   & Standard deviation of Brownian motion of parasite                      &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigP,2)}  & (\Sexpr{0},$\infty$)\\
-$\tau^{\invasive}_{S}$      &  Measurement dispersion for susceptible adult                  &$\mathrm{Unitless}$           & \Sexpr{mysignif(k_Si,2)}  & (\Sexpr{0},$\infty$)\\
-$\tau^{\invasive}_{I}$      &  Measurement dispersion for infected adult                 &$\mathrm{Unitless}$            & \Sexpr{mysignif(k_Ii,2)}  & (\Sexpr{mysignif(ci_table$k_Ii[1],2)},$\infty$)\\
+$\sigma_{F}$   & Standard deviation of Brownian motion of alga                          &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigF,2)}  & (\Sexpr{0},\Sexpr{mysignif(ci_table$sigF[2],2)})\\
+$\sigma_{P}$   & Standard deviation of Brownian motion of parasite                      &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigP,2)}  & (\Sexpr{0},\Sexpr{mysignif(ci_table$sigP[2],2)})\\
+$\tau^{\invasive}_{S}$      &  Measurement dispersion for susceptible adult                  &$\mathrm{Unitless}$           & \Sexpr{mysignif(k_Si,2)}  & (\Sexpr{0},\Sexpr{mysignif(ci_table$k_Si[2],2)})\\
+$\tau^{\invasive}_{I}$      &  Measurement dispersion for infected adult                 &$\mathrm{Unitless}$            & \Sexpr{mysignif(k_Ii,2)}  & (\Sexpr{mysignif(ci_table$k_Ii[1],2)},\Sexpr{mysignif(ci_table$k_Ii[2],2)})\\
 \hline
 \end{tabular}}
 \caption{Variables and parameter definitions and estimates of SIRJPF model for \textit{D.~lumholtzi}-only dynamics. The confidence interval is generated by the Monte Carlo Adjusted Profile.}
@@ -823,7 +822,7 @@ The model’s ability to reproduce these patterns accurately highlights its pote
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\linewidth]{simulation/dent_para_simulation/simulation_band.png}
+    \includegraphics[width=0.75\linewidth]{simulation/dent_para_simulation/simulation_band.png}
     \caption{Simulation plots of densities (Individuals$/$Liter) for susceptible, infected, and juvenile \textit{D.~dentifera}, along with alga density ($10^6\cdot$cells$/$Liter) and parasite density ($10^3\cdot$spores$/$Liter), over time (days). The colorful solid lines represent observed experimental data, showing the variability across different experimental replicates. The black line represents the mean trajectory from the simulation model, capturing the general trend of each density. The light blue shaded area corresponds to the 95\% confidence interval of the simulations, indicating the range of model predictions. Dashed lines illustrate individual simulated trajectories, highlighting the model’s ability to capture fluctuations around the mean trajectory.}
     \label{fig:SIRJPF_native_simulation_band}
 \end{figure}
@@ -831,7 +830,7 @@ The model’s ability to reproduce these patterns accurately highlights its pote
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\linewidth]{simulation/dent_para_simulation/simulation_lines.png}
+    \includegraphics[width=0.75\linewidth]{simulation/dent_para_simulation/simulation_lines.png}
    \caption{Simulated densities (Individuals$/$Liter) of susceptible \textit{D.~dentifera}, infected \textit{D.~dentifera} density, juvenile \textit{D.~dentifera} and alga density ($10^6\cdot$cells$/$Liter) over time (days) for each experimental unit. The blue lines represent individual simulation runs, capturing the variability in susceptible density across replicates, while the red line represents the actual experimental data.}
     \label{fig:SIRJPF_dent_simulation_lines}
 \end{figure}
@@ -840,14 +839,14 @@ The model’s ability to reproduce these patterns accurately highlights its pote
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\linewidth]{simulation/lum_para_simulation/simulation_band.png}
+    \includegraphics[width=0.75\linewidth]{simulation/lum_para_simulation/simulation_band.png}
     \caption{Simulation plots of densities (Individuals$/$Liter) for susceptible, infected, and juvenile \textit{D.~lumholtzi}, along with alga density ($10^6\cdot$cells$/$Liter) and parasite density ($10^3\cdot$spores$/$Liter), over time (days). The colorful solid lines represent observed experimental data, showing the variability across different experimental replicates. The black line represents the mean trajectory from the simulation model, capturing the general trend of each density. The light blue shaded area corresponds to the 95\% confidence interval of the simulations, indicating the range of model predictions. Dashed lines illustrate individual simulated trajectories, highlighting the model’s ability to capture fluctuations around the mean trajectory.}
     \label{fig:SIRJPF_invasive_simulation_band}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\linewidth]{simulation/lum_para_simulation/simulation_lines.png}
+    \includegraphics[width=0.75\linewidth]{simulation/lum_para_simulation/simulation_lines.png}
    \caption{Simulated trajectories of susceptible \textit{D.~lumholtzi}, infected \textit{D.~lumholtzi}, juvenile \textit{D.~lumholtzi} and alga density ($10^6\cdot$cells$/$Liter) over time (days) for each experimental unit (u1 to u9). The blue lines represent individual simulation runs, capturing the variability in susceptible density across replicates, while the red line represents the actual experimental data.}
     \label{fig:SIRJPF_lum_simulation_lines}
 \end{figure}
@@ -1085,7 +1084,7 @@ $P$   & Spore density                             & $10^3 \cdot \mathrm{spore} \
 $r^{\native}$ & Native growth rate                        & $\mathrm{individual} \cdot 10^{-6}\cdot \mathrm{cell}^{-1}$ & \Sexpr{mysignif(rn,2)}  & (\Sexpr{mysignif(ci_table$rn[1],2)},\Sexpr{mysignif(ci_table$rn[2],2)})\\
 $r^{\invasive}$ & Invasive growth rate                      & $\mathrm{individual} \cdot 10^{-6}\cdot \mathrm{cell}^{-1}$ & \Sexpr{mysignif(ri,2)}  & (\Sexpr{mysignif(ci_table$ri[1],2)},\Sexpr{mysignif(ci_table$ri[2],2)})\\
 $f^{\native}_{S}$ & Native susceptible adult host filtering rate   &  $\mathrm{L} \cdot \mathrm{individual}^{-1} \cdot \mathrm{day}^{-1}$   & \Sexpr{mysignif(f_Sn,2)}  & (\Sexpr{mysignif(ci_table$f_Sn[1],2)},\Sexpr{mysignif(ci_table$f_Sn[2],2)})\\
-$f^{\invasive}_{S}$ & Invasive susceptible adult host filtering rate &  $\mathrm{L} \cdot \mathrm{individual}^{-1} \cdot \mathrm{day}^{-1}$   & \Sexpr{mysignif(f_Si,2)}  & (\Sexpr{mysignif(ci_table$f_Si[1],2)},\Sexpr{mysignif(ci_table$f_Si[2],2)})\\
+$f^{\invasive}_{S}$ & Invasive susceptible adult host filtering rate &  $\mathrm{L} \cdot \mathrm{individual}^{-1} \cdot \mathrm{day}^{-1}$   & \Sexpr{mysignif(f_Si,2)}  & (\Sexpr{0},\Sexpr{mysignif(ci_table$f_Si[2],2)})\\
 $\theta^{\native}_{S}$ & Native susceptible adult host mortality rate     &     $  \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Sn,2)}  & (\Sexpr{mysignif(ci_table$theta_Sn[1],2)},\Sexpr{mysignif(ci_table$theta_Sn[2],2)})\\
 $\theta^{\invasive}_{S}$ & Invasive susceptible adult host mortality rate   &     $  \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Si,2)}  & (\Sexpr{mysignif(ci_table$theta_Si[1],2)},\Sexpr{mysignif(ci_table$theta_Si[2],2)})\\
 $\theta^{\native}_{J}$ & Native juvenile mortality rate        &     $   \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Jn,2)}  & (\Sexpr{mysignif(ci_table$theta_Jn[1],2)},\Sexpr{mysignif(ci_table$theta_Jn[2],2)})\\
@@ -1100,7 +1099,7 @@ $\delta$        & Sampling rate                                      &  $day ^{-
 $\sigma^{\native}_{S}$ & Standard deviation of Brownian motion of native susceptible adult             &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & 0  & \\
 $\sigma^{\invasive}_{S}$ & Standard deviation of Brownian motion of invasive susceptible adult              &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & 0  & \\
 $\sigma^{\native}_{J}$ & Standard deviation of Brownian motion of native juvenile               &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigJn,2)}  & (\Sexpr{mysignif(ci_table$sigJn[1],2)},\Sexpr{mysignif(ci_table$sigJn[2],2)})\\
-$\sigma^{\invasive}_{J}$ & Standard deviation of Brownian motion of invasive juvenile             &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigJi,2)}  & (\Sexpr{0},\Sexpr{mysignif(ci_table$sigJi[2],2)})\\
+$\sigma^{\invasive}_{J}$ & Standard deviation of Brownian motion of invasive juvenile             &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigJi,2)}  & (\Sexpr{mysignif(ci_table$sigJi[1],2)},\Sexpr{mysignif(ci_table$sigJi[2],2)})\\
 $\sigma_{F}$   & Standard deviation of Brownian motion of alga                          &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigF,2)}  & (\Sexpr{mysignif(ci_table$sigF[1],2)},\Sexpr{mysignif(ci_table$sigF[2],2)})\\
 $\tau^{\native}_{S}$      &  Measurement dispersion for susceptible native adult             &$\mathrm{Unitless}$           & \Sexpr{mysignif(k_Sn,2)}  & (\Sexpr{mysignif(ci_table$k_Sn[1],2)},\Sexpr{mysignif(ci_table$k_Sn[2],2)})\\
 $\tau^{\invasive}_{S}$      &  Measurement dispersion for susceptible invasive adult              &$\mathrm{Unitless}$            & \Sexpr{mysignif(k_Si,2)}  & (\Sexpr{mysignif(ci_table$k_Si[1],2)},\Sexpr{mysignif(ci_table$k_Si[2],2)})\\
@@ -1164,14 +1163,14 @@ By incorporating resource-consumption feedback into the population dynamics, the
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\linewidth]{simulation/target_no_para_simulation/simulation_band.png}
+    \includegraphics[width=0.75\linewidth]{simulation/target_no_para_simulation/simulation_band.png}
     \caption{Simulation plots of densities (Individuals$/$Liter) for susceptible and juvenile populations of both native \textit{D.~dentifera} and invasive \textit{D.~lumholtzi}, along with alga density ($10^6\,$cells$/$Liter) over time (days). Colorful solid lines represent observed experimental data for each experimental replicate, showcasing variability across replicates. The black line represents the mean simulation trajectory, while the light blue shaded area corresponds to the 95\% confidence interval of the simulation. Dashed lines indicate individual simulation cases, illustrating the model's capacity to capture fluctuations around the mean trajectory.}
     \label{fig:SRJF2_simulation_band}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\linewidth]{simulation/target_no_para_simulation/simulation_lines.png}
+    \includegraphics[width=0.75\linewidth]{simulation/target_no_para_simulation/simulation_lines.png}
     \caption{Simulated density ($10^6\,$cells$/$Liter) of susceptible native \textit{D.~dentifera}, susceptible invasive \textit{D.~lumholtzi}, juvenile native \textit{D.~dentifera}, invasive \textit{D.~lumholtzi}, and alga density ($F$) over time (days) for each experimental unit. The blue lines represent individual simulation cases, while the red line denotes observed experimental data, showing how simulated variability compares to actual data.}
     \label{fig:SRJF2_simulation_lines}
 \end{figure}
@@ -1473,8 +1472,8 @@ $\mu$           & Algae refilling rate                                &  $10^6 \
 $\delta$        & Sampling rate                                      &  $day ^{-1}$                                                                         & \Sexpr{mysignif(delta,2)} & \\
 $\sigma^{\native}_{S}$ & Standard deviation of Brownian motion of susceptible adult               &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & 0  & \\
 $\sigma^{\native}_{J}$ & Standard deviation of Brownian motion of juvenile               &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigJn,2)}  & (\Sexpr{mysignif(ci_table$sigJn[1],2)},\Sexpr{mysignif(ci_table$sigJn[2],2)})\\
-$\sigma_{F}$   & Standard deviation of Brownian motion of alga                          &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigF,2)}  & (\Sexpr{0},$\infty$)\\
-$\tau^{\native}_{S}$      &  Measurement dispersion for susceptible adult          &$\mathrm{Unitless}$           & \Sexpr{mysignif(k_Sn,2)}  & (\Sexpr{0},\Sexpr{mysignif(ci_table$k_Sn[2],2)})\\
+$\sigma_{F}$   & Standard deviation of Brownian motion of alga                          &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & \Sexpr{mysignif(sigF,2)}  & (\Sexpr{0},\Sexpr{mysignif(ci_table$sigF[2],2)})\\
+$\tau^{\native}_{S}$      &  Measurement dispersion for susceptible adult          &$\mathrm{Unitless}$           & \Sexpr{mysignif(k_Sn,2)}  & (\Sexpr{mysignif(ci_table$k_Sn[1],2)},\Sexpr{mysignif(ci_table$k_Sn[2],2)})\\
 \hline
 \end{tabular}}
 \caption{Variables and parameter definitions and estimates of SRJF model for \textit{D.~dentifera}-only dynamics. The confidence interval is generated by the Monte Carlo Adjusted Profile.}
@@ -1512,7 +1511,7 @@ Parameter & Definition &Unit & Value & CI\\[0.5ex]
 $S^{\invasive}$ & Susceptible host density   & $\mathrm{individual} \cdot L ^{-1}$                 & Variable                & \\
 $J^{\invasive}$ & Juvenile host density    & $ \mathrm{individual} \cdot L ^{-1}$                & Variable                & \\
 $F$   & Alga density                              & $10^6 \cdot \mathrm{cell} \cdot L ^{-1}$             & Variable                & \\
-$r^{\invasive}$ &  Birth rate of juvenile                        & $\mathrm{individual} \cdot 10^{-6}\cdot \mathrm{cell}^{-1}$ & \Sexpr{mysignif(ri,2)}  & (\Sexpr{mysignif(ci_table$ri[1],2)},\Sexpr{mysignif(ci_table$ri[2],2)})\\
+$r^{\invasive}$ &  Birth rate of juvenile                        & $\mathrm{individual} \cdot 10^{-6}\cdot \mathrm{cell}^{-1}$ & \Sexpr{mysignif(ri,2)}  & (\Sexpr{mysignif(ci_table$ri[1],2)},$\infty$)\\
 $f^{\invasive}_{S}$ & Susceptible adult host filtering rate   &  $\mathrm{L} \cdot \mathrm{individual}^{-1} \cdot \mathrm{day}^{-1}$   & \Sexpr{mysignif(f_Si,2)}  & (\Sexpr{0},\Sexpr{mysignif(ci_table$f_Si[2],2)})\\
 $\theta^{\invasive}_{S}$ & Susceptible adult host mortality rate     &     $ \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Si,2)}  & (\Sexpr{mysignif(ci_table$theta_Si[1],2)},\Sexpr{mysignif(ci_table$theta_Si[2],2)})\\
 $\theta^{\invasive}_{J}$ & Juvenile mortality rate        &     $ \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Ji,2)}  & (\Sexpr{0},\Sexpr{mysignif(ci_table$theta_Ji[2],2)})\\
@@ -1603,7 +1602,7 @@ This predicted reduction in food availability provides a mechanistic explanation
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\linewidth]{simulation/dent_no_para_simulation/simulation_band.png}
+    \includegraphics[width=0.75\linewidth]{simulation/dent_no_para_simulation/simulation_band.png}
     \caption{Simulation plots of densities (Individuals$/$Liter) for susceptible, and juvenile \textit{D.~dentifera}, along with alga density ($10^6\,$cells$/$Liter) and parasite density  ($10^3\,$spores$/$Liter), over time (days). The colorful solid lines represent observed experimental data, showing the variability across different experimental replicates. The black line represents the mean trajectory from the simulation model, capturing the general trend of each density. The light blue shaded area corresponds to the 95\% confidence interval of the simulations, indicating the range of model predictions. Dashed lines illustrate individual simulated trajectories, highlighting the model’s ability to capture fluctuations around the mean trajectory.}
     \label{fig:SRJF_native_simulation_band}
 \end{figure}
@@ -1611,7 +1610,7 @@ This predicted reduction in food availability provides a mechanistic explanation
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\linewidth]{simulation/dent_no_para_simulation/simulation_lines.png}
+    \includegraphics[width=0.75\linewidth]{simulation/dent_no_para_simulation/simulation_lines.png}
    \caption{Simulated densities (Individuals$/$Liter) of susceptible \textit{D.~dentifera}, juvenile \textit{D.~dentifera} and alga density ($10^6\,$cells$/$Liter) over time (days) for each experimental unit. The blue lines represent individual simulation runs, capturing the variability in susceptible density across replicates, while the red line represents the actual experiment data.}
     \label{fig:SRJF_dent_simulation_lines}
 \end{figure}
@@ -1619,14 +1618,14 @@ This predicted reduction in food availability provides a mechanistic explanation
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\linewidth]{simulation/lum_no_para_simulation/simulation_band.png}
+    \includegraphics[width=0.75\linewidth]{simulation/lum_no_para_simulation/simulation_band.png}
     \caption{Simulation plots of densities (Individuals$/$Liter) for susceptible, and juvenile \textit{D.~lumholtzi}, along with alga density ($10^6\cdot$cells$/$Liter) and parasite density  ($10^3\cdot$spores$/$Liter), over time (days). The colorful solid lines represent observed experimental data, showing the variability across different experimental replicates. The black line represents the mean trajectory from the simulation model, capturing the general trend of each density. The light blue shaded area corresponds to the 95\% confidence interval of the simulations, indicating the range of model predictions. Dashed lines illustrate individual simulated trajectories, highlighting the model’s ability to capture fluctuations around the mean trajectory.}
     \label{fig:SRJF_invasive_simulation_band}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\linewidth]{simulation/lum_no_para_simulation/simulation_lines.png}
+    \includegraphics[width=0.75\linewidth]{simulation/lum_no_para_simulation/simulation_lines.png}
    \caption{Simulated densities (Individuals$/$Liter) of susceptible \textit{D.~lumholtzi}, juvenile \textit{D.~lumholtzi} and  alga density ($10^6\cdot$cells$/$Liter) ays) for each experimental unit. The blue lines represent individual simulation runs, capturing the variability in susceptible density across replicates, while the red line represents the actual experiment data.}
     \label{fig:SRJF_lum_simulation_lines}
 \end{figure}
@@ -1731,7 +1730,7 @@ Each stochastic differential equation accounts for various biological and ecolog
     \, I^{\species}_{\unit}(t)\, dt + I^{\species}_{\unit}(t) \, d\zeta^{\species}_{I,{\unit}},\label{eq:SIRPF2_dS}\\
     dP_{\unit}(t) &= \sum_{\species \in \{\native, \invasive\}} \left(\beta^{\species}_{\unit} \, \theta^{\species}_{I,{\unit}} \,  I^{\species}_{\unit}(t) - f^{\species}_{S,{\unit}} \big\{ S^{\species}_{\unit}(t) + \xi_{\unit} I^{\species}_{\unit}(t) \big\} P_{\unit}(t)\right) dt - \theta_{P,{\unit}} \, P_{\unit}(t)\, dt + P_{\unit}(t)\, d\zeta_{P,{\unit}},\\
     dF_{\unit}(t) &= - \sum_{\species \in \{\native, \invasive\}} f^{\species}_{S,{\unit}} \, F_{\unit}(t) \left(S^{\species}_{\unit}(t)+\xi_{\unit} \, I^{\species}_{\unit}(t)\right)dt  + \mu \, dt + F_{\unit}(t)\, d\zeta_{F,{\unit}},\label{eq:SIRPF2_dF}\\
-d\zeta^{\species}_{I,{\unit}} \sim \Normal &\big[0, (\sigma^{\species}_{I,{\unit}})^{2}\, dt\big],
+d\zeta^{\species}_{I,{\unit}} &\sim \Normal \big[0, (\sigma^{\species}_{I,{\unit}})^{2}\, dt\big],
 \hspace{5mm}
 d\zeta_{F,{\unit}} \sim \Normal \big[0, \sigma_{F,{\unit}}^{2}\, dt\big],
 \hspace{5mm}

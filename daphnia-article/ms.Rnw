@@ -1,4 +1,15 @@
 \documentclass[12pt]{article}
+\usepackage{lmodern}
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
+\setlength{\emergencystretch}{3em}
+\setcounter{secnumdepth}{5}
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}
+}
+\usepackage{longtable,booktabs,array}
+\usepackage{calc}
 \usepackage{amsmath}
 \usepackage{enumerate}
 \usepackage[authoryear,numbers]{natbib}
@@ -12,6 +23,10 @@
 \usepackage{amssymb}
 \usepackage{hyperref}
 \usepackage{float}
+\floatstyle{ruled}
+\newfloat{codelisting}{h}{lop}
+\floatname{codelisting}{Listing}
+\usepackage{bookmark}
 \usepackage[ruled,vlined]{algorithm2e}
 \usepackage[utf8]{inputenc}
 \usepackage{hyphenat}
@@ -198,15 +213,15 @@ This toolbox allows scientists to propose and evaluate scientifically motivated 
 \vfill
 
 \newpage
-\spacingset{1.9} % DON'T change the spacing!
-    \section{Introduction}
-  \label{sec:intro}
+\spacingset{1.8} % DON'T change the spacing!
+\section{Introduction}
+\label{sec:intro}
 
-  Biological dynamic systems often contain elements or processes that are difficult to observe, even under controlled experimental conditions.
-  These unobservable, or latent, components are often crucial to understanding system dynamics, or are of scientific interest themselves.
-  Additionally, both the measurements obtained from the systems in question and their underlying dynamic processes often exhibit substantial stochasticity.
-  The combination of these two factors complicates data interpretation and analysis in ecological studies.
-  Given these inherent properties of ecological systems, it is essential to use models that can account for key latent mechanisms and the stochastic nature of the system when conducting inference \citep{young98,bjornstad01}.
+Biological dynamic systems often contain elements or processes that are difficult to observe, even under controlled experimental conditions.
+These unobservable, or latent, components are often crucial to understanding system dynamics, or are of scientific interest themselves.
+Additionally, both the measurements obtained from the systems in question and their underlying dynamic processes often exhibit substantial stochasticity.
+The combination of these two factors complicates data interpretation and analysis in ecological studies.
+Given these inherent properties of ecological systems, it is essential to use models that can account for key latent mechanisms and the stochastic nature of the system when conducting inference \citep{young98,bjornstad01}.
 
 Partially observed Markov process (POMP) models, also known as hidden Markov models or state space models \citep{breto09,auger-methe21}, comprise a class of models suited to the description of such systems, which describe the latent process using a Markovian representation.
  A POMP model is mechanistic if it is based on scientific principles, which is usually equivalent to providing a causal description of the system that can explain the consequence of interventions.
@@ -399,14 +414,14 @@ The source code and data for this article are available at \href{https://github.
 \tikzset{>={}};
 
 \node (Sn) at (5.5,0) [square] {$S^\native$};
-\node (In) at (5.5,-2) [square] {$I^\native$};
+\node (In) at (5.5,-1.5) [square] {$I^\native$};
 \node (Si) at (-0.5,0) [square] {$S^\invasive$};
-\node (Ii) at (-0.5,-2) [square] {$I^\invasive$};
-\node (Jn) at (5.5,2) [square] {$J^\native$};
-\node (Ji) at (-0.5,2) [square] {$J^\invasive$};
+\node (Ii) at (-0.5,-1.5) [square] {$I^\invasive$};
+\node (Jn) at (5.5,1.5) [square] {$J^\native$};
+\node (Ji) at (-0.5,1.5) [square] {$J^\invasive$};
 \node (R) at (2.5,0)  [rhombus] {$R$};
-\node (P) at (2.5,-2)[travel] {$P$};
-\node (F) at (2.5,2) [report] {$F$};
+\node (P) at (2.5,-1.5)[travel] {$P$};
+\node (F) at (2.5,1.5) [report] {$F$};
 
 
 
@@ -749,7 +764,7 @@ $F$   & Alga density                              & $10^6 \cdot \mathrm{cell} \c
 $P$   & Spore density                             & $10^3 \cdot \mathrm{spore} \cdot L ^{-1}$            & Variable                & \\
 $r^{\native}$ & Native growth rate                        & $\mathrm{individual} \cdot 10^{-6}\cdot \mathrm{cell}^{-1}$ & \Sexpr{mysignif(rn,2)}  & (\Sexpr{mysignif(ci_table$rn[1],2)},\Sexpr{mysignif(ci_table$rn[2],2)})\\
 $r^{\invasive}$ & Invasive growth rate                      & $\mathrm{individual} \cdot 10^{-6}\cdot \mathrm{cell}^{-1}$ & \Sexpr{mysignif(ri,2)}  & (\Sexpr{mysignif(ci_table$ri[1],2)}, $\infty$)\\
-$f_{S^{\native}}$ & Native susceptible adult host filtering rate   &  $\mathrm{L} \cdot \mathrm{individual}^{-1} \cdot \mathrm{day}^{-1}$   & \Sexpr{mysignif(f_Sn,2)}  & (\Sexpr{0},\Sexpr{mysignif(ci_table$f_Sn[2],2)})\\
+$f_{S^{\native}}$ & Native susceptible adult host filtering rate   &  $\mathrm{L} \cdot \mathrm{individual}^{-1} \cdot \mathrm{day}^{-1}$   & \Sexpr{mysignif(f_Sn,2)}  & (\Sexpr{mysignif(ci_table$f_Sn[1],2)},\Sexpr{mysignif(ci_table$f_Sn[2],2)})\\
 $f_{S^{\invasive}}$ & Invasive susceptible adult host filtering rate &  $\mathrm{L} \cdot \mathrm{individual}^{-1} \cdot \mathrm{day}^{-1}$   & \Sexpr{mysignif(f_Si,2)}  & (\Sexpr{0},\Sexpr{mysignif(ci_table$f_Si[2],2)})\\
 $p^{\native}$          & Number of native infections per spore             &     $10^{-3} \cdot \mathrm{individual} \cdot \mathrm{spore}^{-1} $ & \Sexpr{mysignif(probn,2)}  & (\Sexpr{mysignif(ci_table$probn[1],2)},\Sexpr{mysignif(ci_table$probn[2],2)})\\
 $p^{\invasive}$          & Number of invasive infections per spore           &     $10^{-3} \cdot \mathrm{individual} \cdot \mathrm{spore}^{-1} $ & \Sexpr{mysignif(probi,2)}  & (\Sexpr{mysignif(ci_table$probi[1],2)},$\infty$)\\
@@ -758,7 +773,7 @@ $\theta^{\invasive}_{S}$ & Invasive susceptible adult host mortality rate   &   
 $\theta^{\native}_{I}$ & Native infected adult host mortality rate        &     $  \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_In,2)}  & (\Sexpr{mysignif(ci_table$theta_In[1],2)},\Sexpr{mysignif(ci_table$theta_In[2],2)})\\
 $\theta^{\invasive}_{I}$ & Invasive infected adult host mortality rate      &     $  \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Ii,2)}  & (\Sexpr{mysignif(ci_table$theta_Ii[1],2)},\Sexpr{mysignif(ci_table$theta_Ii[2],2)})\\
 $\theta^{\native}_{J}$ & Native juvenile mortality rate        &     $ \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Jn,2)}  & (\Sexpr{0},\Sexpr{mysignif(ci_table$theta_Jn[2],2)})\\
-$\theta^{\invasive}_{J}$ & Invasive juvenile mortality rate      &     $  \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Ji,2)}  & (\Sexpr{mysignif(ci_table$theta_Ji[1],2)},\Sexpr{mysignif(ci_table$theta_Ji[2],2)})\\
+$\theta^{\invasive}_{J}$ & Invasive juvenile mortality rate      &     $  \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Ji,2)}  & (\Sexpr{0},\Sexpr{mysignif(ci_table$theta_Ji[2],2)})\\
 $\theta_{P}$   & Spore degradation rate                           &     $\mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_P,2)}   & (\Sexpr{0},\Sexpr{mysignif(ci_table$theta_P[2],2)})\\
 $\lambda^{\native}_{J}$ & Maturation rate of native juvenile                  &     $ \mathrm{day}^{-1} $                  & \Sexpr{mysignif(lambda_Jn,2)}  & \\
 $\lambda^{\invasive}_{J}$ & Maturation rate of invasive juvenile                &     $ \mathrm{day}^{-1} $                  & \Sexpr{mysignif(lambda_Ji,2)}  & \\
@@ -854,15 +869,17 @@ For field data, one may expect the need for unit-specific parameters describing 
 For example, in a PanelPOMP analysis of pre-vaccine polio transmission dynamics for state-level data in USA, \citet{breto20} used unit-specific parameters to describe variations in the seasonality of transmission across units.
 Modeling decisions concerning shared and unit-specific parameters are testable hypotheses that are of scientific interest in the quest for a parsimonious understanding of the dynamics, and for understanding sources of variation.
 
-In our selected model, the native {\it Daphnia} species was found to have a higher feeding rate ($f^{\native}_{S}> f^{\invasive}_{S}$) and a lower rate of infection per consumed spore ($p^{\native} < p^{\invasive}$), consistent with Fig.~1C of \citet{searle16}.
-Our results indicate that stochasticity in the juvenile stage ($\sigma^{\native}_{J}$ and $\sigma^{\invasive}_{J}$) is an important model feature, needed to adequately describe the data (see the corresponding confidence intervals in Table~\ref{tab:estimates} and the profile likelihood plots in Fig.~S1).
-That suggests the juvenile stage is particularly sensitive to unmodeled phenomena, such as lower fitness resulting from resource depletion, since unmodeled phenomena can be explained by the model as stochastic uncertainty.
-Noise in other stages is small, and often insignificantly different from zero, as shown by flat profile likelihood plots for $\sigma^{\native}_{S}$, $\sigma^{\invasive}_{S}$, $\sigma^{\native}_{I}$, $\sigma^{\invasive}_{I}$ and $\sigma_F$ in Fig.~S1.
-Hence, we fixed the $\sigma^{\native}_{S}$ and $\sigma^{\invasive}_{S}$ to be zero.
+In our selected model, the invaisve {\it Daphnia} species was found to have a higher feeding rate ($f^{\native}_{S}< f^{\invasive}_{S}$) and a lower rate of infection per consumed spore ($p^{\native} < p^{\invasive}$), consistent with Fig.~1C of \citet{searle16}.
+The native parameters—juvenile growth $r^{\native}$, feeding rate $f^{\native}_{S}$ and infection probability $p^{\native}$ show full identifiability as shown in Fig.~S1, whereas the corresponding invasive parameters $r^{\invasive},\,f^{\invasive}_{S},\,p^{\invasive}$ are only bounded on one side. 
+This asymmetry is attributable to (i) the lower density of \textit{D. lumholtzi} allows less potential data collection error tolerance; (ii) the product of these terms governs the juvenile growth and infection process, which allows individual invasive coefficients to vary so long as their products remain fixed; and (iii) host-only experiments with simplified dynamics (Fig.~S8) in which these parameters become fully identifiable, confirming that their limited identifiability in the full model is data–, not model–, driven.
+The identifiability of the measurement error parameter ($\tau^{\native}_{S},\,\tau^{\invasive}_{S},\,\tau^{\native}_{I},\,\tau^{\invasive}_{I}$) explains variability that would otherwise inflate weakly identified process-noise terms.
+Our results indicate that stochasticity in the juvenile stage ($\sigma^{\native}_{J}$ and $\sigma^{\invasive}_{J}$), food ($\sigma_{F}$) and parasite ($\sigma_{P}$) dynamics are important model features, needed to adequately describe the data (see the corresponding confidence intervals in Table~\ref{tab:estimates} and the profile likelihood plots in Fig.~S1).
+That suggests the juvenile stage, food and parasite dynamics are particularly sensitive to unmodeled phenomena, such as lower fitness resulting from resource depletion, since unmodeled phenomena can be explained by the model as stochastic uncertainty.
+Noise in other stages is small, and often insignificantly different from zero, as shown by profile likelihood plots for $\sigma^{\native}_{I}$, $\sigma^{\invasive}_{I}$.
+Since the profile for $\sigma^{\native}_{S}$, $\sigma^{\invasive}_{S}$ is flat and insignificantly different from zero, we fixed the $\sigma^{\native}_{S}$ and $\sigma^{\invasive}_{S}$ to be zero as constants.
 The proposed model is flexible enough to describe the predictability and uncertainty inherent in the system in various ways, and the data have come down in favor of $\sigma^{\native}_{J}$ and $\sigma^{\invasive}_{J}$.
 This indicates that the model might be recalibrated after fixing some or all of the other noise intensities to zero, but there is no pressing need to do so.
 The noise term is helpful when describing other dynamics, for example, dynamics with two species of \textit{Daphnia} and no parasite as shown in Supplement~S5.
-Other model parameters are found to be weakly estimable.
 Natural death rates, ($\theta^{\native}_{S}$, $\theta^{\invasive}_{S}$, $\theta^{\native}_{J}$ and $\theta^{\invasive}_{J}$), are poorly identified in the presence of the parasite since most death comes through the infection process.
 By contrast, these parameters are better identified in the treatments without the parasite (Fig.~S15).
 
@@ -1122,6 +1139,16 @@ We have analyzed data collected in a controlled environment, raising the questio
 The applicability of our approach is contingent on having panel data of sufficient length and quality to inform interactions between species.
 Such panel datasets are available, for example, on pathogen-host ecosystems \citep{martinez-bakker15} and fisheries \citep{naiman02}.
 The flexibility of the PanelPOMP model class provides many opportunities for developing new models that integrate ecological theory with panel time series data.
+
+\section{Supplementary Materials}
+The Supplementary Material includes detailed Panel Iterated Filtering algorithm and the benchmark model specifications.
+It also provides profile likelihoods, residual analyses, and diagnostics for the SIRJPF2, SIRJPF, and SRJF2 models, together with models for the additional dynamics discussed in the manuscript.
+
+\section{Data Availability Statement}
+Code and data for the analysis is available at the Github repository: https://github.com/Megumi-ybb/Daphnia-ms
+
+\section{Disclosure Statement}
+No potential conflict of interest was reported by the authors.
 
 \bibliography{bib-daphnia}
 \end{document}

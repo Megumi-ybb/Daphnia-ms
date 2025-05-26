@@ -476,12 +476,12 @@ plot(x = log(subset_data_sigIi$sigIi), y = subset_data_sigIi$loglik)
 plot(x = subset_data_sigIi$sigIi, y = subset_data_sigIi$loglik)
 subset_data_sigIi$log_sigIi <- log(subset_data_sigIi$sigIi)
 
-mcap(subset_data_sigIi$loglik, subset_data_sigIi$log_sigIi,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_sigIi
+mcap(subset_data_sigIi$loglik, subset_data_sigIi$log_sigIi,  level = 0.95, span = 0.7, Ngrid = 1000) -> mcap_object_sigIi
 mcap_object_sigIi$mle -> sigIi_mle
 sigIi_p <- ggplot() +
   geom_point(data = subset_data_sigIi, aes(x = log_sigIi, y = loglik)) +
   geom_line(data = mcap_object_sigIi$fit, aes(x = parameter, y = smoothed), col = 'red') +
-  geom_vline(xintercept = mcap_object_sigIi$ci[1], linetype = 'dashed') +
+  # geom_vline(xintercept = mcap_object_sigIi$ci[1], linetype = 'dashed') +
   geom_vline(xintercept = mcap_object_sigIi$ci[2], linetype = 'dashed') +
   geom_vline(xintercept = mcap_object_sigIi$mle, col = 'blue') +
   geom_vline(xintercept = log(mif.estimate[['sigIi']]), col = 'red') +
@@ -808,7 +808,7 @@ mcap_object_theta_Jn$mle -> theta_Jn_mle
 theta_Jn_p <- ggplot() +
   geom_point(data = subset_data_theta_Jn, aes(x = log_theta_Jn, y = loglik)) +
   geom_line(data = mcap_object_theta_Jn$fit, aes(x = parameter, y = smoothed), col = 'red') +
-  geom_vline(xintercept = mcap_object_theta_Jn$ci[1], linetype = 'dashed') +
+  # geom_vline(xintercept = mcap_object_theta_Jn$ci[1], linetype = 'dashed') +
   geom_vline(xintercept = mcap_object_theta_Jn$ci[2], linetype = 'dashed') +
   geom_vline(xintercept = mcap_object_theta_Jn$mle, col = 'blue') +
   geom_vline(xintercept = log(mif.estimate[['theta_Jn']]), col = 'red') +
@@ -820,7 +820,7 @@ theta_Jn_p <- ggplot() +
   theme(axis.text = element_text(size = 8),
         axis.title = element_text(size = 10)) +
   ylim(-890, -880)+
-  xlim(-13,-4)+
+  # xlim(-13,-4)+
   theme_bw() +
   theme(axis.title.y = element_blank(),
         axis.text.y = element_blank(),
