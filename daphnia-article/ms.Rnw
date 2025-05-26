@@ -286,7 +286,7 @@ The experiment concluded after 52 days, totaling 10 sampling sessions.
 
 \begin{figure}[ht]
 \centering
-<<DataVis,echo=FALSE, fig.height=3.4, cache=cache_option>>=
+<<DataVis,echo=FALSE, fig.height=3, cache=cache_option>>=
 mixed_para_data_combined <- do.call(rbind, lapply(1:length(mixed_para_data), function(i) {
   cbind(mixed_para_data[[i]], Trial = paste("Trial", trails[i]))
 }))
@@ -384,7 +384,7 @@ The source code and data for this article are available at \href{https://github.
 \begin{figure}[H]
 \begin{center}
 %%%%% SIRJPF2 diagram
-\resizebox{8cm}{!}{
+\resizebox{7cm}{!}{
 \begin{tikzpicture}[
   square/.style={rectangle, draw=black, minimum width=0.5cm, minimum height=0.5cm, rounded corners=.1cm, fill=blue!8},
   rhombus/.style={diamond, draw=black, minimum width=0.1cm, minimum height=0.1cm, fill=purple!8,aspect = 1},
@@ -518,11 +518,10 @@ For the measurement model, we obtain overdispersion by using a negative binomial
 \begin{align}
 N^{\species}_{S,{\unit},n} &\sim \operatorname{NBinomial}\big(
   S^{\species}_{\unit}(t_n), \tau^{\species}_{S,{\unit}}
-\big),
-\\
-N^{\species}_{I,{\unit},n} &\sim \operatorname{NBinomial}\big(
+\big), \quad
+N^{\species}_{I,{\unit},n} \sim \operatorname{NBinomial}\big(
   I^{\species}_{\unit}(t_n), \tau^{\species}_{I,{\unit}}
-\big),
+\big)
 \end{align}
 where $\operatorname{NBinomial}(\mu,\tau)$ is the negative binomial distribution with mean $\mu$ and variance $\mu+ \frac{\mu^2}{\tau}$.
 Since the sampled volume is $1$ liter, the densities $S^{\species}_{\unit}(t_n)$ and $I^{\species}_{\unit}(t_n)$ are on the same scale as the respective counts, $N^{\species}_{S,{\unit},n}$ and  $N^{\species}_{I,{\unit},n}$.
@@ -910,8 +909,10 @@ When a weakly identified parameter has consequences for the biological interpret
 
 \begin{figure}[t]
 \centering
-<<SimulationPlot,echo=FALSE, fig.width=7,fig.height=4,out.width="\\textwidth", cache=cache_option>>=
+<<SimulationPlot,echo=FALSE, fig.width=7,fig.height=3,out.width="\\textwidth", cache=cache_option>>=
   load('../data/simulation.rds')
+theme_size = 8
+
 all_sims_summary <- all_sims %>%
   group_by(day) %>%
   summarise(lower = quantile(Sn, 0.025),   # 2.5% quantile
@@ -925,7 +926,7 @@ p1 = ggplot() +
   theme_minimal() +
   theme(legend.position = "none") +
   labs(x = NULL, y = expression(paste("Susceptible ", italic("D. dentifera")))) +
-  theme(axis.title = element_text(size = 10), axis.text.x = element_blank())+
+  theme(axis.title = element_text(size = theme_size), axis.text.x = element_blank())+
   scale_x_continuous(limits = c(0, 52), breaks = c(0, 25, 50))
 
 
@@ -942,7 +943,7 @@ p2 = ggplot() +
   theme_minimal() +
   theme(legend.position = "none") +
   labs(x = NULL, y = expression(paste("Infected ", italic("D. dentifera")))) +
-  theme(axis.title = element_text(size = 10), axis.text.x = element_blank())+
+  theme(axis.title = element_text(size = theme_size), axis.text.x = element_blank())+
   scale_x_continuous(limits = c(0, 52), breaks = c(0, 25, 50))
 
 
@@ -959,7 +960,7 @@ p3 = ggplot() +
   theme_minimal() +
   theme(legend.position = "none") +
   labs(x = "day", y = expression(paste("Susceptible ", italic("D. lumholtzi")))) +
-  theme(axis.title = element_text(size = 10))+
+  theme(axis.title = element_text(size = theme_size))+
   scale_x_continuous(limits = c(0, 52), breaks = c(0, 25, 50))
 
 
@@ -976,7 +977,7 @@ p4 = ggplot() +
   theme_minimal() +
   theme(legend.position = "none") +
   labs(x = "day", y = expression(paste("Infected ", italic("D. lumholtzi")))) +
-  theme(axis.title = element_text(size = 10))+
+  theme(axis.title = element_text(size = theme_size))+
   scale_x_continuous(limits = c(0, 52), breaks = c(0, 25, 50))
 
 
@@ -996,7 +997,7 @@ p5 = ggplot() +
   theme_minimal() +
   theme(legend.position = "none") +
   labs(x = "day", y = expression(paste("Juvenile ", italic("D. lumholtzi")))) +
-  theme(axis.title = element_text(size = 10))+
+  theme(axis.title = element_text(size = theme_size))+
   scale_x_continuous(limits = c(0, 52), breaks = c(0, 25, 50))
 
 
@@ -1013,7 +1014,7 @@ p6 = ggplot() +
   theme_minimal() +
   theme(legend.position = "none") +
   labs(x = NULL, y = expression(paste("Juvenile ", italic("D. dentifera")))) +
-  theme(axis.title = element_text(size = 10), axis.text.x = element_blank())+
+  theme(axis.title = element_text(size = theme_size), axis.text.x = element_blank())+
   scale_x_continuous(limits = c(0, 52), breaks = c(0, 25, 50))
 
 
@@ -1034,7 +1035,7 @@ p7 = ggplot() +
   theme_minimal() +
   theme(legend.position = "none") +
   labs(x = NULL, y = "Alga") +
-  theme(axis.title = element_text(size = 10), axis.text.x = element_blank())+
+  theme(axis.title = element_text(size = theme_size), axis.text.x = element_blank())+
   scale_x_continuous(limits = c(0, 52), breaks = c(0, 25, 50))
 
 
@@ -1053,7 +1054,7 @@ p8 = ggplot() +
   theme_minimal() +
   theme(legend.position = "none") +
   labs(x = "day", y = "Parasite") +
-  theme(axis.title = element_text(size = 10))+
+  theme(axis.title = element_text(size = theme_size))+
   scale_x_continuous(limits = c(0, 52), breaks = c(0, 25, 50))
 
 suppressWarnings(

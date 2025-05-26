@@ -516,7 +516,7 @@ plot(x = log(subset_data_sigIn$sigIn), y = subset_data_sigIn$loglik)
 plot(x = subset_data_sigIn$sigIn, y = subset_data_sigIn$loglik)
 subset_data_sigIn$log_sigIn <- log(subset_data_sigIn$sigIn)
 
-subset_data_sigIn = subset_data_sigIn[subset_data_sigIn$log_sigIn <=-7.5,]
+subset_data_sigIn = subset_data_sigIn[subset_data_sigIn$log_sigIn <=-6,]
 
 
 mcap(subset_data_sigIn$loglik, subset_data_sigIn$log_sigIn,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_sigIn
