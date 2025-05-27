@@ -259,7 +259,7 @@ Iterated filtering techniques apply to a more general class of POMP models, but 
   We calculate Akaike's Information Criterion (AIC) to compare the overall fit of rival mechanistic models \citep{aic74}.
 We compute profile likelihood confidence intervals, making appropriate adjustment for Monte Carlo uncertainty \citep{ionides17,ning21}.
 All these techniques are predicated on an ability to evaluate and maximize the log-likelihood function.
-This ability was unlocked by panel iterated filtering \citep{breto20} and we demonstrate empirically that this further strengthened by a new marginalized panel iterated filtering algorithm.
+This ability was unlocked by panel iterated filtering \citep{breto20} and we demonstrate empirically that this is further strengthened by a new marginalized panel iterated filtering algorithm.
 A contemporaneous investigation of marginalized panel iterated filtering from a theory and methodology perspective is provided by \cite{wheeler25}.
 These algorithms are discussed in more detail in Section~\ref{sec:meth}, after description of the experimental system in Section~\ref{sec:studysystem} and presentation of our models and their fitted parameter values in Section~\ref{sec:mecmod}.
 Section~\ref{sec:res} presents additional results showing that our stochastic model, that describes depletion of the algal food resource together with age-structured population dynamics, provides a better statistical explanation of the data than the previous deterministic model by \citet{searle16} that supposed the dynamics are driven by a switch of reproductive strategies from the asexual production of juveniles to the sexual production of long-lasting dormant eggs.
@@ -391,7 +391,7 @@ Therefore, we investigate the hypothesis that explicit modeling of resource depl
 We also hypothesizes that the inclusion of age structure, via a juvenile stage, could help to explain the population dynamics even though very juveniles show disease.
 Our paradigm is to assess models that represent known or hypothesized biological mechanisms in terms of their ability to explain observed data, quantified by likelihood penalized by model complexity.
 Our hypothesized model is supported so far as it is the best model for the available data according to this criterion.
-The source code and data for this article are available at \href{https://github.com/Megumi-ybb/Daphnia-ms}{https://github.com/Megumi-ybb/Daphnia-ms}.
+The source code and data for this article are available at \href{https://github.com/Megumi-ybb/Daphnia-ms}{https://github.com/Megumi-ybb/Daphnia-ms} and archived at \href{https://doi.org/10.5281/zenodo.15522753}.
 
 \section{The Susceptible-Infected-Removed-Juvenile-Parasite-Food 2-species model (SIRJPF2)}
 \label{sec:mecmod}
@@ -472,7 +472,7 @@ Fig.~\ref{fig:flow_SIRJPF2} shows a flow diagram for a two-species model where t
 We also keep track of the aquatic parasite spore density (P) and the food density (F).
 Removal (i.e., death, consumption or destructive sampling) for any species is described by transition to class R.
 Similar to many epidemiological models, this description of the dynamic system extends the basic SIR model \citep{weiss13}.
-Mathematically, the model is described by \eqref{eq:model:first}--\eqref{eq:model:last}, a system of stochastic differential equations which we interpret in the It\^{o} sense \citep{oksendal98}.
+Mathematically, the model is described by equations~(\ref{eq:model:first}--\ref{eq:model:last}), a system of stochastic differential equations which we interpret in the It\^{o} sense \citep{oksendal98}.
 Nonlinearity arises through product terms in the infection and consumption specifications.
 We use Gaussian noise, though multiplicative gamma noise can be employed to enforce non-negativity of rates \citep{bhadra11}.
 A version of SIRJPF2 with gamma noise, called SIRJPF2-Gamma, is presented in Section~S9, though we found that a simpler Gaussian noise model is sufficient.
@@ -588,7 +588,7 @@ Nevertheless, in many situations (including this case study) it is scientificall
 The PanelPOMP model depends on a parameter vector, $\theta$, which we write as $\theta=(\phi,\psi_{1:\Unit})$ where $\phi$ is the vector of parameters shared between all units and $\psi_\unit$ is a vector of parameters specific to unit $\unit$.
 We can then define a general PanelPOMP model in terms of the transition density $f_{X_{\unit,n}|X_{\unit,n-1}}(x_{\unit,n}|x_{\unit,n-1};\phi,\psi_{\unit})$, the initial density $f_{X_{\unit,0}}(x_{\unit,0};\phi,\psi_{\unit})$, and the measurement density $f_{Y_{\unit,n}|X_{\unit,n}}(y_{\unit,n}|x_{\unit,n};\phi,\psi_{\unit})$ of each unit $\unit$ in the panel.
 For a model such as ours, the transition density is defined implicitly by the model equations.
-The plug-and-play property means that we never require explicit evaluation of this density, only the ability to obtain simulated trajectories satisfying Eq.~(\ref{eq:model:first}--\ref{eq:model:last}).
+The plug-and-play property means that we never require explicit evaluation of this density, only the ability to obtain simulated trajectories satisfying equations~(\ref{eq:model:first}--\ref{eq:model:last}).
 We do that using Euler's method \citep{kloeden99}.
 
 A defining feature of a PanelPOMP is that the latent processes are modeled as independent across units, so the data generating models for each unit are linked only via the shared parameter vector, $\phi$.
@@ -893,7 +893,7 @@ There are six genotypes in each experimental unit, and we only observe populatio
 When modeling these dynamics, our parameters of interest actually represent population-level means.
 In other words, given this specific combination of genotypes, $\xi > 1$ indicates that at the population level, the average filtration rate of infected \textit{Daphnia} is higher than that of susceptible \textit{Daphnia}.
 However, the direction can be reversed at the individual level.
-$\xi > 1$ could also be a result of reverse causation due to unmodeled heterogeneity: infected \textit{Daphnia} may statistically have a higher filtration rate even though infection decreases the filtration rate.
+$\xi > 1$ could also be a result of reverse causation due to unmodeled heterogeneity: \textit{Daphnia} with higher filtering rate are exposed to more pathogen spores and so filtering rate can causally affect infection status in addition to any causal effect of infection status on filtering rate.
 A subsequent investigation extending the model and measurements to include \textit{Daphna} size and genotype could help to clarify this.
 
 As shown in Table~\ref{tab:estimates}, the estimated values of $p^{\native}$ and $p^{\invasive}$ differ significantly, suggesting that the parasite influences the proportion of individuals becoming infected within each species in distinct scale.
@@ -1108,7 +1108,7 @@ Our modeling and inference approach could be extended to include data on males a
 
 Data science is having a transformative impact on ecological science \citep{mouquet15} and yet too few studies undertake the task of reconciling ecological theory with time series data \citep{peacor22}.
 We have shown that our panel data methodology can allow full-information plug-and-play likelihood-based inference for the complex partially observed nonlinear stochastic dynamic models required to carry out this reconciliation.
-If the previous lack of such data analyses is evidence for the previous lack of effective methods, the PanelPOMP methodology should facilitate many previously intractable scientific investigations.
+If the previous shortage of such data analyses is evidence for the previous lack of effective methods, PanelPOMP methodology should facilitate many previously intractable scientific investigations.
 Further advances in methodology, such as automatic differentiation for particle filters \citep{tan24}, will continue to increase the numerical tractability of PanelPOMP models.
 
 Despite the complexity of our SIRJPF2 model, there are various ways in which further biological mechanisms could be incorporated.
@@ -1118,7 +1118,7 @@ Additional residual analysis can search for patterns suggesting model improvemen
 
 Although we did not calibrate the model using juvenile data, the addition of latent $J^{\species}_{\unit}$ states leads to an improved statistical fit.
 This could arise because the juvenile stage provides a delay in the {\em Daphnia} population growth dynamics, and because juveniles compete with adults for available food resources.
-Juveniles rarely show disease, perhaps because of the latency in the parasite's development within its host, but they nevertheless play a significant role in the infection dynamics.
+Juveniles rarely exhibit disease, perhaps because of the latency in the parasite's development within its host, but they nevertheless play a significant role in the infection dynamics.
 While we have shown the relevance of age-structured dynamics for understanding the data on adults, future work could identify the role of juveniles in the system dynamics more precisely.
 Adding juvenile data to the measurement model in the fitting procedure would enable higher statistical resolution on these dynamics.
 Our general POMP modeling and inference framework allows for the possibility of additional measurements or alternative model hypotheses.

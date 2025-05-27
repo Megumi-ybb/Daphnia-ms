@@ -358,15 +358,11 @@ The stochastic terms $d\zeta^{\species}_{S,{\unit}}$, $d\zeta^{\species}_{J,{\un
 Similar to the SIRJPF2 model, we fixed the $\sigma^{\species}_{S}$ to be zero due to its flat profile plot.
 \parskip 3mm
 
-This model intricately details the interactions and feedback mechanisms among the populations under study.
+This model describes the interactions and feedback mechanisms among the populations under study.
 The equations describe the growth or decline of each population, influenced by deterministic factors such as reproduction, filtering rates, predation, infection, and mortality, alongside stochastic factors captured through the $d\zeta_{\cdot,u}$ terms for each unit.
 These stochastic components represent environmental variability and other unpredictable influences, adhering to the principles of stochastic differential equations.
-By incorporating random fluctuations, the model offers a realistic representation of population dynamics, extending beyond the deterministic framework of classical models.
-\parskip 3mm
-
-This model’s capacity to intertwine biological realism with statistical rigor makes it a potent tool for understanding complex ecological interactions.
-In the following sections, we will present the flow diagram and parameter estimation results to further illustrate the interaction between latent states, emphasizing the advantages of combining the \texttt{panelPOMP} framework with SIRJPF model in addressing this complex problem.
-
+By incorporating random fluctuations, the model offers a statistically motivated representation of population dynamics, extending beyond the deterministic framework used in previous analysis.
+In the following sections, we will present the flow diagram and parameter estimation results to further illustrate the interaction between latent states.
 
 \subsection{Flow Diagram}
 The SIRJPF model illustrates the interdependent dynamics among the Susceptible ($S$), Infected ($I$), Juvenile ($J$), Food ($F$), and Parasite ($P$) populations, with transitions representing ecological and biological interactions.
@@ -884,12 +880,6 @@ The term $\mu \, dt$ represents the refill rate of algae, contributing to its re
 The stochastic fluctuation $F_{\unit}(t) \, d\zeta_{F,\unit}$ introduces randomness into the algae dynamics, where $d\zeta_{F,\unit}$ is the Brownian motion with variance $\sigma_{F,{\unit}}^{2}\, dt$.
 \parskip 3mm
 
-These processes model the inherent randomness and environmental variability affecting the populations of native and invasive species and the alga resource.
-\parskip 3mm
-
-In the following sections, we will present the flow diagram and parameter estimation results to further illustrate the interaction between latent states, emphasizing the advantages of combining the \texttt{panelPOMP} framework with SRJF2 model in addressing this complex problem.
-
-
 \subsection{Flow Diagram}
 The following Figure~\ref{fig:SRJF2} presents the flow diagram of the SRJF2 model, illustrating the interactions among susceptible individuals ($S^{\native}$, $S^{\invasive}$), juveniles ($J^{\native}$,$J^{\invasive}$), algae as a food resource ($F$), and mortality ($R$).
 The bidirectional arrows between $J^{\species}$ and $S^{\species}$, represent the maturation of juveniles into susceptible individuals and the reproduction of susceptible individuals into juveniles.
@@ -1203,13 +1193,7 @@ Equation~\eqref{eq:SRJF_dF} captures the dynamics of the \textit{A.} algae popul
 The consumption term $- f^{\species}_{S,\unit} F^{\species}_{\unit}(t) \left(S^{\species}_{\unit}(t) + \xi_{J,\unit} J^{\species}_{\unit}(t) \right) \, dt$ represents the reduction of algae due to feeding by both susceptible individuals and juveniles, with $\xi_{J,\unit}$ indicating the ratio of juveniles on algae consumption compared to susceptible individuals.
 The term $\mu \, dt$ denotes the refill rate of alga.
 The stochastic fluctuation $F^{\species}_{\unit}(t) \, d\zeta^{\species}_{F,\unit}$ introduces randomness into the algae dynamics, where $d\zeta^{\species}_{F,\unit}$ shows the Brownian motion with variance $\sigma_{F,{\unit}}^{2}\, dt$.
-\parskip 3mm
-
 These terms model the latent randomness in the system due to environmental variability and other stochastic factors influencing the susceptible individuals, juveniles, and alga populations.
-\parskip 3mm
-
-In the following sections, we will present the flow diagram and parameter estimation results to further illustrate the interaction between latent states, emphasizing the advantages of combining the \texttt{panelPOMP} framework with SRJF model in addressing this complex problem.
-
 
 \subsection{Flow Diagram}
 \begin{figure}[H]
@@ -1581,7 +1565,8 @@ $f^{\invasive}_{S,\unit}$ & \Sexpr{mysignif_ll_AIC(lum_no_para_parameter_table[4
 \label{Table:SRJF_lum_model_comparison}
 \end{table}
 
-The results in the tables indicate that the model configuration with all shared parameters achieves the minimum AIC score for both dynamics, suggesting an optimal balance between model fit and complexity. And this align with our previous analysis as well.
+The results in the tables indicate that the model configuration with all shared parameters achieves the minimum AIC score for both dynamics, suggesting an optimal balance between model fit and complexity.
+These results align with our previous analysis.
 
 
 \subsection{Simulation}
