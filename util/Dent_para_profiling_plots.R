@@ -551,13 +551,11 @@ theta_Sn_p <- ggplot() +
   theme(axis.text = element_text(size = 8),
         axis.title = element_text(size = 10)) +
   ylim(-580, -565)+
-  # xlim(-2.2,0)+
+  xlim(-15,-5)+
   theme_bw() +
   theme(axis.title.y = element_blank(),
         axis.text.y = element_blank(),
-        axis.ticks.y = element_blank())  + 
-  annotate("text", x = mcap_object_theta_Sn$mle, y = -900, label = sprintf("theta_Sn_mle: %s", formatC(mcap_object_theta_Sn$mle, format = 'e', digits = 3)), hjust = 1.05, vjust = -0.5, size = 3)
-
+        axis.ticks.y = element_blank())
 theta_Sn_p
 
 

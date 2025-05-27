@@ -513,7 +513,6 @@ d\zeta_{F,{\unit}} &\sim \Normal \big[0, \sigma_{F,{\unit}}^{2}\, dt\big],
 d\zeta_{P,{\unit}} \sim \Normal \big[0, \sigma_{P,{\unit}}^{2}\, dt\big].
 \label{eq:model:last}
 \end{align}}
-
 Here, $\Normal[\mu,\sigma^2]$ is the normal distribution with mean $\mu$ and variance $\sigma^2$.
 Intraspecific competition among hosts is conceptualized via limitation of food and environment resources, with $r^{\species}_{\unit}$ denoting the reproductive rate for species $\species \in \{\native,\invasive\}$.
 Host density growth, influenced by algal density, is posited to be linear, indicating a direct relationship between food availability and \textit{Daphnia} reproduction.
@@ -616,7 +615,6 @@ A flow diagram for a panel iterated filtering (PIF) algorithm is shown in Fig.~\
 At each iteration, $m=\seq{1}{M}$, the magnitude of the perturbations is reduced, and we use geometric ``cooling'' with a reduction factor $\rho<1$.
 By providing likelihood-based inference for a general class of nonlinear, non-Gaussian PanelPOMP models, PIF has the potential to facilitate discoveries in a wide range of scientific domains.
 This article provides a case study for such an application in the field of ecology.
-
 \begin{figure}[h!]
 \centering
 \resizebox{\textwidth}{!}{%
@@ -681,7 +679,6 @@ For the marginalized PIF algorithm, only $\phi$ and $\psi_u$ are reselected in t
 }
 \label{fig:pif}
 \end{figure}
-
 Parameter estimates and corresponding confidence intervals were obtained using PIF.
 A sufficiently large number of particles is needed to maintain particle diversity and achieve robust exploration of the parameter space.
 However, computational cost increases with the number of particles.

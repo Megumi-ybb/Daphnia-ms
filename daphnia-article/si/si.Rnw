@@ -855,8 +855,6 @@ The model’s ability to reproduce these patterns accurately highlights its pote
 \section{SRJF2 Model}
 In this section, we introduce the SRJF2 model, which analyze the dynamics between native and invasive species competing for a shared food resource, algae ($F$) in each bucket($\unit$).
 The stochastic differential equations governing the system are:
-
-
 {\small
 \begin{align}
     dS^{\species}_{\unit}(t) &= \lambda^{\species}_{J,{\unit}} J^{\species}_{\unit}(t) \, dt - (\theta^{\species}_{S,{\unit}} + \delta) S^{\species}_{\unit}(t)\, dt + S^{\species}_{\unit}(t)\, d\zeta^{\species}_{S,{\unit}}, \label{eq:SRJF2_dS}\\
@@ -867,8 +865,6 @@ d\zeta^{\species}_{J,{\unit}} \sim \Normal \big[0, (\sigma^{\species}_{J,{\unit}
 d\zeta_{F,{\unit}} \sim \Normal \big[0, \sigma_{F,{\unit}}^{2}\, dt\big]\label{eq:SRJF2_dzetaS}.
 \end{align}
 }
-
-
 Equation~\eqref{eq:SRJF2_dS} models the rate of change of the specific species' susceptible population $S^{\species}_{\unit}(t)$.
 The term $\lambda^{\species}_{J,\unit} J^{\species}_{\unit}(t) \, dt$ represents the maturation of juveniles into susceptible adults at rate $\lambda^{\species}_{J,\unit}$.
 The mortality term $-\left(\theta^{\species}_{S,\unit} + \delta\right) S^{\species}_{\unit}(t) \, dt$ accounts for natural death at rate $\theta^{\species}_{S,\unit}$ and the sampling rate $\delta$.
@@ -1179,7 +1175,6 @@ By incorporating resource-consumption feedback into the population dynamics, the
 
 \section{SRJF Model}
 In this section, we introduce the SRJF model, which formalizes the dynamics among susceptible individuals ($S^{\species}$), the juvenile population ($J^{\species}$), and algae serving as a food resource ($F$) as follows:
-
 {\small
 \begin{align}
     dS^{\species}_{\unit}(t) &= \lambda^{\species}_{J,{\unit}} J^{\species}_{\unit}(t) \, dt - (\theta^{\species}_{S,{\unit}} + \delta) S^{\species}_{\unit}(t)\, dt + S^{\species}_{\unit}(t)\, d\zeta^{\species}_{S,{\unit}} , \label{eq:SRJF_dS}\\
@@ -1190,7 +1185,6 @@ d\zeta^{\species}_{J,{\unit}} \sim \Normal \big[0, (\sigma^{\species}_{J,{\unit}
 d\zeta_{F,{\unit}} \sim \Normal \big[0, \sigma_{F,{\unit}}^{2}\, dt\big].\label{eq:SRJF_dzetaS}
 \end{align}
 }
-
 Equation~\eqref{eq:SRJF_dS} describes the rate of change of the susceptible population $S^{\species}_{\unit}(t)$. The term $\lambda^{\species}_{J,\unit} J^{\species}(t) \, dt$ represents the growth of susceptible individuals from the maturation of juvenile population at a rate $\lambda^{\species}_{J,\unit}$.
 The loss term $-\left(\theta^{\species}_{S,{\unit}}+ \delta\right) S^{\species}_{\unit}(t) \, dt$ accounts for the mortality of susceptible individuals due to natural causes at rate $\theta^{\species}_{S,\unit}$ and sampling at rate $\delta$.
 The stochastic component $S^{\species}_{\unit}(t) \, d\zeta^{\species}_{S,\unit}$ introduces random fluctuations into the susceptible population dynamics, with $d\zeta^{\species}_{S,\unit}$ being a Brownian motion characterized by variance $(\sigma^{\species}_{S,{\unit}})^{2}\, dt$.
