@@ -1142,7 +1142,7 @@ The Supplementary Material includes detailed Panel Iterated Filtering algorithm 
 It also provides profile likelihoods, residual analyses, and diagnostics for the SIRJPF2, SIRJPF, and SRJF2 models, together with models for the additional dynamics discussed in the manuscript.
 
 \section{Data Availability Statement}
-Code and data for the analysis is available at the Github repository: https://github.com/Megumi-ybb/Daphnia-ms
+Code and data for the analysis is available at the Github repository: https://github.com/Megumi-ybb/Daphnia-ms or https://doi.org/10.5281/zenodo.15522754.
 
 \section{Disclosure Statement}
 No potential conflict of interest was reported by the authors.
