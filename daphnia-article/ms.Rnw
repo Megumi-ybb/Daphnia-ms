@@ -202,7 +202,7 @@ Statistical models for ecological panel data should capture the high levels of n
 Furthermore, the system dynamics may depend on unobservable variables.
 This study applies iterated particle filtering techniques to explore new possibilities for likelihood-based statistical analysis of these complex systems.
 We analyze data from a mesocosm experiment in which two species of the freshwater planktonic crustacean genus, {\it Daphnia}, coexist with an alga and a fungal parasite.
-Time series data are collected on replicated mesocosms under six treatment conditions.
+Time series data were collected on replicated mesocosms under six treatment conditions.
 Iterated filtering enables maximization of the likelihood for scientifically motivated nonlinear partially observed Markov process models, providing access to standard likelihood-based methods for parameter estimation, confidence intervals, hypothesis testing, model selection and diagnostics.
 This toolbox allows scientists to propose and evaluate scientifically motivated stochastic dynamic models for panel data, constrained only by the requirement to write code to simulate from the model and to specify a measurement distribution describing how the system state is observed.
 \end{abstract}
@@ -253,7 +253,7 @@ Iterated filtering techniques apply to a more general class of POMP models, but 
   A central question when using model-based statistical inference to investigate ecological dynamics is to discover which biological details are necessary to include in a model to provide an adequate statistical explanation for the data.
   Our approach to answering this question uses standard tools of likelihood-based inference.
   We compare the model likelihood to statistical benchmarks, such as linear or autoregressive models, seeking to continue improving a mechanistic model until it captures the predictability of the data with at least comparable skill to a simple non-mechanistic analysis \citep{wheeler24,li24}.
-  In doing so, we ensure that the proposed dynamic model provides a plausible mechanistic description of the dynamic system, supported by evidence that that the model also provides a suitable quantitative description of data that arise from the system.
+  In doing so, we ensure that the proposed dynamic model provides a plausible mechanistic description of the dynamic system, supported by evidence that the model also provides a suitable quantitative description of data that arise from the system.
 
   To do this, we study residuals and conditional log-likelihood anomalies for each data point to identify relative weaknesses and strengths of different models.
   We calculate Akaike's Information Criterion (AIC) to compare the overall fit of rival mechanistic models \citep{aic74}.
@@ -276,8 +276,8 @@ Here, we investigate how this competition is affected by a parasite that infects
 \citet{searle16} hypothesized that the presence of a fast-growing invasive species, which has a high susceptibility to the native parasite {\it M.~bicuspidata}, could amplify the parasite in the native population.
 
 Female \textit{Daphnia} reproduce asexually in favorable situations, parthenogenetically producing female offspring equipped for parthenogenetic reproduction.
-Maturation of juveniles to adults takes five to ten days.
-In response to adverse environmental cues, \textit{Daphnia} produce male and female offspring which reproduce sexually to produce durable resting eggs called ephippia \citep{radzikowski18,searle16salinization}.
+Maturation of juveniles to adults takes approximately five to ten days, depending on environmental conditions.
+In response to adverse environmental cues, \textit{Daphnia} produce males and females begin reproducing sexually, producing durable resting eggs called ephippia \citep{radzikowski18,searle16salinization}.
 The ephippia can remain viable for many years, awaiting the return of favorable conditions.
 
 {\it Daphnia} become infected by the parasite by ingesting free-floating spores as they filter the water to extract food.
@@ -289,7 +289,7 @@ Infection leads to sterility and reduced feeding, and an opaque body cavity whic
 Six treaments were carried out, comprised of three levels of the host ({\it D.\ dentifera} or {\it D. lumholtzi} or both) factored with two levels of the parasite (present or absent).
 The experimental units are replicates of the treatments; the design consisted of 8, 9 or 10 units for each treatment.
 The initial {\it Daphnia} population consisted of 45 adult females, which in two-host treatments consisted of 35 native \textit{Daphnia} and 10 invasives.
-After a four day acclimatization period, spores of the fungal parasite, {\it M.~bicuspidata} were added at a concentration of 25 per \text{mL} if the mesocosm was assigned to the parasite exposure treatment.
+After a four day acclimatization period, spores of the fungal parasite, {\it M.~bicuspidata}, were added at a concentration of 25 per \text{mL} if the mesocosm was assigned to the parasite exposure treatment.
 Every five days, a well-mixed sample of 1 liter was removed, and the species (native or invasive), infection status, sex, and age (juvenile or adult) were identified for each \textit{Daphnia} using a microscope.
 A negligible number of infected juveniles were observed so henceforth we model infection only in adults.
 Algal and nutrient levels were supplemented twice per week, with medium added as necessary to maintain the volume.
@@ -388,7 +388,7 @@ The hypothesis that motivated the model of \citet{searle16} is that the arrival 
 This hypothesis is related to resource depletion, since shortage of food and high population density are both triggers for a change in reproductive strategy \citep{radzikowski18,searle16salinization}.
 However, resource depletion affects parthenogenetic reproduction as well influencing a switch to sexual reproduction.
 Therefore, we investigate the hypothesis that explicit modeling of resource depletion can help to explain the observed dynamics, via the introduction of a latent food compartment.
-We also hypothesizes that the inclusion of age structure, via a juvenile stage, could help to explain the population dynamics even though very juveniles show disease.
+We also hypothesize that the inclusion of age structure, via a juvenile stage, could help to explain the population dynamics even though very few juveniles show disease.
 Our paradigm is to assess models that represent known or hypothesized biological mechanisms in terms of their ability to explain observed data, quantified by likelihood penalized by model complexity.
 Our hypothesized model is supported so far as it is the best model for the available data according to this criterion.
 The source code and data for this article are available at \href{https://github.com/Megumi-ybb/Daphnia-ms}{https://github.com/Megumi-ybb/Daphnia-ms} and archived at \href{https://doi.org/10.5281/zenodo.15522753}.
@@ -759,8 +759,8 @@ $I^{k}$ & Infected host density for species $k$     & $ \mathrm{individual} \cdo
 $J^{k}$ & Juvenile host density for species $k$     & $ \mathrm{individual} \cdot L ^{-1}$                & Variable                & \\
 $F$   & Alga density                              & $10^6 \cdot \mathrm{cell} \cdot L ^{-1}$             & Variable                & \\
 $P$   & Spore density                             & $10^3 \cdot \mathrm{spore} \cdot L ^{-1}$            & Variable                & \\
-$r^{\native}$ & Native growth rate                        & $\mathrm{individual} \cdot 10^{-6}\cdot \mathrm{cell}^{-1}$ & \Sexpr{mysignif(rn,2)}  & (\Sexpr{mysignif(ci_table$rn[1],2)},\Sexpr{mysignif(ci_table$rn[2],2)})\\
-$r^{\invasive}$ & Invasive growth rate                      & $\mathrm{individual} \cdot 10^{-6}\cdot \mathrm{cell}^{-1}$ & \Sexpr{mysignif(ri,2)}  & (\Sexpr{mysignif(ci_table$ri[1],2)}, $\infty$)\\
+$r^{\native}$ & Birth rate of native juvenile                         & $\mathrm{individual} \cdot 10^{-6}\cdot \mathrm{cell}^{-1}$ & \Sexpr{mysignif(rn,2)}  & (\Sexpr{mysignif(ci_table$rn[1],2)},\Sexpr{mysignif(ci_table$rn[2],2)})\\
+$r^{\invasive}$ & Birth rate of invasive juvenile                       & $\mathrm{individual} \cdot 10^{-6}\cdot \mathrm{cell}^{-1}$ & \Sexpr{mysignif(ri,2)}  & (\Sexpr{mysignif(ci_table$ri[1],2)}, $\infty$)\\
 $f_{S^{\native}}$ & Native susceptible adult host filtering rate   &  $\mathrm{L} \cdot \mathrm{individual}^{-1} \cdot \mathrm{day}^{-1}$   & \Sexpr{mysignif(f_Sn,2)}  & (\Sexpr{mysignif(ci_table$f_Sn[1],2)},\Sexpr{mysignif(ci_table$f_Sn[2],2)})\\
 $f_{S^{\invasive}}$ & Invasive susceptible adult host filtering rate &  $\mathrm{L} \cdot \mathrm{individual}^{-1} \cdot \mathrm{day}^{-1}$   & \Sexpr{mysignif(f_Si,2)}  & (\Sexpr{0},\Sexpr{mysignif(ci_table$f_Si[2],2)})\\
 $p^{\native}$          & Number of native infections per spore             &     $10^{-3} \cdot \mathrm{individual} \cdot \mathrm{spore}^{-1} $ & \Sexpr{mysignif(probn,2)}  & (\Sexpr{mysignif(ci_table$probn[1],2)},\Sexpr{mysignif(ci_table$probn[2],2)})\\
@@ -833,7 +833,7 @@ Comparison of model fit for mechanistic models and non-mechanistic benchmarks.}
 
 Parameter estimates and confidence intervals for the SIRJPF2 model are in Table~\ref{tab:estimates}, which also includes a brief description of the parameter mechanism and the corresponding measurement units.
 The log-likelihood, AIC and number of parameters for this model is compared against alternatives in Table~\ref{Table:Model_comparison}.
-Differences in AIC values between model are intepretable only between alternative models for the same data, we fit a few statistical benchmarks to help calibrate these results.
+Differences in AIC values between models are intepretable only between alternative models for the same data, so we fit a few statistical benchmarks to help calibrate these results.
 For comparison, we fit a negative binomial regression model with dependence on linear, quadratic, and cubic version of the measurement time.
 Comparing a mechanistic model to a simple statistical benchmark model is a useful test of model specification, since it reveals quickly whether the mechanistic model is constructed in a way that is statistically compatible with the data \citep{wheeler24,li24}.
 The negative binomial models with polynomial (quadratic or cubic) terms fit the dynamics better than a linear trend.
@@ -846,7 +846,7 @@ The SIRPF2 model ignores the process of maturation of juvenile and instead highl
 While this model does have an improved statistical fit compared to the deterministic ODE model of \citet{searle16} and other benchmark models, it has weaker performance than the model that accounts for the effect of juveniles on population dynamics.
 
 If the goal of modeling a dynamic system is forecasting future states of the system, a model that has a better statistical fit is expected to make more accurate predictions.
-Similarly, improvements to model fits facilitate new scientific insights, supported by evidence that the model with superior fit is a better description of data generating processes than preexisting alternatives.
+Because the improvements to model fits evidence the observed data more accurately, it more faithfully captures the underlying ecological mechanisms, which thereby uncovering new scientific insights.
 Thus, the process of developing new models for existing data and reporting consequent improvements in model fit raises the bar for subsequent studies, enabling the continual advancement of our scientific understanding of a given system. 
 
 Our SIRJPF2 model quantitatively describes the observed data better than any of the alternatives, while simultaneously providing a plausible mechanistic description of the experimental system.
@@ -866,7 +866,7 @@ For field data, one may expect the need for unit-specific parameters describing 
 For example, in a PanelPOMP analysis of pre-vaccine polio transmission dynamics for state-level data in USA, \citet{breto20} used unit-specific parameters to describe variations in the seasonality of transmission across units.
 Modeling decisions concerning shared and unit-specific parameters are testable hypotheses that are of scientific interest in the quest for a parsimonious understanding of the dynamics, and for understanding sources of variation.
 
-In our selected model, the invaisve {\it Daphnia} species was found to have a higher feeding rate ($f^{\native}_{S}< f^{\invasive}_{S}$) and a lower rate of infection per consumed spore ($p^{\native} < p^{\invasive}$), consistent with Fig.~1C of \citet{searle16}.
+In our selected model, the invasive {\it Daphnia} species was found to have a higher feeding rate ($f^{\native}_{S}< f^{\invasive}_{S}$) and a lower rate of infection per consumed spore ($p^{\native} < p^{\invasive}$), consistent with Fig.~1C of \citet{searle16}.
 The native parameters—juvenile growth $r^{\native}$, feeding rate $f^{\native}_{S}$ and infection probability $p^{\native}$ show full identifiability as shown in Fig.~S1, whereas the corresponding invasive parameters $r^{\invasive},\,f^{\invasive}_{S},\,p^{\invasive}$ are only bounded on one side. 
 This asymmetry is attributable to (i) the lower density of \textit{D. lumholtzi} allows less potential data collection error tolerance; (ii) the product of these terms governs the juvenile growth and infection process, which allows individual invasive coefficients to vary so long as their products remain fixed; and (iii) host-only experiments with simplified dynamics (Fig.~S8) in which these parameters become fully identifiable, confirming that their limited identifiability in the full model is data–, not model–, driven.
 The identifiability of the measurement error parameter ($\tau^{\native}_{S},\,\tau^{\invasive}_{S},\,\tau^{\native}_{I},\,\tau^{\invasive}_{I}$) explains variability that would otherwise inflate weakly identified process-noise terms.
