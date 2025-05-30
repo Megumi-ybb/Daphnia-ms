@@ -391,7 +391,6 @@ Therefore, we investigate the hypothesis that explicit modeling of resource depl
 We also hypothesize that the inclusion of age structure, via a juvenile stage, could help to explain the population dynamics even though very few juveniles show disease.
 Our paradigm is to assess models that represent known or hypothesized biological mechanisms in terms of their ability to explain observed data, quantified by likelihood penalized by model complexity.
 Our hypothesized model is supported so far as it is the best model for the available data according to this criterion.
-The source code and data for this article are available at \href{https://github.com/Megumi-ybb/Daphnia-ms}{https://github.com/Megumi-ybb/Daphnia-ms} and archived at \href{https://doi.org/10.5281/zenodo.15522753}.
 
 \section{The Susceptible-Infected-Removed-Juvenile-Parasite-Food 2-species model (SIRJPF2)}
 \label{sec:mecmod}
@@ -734,6 +733,10 @@ k_Ii = parms$k_Ii
 k_In = parms$k_In
 k_Si = parms$k_Si
 k_Sn = parms$k_Sn
+probi_f_Si = parms$probi * parms$f_Si
+probn_f_Sn = parms$probn * parms$f_Sn
+ri_f_Si = parms$ri * parms$f_Si
+rn_f_Sn = parms$rn * parms$f_Sn
 lambda_Jn = 0.1
 lambda_Ji = 0.1
 beta_n = 30.00
@@ -765,6 +768,10 @@ $f_{S^{\native}}$ & Native susceptible adult host filtering rate   &  $\mathrm{L
 $f_{S^{\invasive}}$ & Invasive susceptible adult host filtering rate &  $\mathrm{L} \cdot \mathrm{individual}^{-1} \cdot \mathrm{day}^{-1}$   & \Sexpr{mysignif(f_Si,2)}  & (\Sexpr{0},\Sexpr{mysignif(ci_table$f_Si[2],2)})\\
 $p^{\native}$          & Number of native infections per spore             &     $10^{-3} \cdot \mathrm{individual} \cdot \mathrm{spore}^{-1} $ & \Sexpr{mysignif(probn,2)}  & (\Sexpr{mysignif(ci_table$probn[1],2)},\Sexpr{mysignif(ci_table$probn[2],2)})\\
 $p^{\invasive}$          & Number of invasive infections per spore           &     $10^{-3} \cdot \mathrm{individual} \cdot \mathrm{spore}^{-1} $ & \Sexpr{mysignif(probi,2)}  & (\Sexpr{mysignif(ci_table$probi[1],2)},$\infty$)\\
+$p^{\native} \cdot f_{S^{\native}}$          & Effective infection rate of native adult hosts per‐spore      &     $10^{-3} \cdot \mathrm{L} \cdot \mathrm{spore}^{-1} \cdot \mathrm{day}^{-1}$  & \Sexpr{mysignif(probn_f_Sn,2)}  & (\Sexpr{mysignif(ci_table$pn_f_Sn[1],2)},\Sexpr{mysignif(ci_table$pn_f_Sn[2],2)})\\
+$p^{\invasive} \cdot f_{S^{\invasive}}$          & Effective infection rate of invasive adult hosts per‐spore      &     $10^{-3} \cdot \mathrm{L} \cdot \mathrm{spore}^{-1} \cdot \mathrm{day}^{-1}$ & \Sexpr{mysignif(probi_f_Si,2)}  & (\Sexpr{mysignif(ci_table$pi_f_Si[1],2)},\Sexpr{mysignif(ci_table$pi_f_Si[2],2)})\\
+$r^{\native} \cdot f_{S^{\native}}$          & Effective birth rate of native juvenile            &     $10^{-6} \cdot \mathrm{L} \cdot \mathrm{cell}^{-1} \cdot \mathrm{day}^{-1} $ & \Sexpr{mysignif(rn_f_Sn,2)}  & (\Sexpr{mysignif(ci_table$rn_f_Sn[1],2)},\Sexpr{mysignif(ci_table$rn_f_Sn[2],2)})\\
+$r^{\invasive} \cdot f_{S^{\invasive}}$          & Effective birth rate of invasive juvenile            &     $10^{-6} \cdot \mathrm{L} \cdot \mathrm{cell}^{-1} \cdot \mathrm{day}^{-1} $ & \Sexpr{mysignif(ri_f_Si,2)}  & (\Sexpr{mysignif(ci_table$ri_f_Si[1],2)},\Sexpr{mysignif(ci_table$ri_f_Si[2],2)})\\
 $\theta^{\native}_{S}$ & Native susceptible adult host mortality rate     &     $ \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Sn,2)}  & (\Sexpr{0},\Sexpr{mysignif(ci_table$theta_Sn[2],2)})\\
 $\theta^{\invasive}_{S}$ & Invasive susceptible adult host mortality rate   &     $  \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Si,2)}  & (\Sexpr{0},\Sexpr{mysignif(ci_table$theta_Si[2],2)})\\
 $\theta^{\native}_{I}$ & Native infected adult host mortality rate        &     $  \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_In,2)}  & (\Sexpr{mysignif(ci_table$theta_In[1],2)},\Sexpr{mysignif(ci_table$theta_In[2],2)})\\
@@ -866,10 +873,12 @@ For field data, one may expect the need for unit-specific parameters describing 
 For example, in a PanelPOMP analysis of pre-vaccine polio transmission dynamics for state-level data in USA, \citet{breto20} used unit-specific parameters to describe variations in the seasonality of transmission across units.
 Modeling decisions concerning shared and unit-specific parameters are testable hypotheses that are of scientific interest in the quest for a parsimonious understanding of the dynamics, and for understanding sources of variation.
 
-In our selected model, the invasive {\it Daphnia} species was found to have a higher feeding rate ($f^{\native}_{S}< f^{\invasive}_{S}$) and a lower rate of infection per consumed spore ($p^{\native} < p^{\invasive}$), consistent with Fig.~1C of \citet{searle16}.
+In our selected model, the feeding rate of the invasive {\it Daphnia} species ($f^{\invasive}_{S}$)is not statistically significantly different from that of the native {\it Daphnia} species ($f^{\native}_{S}$).
+And the invasive species has a lower rate of infection per consumed spore ($p^{\native} < p^{\invasive}$), consistent with Fig.~1C of \citet{searle16}.
 The native parameters—juvenile growth $r^{\native}$, feeding rate $f^{\native}_{S}$ and infection probability $p^{\native}$ show full identifiability as shown in Fig.~S1, whereas the corresponding invasive parameters $r^{\invasive},\,f^{\invasive}_{S},\,p^{\invasive}$ are only bounded on one side. 
 This asymmetry is attributable to (i) the lower density of \textit{D. lumholtzi} allows less potential data collection error tolerance; (ii) the product of these terms governs the juvenile growth and infection process, which allows individual invasive coefficients to vary so long as their products remain fixed; and (iii) host-only experiments with simplified dynamics (Fig.~S8) in which these parameters become fully identifiable, confirming that their limited identifiability in the full model is data–, not model–, driven.
-The identifiability of the measurement error parameter ($\tau^{\native}_{S},\,\tau^{\invasive}_{S},\,\tau^{\native}_{I},\,\tau^{\invasive}_{I}$) explains variability that would otherwise inflate weakly identified process-noise terms.
+However, we achieve the identifiability of the effective infection rate ($p^{\native}f_{S^{\native}}$, $p^{\invasive}f_{S^{\invasive}}$), and the effective juvenile birth rate ($r^{\native}f_{S^{\native}}$, $r^{\invasive}f_{S^{\invasive}}$), which support our model's scientific interpretability.
+At the same time, the identifiability of the measurement error parameter ($\tau^{\native}_{S},\,\tau^{\invasive}_{S},\,\tau^{\native}_{I},\,\tau^{\invasive}_{I}$) explains variability that would otherwise inflate weakly identified process-noise terms.
 Our results indicate that stochasticity in the juvenile stage ($\sigma^{\native}_{J}$ and $\sigma^{\invasive}_{J}$), food ($\sigma_{F}$) and parasite ($\sigma_{P}$) dynamics are important model features, needed to adequately describe the data (see the corresponding confidence intervals in Table~\ref{tab:estimates} and the profile likelihood plots in Fig.~S1).
 That suggests the juvenile stage, food and parasite dynamics are particularly sensitive to unmodeled phenomena, such as lower fitness resulting from resource depletion, since unmodeled phenomena can be explained by the model as stochastic uncertainty.
 Noise in other stages is small, and often insignificantly different from zero, as shown by profile likelihood plots for $\sigma^{\native}_{I}$, $\sigma^{\invasive}_{I}$.

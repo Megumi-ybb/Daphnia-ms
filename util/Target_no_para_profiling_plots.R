@@ -554,7 +554,120 @@ theta_Sn_p <- ggplot() +
 theta_Sn_p
 
 
+combine_subset = rbind(subset_data_ri[,1:16],
+                       subset_data_rn[,1:16],
+                       subset_data_f_Si[,1:16],
+                       subset_data_f_Sn[,1:16],
+                       subset_data_theta_Sn[,1:16],
+                       subset_data_theta_Si[,1:16],
+                       subset_data_theta_Ji[,1:16],
+                       subset_data_theta_Jn[,1:16],
+                       subset_data_sigJi[,1:16],
+                       subset_data_sigJn[,1:16],
+                       subset_data_sigF[,1:16],
+                       subset_data_k_Si[,1:16],
+                       subset_data_k_Sn[,1:16])
 
+
+combine_subset$rn_f_Sn = combine_subset$rn * combine_subset$f_Sn
+combine_subset$log_rn_f_Sn <- log(combine_subset$rn_f_Sn)
+plot(x = combine_subset$log_rn_f_Sn, y = combine_subset$loglik)
+
+combine_subset_rn_f_Sn <- combine_subset %>%
+  ungroup() %>%
+  mutate(
+    bin = cut(
+      log_rn_f_Sn,
+      breaks = seq(
+        min(log_rn_f_Sn, na.rm = TRUE),
+        max(log_rn_f_Sn, na.rm = TRUE),
+        length.out = 51
+      ),
+      include.lowest = TRUE,
+      right = FALSE
+    )
+  ) %>%
+  group_by(bin) %>%
+  slice_max(loglik, n = 1, with_ties = FALSE) %>%
+  ungroup() %>%
+  select(-bin)
+
+mcap(combine_subset_rn_f_Sn$loglik, combine_subset_rn_f_Sn$log_rn_f_Sn,  level = 0.95, span = 0.95, Ngrid = 1000) -> mcap_object_rn_f_Sn
+mcap_object_rn_f_Sn$mle -> rn_f_Sn_mle
+rn_f_Sn_p <- ggplot() +
+  geom_point(data = combine_subset_rn_f_Sn, aes(x = log_rn_f_Sn, y = loglik)) +
+  geom_line(data = mcap_object_rn_f_Sn$fit, aes(x = parameter, y = smoothed), col = 'red') +
+  geom_vline(xintercept = mcap_object_rn_f_Sn$ci[1], linetype = 'dashed') +
+  geom_vline(xintercept = mcap_object_rn_f_Sn$ci[2], linetype = 'dashed') +
+  geom_vline(xintercept = mcap_object_rn_f_Sn$mle, col = 'blue') +
+  geom_vline(xintercept = log(mif.estimate[['rn']] * mif.estimate[['f_Sn']]), col = 'red') +
+  geom_hline(yintercept = pf.loglik.of.mif.estimate, col = 'red',linetype = "longdash") +
+  geom_point(aes(x = log(mif.estimate[['rn']] * mif.estimate[['f_Sn']]), 
+                 y = pf.loglik.of.mif.estimate), 
+             color = "red", size = 2) + 
+  labs(x =  TeX("$\\log(\\r^n \\cdot f^n_{S})$"), y = "log likelihood") +
+  theme(axis.text = element_text(size = 11),
+        axis.title = element_text(size = 11)) +
+  ylim(-710, -699)+
+  # xlim(-2.2,0)+
+  theme_bw() +
+  theme(axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank())
+
+rn_f_Sn_p
+
+
+
+
+combine_subset$ri_f_Si = combine_subset$ri * combine_subset$f_Si
+combine_subset$log_ri_f_Si <- log(combine_subset$ri_f_Si)
+plot(x = combine_subset$log_ri_f_Si, y = combine_subset$loglik)
+# combine_subset_ri_f_Si = combine_subset[combine_subset$log_ri_f_Si < -1,]
+# combine_subset_ri_f_Si = combine_subset_ri_f_Si[combine_subset_ri_f_Si$log_ri_f_Si > -2.5,]
+combine_subset_ri_f_Si <- combine_subset %>%
+  ungroup() %>%
+  mutate(
+    bin = cut(
+      log_ri_f_Si,
+      breaks = seq(
+        min(log_ri_f_Si, na.rm = TRUE),
+        max(log_ri_f_Si, na.rm = TRUE),
+        length.out = 101
+      ),
+      include.lowest = TRUE,
+      right = FALSE
+    )
+  ) %>%
+  group_by(bin) %>%
+  slice_max(loglik, n = 1, with_ties = FALSE) %>%
+  ungroup() %>%
+  select(-bin)
+
+mcap(combine_subset_ri_f_Si$loglik, combine_subset_ri_f_Si$log_ri_f_Si,  level = 0.95, span = 0.7, Ngrid = 1000) -> mcap_object_ri_f_Si
+mcap_object_ri_f_Si$mle -> ri_f_Si_mle
+ri_f_Si_p <- ggplot() +
+  geom_point(data = combine_subset_ri_f_Si, aes(x = log_ri_f_Si, y = loglik)) +
+  geom_line(data = mcap_object_ri_f_Si$fit, aes(x = parameter, y = smoothed), col = 'red') +
+  geom_vline(xintercept = mcap_object_ri_f_Si$ci[1], linetype = 'dashed') +
+  geom_vline(xintercept = mcap_object_ri_f_Si$ci[2], linetype = 'dashed') +
+  geom_vline(xintercept = mcap_object_ri_f_Si$mle, col = 'blue') +
+  geom_vline(xintercept = log(mif.estimate[['ri']] * mif.estimate[['f_Si']]), col = 'red') +
+  geom_hline(yintercept = pf.loglik.of.mif.estimate, col = 'red',linetype = "longdash") +
+  geom_point(aes(x = log(mif.estimate[['ri']] * mif.estimate[['f_Si']]), 
+                 y = pf.loglik.of.mif.estimate), 
+             color = "red", size = 2) + 
+  labs(x =  TeX("$\\log(\\r^i \\cdot f^i_{S})$"), y = "log likelihood") +
+  theme(axis.text = element_text(size = 11),
+        axis.title = element_text(size = 11)) +
+  ylim(-710, -699)+
+  # xlim(-2.2,0)+
+  theme_bw() +
+  theme(axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank())
+
+ri_f_Si_p
 
 
 
@@ -562,13 +675,13 @@ theta_Sn_p
 
 grid.arrange( rn_p, ri_p, f_Sn_p, f_Si_p,theta_Sn_p,
                theta_Si_p, theta_Jn_p,theta_Ji_p,sigJn_p,sigJi_p,
-              sigF_p,k_Sn_p,k_Si_p,
+              sigF_p,k_Sn_p,k_Si_p,rn_f_Sn_p,ri_f_Si_p,
               nrow = 3, ncol = 5)
 
 g <- arrangeGrob( rn_p, ri_p, f_Sn_p, f_Si_p,theta_Sn_p,
-              theta_Si_p, theta_Jn_p,theta_Ji_p,sigJn_p,sigJi_p,
-              sigF_p,k_Sn_p,k_Si_p,
-              nrow = 3, ncol = 5)
+                  theta_Si_p, theta_Jn_p,theta_Ji_p,sigJn_p,sigJi_p,
+                  sigF_p,k_Sn_p,k_Si_p,rn_f_Sn_p,ri_f_Si_p,
+                  nrow = 3, ncol = 5)
 
 ggsave(
   filename = "./daphnia-article/si/profile/Target_dynamics/no_para/Profile_plot.png",
@@ -591,7 +704,9 @@ save(subset_data_ri,
      subset_data_sigJn,
      subset_data_sigF,
      subset_data_k_Si,
-     subset_data_k_Sn, file = "data/Target_dynamics/no_para/profile_graph_data.rda")
+     subset_data_k_Sn,
+     combine_subset_ri_f_Si,
+     combine_subset_rn_f_Sn, file = "data/Target_dynamics/no_para/profile_graph_data.rda")
 
 
 save(mcap_object_ri,
@@ -606,7 +721,9 @@ save(mcap_object_ri,
      mcap_object_sigJn,
      mcap_object_sigF,
      mcap_object_k_Si,
-     mcap_object_k_Sn, file = "data/Target_dynamics/no_para/profile_mcap_object.rda")
+     mcap_object_k_Sn,
+     mcap_object_ri_f_Si,
+     mcap_object_rn_f_Sn, file = "data/Target_dynamics/no_para/profile_mcap_object.rda")
 
 
 ci_table = cbind(mcap_object_ri$ci,
@@ -621,7 +738,9 @@ ci_table = cbind(mcap_object_ri$ci,
                  mcap_object_sigJn$ci,
                  mcap_object_sigF$ci,
                  mcap_object_k_Si$ci,
-                 mcap_object_k_Sn$ci)
+                 mcap_object_k_Sn$ci,
+                 mcap_object_ri_f_Si$ci,
+                 mcap_object_rn_f_Sn$ci)
 
 ci_table = rbind(ci_table,c(mcap_object_ri$mle,
                             mcap_object_rn$mle,
@@ -635,12 +754,14 @@ ci_table = rbind(ci_table,c(mcap_object_ri$mle,
                             mcap_object_sigJn$mle,
                             mcap_object_sigF$mle,
                             mcap_object_k_Si$mle,
-                            mcap_object_k_Sn$mle))
+                            mcap_object_k_Sn$mle,
+                            mcap_object_ri_f_Si$mle,
+                            mcap_object_rn_f_Sn$mle))
 
 
 rownames(ci_table) = c("2.5%","97.5%","MLE")
 colnames(ci_table) = c('ri','rn','f_Si','f_Sn','theta_Sn','theta_Si',
-                       'theta_Ji','theta_Jn','sigJi','sigJn','sigF','k_Si','k_Sn')
+                       'theta_Ji','theta_Jn','sigJi','sigJn','sigF','k_Si','k_Sn','ri_f_Si','rn_f_Sn')
 ci_table = as.data.frame(ci_table)
 save(ci_table, file = 'data/Target_dynamics/no_para/profile_ci_table.rda')
 

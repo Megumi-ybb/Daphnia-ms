@@ -613,6 +613,8 @@ sigF = dent_para_parameters[['sigF']]
 k_Sn = dent_para_parameters[['k_Sn']]
 k_In = dent_para_parameters[['k_In']]
 xi = dent_para_parameters[['xi']]
+probn_f_Sn = probn * f_Sn
+rn_f_Sn = rn * f_Sn
 xi_J = 1
 beta_n = 30
 mu = 0.37
@@ -636,6 +638,8 @@ $P$   & Spore density                             & $10^3 \cdot \mathrm{spore} \
 $r^{\native}$ &  Birth rate of juvenile                        & $\mathrm{individual} \cdot 10^{-6}\cdot \mathrm{cell}^{-1}$ & \Sexpr{mysignif(rn,2)}  & (\Sexpr{mysignif(ci_table$rn[1],2)},\Sexpr{mysignif(ci_table$rn[2],2)})\\
 $f^{\native}_{S}$ & Susceptible adult host filtering rate   &  $\mathrm{L} \cdot \mathrm{individual}^{-1} \cdot \mathrm{day}^{-1}$   & \Sexpr{mysignif(f_Sn,2)}  & (\Sexpr{mysignif(ci_table$f_Sn[1],2)},\,\Sexpr{mysignif(ci_table$f_Sn[2],2)})\\
 $p^{\native}$          & Number of infections per spore            &     $10^{-3} \cdot \mathrm{individual} \cdot \mathrm{spore}^{-1} $ & \Sexpr{mysignif(probn,2)}  & (\Sexpr{mysignif(ci_table$probn[1],2)},\,\Sexpr{mysignif(ci_table$probn[2],2)})\\
+$p^{\native} \cdot f_{S^{\native}}$          & Effective infection rate of native adult hosts per‐spore      &     $10^{-3} \cdot \mathrm{L} \cdot \mathrm{spore}^{-1} \cdot \mathrm{day}^{-1}$  & \Sexpr{mysignif(probn_f_Sn,2)}  & (\Sexpr{mysignif(ci_table$pn_f_Sn[1],2)},\Sexpr{mysignif(ci_table$pn_f_Sn[2],2)})\\
+$r^{\native} \cdot f_{S^{\native}}$          & Effective Birth rate of native juvenile            &     $10^{-6} \cdot \mathrm{L} \cdot \mathrm{cell}^{-1} \cdot \mathrm{day}^{-1} $ & \Sexpr{mysignif(rn_f_Sn,2)}  & (\Sexpr{mysignif(ci_table$rn_f_Sn[1],2)},\Sexpr{mysignif(ci_table$rn_f_Sn[2],2)})\\
 $\theta^{\native}_{S}$ & Susceptible adult host mortality rate     &     $  \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Sn,2)}  & (\Sexpr{0},\,\Sexpr{mysignif(ci_table$theta_Sn[2],2)})\\
 $\theta^{\native}_{I}$ & Infected adult host mortality rate        &     $  \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_In,2)}  & (\Sexpr{mysignif(ci_table$theta_In[1],2)},\,\Sexpr{mysignif(ci_table$theta_In[2],2)})\\
 $\theta^{\native}_{J}$ & Juvenile mortality rate        &     $ \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Jn,2)}  & (\Sexpr{0},\,\Sexpr{mysignif(ci_table$theta_Jn[2],2)})\\
@@ -680,6 +684,8 @@ sigF = lum_para_parameters[['sigF']]
 k_Si = lum_para_parameters[['k_Si']]
 k_Ii = lum_para_parameters[['k_Ii']]
 xi = lum_para_parameters[['xi']]
+probi_f_Si = probi * f_Si
+ri_f_Si = ri * f_Si
 xi_J = 1
 beta_i = 30
 mu = 0.37
@@ -703,6 +709,8 @@ $P$   & Spore density                             & $10^3 \cdot \mathrm{spore} \
 $r^{\invasive}$ &  Birth rate of juvenile                        & $\mathrm{individual} \cdot 10^{-6}\cdot \mathrm{cell}^{-1}$ & \Sexpr{mysignif(ri,2)}  & (\Sexpr{mysignif(ci_table$ri[1],2)},\Sexpr{mysignif(ci_table$ri[2],2)})\\
 $f^{\invasive}_{S}$ & Susceptible adult host filtering rate   &  $\mathrm{L} \cdot \mathrm{individual}^{-1} \cdot \mathrm{day}^{-1}$   & \Sexpr{mysignif(f_Si,2)}  & (\Sexpr{mysignif(ci_table$f_Si[1],2)},\Sexpr{mysignif(ci_table$f_Si[2],2)})\\
 $p^{\invasive}$          & Number of infections per spore            &     $10^{-3} \cdot \mathrm{individual} \cdot \mathrm{spore}^{-1} $ & \Sexpr{mysignif(probi,2)}  & (\Sexpr{mysignif(ci_table$probi[1],2)},\Sexpr{mysignif(ci_table$probi[2],2)})\\
+$p^{\invasive} \cdot f_{S^{\invasive}}$          & Effective infection rate of invasive adult hosts per‐spore      &     $10^{-3} \cdot \mathrm{L} \cdot \mathrm{spore}^{-1} \cdot \mathrm{day}^{-1}$ & \Sexpr{mysignif(probi_f_Si,2)}  & (\Sexpr{mysignif(ci_table$pi_f_Si[1],2)},\Sexpr{mysignif(ci_table$pi_f_Si[2],2)})\\
+$r^{\invasive} \cdot f_{S^{\invasive}}$          & Effective Birth rate of invasive juvenile            &     $10^{-6} \cdot \mathrm{L} \cdot \mathrm{cell}^{-1} \cdot \mathrm{day}^{-1} $ & \Sexpr{mysignif(ri_f_Si,2)}  & (\Sexpr{mysignif(ci_table$ri_f_Si[1],2)},\Sexpr{mysignif(ci_table$ri_f_Si[2],2)})\\
 $\theta^{\invasive}_{S}$ & Susceptible adult host mortality rate     &     $ \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Si,2)}  & (\Sexpr{mysignif(ci_table$theta_Si[1],2)},\Sexpr{mysignif(ci_table$theta_Si[2],2)})\\
 $\theta^{\invasive}_{I}$ & Infected adult host mortality rate        &     $ \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Ii,2)}  & (\Sexpr{mysignif(ci_table$theta_Ii[1],2)},\Sexpr{mysignif(ci_table$theta_Ii[2],2)})\\
 $\theta^{\invasive}_{J}$ & Juvenile mortality rate        &     $  \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Ji,2)}  & (\Sexpr{0},\Sexpr{mysignif(ci_table$theta_Ji[2],2)})\\
@@ -1047,6 +1055,8 @@ sigSi = target_no_para_parameters[['sigSi']]
 sigJi = target_no_para_parameters[['sigJi']]
 sigF = target_no_para_parameters[['sigF']]
 k_Si = target_no_para_parameters[['k_Si']]
+rn_f_Sn = rn * f_Sn
+ri_f_Si = ri * f_Si
 xi_J = 1
 beta_i = 30
 mu = 0.37
@@ -1071,6 +1081,8 @@ $r^{\native}$ & Birth rate of native juvenile                        & $\mathrm{
 $r^{\invasive}$ & Birth rate of invasive juvenile                      & $\mathrm{individual} \cdot 10^{-6}\cdot \mathrm{cell}^{-1}$ & \Sexpr{mysignif(ri,2)}  & (\Sexpr{mysignif(ci_table$ri[1],2)},\Sexpr{mysignif(ci_table$ri[2],2)})\\
 $f^{\native}_{S}$ & Native susceptible adult host filtering rate   &  $\mathrm{L} \cdot \mathrm{individual}^{-1} \cdot \mathrm{day}^{-1}$   & \Sexpr{mysignif(f_Sn,2)}  & (\Sexpr{mysignif(ci_table$f_Sn[1],2)},\Sexpr{mysignif(ci_table$f_Sn[2],2)})\\
 $f^{\invasive}_{S}$ & Invasive susceptible adult host filtering rate &  $\mathrm{L} \cdot \mathrm{individual}^{-1} \cdot \mathrm{day}^{-1}$   & \Sexpr{mysignif(f_Si,2)}  & (\Sexpr{0},\Sexpr{mysignif(ci_table$f_Si[2],2)})\\
+$r^{\native} \cdot f_{S^{\native}}$          & Effective Birth rate of native juvenile            &     $10^{-6} \cdot \mathrm{L} \cdot \mathrm{cell}^{-1} \cdot \mathrm{day}^{-1} $ & \Sexpr{mysignif(rn_f_Sn,2)}  & (\Sexpr{mysignif(ci_table$rn_f_Sn[1],2)},\Sexpr{mysignif(ci_table$rn_f_Sn[2],2)})\\
+$r^{\invasive} \cdot f_{S^{\invasive}}$          & Effective Birth rate of invasive juvenile            &     $10^{-6} \cdot \mathrm{L} \cdot \mathrm{cell}^{-1} \cdot \mathrm{day}^{-1} $ & \Sexpr{mysignif(ri_f_Si,2)}  & (\Sexpr{mysignif(ci_table$ri_f_Si[1],2)},\Sexpr{mysignif(ci_table$ri_f_Si[2],2)})\\
 $\theta^{\native}_{S}$ & Native susceptible adult host mortality rate     &     $  \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Sn,2)}  & (\Sexpr{mysignif(ci_table$theta_Sn[1],2)},\Sexpr{mysignif(ci_table$theta_Sn[2],2)})\\
 $\theta^{\invasive}_{S}$ & Invasive susceptible adult host mortality rate   &     $  \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Si,2)}  & (\Sexpr{mysignif(ci_table$theta_Si[1],2)},\Sexpr{mysignif(ci_table$theta_Si[2],2)})\\
 $\theta^{\native}_{J}$ & Native juvenile mortality rate        &     $   \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Jn,2)}  & (\Sexpr{mysignif(ci_table$theta_Jn[1],2)},\Sexpr{mysignif(ci_table$theta_Jn[2],2)})\\
@@ -1421,7 +1433,7 @@ sigJn = dent_no_para_parameters[['sigJn']]
 sigSn = 0
 sigF = dent_no_para_parameters[['sigF']]
 k_Sn = dent_no_para_parameters[['k_Sn']]
-
+rn_f_Sn = rn * f_Sn
 xi_J = 1
 mu = 0.37
 delta = 0.013
@@ -1441,6 +1453,7 @@ $J^{\native}$ & Juvenile host density    & $ \mathrm{individual} \cdot L ^{-1}$ 
 $F$   & Alga density                              & $10^6 \cdot \mathrm{cell} \cdot L ^{-1}$             & Variable                & \\
 $r^{\native}$ &  Birth rate of juvenile                        & $\mathrm{individual} \cdot 10^{-6}\cdot \mathrm{cell}^{-1}$ & \Sexpr{mysignif(rn,2)}  & (\Sexpr{mysignif(ci_table$rn[1],2)},\Sexpr{mysignif(ci_table$rn[2],2)})\\
 $f^{\native}_{S}$ & Susceptible adult host filtering rate   &  $\mathrm{L} \cdot \mathrm{individual}^{-1} \cdot \mathrm{day}^{-1}$   & \Sexpr{mysignif(f_Sn,2)}  & (\Sexpr{mysignif(ci_table$f_Sn[1],2)},\Sexpr{mysignif(ci_table$f_Sn[2],2)})\\
+$r^{\native} \cdot f_{S^{\native}}$          & Effective Birth rate of native juvenile            &     $10^{-6} \cdot \mathrm{L} \cdot \mathrm{cell}^{-1} \cdot \mathrm{day}^{-1} $ & \Sexpr{mysignif(rn_f_Sn,2)}  & (\Sexpr{mysignif(ci_table$rn_f_Sn[1],2)},\Sexpr{mysignif(ci_table$rn_f_Sn[2],2)})\\
 $\theta^{\native}_{S}$ & Susceptible adult host mortality rate     &     $  \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Sn,2)}  & (\Sexpr{mysignif(ci_table$theta_Sn[1],2)},\Sexpr{mysignif(ci_table$theta_Sn[2],2)})\\
 $\theta^{\native}_{J}$ & Juvenile mortality rate        &     $ \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Jn,2)}  & (0,\Sexpr{mysignif(ci_table$theta_Jn[2],2)})\\
 $\lambda^{\native}_{J}$ & Maturation rate of the juvenile                  &     $ \mathrm{day}^{-1} $                  & \Sexpr{mysignif(lambda_Jn,2)}  & \\
@@ -1472,6 +1485,7 @@ sigSi = lum_no_para_parameters[['sigSi']]
 sigJi = lum_no_para_parameters[['sigJi']]
 sigF = lum_no_para_parameters[['sigF']]
 k_Si = lum_no_para_parameters[['k_Si']]
+ri_f_Si = ri * f_Si
 xi_J = 1
 mu = 0.37
 delta = 0.013
@@ -1491,6 +1505,7 @@ $J^{\invasive}$ & Juvenile host density    & $ \mathrm{individual} \cdot L ^{-1}
 $F$   & Alga density                              & $10^6 \cdot \mathrm{cell} \cdot L ^{-1}$             & Variable                & \\
 $r^{\invasive}$ &  Birth rate of juvenile                        & $\mathrm{individual} \cdot 10^{-6}\cdot \mathrm{cell}^{-1}$ & \Sexpr{mysignif(ri,2)}  & (\Sexpr{mysignif(ci_table$ri[1],2)},$\infty$)\\
 $f^{\invasive}_{S}$ & Susceptible adult host filtering rate   &  $\mathrm{L} \cdot \mathrm{individual}^{-1} \cdot \mathrm{day}^{-1}$   & \Sexpr{mysignif(f_Si,2)}  & (\Sexpr{0},\Sexpr{mysignif(ci_table$f_Si[2],2)})\\
+$r^{\invasive} \cdot f_{S^{\invasive}}$          & Effective Birth rate of invasive juvenile            &     $10^{-6} \cdot \mathrm{L} \cdot \mathrm{cell}^{-1} \cdot \mathrm{day}^{-1} $ & \Sexpr{mysignif(ri_f_Si,2)}  & (\Sexpr{mysignif(ci_table$ri_f_Si[1],2)},\Sexpr{mysignif(ci_table$ri_f_Si[2],2)})\\
 $\theta^{\invasive}_{S}$ & Susceptible adult host mortality rate     &     $ \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Si,2)}  & (\Sexpr{mysignif(ci_table$theta_Si[1],2)},\Sexpr{mysignif(ci_table$theta_Si[2],2)})\\
 $\theta^{\invasive}_{J}$ & Juvenile mortality rate        &     $ \mathrm{day}^{-1}$     & \Sexpr{mysignif(theta_Ji,2)}  & (\Sexpr{0},\Sexpr{mysignif(ci_table$theta_Ji[2],2)})\\
 $\lambda^{\invasive}_{J}$ & Maturation rate of the juvenile                  &     $ \mathrm{day}^{-1} $                  & \Sexpr{mysignif(lambda_Jn,2)}  & \\
