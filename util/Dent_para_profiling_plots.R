@@ -39,8 +39,8 @@ f_Sn_p <- ggplot() +
                  y = pf.loglik.of.mif.estimate), 
              color = "red", size = 2) + 
   labs(x =  TeX("$\\log(f^n_{S})$"), y = "log likelihood") +
-  theme(axis.text = element_text(size = 8),
-        axis.title = element_text(size = 10)) +
+  theme(axis.text = element_text(size = 11),
+        axis.title = element_text(size = 11)) +
   ylim(-580, -565)+
   # xlim(-9.5,-5.5)+
   theme_bw() +
@@ -82,8 +82,8 @@ k_In_p <- ggplot() +
                  y = pf.loglik.of.mif.estimate), 
              color = "red", size = 2) + 
   labs(x =  TeX("$\\log(\\tau^n_{I})$"), y = "log likelihood") +
-  theme(axis.text = element_text(size = 8),
-        axis.title = element_text(size = 10)) +
+  theme(axis.text = element_text(size = 11),
+        axis.title = element_text(size = 11)) +
   ylim(-580, -565)+
   xlim(-1,1.5)+
   theme_bw() +
@@ -124,8 +124,8 @@ k_Sn_p <- ggplot() +
                  y = pf.loglik.of.mif.estimate), 
              color = "red", size = 2) + 
   labs(x =  TeX("$\\log(\\tau^n_{S})$"), y = "log likelihood") +
-  theme(axis.text = element_text(size = 8),
-        axis.title = element_text(size = 10)) +
+  theme(axis.text = element_text(size = 11),
+        axis.title = element_text(size = 11)) +
   ylim(-580, -565)+
   theme_bw() +
   theme(axis.title.y = element_blank(),
@@ -163,8 +163,8 @@ probn_p <- ggplot() +
                  y = pf.loglik.of.mif.estimate), 
              color = "red", size = 2) + 
   labs(x =  TeX("$p^n$"), y = "log likelihood") +
-  theme(axis.text = element_text(size = 8),
-        axis.title = element_text(size = 10)) +
+  theme(axis.text = element_text(size = 11),
+        axis.title = element_text(size = 11)) +
   ylim(-580, -565)+
   theme_bw() +
   theme(axis.title.y = element_blank(),
@@ -206,8 +206,8 @@ rn_p <- ggplot() +
                  y = pf.loglik.of.mif.estimate), 
              color = "red", size = 2) + 
   labs(x =  TeX("$r^n$"), y = "log likelihood") +
-  theme(axis.text = element_text(size = 8),
-        axis.title = element_text(size = 10)) +
+  theme(axis.text = element_text(size = 11),
+        axis.title = element_text(size = 11)) +
   ylim(-580, -565)+
   theme_bw() +
   theme(axis.title.y = element_blank())  + 
@@ -243,8 +243,8 @@ sigF_p <- ggplot() +
                  y = pf.loglik.of.mif.estimate), 
              color = "red", size = 2) + 
   labs(x =  TeX("$\\log(\\sigma_{F})$"), y = "log likelihood") +
-  theme(axis.text = element_text(size = 8),
-        axis.title = element_text(size = 10)) +
+  theme(axis.text = element_text(size = 11),
+        axis.title = element_text(size = 11)) +
   ylim(-580, -565)+
   theme_bw() +
   theme(axis.title.y = element_blank(),
@@ -284,8 +284,8 @@ sigIn_p <- ggplot() +
                  y = pf.loglik.of.mif.estimate), 
              color = "red", size = 2) + 
   labs(x =  TeX("$\\log(\\sigma^n_{I})$"), y = "log likelihood") +
-  theme(axis.text = element_text(size = 8),
-        axis.title = element_text(size = 10)) +
+  theme(axis.text = element_text(size = 11),
+        axis.title = element_text(size = 11)) +
   ylim(-580, -565)+
   theme_bw() +
   theme(axis.title.y = element_blank(),
@@ -323,8 +323,8 @@ sigJn_p <- ggplot() +
                  y = pf.loglik.of.mif.estimate), 
              color = "red", size = 2) + 
   labs(x =  TeX("$\\log(\\sigma^n_{J})$"), y = "log likelihood") +
-  theme(axis.text = element_text(size = 8),
-        axis.title = element_text(size = 10)) +
+  theme(axis.text = element_text(size = 11),
+        axis.title = element_text(size = 11)) +
   ylim(-580, -565)+
   xlim(-3,0)+
   theme_bw() +
@@ -363,8 +363,8 @@ sigP_p <- ggplot() +
                  y = pf.loglik.of.mif.estimate), 
              color = "red", size = 2) + 
   labs(x =  TeX("$\\log(\\sigma_{P})$"), y = "log likelihood") +
-  theme(axis.text = element_text(size = 8),
-        axis.title = element_text(size = 10)) +
+  theme(axis.text = element_text(size = 11),
+        axis.title = element_text(size = 11)) +
   ylim(-580, -565)+
   theme_bw() +
   theme(axis.title.y = element_blank(),
@@ -402,8 +402,8 @@ theta_In_p <- ggplot() +
                  y = pf.loglik.of.mif.estimate), 
              color = "red", size = 2) + 
   labs(x =  TeX("$\\log(\\theta^n_{I})$"), y = "log likelihood") +
-  theme(axis.text = element_text(size = 8),
-        axis.title = element_text(size = 10)) +
+  theme(axis.text = element_text(size = 11),
+        axis.title = element_text(size = 11)) +
   ylim(-580, -565)+
   xlim(-2,0.5)+
   theme_bw() +
@@ -465,8 +465,8 @@ theta_Jn_p <- ggplot() +
                  y = pf.loglik.of.mif.estimate), 
              color = "red", size = 2) + 
   labs(x =  TeX("$\\log(\\theta^n_{J})$"), y = "log likelihood") +
-  theme(axis.text = element_text(size = 8),
-        axis.title = element_text(size = 10)) +
+  theme(axis.text = element_text(size = 11),
+        axis.title = element_text(size = 11)) +
   ylim(-580, -565)+
   # xlim(-2.2,0)+
   theme_bw() +
@@ -505,8 +505,8 @@ theta_P_p <- ggplot() +
                  y = pf.loglik.of.mif.estimate), 
              color = "red", size = 2) + 
   labs(x =  TeX("$\\log(\\theta_{P})$"), y = "log likelihood") +
-  theme(axis.text = element_text(size = 8),
-        axis.title = element_text(size = 10)) +
+  theme(axis.text = element_text(size = 11),
+        axis.title = element_text(size = 11)) +
   ylim(-580, -565)+
   # xlim(-2.2,0)+
   theme_bw() +
@@ -548,8 +548,8 @@ theta_Sn_p <- ggplot() +
                  y = pf.loglik.of.mif.estimate), 
              color = "red", size = 2) + 
   labs(x =  TeX("$\\log(\\theta^n_{S})$"), y = "log likelihood") +
-  theme(axis.text = element_text(size = 8),
-        axis.title = element_text(size = 10)) +
+  theme(axis.text = element_text(size = 11),
+        axis.title = element_text(size = 11)) +
   ylim(-580, -565)+
   xlim(-15,-5)+
   theme_bw() +
@@ -585,8 +585,8 @@ xi_p <- ggplot() +
                  y = pf.loglik.of.mif.estimate), 
              color = "red", size = 2) + 
   labs(x =  TeX("$\\log(\\xi)$"), y = "log likelihood") +
-  theme(axis.text = element_text(size = 8),
-        axis.title = element_text(size = 10)) +
+  theme(axis.text = element_text(size = 11),
+        axis.title = element_text(size = 11)) +
   ylim(-580, -565)+
   # xlim(-2.2,0)+
   theme_bw() +
