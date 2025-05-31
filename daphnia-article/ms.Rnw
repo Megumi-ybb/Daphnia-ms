@@ -277,7 +277,7 @@ Here, we investigate how this competition is affected by a parasite that infects
 
 Female \textit{Daphnia} reproduce asexually in favorable situations, parthenogenetically producing female offspring equipped for parthenogenetic reproduction.
 Maturation of juveniles to adults takes approximately five to ten days, depending on environmental conditions.
-In response to adverse environmental cues, \textit{Daphnia} produce males and females begin reproducing sexually, producing durable resting eggs called ephippia \citep{radzikowski18,searle16salinization}.
+In response to adverse environmental cues, \textit{Daphnia} produce males, and females reproduce sexually to produce durable resting eggs called ephippia \citep{radzikowski18,searle16salinization}.
 The ephippia can remain viable for many years, awaiting the return of favorable conditions.
 
 {\it Daphnia} become infected by the parasite by ingesting free-floating spores as they filter the water to extract food.
@@ -840,8 +840,8 @@ Comparison of model fit for mechanistic models and non-mechanistic benchmarks.}
 
 Parameter estimates and confidence intervals for the SIRJPF2 model are in Table~\ref{tab:estimates}, which also includes a brief description of the parameter mechanism and the corresponding measurement units.
 The log-likelihood, AIC and number of parameters for this model is compared against alternatives in Table~\ref{Table:Model_comparison}.
-Differences in AIC values between models are intepretable only between alternative models for the same data, so we fit a few statistical benchmarks to help calibrate these results.
-For comparison, we fit a negative binomial regression model with dependence on linear, quadratic, and cubic version of the measurement time.
+Differences in AIC values between models are intepretable only between alternative models for the same data, so we fit statistical benchmark models to calibrate these results.
+Specifically, we fit negative binomial regression models with linear, quadratic, and cubic dependence on time.
 Comparing a mechanistic model to a simple statistical benchmark model is a useful test of model specification, since it reveals quickly whether the mechanistic model is constructed in a way that is statistically compatible with the data \citep{wheeler24,li24}.
 The negative binomial models with polynomial (quadratic or cubic) terms fit the dynamics better than a linear trend.
 Although these more flexible polynomial expansions do not represent latent biological processes directly, they better capture the non-linearlity of the system, leading to a higher log-likelihood and a lower AIC than the linear model.
@@ -852,9 +852,6 @@ We also consider several variants of the SIRJPF2 model described here, namely a 
 The SIRPF2 model ignores the process of maturation of juvenile and instead highlights the infection process of the \textit{Daphnia} adult populations.
 While this model does have an improved statistical fit compared to the deterministic ODE model of \citet{searle16} and other benchmark models, it has weaker performance than the model that accounts for the effect of juveniles on population dynamics.
 
-If the goal of modeling a dynamic system is forecasting future states of the system, a model that has a better statistical fit is expected to make more accurate predictions.
-Because the improvements to model fits evidence the observed data more accurately, it more faithfully captures the underlying ecological mechanisms, which thereby uncovering new scientific insights.
-Thus, the process of developing new models for existing data and reporting consequent improvements in model fit raises the bar for subsequent studies, enabling the continual advancement of our scientific understanding of a given system. 
 
 Our SIRJPF2 model quantitatively describes the observed data better than any of the alternatives, while simultaneously providing a plausible mechanistic description of the experimental system.
 Having assessed the fit of our model, we have some support for interpreting the estimated parameters of the model.
@@ -873,11 +870,14 @@ For field data, one may expect the need for unit-specific parameters describing 
 For example, in a PanelPOMP analysis of pre-vaccine polio transmission dynamics for state-level data in USA, \citet{breto20} used unit-specific parameters to describe variations in the seasonality of transmission across units.
 Modeling decisions concerning shared and unit-specific parameters are testable hypotheses that are of scientific interest in the quest for a parsimonious understanding of the dynamics, and for understanding sources of variation.
 
-In our selected model, the feeding rate of the invasive {\it Daphnia} species ($f^{\invasive}_{S}$)is not statistically significantly different from that of the native {\it Daphnia} species ($f^{\native}_{S}$).
-And the invasive species has a lower rate of infection per consumed spore ($p^{\native} < p^{\invasive}$), consistent with Fig.~1C of \citet{searle16}.
+In our selected model, the feeding rate of the invasive {\it Daphnia} species ($f^{\invasive}_{S}$) is not statistically significantly different from that of the native {\it Daphnia} species ($f^{\native}_{S}$).
+Also, the invasive species has a lower rate of infection per consumed spore ($p^{\native} < p^{\invasive}$), consistent with Fig.~1C of \citet{searle16}.
 The native parameters—juvenile growth $r^{\native}$, feeding rate $f^{\native}_{S}$ and infection probability $p^{\native}$ show full identifiability as shown in Fig.~S1, whereas the corresponding invasive parameters $r^{\invasive},\,f^{\invasive}_{S},\,p^{\invasive}$ are only bounded on one side. 
-This asymmetry is attributable to (i) the lower density of \textit{D. lumholtzi} allows less potential data collection error tolerance; (ii) the product of these terms governs the juvenile growth and infection process, which allows individual invasive coefficients to vary so long as their products remain fixed; and (iii) host-only experiments with simplified dynamics (Fig.~S8) in which these parameters become fully identifiable, confirming that their limited identifiability in the full model is data–, not model–, driven.
-However, we achieve the identifiability of the effective infection rate ($p^{\native}f_{S^{\native}}$, $p^{\invasive}f_{S^{\invasive}}$), and the effective juvenile birth rate ($r^{\native}f_{S^{\native}}$, $r^{\invasive}f_{S^{\invasive}}$), which support our model's scientific interpretability.
+This limited identifiability is attributable to
+(i) the lower density of \textit{D. lumholtzi} which may increast stochastic effects;
+(ii) model complexity, since the parameters become identifiable in host-only experiments with simplified dynamics (Fig.~S8);
+(iii) the product of these parameters governs the juvenile growth and infection process, which allows individual invasive coefficients to vary so long as their products remain fixed.
+To investigate this last explanation, Table~\ref{tab:estimates} shows relatively precise identifiability of the effective infection rate ($p^{\native}f^{\native}_{S}$, $p^{\invasive}f^{\invasive}_{S}$), and the effective juvenile birth rate ($r^{\native}f^{\native}_{S}$, $r^{\invasive}f^{\invasive}_{S}$).
 At the same time, the identifiability of the measurement error parameter ($\tau^{\native}_{S},\,\tau^{\invasive}_{S},\,\tau^{\native}_{I},\,\tau^{\invasive}_{I}$) explains variability that would otherwise inflate weakly identified process-noise terms.
 Our results indicate that stochasticity in the juvenile stage ($\sigma^{\native}_{J}$ and $\sigma^{\invasive}_{J}$), food ($\sigma_{F}$) and parasite ($\sigma_{P}$) dynamics are important model features, needed to adequately describe the data (see the corresponding confidence intervals in Table~\ref{tab:estimates} and the profile likelihood plots in Fig.~S1).
 That suggests the juvenile stage, food and parasite dynamics are particularly sensitive to unmodeled phenomena, such as lower fitness resulting from resource depletion, since unmodeled phenomena can be explained by the model as stochastic uncertainty.
@@ -1140,6 +1140,10 @@ Subsequent experimentation could substantiate or refute this prediction, and our
 
 Deterministic dynamic models continue to be widely used for ecological theory, despite the fact that inclusion of stochasticity can both improve model fit and enable diagnosis of model shortcomings \citep{king15}.
 We demonstrate that including stochasticity can also lead to more parsimonious understanding of the system, since, in our case study, the dynamic stochasticity obviates a need for mesocosm-specific parameters to explain the difference between the experimental replicates.
+
+This study has focused on the task of fitting models to understand the biological dynamics.
+This is closely related to the task of forecasting: fitting by maximum likelihood is equivalent to assessing one-step forecasting skill, and the AIC criterion is designed to evaluate out-of-sample predictive skill \citep{aic74}.
+Within this framework, the goals of model-based biological understanding and forecasting are therefore closely aligned.
 
 We have analyzed data collected in a controlled environment, raising the question of the applicability of our methods to field ecosystems. 
 The applicability of our approach is contingent on having panel data of sufficient length and quality to inform interactions between species.

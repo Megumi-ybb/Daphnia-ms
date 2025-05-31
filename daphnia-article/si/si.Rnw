@@ -166,6 +166,15 @@ A smoothed estimate of the profile likelihood is used to reduce Monte Carlo erro
 MCAP is particularly useful for high-dimensional situations, such as arise in panel data analysis, since it becomes practically impossible to apply sufficient computational effort to make Monte Carlo error negligible.
 MCAP has previously been demonstrated for panel iterated filtering by \citet{breto20}.
 
+\parskip 3mm
+
+To investigate identifability, we carried out an additional exploration to obtain estimates, profiles and confidence intervals for the composite parameters,  $r^{\species}f^{\species}_{S}$ and $r^{\species}f^{\species}_{S}$, as well as the individual parameters.
+We could have reparameterized to apply MCAP to these composite parameters exactly as we did for the individual parameters.
+However, for this additional analysis we made a simplification by re-using the calculations for the original profiles.
+For every point on every profile, computed for the individual parameters, we calculated the value of the composite parameters.
+We obtained the highest log-likelihoods within a grid of values for the composite parameters and applied MCAP to these values.
+We have found previously that these ``poor man's profiles'' provide a reasonable approximation to the true profile, while avoiding the need to work with a reparameterized version of the model.
+
 \section{The Panel Iterated Filtering Algorithm}
 
 \begin{algorithm}[h]
@@ -234,7 +243,8 @@ Additional generality is provided by the pseudocode in \cite{breto25} that is im
     \includegraphics[width=\linewidth]{profile/Target_dynamics/para/Profile_plot.png}
     \caption{Monte Carlo Adjusted Profile results of SIRJPF2 model for mixed species Parasitized dynamics.
     The vertical dotted lines represent the 95\% confidence interval obtained by MCAP.
-    The vertical blue lines show the MLE by MCAP method. And the red vertical lines are the estimated parameters by the panelPOMP. }
+    The vertical blue lines show the MLE estimated using MCAP.
+    The red vertical lines correspond to the model with the overall highest likelihood among all searches. }
     \label{fig:SIRJPF2_profile}
 \end{figure}
 
@@ -740,7 +750,9 @@ $\tau^{\invasive}_{I}$      &  Measurement dispersion for infected adult        
     \includegraphics[width=\linewidth]{profile/Simple_dynamics/Dent/para/Profile_plot.png}
     \caption{Monte Carlo Adjusted Profile results of SIRJPF model for \textit{D.~dentifera}-only dynamics.
     The vertical dotted lines represent the 95\% confidence interval obtained by MCAP.
-    The vertical blue lines show the MLE by MCAP method. And the red vertical lines are the estimated parameters by the panelPOMP.}
+    The vertical blue lines show the MLE estimated using MCAP.
+    The red vertical lines correspond to the model with the overall highest likelihood among all searches.
+    }
     \label{fig:SIRJPF_dent_profile}
 \end{figure}
 
@@ -749,7 +761,9 @@ $\tau^{\invasive}_{I}$      &  Measurement dispersion for infected adult        
     \includegraphics[width=\linewidth]{profile/Simple_dynamics/Lum/para/Profile_plot.png}
     \caption{Monte Carlo Adjusted Profile results of SIRJPF model for \textit{D.~lumholtzi}-only dynamics.
     The vertical dotted lines represent the 95\% confidence interval obtained by MCAP.
-    The vertical blue lines show the MLE by MCAP method. And the red vertical lines are the estimated parameters by the panelPOMP.}
+    The vertical blue lines show the MLE estimated using MCAP.
+    The red vertical lines correspond to the model with the overall highest likelihood among all searches.
+}
     \label{fig:SIRJPF_native_profile}
 \end{figure}
 
@@ -1114,7 +1128,9 @@ $\tau^{\invasive}_{S}$      &  Measurement dispersion for susceptible invasive a
     \includegraphics[width=\linewidth]{profile/Target_dynamics/no_para/Profile_plot.png}
     \caption{Monte Carlo Adjusted Profile results of SRJF2 model for dynamics with both species of \textit{Daphnia}.
     The vertical dotted lines represent the 95\% confidence interval obtained by MCAP.
-    The vertical blue lines show the MLE by MCAP method. And the red vertical lines are the estimated parameters by the panelPOMP.}
+    The vertical blue lines show the MLE estimated using MCAP.
+    The red vertical lines correspond to the model with the overall highest likelihood among all searches.
+}
     \label{fig:SRJF2_profile}
 \end{figure}
 
@@ -1529,7 +1545,9 @@ $\tau^{\invasive}_{S}$      &  Measurement dispersion for susceptible adult     
     \includegraphics[width=\linewidth]{profile/Simple_dynamics/Dent/no_para/Profile_plot.png}
     \caption{Monte Carlo Adjusted Profile results of SRJF model for \textit{D.~dentifera}-only dynamics.
     The vertical dotted lines represent the 95\% confidence interval obtained by MCAP.
-    The vertical blue lines show the MLE by MCAP method. And the red vertical lines are the estimated parameters by the panelPOMP.}
+    The vertical blue lines show the MLE estimated using MCAP.
+    The red vertical lines correspond to the model with the overall highest likelihood among all searches.
+}
     \label{fig:SRJF_dent_profile}
 \end{figure}
 
@@ -1538,7 +1556,9 @@ $\tau^{\invasive}_{S}$      &  Measurement dispersion for susceptible adult     
     \includegraphics[width=\linewidth]{profile/Simple_dynamics/Lum/no_para/Profile_plot.png}
     \caption{Monte Carlo Adjusted Profile results of SRJF model for \textit{D.~lumholtzi}-only dynamics.
     The vertical dotted lines represent the 95\% confidence interval obtained by MCAP.
-    The vertical blue lines show the MLE by MCAP method. And the red vertical lines are the estimated parameters by the panelPOMP.}
+    The vertical blue lines show the MLE estimated using MCAP.
+    The red vertical lines correspond to the model with the overall highest likelihood among all searches.
+}
     \label{fig:SRJF_lum_profile}
 \end{figure}
 
