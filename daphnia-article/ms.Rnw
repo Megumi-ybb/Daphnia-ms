@@ -874,7 +874,7 @@ In our selected model, the feeding rate of the invasive {\it Daphnia} species ($
 Also, the invasive species has a lower rate of infection per consumed spore ($p^{\native} < p^{\invasive}$), consistent with Fig.~1C of \citet{searle16}.
 The native parameters—juvenile growth $r^{\native}$, feeding rate $f^{\native}_{S}$ and infection probability $p^{\native}$ show full identifiability as shown in Fig.~S1, whereas the corresponding invasive parameters $r^{\invasive},\,f^{\invasive}_{S},\,p^{\invasive}$ are only bounded on one side. 
 This limited identifiability is attributable to
-(i) the lower density of \textit{D. lumholtzi} which may increast stochastic effects;
+(i) the lower density of \textit{D. lumholtzi} which may increase stochastic effects;
 (ii) model complexity, since the parameters become identifiable in host-only experiments with simplified dynamics (Fig.~S8);
 (iii) the product of these parameters governs the juvenile growth and infection process, which allows individual invasive coefficients to vary so long as their products remain fixed.
 To investigate this last explanation, Table~\ref{tab:estimates} shows relatively precise identifiability of the effective infection rate ($p^{\native}f^{\native}_{S}$, $p^{\invasive}f^{\invasive}_{S}$), and the effective juvenile birth rate ($r^{\native}f^{\native}_{S}$, $r^{\invasive}f^{\invasive}_{S}$).

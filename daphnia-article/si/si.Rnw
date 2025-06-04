@@ -168,12 +168,13 @@ MCAP has previously been demonstrated for panel iterated filtering by \citet{bre
 
 \parskip 3mm
 
-To investigate identifability, we carried out an additional exploration to obtain estimates, profiles and confidence intervals for the composite parameters,  $r^{\species}f^{\species}_{S}$ and $r^{\species}f^{\species}_{S}$, as well as the individual parameters.
+To investigate identifiability, we carried out an additional exploration to obtain estimates, profiles and confidence intervals for the composite parameters,  $r^{\species}f^{\species}_{S}$ and $r^{\species}f^{\species}_{S}$, as well as the individual parameters.
 We could have reparameterized to apply MCAP to these composite parameters exactly as we did for the individual parameters.
 However, for this additional analysis we made a simplification by re-using the calculations for the original profiles.
 For every point on every profile, computed for the individual parameters, we calculated the value of the composite parameters.
 We obtained the highest log-likelihoods within a grid of values for the composite parameters and applied MCAP to these values.
 We have found previously that these ``poor man's profiles'' provide a reasonable approximation to the true profile, while avoiding the need to work with a reparameterized version of the model.
+We calculated these composite parameters only for the SIRJPF2 model, and the results are shown together with the individual parameters, in Table~1 and Figure~S-1.
 
 \section{The Panel Iterated Filtering Algorithm}
 
