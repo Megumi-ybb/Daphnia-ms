@@ -81,7 +81,7 @@ opts_chunk$set(echo = TRUE, cache = cache_option)
 @
 
 
-\if1\blind
+\if0\blind
 {
   \title{\bf Supplement to ``Mechanistic models for panel data: Analysis of ecological experiments with four interacting species''}
 \author{Bo Yang$^1$, Jesse Wheeler$^2$, Meghan A. Duffy$^3$, Aaron A. King$^{3,4}$ \\ and Edward L. Ionides$^2$\\
@@ -91,7 +91,7 @@ opts_chunk$set(echo = TRUE, cache = cache_option)
   \maketitle
 } \fi
 
-\if0\blind
+\if1\blind
 {
   \bigskip
   \bigskip
