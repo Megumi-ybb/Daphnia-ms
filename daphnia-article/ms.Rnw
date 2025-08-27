@@ -85,6 +85,7 @@
 %\newcommand\invasive{\textsc{i}}
 %\newcommand\Normal{\operatorname{N}}
 \newcommand\Normal{\mathrm{N}}
+\date{}
 \begin{document}
 \def\spacingset#1{\renewcommand{\baselinestretch}%
 {#1}\small\normalsize} \spacingset{1}
@@ -103,7 +104,7 @@ opts_chunk$set(echo = TRUE, cache = cache_option)
 {
   \title{\bf Mechanistic models for panel data: Analysis of ecological experiments with four interacting species}
 \author{Bo Yang \authoraddress Department of Biostatistics, University of Michigan \\
-        Jesse Wheeler  \authoraddress Department of Statistics, University of Michigan \\
+        Jesse Wheeler  \authoraddress Department of Statistics, University of Michigan \&  \authoraddress Department of Mathematics and Statistic, Idaho State University\\
 	Meghan A. Duffy  \authoraddress Department of Ecology and Evolutionary Biology, University of Michigan\\
         Aaron A. King  \authoraddress Department of Ecology and Evolutionary Biology \&  \authoraddress Center for the Study of Complex Systems, University of Michigan\\
         Edward L. Ionides \authoraddress Department of Statistics, University of Michigan}
@@ -200,13 +201,12 @@ load("data/raw_data.rda")
 Each process may correspond to a spatial location for field data, or to an experimental ecosystem in a designed experiment.
 Statistical models for ecological panel data should capture the high levels of nonlinearity, stochasticity, and measurement uncertainty inherent in ecological systems.
 Furthermore, the system dynamics may depend on unobservable variables.
-This study applies iterated particle filtering techniques to explore new possibilities for likelihood-based statistical analysis of these complex systems.
-We analyze data from a mesocosm experiment in which two species of the freshwater planktonic crustacean genus, {\it Daphnia}, coexist with an alga and a fungal parasite.
-Time series data were collected on replicated mesocosms under six treatment conditions.
-Iterated filtering enables maximization of the likelihood for scientifically motivated nonlinear partially observed Markov process models, providing access to standard likelihood-based methods for parameter estimation, confidence intervals, hypothesis testing, model selection and diagnostics.
-This toolbox allows scientists to propose and evaluate scientifically motivated stochastic dynamic models for panel data, constrained only by the requirement to write code to simulate from the model and to specify a measurement distribution describing how the system state is observed.
-Existing Bayesian tools cannot handle the nonlinear, partially observed Markov-process models, including ecological aspects. 
-Our iterated-filtering framework provides the a statistically efficient, likelihood-based solution, avoiding the information loss inherent in GMM or ABC approaches.
+This study applies iterated particle filtering techniques to explore possibilities for likelihood-based statistical analysis of these complex systems.
+We analyze time series data from six mesocosm experiments that includes two species of {\it Daphnia}, an alga and a fungal parasite.
+Iterated filtering enables maximization of the likelihood for scientifically motivated nonlinear partially observed Markov process (POMP) models, providing access to standard likelihood-based methods for parameter estimation, confidence intervals, model selection and diagnostics.
+This toolbox allows scientists to propose and evaluate scientifically motivated stochastic dynamic models for panel data, constrained only by specifying a measurement distribution describing how the system state is observed.
+Existing Bayesian tools cannot handle the nonlinear POMP models, including ecological aspects. 
+Our framework provides the a statistically efficient, likelihood-based solution, avoiding the information loss inherent in GMM or ABC approaches.
 \end{abstract}
 
 
@@ -250,7 +250,7 @@ Partially observed Markov process (POMP) models, also known as hidden Markov mod
   A major practical limitation has been the computational difficulty in carrying out inference.
   When Laplace approximations are applicable, the Template Model Builder approach is available \citep{kristensen16}.
 Iterated filtering techniques apply to a more general class of POMP models, but the high-dimensional nature of PanelPOMP models adds additional methodological challenges.
-At the same time, Bayesian method cannot accommodate the nonlinear, non-Gaussian mechanistic models considered here \citep{wigren22}, and no ecological study has yet achieved full-likelihood inference for them. 
+At the same time, Bayesian method cannot accommodate the nonlinear, non-Gaussian mechanistic models considered here \citep{wigren22}, and no ecological study has yet achieved full-likelihood inference for them \citep{haggstrom25}. 
   We are not aware of any previous scientific studies where nonlinear, non-Gaussian PanelPOMP models (with some parameters shared between units and some parameters specific to each unit) have been calibrated to multi-species panel data via maximum likelihood.
 
   A central question when using model-based statistical inference to investigate ecological dynamics is to discover which biological details are necessary to include in a model to provide an adequate statistical explanation for the data.
