@@ -85,6 +85,7 @@
 %\newcommand\invasive{\textsc{i}}
 %\newcommand\Normal{\operatorname{N}}
 \newcommand\Normal{\mathrm{N}}
+\date{}
 \begin{document}
 \def\spacingset#1{\renewcommand{\baselinestretch}%
 {#1}\small\normalsize} \spacingset{1}
@@ -103,7 +104,7 @@ opts_chunk$set(echo = TRUE, cache = cache_option)
 {
   \title{\bf Mechanistic models for panel data: Analysis of ecological experiments with four interacting species}
 \author{Bo Yang \authoraddress Department of Biostatistics, University of Michigan \\
-        Jesse Wheeler  \authoraddress Department of Statistics, University of Michigan \\
+        Jesse Wheeler  \authoraddress Department of Statistics, University of Michigan \&  \authoraddress Department of Mathematics and Statistic, Idaho State University\\
 	Meghan A. Duffy  \authoraddress Department of Ecology and Evolutionary Biology, University of Michigan\\
         Aaron A. King  \authoraddress Department of Ecology and Evolutionary Biology \&  \authoraddress Center for the Study of Complex Systems, University of Michigan\\
         Edward L. Ionides \authoraddress Department of Statistics, University of Michigan}
@@ -250,7 +251,7 @@ Partially observed Markov process (POMP) models, also known as hidden Markov mod
   A major practical limitation has been the computational difficulty in carrying out inference.
   When Laplace approximations are applicable, the Template Model Builder approach is available \citep{kristensen16}.
 Iterated filtering techniques apply to a more general class of POMP models, but the high-dimensional nature of PanelPOMP models adds additional methodological challenges.
-At the same time, standard Bayesian methods cannot accommodate the nonlinear, non-Gaussian mechanistic panel models considered here \citep{wigren22}, and no ecological study has yet achieved full-likelihood inference for them. 
+At the same time, Bayesian method cannot accommodate the nonlinear, non-Gaussian mechanistic models considered here \citep{wigren22}, and no ecological study has yet achieved full-likelihood inference for them \citep{haggstrom25}. 
   We are not aware of any previous scientific studies where nonlinear, non-Gaussian PanelPOMP models (with some parameters shared between units and some parameters specific to each unit) have been calibrated to multi-species panel data via maximum likelihood.
 
   A central question when using model-based statistical inference to investigate ecological dynamics is to discover which biological details are necessary to include in a model to provide an adequate statistical explanation for the data.
