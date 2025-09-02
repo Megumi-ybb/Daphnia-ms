@@ -181,12 +181,13 @@ load("data/raw_data.rda")
 \author[C]{\fnms{Meghan A.}~\snm{Duffy}\ead[label=e3]{duffymeg@umich.edu}},
 \author[C]{\fnms{Aaron A.}~\snm{King}\ead[label=e4]{kingaa@umich.edu}}
 \and
-\author[B]{\fnms{Edward}~\snm{Ionides}\ead[label=e5]{ionides@umich.edu}}
+\author[D]{\fnms{Edward}~\snm{Ionides}\ead[label=e5]{ionides@umich.edu}}
 
-\address[A]{Department of Biostatistics, University of Michigan \printead[presep={,\ }]{e1}}
-\address[B]{Department of Statistics, University of Michigan\printead[presep={,\ }]{e2,e5}}
-\address[C]{Department of Ecology and Evolutionary Biology, University of Michigan \printead[presep={,\ }]{e3,e4}}
-% \address[D]{Center for the Study of Complex Systems, University of Michigan\printead[presep={,\ }]{e4}}
+\address[A]{Department of Marketing, Columbia University \printead[presep={,\ }]{e1}}
+\address[B]{Department of Mathematics and Statistics, Idaho State University\printead[presep={,\ }]{e2}}
+\address[C]{Department of Ecology and Evolutionary Biology, University of Michigan
+\address[D]{Department of Statistics, University of Michigan\printead[presep={,\ }]{e5}}
+ \printead[presep={,\ }]{e3,e4}}
 \end{aug}
 } \fi
 
@@ -1152,8 +1153,7 @@ The flexibility of the PanelPOMP model class provides many opportunities for dev
 
 
 \begin{acks}[Acknowledgments]
-The corresponding author is Bo Yang.
-Jesse Wheeler is also affiliated with the Department of Mathematics and Statistics, Idaho State University.
+The corresponding author is Bo Yang with address 665 W 130th St, New York, NY 10027.
 Aaron A. King is additionally affiliated with the Center for the Study of Complex Systems, University of Michigan.
 \end{acks}
 
