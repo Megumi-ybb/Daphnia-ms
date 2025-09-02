@@ -1,4 +1,4 @@
-\documentclass[aoas]{imsart}
+\documentclass[aoas,preprint]{imsart}
 \usepackage{lmodern}
 \PassOptionsToPackage{unicode}{hyperref}
 \PassOptionsToPackage{hyphens}{url}

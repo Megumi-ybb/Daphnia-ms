@@ -1,4 +1,4 @@
-\documentclass[aoas]{imsart}
+\documentclass[aoas,preprint]{imsart}
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{graphicx}
@@ -222,7 +222,6 @@ Additional generality is provided by the pseudocode in \cite{breto25} that is im
 
 \section{SIRJPF2 Model}
 \subsection{Results}
-\subsubsection{MCAP Results}
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=\linewidth]{profile/Target_dynamics/para/Profile_plot.png}
@@ -236,8 +235,6 @@ Additional generality is provided by the pseudocode in \cite{breto25} that is im
 <<LoadSIRJPF2data, include=FALSE, cache=cache_option>>=
 load('../../data/Target_dynamics/para/Target_para_loglik_df.rds')
 @
-
-\subsubsection{Model Comparison}
 In the panelPOMP framework, one must decide whether or not each parameter should be unit specific, or shared across units.
 These decisions greatly affect the degree of freedom for each model. For example, with ten units in the model, adding a shared parameter increases the model’s dimension by one, and adding a unit specific parameter will increase the dimension by ten.
 An increase in parameter dimension increases the model’s ability to quantitatively describe the observed data, but leads to the possibility of over-fitting, resulting in a model with poor explanatory and predictive power.
@@ -269,8 +266,6 @@ $r^{\species}_{\unit}$ & \Sexpr{mysignif_ll_AIC(target_para_parameter_table[8,]$
 \label{Table:SIRJPF2_model_comparison}
 \end{table}
 
-\subsection{Simulation}
-
 \begin{figure}[H]
     \centering
     \includegraphics[width=\linewidth]{simulation/target_para_simulation/simulation_lines.png}
@@ -278,8 +273,6 @@ $r^{\species}_{\unit}$ & \Sexpr{mysignif_ll_AIC(target_para_parameter_table[8,]$
     \label{fig:SIRJPF2_simulation_lines}
 \end{figure}
 
-
-\subsection{Residual Analysis}
 
 \begin{figure}[H]
     \centering
@@ -359,7 +352,6 @@ These stochastic components represent environmental variability and other unpred
 By incorporating random fluctuations, the model offers a statistically motivated representation of population dynamics, extending beyond the deterministic framework used in previous analysis.
 In the following sections, we will present the flow diagram and parameter estimation results to further illustrate the interaction between latent states.
 
-\subsection{Flow Diagram}
 The SIRJPF model illustrates the interdependent dynamics among the Susceptible ($S$), Infected ($I$), Juvenile ($J$), Food ($F$), and Parasite ($P$) populations, with transitions representing ecological and biological interactions.
 The model integrates deterministic growth and mortality rates with stochastic components, providing a realistic framework for studying population fluctuations under variable environmental conditions.
 
@@ -421,7 +413,6 @@ The model integrates deterministic growth and mortality rates with stochastic co
 \label{fig:flow_SIRJPF}
 \end{figure}
 
-\subsection{Data Visualization}
 \begin{figure}[H]
 \centering
 <<DataVisSIRPFdent,echo=FALSE, fig.width=9,fig.height=4,out.width="\\textwidth", cache=cache_option>>=
@@ -616,7 +607,6 @@ mu = 0.37
 delta = 0.013
 lambda_Jn = 0.1
 @
-\subsubsection{Parameter Estimation}
 \begin{table}[H]
 \centering
 \resizebox{\textwidth}{!}{
@@ -687,7 +677,6 @@ mu = 0.37
 delta = 0.013
 lambda_Ji = 0.1
 @
-\subsubsection{Parameter Estimation}
 \begin{table}[H]
 \centering
 \resizebox{\textwidth}{!}{
@@ -729,7 +718,6 @@ $\tau^{\invasive}_{I}$      &  Measurement dispersion for infected adult        
 \label{Table:SIRJPF_invasive}
 \end{table}
 
-\subsubsection{MCAP Results}
 \begin{figure}[H]
     \centering
     \includegraphics[width=\linewidth]{profile/Simple_dynamics/Dent/para/Profile_plot.png}
@@ -752,7 +740,6 @@ $\tau^{\invasive}_{I}$      &  Measurement dispersion for infected adult        
     \label{fig:SIRJPF_native_profile}
 \end{figure}
 
-\subsubsection{Model Comparison}
 \begin{table}[h!]
 \centering
 \begin{center}
@@ -887,7 +874,6 @@ The term $\mu \, dt$ represents the refill rate of algae, contributing to its re
 The stochastic fluctuation $F_{\unit}(t) \, d\zeta_{F,\unit}$ introduces randomness into the algae dynamics, where $d\zeta_{F,\unit}$ is the Brownian motion with variance $\sigma_{F,{\unit}}^{2}\, dt$.
 \parskip 3mm
 
-\subsection{Flow Diagram}
 The following Figure~\ref{fig:SRJF2} presents the flow diagram of the SRJF2 model, illustrating the interactions among susceptible individuals ($S^{\native}$, $S^{\invasive}$), juveniles ($J^{\native}$,$J^{\invasive}$), algae as a food resource ($F$), and mortality ($R$).
 The bidirectional arrows between $J^{\species}$ and $S^{\species}$, represent the maturation of juveniles into susceptible individuals and the reproduction of susceptible individuals into juveniles.
 Both susceptible individuals and juveniles, consume resources from the alga population $F$, as indicated by the arrows from $F$ to each population node.
@@ -947,7 +933,6 @@ Two species of \textit{Daphnia} are competing through the food resources in this
 \label{fig:SRJF2}
 \end{figure}
 
-\subsection{Data Visualization}
 \begin{figure}[H]
 \centering
 <<DataVisSRJF2,echo=FALSE, fig.width=9,fig.height=4,out.width="\\textwidth", cache=cache_option>>=
@@ -1031,7 +1016,6 @@ Columns are buckets corresponding to replications with same treatment setting.
 \end{figure}
 
 \subsection{Results}
-\subsubsection{Parameter Estimation}
 <<LoadSRJF2, include=FALSE, cache=TRUE>>=
 load("../../data/Target_dynamics/no_para/profile_ci_table.rda")
 load('../../Mixed-species/SRJF2/best_result.rda')
@@ -1106,8 +1090,6 @@ $\tau^{\invasive}_{S}$      &  Measurement dispersion for susceptible invasive a
 \label{Table:SRJF2}
 \end{table}
 
-
-\subsubsection{MCAP Results}
 \begin{figure}[H]
     \centering
     \includegraphics[width=\linewidth]{profile/Target_dynamics/no_para/Profile_plot.png}
@@ -1208,7 +1190,6 @@ The term $\mu \, dt$ denotes the refill rate of alga.
 The stochastic fluctuation $F^{\species}_{\unit}(t) \, d\zeta^{\species}_{F,\unit}$ introduces randomness into the algae dynamics, where $d\zeta^{\species}_{F,\unit}$ shows the Brownian motion with variance $\sigma_{F,{\unit}}^{2}\, dt$.
 These terms model the latent randomness in the system due to environmental variability and other stochastic factors influencing the susceptible individuals, juveniles, and alga populations.
 
-\subsection{Flow Diagram}
 \begin{figure}[H]
 \begin{center}
 %%%%% SEAIR diagram
@@ -1253,8 +1234,6 @@ These terms model the latent randomness in the system due to environmental varia
 \label{fig:SRJF}
 \end{figure}
 
-
-\subsection{Data Visualization}
 \begin{figure}[H]
 \centering
 <<DataVisSRJFdent,echo=FALSE, fig.width=9,fig.height=4,out.width="\\textwidth", cache=cache_option>>=
@@ -1440,7 +1419,6 @@ mu = 0.37
 delta = 0.013
 lambda_Jn = 0.1
 @
-\subsubsection{Parameter Estimation}
 \begin{table}[H]
 \centering
 \resizebox{\textwidth}{!}{
@@ -1492,7 +1470,6 @@ mu = 0.37
 delta = 0.013
 lambda_Ji = 0.1
 @
-\subsubsection{Parameter Estimation}
 \begin{table}[H]
 \centering
 \resizebox{\textwidth}{!}{
@@ -1524,7 +1501,6 @@ $\tau^{\invasive}_{S}$      &  Measurement dispersion for susceptible adult     
 \label{Table:SRJF_invasive}
 \end{table}
 
-\subsubsection{MCAP Results}
 \begin{figure}[H]
     \centering
     \includegraphics[width=\linewidth]{profile/Simple_dynamics/Dent/no_para/Profile_plot.png}
@@ -1547,8 +1523,6 @@ $\tau^{\invasive}_{S}$      &  Measurement dispersion for susceptible adult     
     \label{fig:SRJF_lum_profile}
 \end{figure}
 
-
-\subsubsection{Model Comparison}
 \begin{table}[h!]
 \centering
 \begin{center}
