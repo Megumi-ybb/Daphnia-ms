@@ -1,10 +1,10 @@
-\documentclass[12pt]{article}
+\documentclass[aoas]{imsart}
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{graphicx}
 \usepackage{subcaption}
 \usepackage{enumerate}
-\usepackage[authoryear,numbers]{natbib}
+\usepackage[authoryear]{natbib}
 \usepackage{graphicx}
 \usepackage[english]{babel}
 \usepackage[colorlinks=true, allcolors=blue]{hyperref}
@@ -25,17 +25,9 @@
 \usepackage{tikz}
 \usepackage{hyphenat}
 \usepackage{tikz}
-\usepackage{float} 
 \usetikzlibrary{arrows.meta, shapes.geometric, positioning}
 \bibliographystyle{apalike}
 \newcommand{\blind}{1}
-
-% DON'T change margins - should be 1 inch all around.
-\addtolength{\oddsidemargin}{-.5in}%
-\addtolength{\evensidemargin}{-1in}%
-\addtolength{\textwidth}{1in}%
-\addtolength{\textheight}{1.7in}%
-\addtolength{\topmargin}{-1in}%
 
 \newcommand\Unit{U}
 \newcommand\unit{u}
@@ -47,8 +39,6 @@
 \newcommand\invasive{\mathbbm{i}}
 \newcommand\Normal{\mathrm{N}}
 \newcommand\benchmarktime{n}
-
-
 
 \parskip 3mm
 \newcommand\authoraddress{ \vspace{-1mm} \\ \normalsize}
@@ -65,12 +55,9 @@
 \renewcommand\thesection{S\arabic{section}}
 \renewcommand\theequation{S\arabic{equation}}
 \renewcommand\thealgocf{S\arabic{algocf}}
-
 \setcounter{tocdepth}{2}
 
 \begin{document}
-\def\spacingset#1{\renewcommand{\baselinestretch}%
-{#1}\small\normalsize} \spacingset{1}
 
 <<Debug, include=FALSE>>=
 library(knitr)
@@ -81,29 +68,26 @@ opts_chunk$set(echo = TRUE, cache = cache_option)
 @
 
 
+
+\begin{frontmatter}
+\title{Supplement to ``Mechanistic models for panel data: Analysis of ecological experiments with four interacting species''}
+
 \if1\blind
 {
-  \title{\bf Supplement to ``Mechanistic models for panel data: Analysis of ecological experiments with four interacting species''}
-\author{Bo Yang$^1$, Jesse Wheeler$^{2,5}$, Meghan A. Duffy$^3$, Aaron A. King$^{3,4}$ \\ and Edward L. Ionides$^2$\\
-\authoraddress University of Michigan, Departments of $^1$Biostatistics, $^2$Statistics,
-\\
-\authoraddress $^3$Ecology \& Evolutionary Biology, $^4$Complex Systems,
-\\
-\authoraddress $^5$Idaho State University, Department of Mathematics and Statistic}
-  \maketitle
-} \fi
+\begin{aug}
+\author[A]{\fnms{Bo}~\snm{Yang}\ead[label=e1]{ybb@umich.edu}},
+\author[B]{\fnms{Jesse}~\snm{Wheeler}\ead[label=e2]{jeswheel@umich.edu}},
+\author[C]{\fnms{Meghan A.}~\snm{Duffy}\ead[label=e3]{duffymeg@umich.edu}},
+\author[C]{\fnms{Aaron A.}~\snm{King}\ead[label=e4]{kingaa@umich.edu}}
+\and
+\author[B]{\fnms{Edward}~\snm{Ionides}\ead[label=e5]{ionides@umich.edu}}
 
-\if0\blind
-{
-  \bigskip
-  \bigskip
-  \bigskip
-  \begin{center}
-    {\LARGE\bf Supplement to "Mechanistic models for panel data: analysis of ecological experiments with four interacting species"}
-\end{center}
-  \medskip
+\address[A]{Department of Biostatistics, University of Michigan \printead[presep={,\ }]{e1}}
+\address[B]{Department of Statistics, University of Michigan\printead[presep={,\ }]{e2,e5}}
+\address[C]{Department of Ecology and Evolutionary Biology, University of Michigan \printead[presep={,\ }]{e3,e4}}
+\end{aug}
 } \fi
-
+\end{frontmatter}
 
 <<Setup, include=FALSE,echo=FALSE,results='hide', cache=cache_option>>=
  library(patchwork)
@@ -183,8 +167,6 @@ We calculated these composite parameters only for the SIRJPF2 model, and the res
 \begin{algorithm}[h]
 \caption{Panel iterated filter (PIF)}
 \label{alg:pif}
-%\SetAlgoLined
-%\SetNoline
 \DontPrintSemicolon
 \KwIn{PanelPOMP model, as defined in Section~3 of the main text\;
   Number of particles, $J$, and filter iterations, $M$\;
@@ -241,7 +223,7 @@ Additional generality is provided by the pseudocode in \cite{breto25} that is im
 \section{SIRJPF2 Model}
 \subsection{Results}
 \subsubsection{MCAP Results}
-\begin{figure}[H]
+\begin{figure}[!ht]
     \centering
     \includegraphics[width=\linewidth]{profile/Target_dynamics/para/Profile_plot.png}
     \caption{Monte Carlo Adjusted Profile results of SIRJPF2 model for mixed species Parasitized dynamics.

@@ -1,4 +1,4 @@
-\documentclass[12pt]{article}
+\documentclass[aoas]{imsart}
 \usepackage{lmodern}
 \PassOptionsToPackage{unicode}{hyperref}
 \PassOptionsToPackage{hyphens}{url}
@@ -12,7 +12,7 @@
 \usepackage{calc}
 \usepackage{amsmath}
 \usepackage{enumerate}
-\usepackage[authoryear,numbers]{natbib}
+\usepackage[authoryear]{natbib}
 \usepackage{graphicx}
 \usepackage[english]{babel}
 \usepackage[colorlinks=true, allcolors=blue]{hyperref}
@@ -55,11 +55,11 @@
 \usetikzlibrary{shapes.geometric}
 \usetikzlibrary{calc}
 % DON'T change margins - should be 1 inch all around.
-\addtolength{\oddsidemargin}{-.5in}%
-\addtolength{\evensidemargin}{-1in}%
-\addtolength{\textwidth}{1in}%
-\addtolength{\textheight}{1.7in}%
-\addtolength{\topmargin}{-1in}%
+% \addtolength{\oddsidemargin}{-.5in}%
+% \addtolength{\evensidemargin}{-1in}%
+% \addtolength{\textwidth}{1in}%
+% \addtolength{\textheight}{1.7in}%
+% \addtolength{\topmargin}{-1in}%
 
 \newcommand\authoraddress{ \vspace{-1mm} \\ \normalsize}
 
@@ -87,8 +87,8 @@
 \newcommand\Normal{\mathrm{N}}
 \date{}
 \begin{document}
-\def\spacingset#1{\renewcommand{\baselinestretch}%
-{#1}\small\normalsize} \spacingset{1}
+% \def\spacingset#1{\renewcommand{\baselinestretch}%
+% {#1}\small\normalsize} \spacingset{1}
 
 
 <<Debug, include=FALSE>>=
@@ -98,31 +98,6 @@ library(knitr)
 cache_option = FALSE
 opts_chunk$set(echo = TRUE, cache = cache_option)
 @
-
-
-\if0\blind
-{
-  \title{\bf Mechanistic models for panel data: Analysis of ecological experiments with four interacting species}
-\author{Bo Yang \authoraddress Department of Biostatistics, University of Michigan \\
-        Jesse Wheeler  \authoraddress Department of Statistics, University of Michigan \&  \authoraddress Department of Mathematics and Statistic, Idaho State University\\
-	Meghan A. Duffy  \authoraddress Department of Ecology and Evolutionary Biology, University of Michigan\\
-        Aaron A. King  \authoraddress Department of Ecology and Evolutionary Biology \&  \authoraddress Center for the Study of Complex Systems, University of Michigan\\
-        Edward L. Ionides \authoraddress Department of Statistics, University of Michigan}
-  \maketitle
-} \fi
-
-
-\if1\blind
-{
-  \bigskip
-  \bigskip
-  \bigskip
-  \begin{center}
-    {\LARGE\bf Mechanistic models for panel data: Analysis of ecological experiments with four interacting species}
-\end{center}
-  \medskip
-} \fi
-
 <<Setup, include=FALSE,echo=FALSE,results='hide', cache=cache_option>>=
  library(patchwork)
  library(magrittr)
@@ -194,9 +169,28 @@ load("data/raw_data.rda")
  }
 @
 
-%\bigskip
 
-\begin{abstract} %% 200-word limit for ASA journals
+\begin{frontmatter}
+\title{Mechanistic models for panel data: Analysis of ecological experiments with four interacting species}
+
+\if1\blind
+{
+\begin{aug}
+\author[A]{\fnms{Bo}~\snm{Yang}\ead[label=e1]{ybb@umich.edu}},
+\author[B]{\fnms{Jesse}~\snm{Wheeler}\ead[label=e2]{jeswheel@umich.edu}},
+\author[C]{\fnms{Meghan A.}~\snm{Duffy}\ead[label=e3]{duffymeg@umich.edu}},
+\author[C]{\fnms{Aaron A.}~\snm{King}\ead[label=e4]{kingaa@umich.edu}}
+\and
+\author[B]{\fnms{Edward}~\snm{Ionides}\ead[label=e5]{ionides@umich.edu}}
+
+\address[A]{Department of Biostatistics, University of Michigan \printead[presep={,\ }]{e1}}
+\address[B]{Department of Statistics, University of Michigan\printead[presep={,\ }]{e2,e5}}
+\address[C]{Department of Ecology and Evolutionary Biology, University of Michigan \printead[presep={,\ }]{e3,e4}}
+% \address[D]{Center for the Study of Complex Systems, University of Michigan\printead[presep={,\ }]{e4}}
+\end{aug}
+} \fi
+
+\begin{abstract}
 \noindent In an ecological context, panel data arise when time series measurements are made on a collection of ecological processes.
 Each process may correspond to a spatial location for field data, or to an experimental ecosystem in a designed experiment.
 Statistical models for ecological panel data should capture the high levels of nonlinearity, stochasticity, and measurement uncertainty inherent in ecological systems.
@@ -210,13 +204,16 @@ Our iterated filtering framework provides a statistically efficient, likelihood-
 Existing full-information Bayesian tools are not applicable to panels of partially observed Markov process models with intractable transition densities.
 \end{abstract}
 
+\begin{keyword}
+\kwd{Panel Iterated Filtering}
+\kwd{SIRJPF model}
+\kwd{PanelPOMP}
+\kwd{Daphnia}
+\end{keyword}
 
-\noindent%
-{\it Keywords:  Panel Iterated Filtering; SIRJPF model; PanelPOMP; Daphnia}
-\vfill
+\end{frontmatter}
 
 \newpage
-\spacingset{1.8} % DON'T change the spacing!
 \section{Introduction}
 \label{sec:intro}
 
@@ -817,7 +814,6 @@ The superscript $\native$ and $\invasive$ represents native (\textit{D.~dentifer
 \label{sec:res}
 
 \begin{table}[t]
-\renewcommand{\arraystretch}{0.5}
 \centering
 \small
 \begin{center}
@@ -1154,15 +1150,25 @@ The applicability of our approach is contingent on having panel data of sufficie
 Such panel datasets are available, for example, on pathogen-host ecosystems \citep{martinez-bakker15} and fisheries \citep{naiman02}.
 The flexibility of the PanelPOMP model class provides many opportunities for developing new models that integrate ecological theory with panel time series data.
 
-\section{Supplementary Materials}
-The Supplementary Material includes detailed Panel Iterated Filtering algorithm and the benchmark model specifications.
-It also provides profile likelihoods, residual analyses, and diagnostics for the SIRJPF2, SIRJPF, and SRJF2 models, together with models for the additional dynamics discussed in the manuscript.
 
-\section{Data Availability Statement}
-Code and data for the analysis is available at the Github repository: https://github.com/Megumi-ybb/Daphnia-ms or https://doi.org/10.5281/zenodo.15595669.
+\begin{acks}[Acknowledgments]
+The corresponding author is Bo Yang.
+Jesse Wheeler is also affiliated with the Department of Mathematics and Statistics, Idaho State University.
+Aaron A. King is additionally affiliated with the Center for the Study of Complex Systems, University of Michigan.
+\end{acks}
 
-\section{Disclosure Statement}
-No potential conflict of interest was reported by the authors.
+
+\begin{supplement}
+\stitle{Data Availability Statement}
+\sdescription{Code and data for the analysis is available at the Github repository: https://github.com/Megumi-ybb/Daphnia-ms or https://doi.org/10.5281/zenodo.15595669.}
+\end{supplement}
+\begin{supplement}
+\stitle{Supplementary Material}
+\sdescription{The Supplementary Material includes detailed Panel Iterated Filtering algorithm and the benchmark model specifications.
+It also provides profile likelihoods, residual analyses, and diagnostics for the SIRJPF2, SIRJPF, and SRJF2 models, together with models for the additional dynamics discussed in the manuscript.}
+\end{supplement}
+
+\newpage
 
 \bibliography{bib-daphnia}
 \end{document}
