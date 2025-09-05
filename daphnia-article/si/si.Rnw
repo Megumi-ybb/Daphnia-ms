@@ -1103,7 +1103,6 @@ $\tau^{\invasive}_{S}$      &  Measurement dispersion for susceptible invasive a
     \label{fig:SRJF2_profile}
 \end{figure}
 
-\subsubsection{Model Comparison}
 
 \begin{table}[h!]
 \centering
@@ -1144,14 +1143,14 @@ As algae availability declines, population growth of both susceptible and juveni
 By incorporating resource-consumption feedback into the population dynamics, the model demonstrates not only an ability to simulate individual population trends but also to capture this ecological feedback loop.
 
 
-\begin{figure}[H]
+\begin{figure}
     \centering
     \includegraphics[width=0.75\linewidth]{simulation/target_no_para_simulation/simulation_band.png}
     \caption{Simulation plots of densities (Individuals$/$Liter) for susceptible and juvenile populations of both native \textit{D.~dentifera} and invasive \textit{D.~lumholtzi}, along with alga density ($10^6\,$cells$/$Liter) over time (days). Colorful solid lines represent observed experimental data for each experimental replicate, showcasing variability across replicates. The black line represents the mean simulation trajectory, while the light blue shaded area corresponds to the 95\% confidence interval of the simulation. Dashed lines indicate individual simulation cases, illustrating the model's capacity to capture fluctuations around the mean trajectory.}
     \label{fig:SRJF2_simulation_band}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}
     \centering
     \includegraphics[width=0.75\linewidth]{simulation/target_no_para_simulation/simulation_lines.png}
     \caption{Simulated density ($10^6\,$cells$/$Liter) of susceptible native \textit{D.~dentifera}, susceptible invasive \textit{D.~lumholtzi}, juvenile native \textit{D.~dentifera}, invasive \textit{D.~lumholtzi}, and alga density ($F$) over time (days) for each experimental unit. The blue lines represent individual simulation cases, while the red line denotes observed experimental data, showing how simulated variability compares to actual data.}
@@ -1397,7 +1396,7 @@ Columns are buckets corresponding to replications with same treatment setting.
 }
 \end{figure}
 
-\subsection{Result}
+\subsection{Results}
 <<LoadSRJFdatanative, include=FALSE, cache=cache_option>>=
 load("../../data/Simple_dynamics/Dent/no_para/profile_ci_table.rda")
 load('../../Single-species/Dent/SRJF/model/best_result.rda')
@@ -1561,9 +1560,10 @@ $f^{\invasive}_{S,\unit}$ & \Sexpr{mysignif_ll_AIC(lum_no_para_parameter_table[4
 \label{Table:SRJF_lum_model_comparison}
 \end{table}
 
-The results in the tables indicate that the model configuration with all shared parameters achieves the minimum AIC score for both dynamics, suggesting an optimal balance between model fit and complexity.
-These results align with our previous analysis.
+The data plots, parameter estimates, and profile likelihood plots are analogous to the results in the main text, applied here to the SRJF model for either \textit{D.~dentifera} or \textit{D.~lumholtzi}.
 
+The results in Tables~\ref{Table:SRJF_dent_model_comparison} and~\ref{Table:SRJF_lum_model_comparison} indicate that the model configuration with all shared parameters achieves the minimum AIC score for both dynamics, suggesting that this model makes a successful balance between model fit and complexity.
+These results are consistent with our other analysis.
 
 \subsection{Simulation}
 The simulation plots (Figures \ref{fig:SRJF_native_simulation_band} to \ref{fig:SRJF_lum_simulation_lines}) collectively demonstrate the SRPF model's capability to capture the complex interactions among various states within the population dynamics of \textit{D.~dentifera} and \textit{D.~lumholtzi}.
@@ -1601,7 +1601,7 @@ This predicted reduction in food availability provides a mechanistic explanation
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.75\linewidth]{simulation/lum_no_para_simulation/simulation_lines.png}
-   \caption{Simulated densities (Individuals$/$Liter) of susceptible \textit{D.~lumholtzi}, juvenile \textit{D.~lumholtzi} and  alga density ($10^6\cdot$cells$/$Liter) ays) for each experimental unit. The blue lines represent individual simulation runs, capturing the variability in susceptible density across replicates, while the red line represents the actual experiment data.}
+   \caption{Simulated densities (Individuals$/$Liter) of susceptible \textit{D.~lumholtzi} and juvenile \textit{D.~lumholtzi},  with  alga density ($10^6\cdot$cells$/$Liter), for each experimental unit. The blue lines represent individual simulation runs, capturing the variability in susceptible density across replicates, while the red line represents the actual experiment data.}
     \label{fig:SRJF_lum_simulation_lines}
 \end{figure}
 
@@ -1703,7 +1703,9 @@ Each stochastic differential equation accounts for various biological and ecolog
     \theta^{\species}_{I,{\unit}} + \delta
     \big\}
     \, I^{\species}_{\unit}(t)\, dt + I^{\species}_{\unit}(t) \, d\zeta^{\species}_{I,{\unit}},\label{eq:SIRPF2_dS}\\
-    dP_{\unit}(t) &= \sum_{\species \in \{\native, \invasive\}} \left(\beta^{\species}_{\unit} \, \theta^{\species}_{I,{\unit}} \,  I^{\species}_{\unit}(t) - f^{\species}_{S,{\unit}} \big\{ S^{\species}_{\unit}(t) + \xi_{\unit} I^{\species}_{\unit}(t) \big\} P_{\unit}(t)\right) dt - \theta_{P,{\unit}} \, P_{\unit}(t)\, dt + P_{\unit}(t)\, d\zeta_{P,{\unit}},\\
+    dP_{\unit}(t) &= \sum_{\species \in \{\native, \invasive\}} \left(\beta^{\species}_{\unit} \, \theta^{\species}_{I,{\unit}} \,  I^{\species}_{\unit}(t) - f^{\species}_{S,{\unit}} \big\{ S^{\species}_{\unit}(t) + \xi_{\unit} I^{\species}_{\unit}(t) \big\} P_{\unit}(t)\right) dt
+    \\ \nonumber
+    & \hspace{5cm} - \theta_{P,{\unit}} \, P_{\unit}(t)\, dt + P_{\unit}(t)\, d\zeta_{P,{\unit}},\\
     dF_{\unit}(t) &= - \sum_{\species \in \{\native, \invasive\}} f^{\species}_{S,{\unit}} \, F_{\unit}(t) \left(S^{\species}_{\unit}(t)+\xi_{\unit} \, I^{\species}_{\unit}(t)\right)dt  + \mu \, dt + F_{\unit}(t)\, d\zeta_{F,{\unit}},\label{eq:SIRPF2_dF}\\
 d\zeta^{\species}_{I,{\unit}} &\sim \Normal \big[0, (\sigma^{\species}_{I,{\unit}})^{2}\, dt\big],
 \hspace{5mm}
@@ -1795,8 +1797,10 @@ Mesocosm
 8 & 27 & 32 & 22 & 22 & 42 \\
 \bottomrule
 \end{tabular}
-\caption{This table shows the day on which each species reached its peak density in mesocosms containing mixed \textit{Daphnia} species and a parasite. \textit{D.~dentifera} male adults are excluded because they were almost absent.}
+\caption{This table shows the day on which each species reached its peak density in mesocosms containing both \textit{Daphnia} species and the parasite. \textit{D.~dentifera} male adults are excluded because they were almost absent.} \label{table:peak_density}
 \end{table}
+
+Table~\ref{table:peak_density} provides supporting data on the relative timing of peak abundance for different demographic groups.
 
 \section{SIRJPF2-Gamma Model}
 The SIRJPF2-Gamma model differs from the original SIRJPF2 model by its incorporation of gamma noise in transition processes between states, in place of the Gaussian noise used previously. 
@@ -1821,7 +1825,9 @@ This aligns with the underlying dynamics that the jump-like transitions observed
     \theta^{\species}_{J,{\unit}}  + \delta
     \big\} 
     \, J^{\species}_{\unit}(t)\, dt - \lambda^{\species}_{J,{\unit}} \,  J^{\species}_{\unit}(t)dt, \\
-    dP_{\unit}(t) &= \sum_{\species \in \{\native, \invasive\}} \left(\beta^{\species}_{\unit} \, \theta^{\species}_{I,{\unit}} \,  I^{\species}_{\unit}(t)d\Gamma^{\species}_{IP,{\unit}} - f^{\species}_{S,{\unit}} \big\{ S^{\species}_{\unit}(t) + \xi_{\unit} I^{\species}_{\unit}(t) \big\} P_{\unit}(t)dt\right) - \theta_{P,{\unit}} \, P_{\unit}(t)\, dt,\\
+    dP_{\unit}(t) &= \sum_{\species \in \{\native, \invasive\}} \left(\beta^{\species}_{\unit} \, \theta^{\species}_{I,{\unit}} \,  I^{\species}_{\unit}(t)d\Gamma^{\species}_{IP,{\unit}} - f^{\species}_{S,{\unit}} \big\{ S^{\species}_{\unit}(t) + \xi_{\unit} I^{\species}_{\unit}(t) \big\} P_{\unit}(t)dt\right) 
+    \\ \nonumber & \hspace{7cm}
+    - \theta_{P,{\unit}} \, P_{\unit}(t)\, dt,\\
     dF_{\unit}(t) &= - \sum_{\species \in \{\native, \invasive\}} f^{\species}_{S,{\unit}} \, F_{\unit}(t) \left(S^{\species}_{\unit}(t)+\xi_{J,{\unit}} \, J^{\species}_{\unit}(t) +\xi_{\unit} \, I^{\species}_{\unit}(t)\right)dt  + \mu \, dt + F_{\unit}(t)\, d\Gamma_{F,{\unit}},\\
 d\Gamma^{\species}_{JS,{\unit}} &\sim \Gamma
   \bigg[\frac{dt}{(\sigma^{\species}_{JS,{\unit}})^{2}}, (\sigma^{\species}_{JS,{\unit}})^{2}\bigg],

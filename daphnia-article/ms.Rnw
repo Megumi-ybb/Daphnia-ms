@@ -496,13 +496,15 @@ The experimentally determined sampling rate, $\delta = 0.013$ per liter per day,
     \big\{
     \theta^{\species}_{I,{\unit}} + \delta
     \big\}
-    \, I^{\species}_{\unit}(t)\, dt + I^{\species}_{\unit}(t) \, d\zeta^{\species}_{I,{\unit}},\\
+    \, I^{\species}_{\unit}(t)\, dt + I^{\species}_{\unit}(t) \, d\zeta^{\species}_{I,{\unit}},\\ 
     dJ^{\species}_{\unit}(t) &= r^{\species}_{\unit} \, f^{\species}_{S,{\unit}} \, F_{\unit}(t) \, S^{\species}_{\unit}(t)\, dt -
     \big\{
     \theta^{\species}_{J,{\unit}}  + \delta + \lambda^{\species}_{J,{\unit}}
     \big\} 
-    \, J^{\species}_{\unit}(t)\, dt + J^{\species}_{\unit}(t)\, d\zeta^{\species}_{J,{\unit}}, \\
-    dP_{\unit}(t) &= \hspace{-1mm} \sum_{\species \in \{\native, \invasive\}} \hspace{-1mm} \left(\beta^{\species}_{\unit} \, \theta^{\species}_{I,{\unit}} \,  I^{\species}_{\unit}(t) - f^{\species}_{S,{\unit}} \big\{ S^{\species}_{\unit}(t) + \xi_{\unit} I^{\species}_{\unit}(t) \big\} P_{\unit}(t)\right) \! dt - \theta_{P,{\unit}} \, P_{\unit}(t)\, dt + P_{\unit}(t)\, d\zeta_{P,{\unit}},\\
+    \, J^{\species}_{\unit}(t)\, dt + J^{\species}_{\unit}(t)\, d\zeta^{\species}_{J,{\unit}}, \\ 
+    dP_{\unit}(t) &= \hspace{-1mm} \sum_{\species \in \{\native, \invasive\}} \hspace{-1mm} \left(\beta^{\species}_{\unit} \, \theta^{\species}_{I,{\unit}} \,  I^{\species}_{\unit}(t) - f^{\species}_{S,{\unit}} \big\{ S^{\species}_{\unit}(t) + \xi_{\unit} I^{\species}_{\unit}(t) \big\} P_{\unit}(t)\right) \! dt
+    \\ \nonumber & \hspace{5.5cm}
+    - \theta_{P,{\unit}} \, P_{\unit}(t)\, dt + P_{\unit}(t)\, d\zeta_{P,{\unit}},\\
     dF_{\unit}(t) &= - \hspace{-1mm} \sum_{\species \in \{\native, \invasive\}} f^{\species}_{S,{\unit}} \, F_{\unit}(t) \left(S^{\species}_{\unit}(t)+\xi_{J,{\unit}} \, J^{\species}_{\unit}(t) +\xi_{\unit} \, I^{\species}_{\unit}(t)\right)dt  + \mu \, dt + F_{\unit}(t)\, d\zeta_{F,{\unit}},\\
 d\zeta^{\species}_{S,{\unit}} &\sim \Normal \big[0, (\sigma^{\species}_{S,{\unit}})^{2}\, dt\big],
 \quad
@@ -849,7 +851,7 @@ Although these more flexible polynomial expansions do not represent latent biolo
 
 Table~\ref{Table:Model_comparison} includes the log-likelihood and AIC values for the fitted model and the deterministic ODE model of \citet{searle16}, which served as a starting point for our model.
 Although the mechanistic model of \citet{searle16} was successfully used to provide scientific insight into the ecological dynamics of the experiment, we found it does not provide a competitive statistical fit to the data compared to simple alternatives.
-We also consider several variants of the SIRJPF2 model described here, namely a model that excludes the juvenile state (SIRPF2, described in Supplement~S7.3), and a version of the SIRJPF2 model where the Gaussian noise has been replaced with Gamma noise (SIRJPF2-Gamma). 
+We also consider several variants of the SIRJPF2 model described here, namely a model that excludes the juvenile state (SIRPF2, described in Section S7.3), and a version of the SIRJPF2 model where the Gaussian noise has been replaced with Gamma noise (SIRJPF2-Gamma, see Section S9). 
 The SIRPF2 model ignores the process of maturation of juvenile and instead highlights the infection process of the \textit{Daphnia} adult populations.
 While this model does have an improved statistical fit compared to the deterministic ODE model of \citet{searle16} and other benchmark models, it has weaker performance than the model that accounts for the effect of juveniles on population dynamics.
 
@@ -1153,18 +1155,19 @@ The flexibility of the PanelPOMP model class provides many opportunities for dev
 
 
 \begin{acks}[Acknowledgments]
-The corresponding author is Bo Yang with address 665 W 130th St, New York, NY 10027.
+%% The corresponding author is Bo Yang with address 665 W 130th St, New York, NY 10027.
 Aaron A. King is additionally affiliated with the Center for the Study of Complex Systems, University of Michigan.
+This work was supported by National Science Foundation grant DMS-1761603.
 \end{acks}
 
 
 \begin{supplement}
 \stitle{Data Availability Statement}
-\sdescription{Code and data for the analysis is available at the Github repository: https://github.com/Megumi-ybb/Daphnia-ms or https://doi.org/10.5281/zenodo.15595669.}
+\sdescription{Code and data for the analysis is available on Github at https://github.com/Megumi-ybb/Daphnia-ms and is archived on Zenodo at https://doi.org/10.5281/zenodo.15595669.}
 \end{supplement}
 \begin{supplement}
 \stitle{Supplementary Material}
-\sdescription{The Supplementary Material includes detailed Panel Iterated Filtering algorithm and the benchmark model specifications.
+\sdescription{The Supplementary Material includes detailed specification of the Panel Iterated Filtering algorithm and the benchmark models.
 It also provides profile likelihoods, residual analyses, and diagnostics for the SIRJPF2, SIRJPF, and SRJF2 models, together with models for the additional dynamics discussed in the manuscript.}
 \end{supplement}
 
