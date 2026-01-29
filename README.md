@@ -50,3 +50,13 @@ cd ./daphnia-article/si && Rscript -e "library(knitr); knit2pdf('./si.Rnw')"
 4. **Results**:
    - After parameter estimation and profiling, use scripts in `./util` to generate profiling plots, simulations, and parameter-estimation tables for the main article and supplementary materials.
 
+
+5. **Tutorial**:
+
+For a step-by-step guide on implementing PanelPOMP models and the methods used in this article, please refer to the tutorial repository:
+
+**https://github.com/Megumi-ybb/Daphnia-tutorial**
+
+The tutorial covers model specification, parameter estimation via panel iterated filtering, profile likelihood confidence intervals, and model diagnostics.
+
+
