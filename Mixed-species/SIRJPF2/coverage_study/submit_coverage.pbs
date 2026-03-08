@@ -1,0 +1,51 @@
+#!/bin/bash
+##############################################################################
+## submit_coverage.pbs
+## PBS submission script for the MCAP coverage simulation study.
+##
+## Step 1: Run simulate_datasets.R locally (fast, no HPC needed):
+##           cd /path/to/coverage_study
+##           Rscript simulate_datasets.R
+##
+## Step 2: Submit this PBS array job:
+##           qsub submit_coverage.pbs
+##
+## Step 3: After all jobs finish, run collect_coverage.R locally:
+##           Rscript collect_coverage.R
+##############################################################################
+
+## ---- PBS directives ----
+
+#PBS -N mcap_cov_ri
+#PBS -l nodes=1:ppn=128
+#PBS -l walltime=12:00:00
+#PBS -t 1-100
+#PBS -j oe
+#PBS -o coverage_logs/
+#PBS -m ae
+
+## ---- Environment setup ----
+
+## Load required modules (adjust module names for your HPC)
+## Uncomment and modify the lines below to match your system:
+# module load R/4.3.0
+# module load gcc
+
+## Change to the working directory where the scripts live
+cd $PBS_O_WORKDIR
+
+## Create output directories if they don't exist
+mkdir -p coverage_results
+mkdir -p coverage_logs
+
+## ---- Run the profiling script ----
+
+echo "=== Job array task: $PBS_ARRAYID ==="
+echo "Host: $(hostname)"
+echo "Cores: $(nproc)"
+echo "Start: $(date)"
+
+Rscript coverage_profile_ri.R
+
+echo "End: $(date)"
+echo "Exit code: $?"
