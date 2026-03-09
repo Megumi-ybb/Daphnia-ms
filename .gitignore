@@ -18,3 +18,7 @@
 Daphnia.Rproj
 *.txt
 *.Rapp.history
+*.e*
+*.o*
+*.pe*
+*.po*

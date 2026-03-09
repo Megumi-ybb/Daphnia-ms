@@ -1,4 +1,5 @@
-#!/apps/bin/Rscript
+#!/user/by2418/.conda/envs/r-pomp/bin/Rscript
+Sys.setenv(PATH = paste("/user/by2418/.conda/envs/r-pomp/bin", Sys.getenv("PATH"), sep = ":"))
 library(reshape2)
 library(magrittr)
 library(foreach)
@@ -259,7 +260,7 @@ dent_rw_sd_first <- generate_sd(x = 0.05, profile_name = name_str)
 
     ll <- replicate(
       n = algorithmic.params$Np_rep[run_level],
-      unitlogLik(pfilter(m1, Np = algorithmic.params$Np[run_level]))
+      unitLogLik(pfilter(m1, Np = algorithmic.params$Np[run_level]))
     )
 
     list(
@@ -330,7 +331,7 @@ dent_rw_sd_second <- generate_sd(x = 0.04, profile_name = name_str)
 
     ll <- replicate(
       n = algorithmic.params$Np_rep[run_level],
-      unitlogLik(pfilter(m1, Np = algorithmic.params$Np[run_level]))
+      unitLogLik(pfilter(m1, Np = algorithmic.params$Np[run_level]))
     )
 
     ## STORAGE OPTIMIZATION: save only coefficients + loglik, not the full mif object

@@ -1,18 +1,5 @@
-##############################################################################
-## collect_coverage.R
-## Purpose: Collect all profile results, compute MCAP CIs, assess coverage.
-##
-## Input:   coverage_results/profile_ri_<b>.rds  (b = 1, ..., B)
-##          simulated_data/true_params.rds
-##
-## Output:  coverage_results/coverage_summary.rds
-##          coverage_results/coverage_report.txt
-##          coverage_results/coverage_plot.pdf
-##
-## Usage:   Rscript collect_coverage.R
-##          (runs quickly on any machine — no HPC needed)
-##############################################################################
-
+#!/user/by2418/.conda/envs/r-pomp/bin/Rscript
+Sys.setenv(PATH = paste("/user/by2418/.conda/envs/r-pomp/bin", Sys.getenv("PATH"), sep = ":"))
 library(pomp)
 library(dplyr)
 library(ggplot2)

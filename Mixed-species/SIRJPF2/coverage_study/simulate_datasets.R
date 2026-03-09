@@ -1,27 +1,12 @@
-##############################################################################
-## simulate_datasets.R
-## Purpose: Simulate B synthetic panel datasets from the MLE for the
-##          MCAP coverage simulation study.
-##
-## Output:  simulated_data/sim_data_<b>.rds  (b = 1, ..., B)
-##          Each .rds contains a list of 8 data frames (one per unit),
-##          with columns: day, dentadult, dentinf, lumadult, luminf
-##
-## Usage:   Rscript simulate_datasets.R
-##          (runs quickly on a single machine, no HPC needed)
-##############################################################################
-
+#!/user/by2418/.conda/envs/r-pomp/bin/Rscript
+Sys.setenv(PATH = paste("/user/by2418/.conda/envs/r-pomp/bin", Sys.getenv("PATH"), sep = ":"))
 library(pomp)
 library(panelPomp)
-library(foreach)
 
 set.seed(801)
 
-B <- 100   # number of synthetic datasets
+B <- 100
 
-## ---------------------------------------------------------------------------
-## 1. MLE parameter vector (the "truth" for the coverage study)
-## ---------------------------------------------------------------------------
 mif.estimate <- c(
   ri        = 2.152877e+05,
   rn        = 4.082784e+01,
@@ -50,10 +35,6 @@ mif.estimate <- c(
   k_Si      = 5.262009e+00,
   k_Sn      = 4.103463e+00
 )
-
-## ---------------------------------------------------------------------------
-## 2. Model specification (C snippets — identical to the original model)
-## ---------------------------------------------------------------------------
 
 dyn_rpro <- Csnippet("
   double Sn_term, In_term, F_term, P_term, Si_term, Ii_term, Jn_term, Ji_term;
@@ -87,9 +68,7 @@ dyn_rpro <- Csnippet("
   Ii += Ii_term;
   P  += P_term;
 
-  if (t - 4.0 < 0.001 && t - 4.0 > -0.001) {
-    P += 25;
-  }
+  if (t - 4.0 < 0.001 && t - 4.0 > -0.001) { P += 25; }
 
   if (Sn < 0.0 || Sn > 1e5) { Sn = 0.0; error_count += 1; }
   if (Si < 0.0 || Si > 1e5) { Si = 0.0; error_count += 1000000; }
@@ -110,14 +89,9 @@ dyn_init <- Csnippet("
   Sn = 2.333;
   Si = 0.667;
   F  = 16.667;
-  Jn = 0;
-  Ji = 0;
-  T_Sn = 0.0;
-  T_Si = 0.0;
-  T_In = 0.0;
-  T_Ii = 0.0;
-  In = 0.0;
-  Ii = 0.0;
+  Jn = 0; Ji = 0;
+  T_Sn = 0.0; T_Si = 0.0; T_In = 0.0; T_Ii = 0.0;
+  In = 0.0; Ii = 0.0;
   error_count = 0.0;
   P = 0;
 ")
@@ -147,16 +121,8 @@ pt <- parameter_trans(
           "theta_Sn","theta_In","theta_Si","theta_Ii","theta_P","theta_Jn","theta_Ji","xi")
 )
 
-## ---------------------------------------------------------------------------
-## 3. Build the panelPomp using the REAL observation times (day structure)
-##    We need one "template" dataset per unit just to get the time grid.
-##    Use a dummy dataset with the correct time column.
-## ---------------------------------------------------------------------------
-
-# Observation times: day 7, 12, 17, ..., 52  (10 time points)
 obs_times <- (0:9) * 5 + 7
 
-# Create template data for each unit (dummy zeros — will be replaced by sims)
 template_data <- data.frame(
   day       = obs_times,
   dentadult = rep(0, length(obs_times)),
@@ -171,10 +137,7 @@ param_names <- c("xi","sigSn","sigIn","sigSi","sigIi","sigF","sigP",
                  "k_Ii","k_In","k_Sn","k_Si","sigJi","sigJn","theta_Jn","theta_Ji")
 state_names <- c("Sn","In","Si","Jn","Ji","Ii","error_count","F","T_Sn","T_In","T_Si","T_Ii","P")
 
-# Placeholder parameters (will be overwritten)
-parameters <- mif.estimate
-# Reorder to match param_names if needed
-parameters <- parameters[param_names]
+parameters <- mif.estimate[param_names]
 
 pomplist <- list()
 for (i in 1:8) {
@@ -198,26 +161,11 @@ names(pomplist) <- paste0("u", 1:8)
 
 panelfood <- panelPomp(pomplist, shared = mif.estimate)
 
-## ---------------------------------------------------------------------------
-## 4. Simulate B datasets
-## ---------------------------------------------------------------------------
-
 dir.create("simulated_data", showWarnings = FALSE, recursive = TRUE)
 
 cat("Simulating", B, "datasets from MLE...\n")
 
 for (b in 1:B) {
-  # Simulate one realization per unit
-  sim_data_list <- foreach(u = names(panelfood), .combine = NULL) %do% {
-    unit_model <- unit_objects(panelfood)[[u]]
-    sim <- pomp::simulate(unit_model, nsim = 1, format = "data.frame",
-                          params = mif.estimate)
-    # Keep only observation columns (drop latent states)
-    sim_obs <- sim[, c("day","dentadult","dentinf","lumadult","luminf")]
-    sim_obs
-  }
-
-  # Actually rebuild as a proper list of 8 data frames
   sim_data_list <- list()
   for (u in names(panelfood)) {
     unit_model <- unit_objects(panelfood)[[u]]
@@ -225,12 +173,10 @@ for (b in 1:B) {
                           params = mif.estimate)
     sim_data_list[[u]] <- sim[, c("day","dentadult","dentinf","lumadult","luminf")]
   }
-
   saveRDS(sim_data_list, file = sprintf("simulated_data/sim_data_%03d.rds", b))
   cat("  Dataset", b, "saved.\n")
 }
 
-# Also save the true parameter value for reference
 saveRDS(mif.estimate, file = "simulated_data/true_params.rds")
 
 cat("Done. All", B, "simulated datasets saved in simulated_data/\n")
