@@ -7,7 +7,6 @@ library(ggplot2)
 ## ---------------------------------------------------------------------------
 ## 1. Settings
 ## ---------------------------------------------------------------------------
-B <- 100
 level <- 0.95
 
 ## True parameter value (on log scale, since mcap is done on log(ri))
@@ -18,8 +17,19 @@ cat("True log(ri) =", true_log_ri, "\n")
 cat("True ri      =", true_params["ri"], "\n\n")
 
 ## ---------------------------------------------------------------------------
-## 2. Loop over all completed profile results
+## 2. Auto-discover all completed profile results
 ## ---------------------------------------------------------------------------
+
+profile_files <- list.files("coverage_results", pattern = "^profile_ri_\\d+\\.rds$",
+                            full.names = TRUE)
+cat("Found", length(profile_files), "completed profile files\n\n")
+
+if (length(profile_files) == 0) {
+  stop("No profile result files found in coverage_results/")
+}
+
+## Extract dataset indices from filenames
+dataset_indices <- as.integer(gsub(".*profile_ri_(\\d+)\\.rds$", "\\1", profile_files))
 
 results <- data.frame(
   b      = integer(0),
@@ -29,17 +39,14 @@ results <- data.frame(
   covers = logical(0)
 )
 
-missing <- c()
+failed <- c()
 
-for (b in 1:B) {
-  fname <- sprintf("coverage_results/profile_ri_%03d.rds", b)
-  if (!file.exists(fname)) {
-    missing <- c(missing, b)
-    next
-  }
-
+for (k in seq_along(profile_files)) {
+  b     <- dataset_indices[k]
+  fname <- profile_files[k]
+  
   subset_data_ri <- readRDS(fname)
-
+  
   # Compute MCAP CI (same as Target_profiling_plots.R)
   mcap_obj <- tryCatch(
     mcap(subset_data_ri$loglik, subset_data_ri$log_ri,
@@ -49,13 +56,16 @@ for (b in 1:B) {
       return(NULL)
     }
   )
-
-  if (is.null(mcap_obj)) next
-
+  
+  if (is.null(mcap_obj)) {
+    failed <- c(failed, b)
+    next
+  }
+  
   ci_lo  <- mcap_obj$ci[1]
   ci_hi  <- mcap_obj$ci[2]
   covers <- (true_log_ri >= ci_lo) & (true_log_ri <= ci_hi)
-
+  
   results <- rbind(results, data.frame(
     b      = b,
     ci_lo  = ci_lo,
@@ -89,17 +99,17 @@ cov_ci <- wilson_ci(coverage, n_completed)
 report <- paste0(
   "=== MCAP Coverage Simulation Study: ri ===\n",
   "Nominal level: ", level*100, "%\n",
-  "Total simulated datasets: ", B, "\n",
-  "Completed profiles: ", n_completed, "\n",
-  "Missing/failed: ", length(missing), "\n",
-  if (length(missing) > 0) paste0("  Missing datasets: ", paste(missing, collapse=", "), "\n") else "",
+  "Profile files found: ", length(profile_files), "\n",
+  "Successfully processed: ", n_completed, "\n",
+  "mcap() failures: ", length(failed), "\n",
+  if (length(failed) > 0) paste0("  Failed datasets: ", paste(failed, collapse=", "), "\n") else "",
   "\n",
   "--- Results ---\n",
   "CIs covering true log(ri): ", n_covering, " / ", n_completed, "\n",
   "Empirical coverage: ", sprintf("%.1f%%", coverage*100), "\n",
-  "95% Wilson CI for coverage: [", sprintf("%.1f%%", cov_ci[1]*100), ", ",
-  sprintf("%.1f%%", cov_ci[2]*100), "]\n",
-  "\n",
+  # "95% Wilson CI for coverage: [", sprintf("%.1f%%", cov_ci[1]*100), ", ",
+  # sprintf("%.1f%%", cov_ci[2]*100), "]\n",
+  # "\n",
   "True log(ri) = ", sprintf("%.4f", true_log_ri), "\n",
   "Mean MCAP MLE = ", sprintf("%.4f", mean(results$mle)), "\n",
   "Mean CI width = ", sprintf("%.4f", mean(results$ci_hi - results$ci_lo)), "\n"
@@ -122,7 +132,7 @@ results$b_ordered <- rank(results$mle)
 
 p <- ggplot(results, aes(x = b_ordered)) +
   geom_segment(aes(xend = b_ordered, y = ci_lo, yend = ci_hi,
-                    color = covers), linewidth = 0.8) +
+                   color = covers), linewidth = 0.8) +
   geom_point(aes(y = mle), size = 1.2) +
   geom_hline(yintercept = true_log_ri, linetype = "dashed", color = "red", linewidth = 0.8) +
   scale_color_manual(values = c("TRUE" = "steelblue", "FALSE" = "red"),
