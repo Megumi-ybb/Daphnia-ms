@@ -22,3 +22,9 @@ Daphnia.Rproj
 *.o*
 *.pe*
 *.po*
+
+# core dumps
+core
+core.*
+**/core
+**/core.*
