@@ -1,4 +1,6 @@
 \documentclass[aoas,preprint]{imsart}
+
+\input{edits.tex}
 \usepackage{lmodern}
 \PassOptionsToPackage{unicode}{hyperref}
 \PassOptionsToPackage{hyphens}{url}
@@ -481,7 +483,8 @@ A version of SIRJPF2 with gamma noise, called SIRJPF2-Gamma, is presented in Sec
 
 The nonlinearity and intrinsic stochasticity of the SIRPF2 model are characteristic features of dynamics in biological systems \citep{coulson04,wilkinson18}.
 In the following equations, the superscript $\species$ describes the species of \textit{Daphnia}, taking value ${\native}$ for native (\textit{D.~dentifera}) and ${\invasive}$ for invasive  (\textit{D.~lumholtzi}).
-The subscript $u$ ranges in $\seq{1}{U}$, and most parameters are written with potential dependence on $u$ to enable investigation of factors explaining differences between replicates.
+\editSubscript
+Most parameters are written with potential dependence on $u$ to enable investigation of factors explaining differences between replicates.
 We will later establish that this dependence is not needed; random dynamic noise is sufficient to explain the observed differences between units.
 The experimentally determined sampling rate, $\delta = 0.013$ per liter per day, and food replenishment rate, $\mu = 0.37 \times 10^5$ cells per liter per day, are fixed parameter values that are shared between units based on the experimental protocol.
 {\small
@@ -1153,6 +1156,9 @@ The applicability of our approach is contingent on having panel data of sufficie
 Such panel datasets are available, for example, on pathogen-host ecosystems \citep{martinez-bakker15} and fisheries \citep{naiman02}.
 The flexibility of the PanelPOMP model class provides many opportunities for developing new models that integrate ecological theory with panel time series data.
 
+\section*{Significance Statement}
+
+\editSignificance
 
 \begin{acks}[Acknowledgments]
 %% The corresponding author is Bo Yang with address 665 W 130th St, New York, NY 10027.

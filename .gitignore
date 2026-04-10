@@ -28,3 +28,6 @@ core
 core.*
 **/core
 **/core.*
+
+# private repo placed within public repo
+Daphnia-paper-review
