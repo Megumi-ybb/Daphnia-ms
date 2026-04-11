@@ -37,3 +37,6 @@ core.*
 
 # private repo placed within public repo
 Daphnia-paper-review
+
+# track bootstrap LRT command files
+!**/bootstrap_lrt/commands*.txt
