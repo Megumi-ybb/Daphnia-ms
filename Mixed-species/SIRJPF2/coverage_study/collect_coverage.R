@@ -13,7 +13,7 @@ level <- 0.95
 true_params <- readRDS("simulated_data/true_params.rds")
 
 ## Parameters to process
-param_names <- c("ri", "rn")
+param_names <- c("ri", "rn","sigP",'sigF')
 
 ## Wilson score confidence interval for the coverage proportion
 wilson_ci <- function(p, n, z = 1.96) {
