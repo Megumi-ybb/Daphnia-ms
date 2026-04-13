@@ -237,7 +237,11 @@ In order to find a balance between fitting accuracy and simplicity when selectin
 We estimate model parameters via maximum likelihood using the panel iterated filtering (PIF) \citep{breto20} and calculate AIC for all models.
 In addition to AIC, we report $p$-values from the likelihood ratio test (LRT) to provide a complementary assessment of whether unit-specific parameterizations yield a statistically significant improvement in model fit over the all-shared baseline.
 The LRT compares each unit-specific model (alternative) against the all-shared model (null) as a nested pair: the all-shared model is the restricted case obtained by constraining all unit-specific copies of a parameter to be equal.
-The test statistic $\Lambda = 2[\ell(\text{alternative}) - \ell(\text{null})]$ is referred to a $\chi^2$ distribution with degrees of freedom equal to the difference in the number of estimated parameters between the two models.
+The test statistic $\Lambda = 2[\ell(\text{alternative}) - \ell(\text{null})]$ is conventionally referred to a $\chi^2$ distribution (Wilks' theorem) with degrees of freedom equal to the difference in the number of estimated parameters between the two models, and we report this $\chi^2$ $p$-value in the tables.
+However, the regularity conditions for Wilks' theorem do not necessarily hold for our panelPOMP models: the latent-state dynamics are non-standard, some parameters may lie near boundaries, and the log-likelihoods themselves are evaluated by particle filtering and so are subject to Monte Carlo noise.
+To address this, we additionally report a \emph{simulation-based} (parametric bootstrap) LRT $p$-value that does not rely on the $\chi^2$ reference distribution.
+For each comparison we simulate $B=100$ datasets from the fitted all-shared (null) model, refit both the null and the unit-specific alternative model to each simulated dataset, form the bootstrap test statistic $\Lambda^{(b)} = 2[\ell_{\text{alt}}(y^{(b)}) - \ell_{\text{null}}(y^{(b)})]$, and compute $p_{\text{boot}} = (1 + \#\{b:\,\Lambda^{(b)} \ge \Lambda_{\text{obs}}\}) / (1 + B)$.
+Empty cells in the bootstrap column correspond to comparisons for which the simulation study is still in progress.
 Since the log-likelihoods in our framework are evaluated via Monte Carlo methods, both the AIC values and LRT $p$-values are subject to Monte Carlo variability, and we interpret them accordingly.
 The following table shows the comparison of different models under different settings of unit specific parameter.
 Each row represents a different model configuration, with specific parameters designated as either unit-specific or shared across all units.
@@ -246,18 +250,18 @@ Within the table, the max log-likelihood and AIC columns report the maximum log-
 \centering
 \small
 \begin{center}
-\begin{tabular}{||c |c |c |c|c|c||}
+\begin{tabular}{||c |c |c |c|c|c|c||}
  \hline
-Specific parameters  & Max log-likelihood & AIC & \makecell[c]{Max log-likelihood\\(MPIF)} & \makecell[c]{AIC\\(MPIF)} & \makecell[c]{LRT\\$p$-value}\\ [0.5ex]
+Specific parameters  & Max log-likelihood & AIC & \makecell[c]{Max log-likelihood\\(MPIF)} & \makecell[c]{AIC\\(MPIF)} & \makecell[c]{LRT\\$p$-value\\($\chi^2$)} & \makecell[c]{LRT\\$p$-value\\(bootstrap)}\\ [0.5ex]
  \hline\hline
-$\varnothing$ & -880.56& 1809.12& -880.56& 1809.12 & --- \\
-$\theta^{\species}_{I,\unit}$ & -867.76& 1811.51& -863.03& 1802.05 & 0.03 \\
-$p^{\species}_{\unit}$ & -868.04& 1812.07& -865.80& 1807.61 & 0.03 \\
-$\theta_{P,\unit}$ & -878.32& 1818.64& -875.87& 1813.75 & 0.72 \\
-$\xi_{\unit}$ & -880.84& 1823.67& -879.24& 1820.48 & $>$0.99 \\
-$\theta^{\species}_{S,\unit}$ & -881.09& 1838.18& -872.08& 1820.17 & $>$0.99 \\
-$f^{\species}_{S,\unit}$ & -881.53& 1839.05& -872.49& 1820.99 & $>$0.99 \\
-$r^{\species}_{\unit}$ & -883.93& 1843.87& -870.46& 1816.93 & $>$0.99 \\[1ex]
+$\varnothing$ & -880.56& 1809.12& -880.56& 1809.12 & --- & --- \\
+$\theta^{\species}_{I,\unit}$ & -867.76& 1811.51& -863.03& 1802.05 & 0.03 & --- \\
+$p^{\species}_{\unit}$ & -868.04& 1812.07& -865.80& 1807.61 & 0.03 & --- \\
+$\theta_{P,\unit}$ & -878.32& 1818.64& -875.87& 1813.75 & 0.72 & --- \\
+$\xi_{\unit}$ & -880.84& 1823.67& -879.24& 1820.48 & $>$0.99 & --- \\
+$\theta^{\species}_{S,\unit}$ & -881.09& 1838.18& -872.08& 1820.17 & $>$0.99 & --- \\
+$f^{\species}_{S,\unit}$ & -881.53& 1839.05& -872.49& 1820.99 & $>$0.99 & --- \\
+$r^{\species}_{\unit}$ & -883.93& 1843.87& -870.46& 1816.93 & $>$0.99 & --- \\[1ex]
  \hline
 \end{tabular}
 \end{center}
@@ -556,18 +560,18 @@ $\tau^{\invasive}_{I}$      &  Measurement dispersion for infected adult        
 \begin{table}[h!]
 \centering
 \begin{center}
-\begin{tabular}{||c |c |c |c|c|c||}
+\begin{tabular}{||c |c |c |c|c|c|c||}
  \hline
-Specific parameters  & Max log-likelihood & AIC & \makecell[c]{Max log-likelihood\\(block)} & \makecell[c]{AIC\\(block)} & \makecell[c]{LRT\\$p$-value}\\ [0.5ex]
+Specific parameters  & Max log-likelihood & AIC & \makecell[c]{Max log-likelihood\\(block)} & \makecell[c]{AIC\\(block)} & \makecell[c]{LRT\\$p$-value\\($\chi^2$)} & \makecell[c]{LRT\\$p$-value\\(bootstrap)}\\ [0.5ex]
  \hline\hline
-$\theta^{\native}_{I,\unit}$ & -549.38& 1140.77& -547.92& 1137.84 & $<$0.001 \\
-$\varnothing$  & -567.98& 1163.97& -567.98& 1163.97 & --- \\
- $r^{\native}_{\unit}$ & -563.38& 1168.76& -562.95& 1167.90 & 0.24 \\
-$p^{\native}_{\unit}$ & -563.78& 1169.56& -562.75& 1167.49 & 0.30 \\
-$\xi_{\unit}$ & -566.59& 1175.19& -565.80& 1173.60 & 0.90 \\
-$\theta^{\native}_{S,\unit}$ & -567.31& 1176.61& -565.48& 1172.96 & 0.99 \\
-$f^{\native}_{S,\unit}$ & -568.66& 1179.33& -566.32& 1174.63 & $>$0.99 \\
-$\theta_{P,\unit}$& -568.21& 1178.42& -568.87& 1179.74 & $>$0.99 \\[1ex]
+$\theta^{\native}_{I,\unit}$ & -549.38& 1140.77& -547.92& 1137.84 & $<$0.001 & --- \\
+$\varnothing$  & -567.98& 1163.97& -567.98& 1163.97 & --- & --- \\
+ $r^{\native}_{\unit}$ & -563.38& 1168.76& -562.95& 1167.90 & 0.24 & --- \\
+$p^{\native}_{\unit}$ & -563.78& 1169.56& -562.75& 1167.49 & 0.30 & --- \\
+$\xi_{\unit}$ & -566.59& 1175.19& -565.80& 1173.60 & 0.90 & --- \\
+$\theta^{\native}_{S,\unit}$ & -567.31& 1176.61& -565.48& 1172.96 & 0.99 & --- \\
+$f^{\native}_{S,\unit}$ & -568.66& 1179.33& -566.32& 1174.63 & $>$0.99 & --- \\
+$\theta_{P,\unit}$& -568.21& 1178.42& -568.87& 1179.74 & $>$0.99 & --- \\[1ex]
  \hline
 \end{tabular}
 \end{center}
@@ -578,18 +582,18 @@ $\theta_{P,\unit}$& -568.21& 1178.42& -568.87& 1179.74 & $>$0.99 \\[1ex]
 \begin{table}[h!]
 \centering
 \begin{center}
-\begin{tabular}{||c |c |c |c|c|c||}
+\begin{tabular}{||c |c |c |c|c|c|c||}
  \hline
-Specific parameters  & Max log-likelihood & AIC & \makecell[c]{Max log-likelihood\\(block)} & \makecell[c]{AIC\\(block)} & \makecell[c]{LRT\\$p$-value}\\ [0.5ex]
+Specific parameters  & Max log-likelihood & AIC & \makecell[c]{Max log-likelihood\\(block)} & \makecell[c]{AIC\\(block)} & \makecell[c]{LRT\\$p$-value\\($\chi^2$)} & \makecell[c]{LRT\\$p$-value\\(bootstrap)}\\ [0.5ex]
  \hline\hline
-$\xi_{\unit}$ & -419.78& 883.560& -416.87& 877.747 & 0.03 \\
-$\varnothing$  & -428.36& 884.715& -428.36& 884.715 & --- \\
-$p^{\invasive}_{\unit}$ & -421.21& 886.411& -420.66& 885.326 & 0.07 \\
-$\theta^{\invasive}_{I,\unit}$ & -421.21& 886.427& -419.32& 882.636 & 0.07 \\
-$f^{\invasive}_{S,\unit}$ & -422.85& 889.700& -423.26& 890.523 & 0.20 \\
-$\theta_{P,\unit}$ & -429.20& 902.400& -428.99& 901.972 & $>$0.99 \\
-$r^{\invasive}_{\unit}$ & -432.43& 908.868& -426.31& 896.612 & $>$0.99 \\
-$\theta^{\invasive}_{S,\unit}$ & -432.87& 909.740& -430.01& 904.014 & $>$0.99 \\[1ex]
+$\xi_{\unit}$ & -419.78& 883.560& -416.87& 877.747 & 0.03 & --- \\
+$\varnothing$  & -428.36& 884.715& -428.36& 884.715 & --- & --- \\
+$p^{\invasive}_{\unit}$ & -421.21& 886.411& -420.66& 885.326 & 0.07 & --- \\
+$\theta^{\invasive}_{I,\unit}$ & -421.21& 886.427& -419.32& 882.636 & 0.07 & --- \\
+$f^{\invasive}_{S,\unit}$ & -422.85& 889.700& -423.26& 890.523 & 0.20 & --- \\
+$\theta_{P,\unit}$ & -429.20& 902.400& -428.99& 901.972 & $>$0.99 & --- \\
+$r^{\invasive}_{\unit}$ & -432.43& 908.868& -426.31& 896.612 & $>$0.99 & --- \\
+$\theta^{\invasive}_{S,\unit}$ & -432.87& 909.740& -430.01& 904.014 & $>$0.99 & --- \\[1ex]
  \hline
 \end{tabular}
 \end{center}
@@ -821,14 +825,14 @@ $\tau^{\invasive}_{S}$      &  Measurement dispersion for susceptible invasive a
 \begin{table}[h!]
 \centering
 \begin{center}
-\begin{tabular}{||c |c |c |c|c|c||}
+\begin{tabular}{||c |c |c |c|c|c|c||}
  \hline
-Specific parameters  & Max log-likelihood & AIC & \makecell[c]{Max log-likelihood\\(block)} & \makecell[c]{AIC\\(block)} & \makecell[c]{LRT\\$p$-value}\\ [0.5ex]
+Specific parameters  & Max log-likelihood & AIC & \makecell[c]{Max log-likelihood\\(block)} & \makecell[c]{AIC\\(block)} & \makecell[c]{LRT\\$p$-value\\($\chi^2$)} & \makecell[c]{LRT\\$p$-value\\(bootstrap)}\\ [0.5ex]
  \hline\hline
-$\varnothing$  & -701.17& 1428.34& -701.17& 1428.34 & --- \\
-$\theta^{\species}_{S,\unit}$ & -705.50& 1468.99& -691.20& 1440.39 & $>$0.99 \\
-$f^{\species}_{S,\unit}$ & -720.72& 1499.44& -692.71& 1443.43 & $>$0.99 \\
-$r^{\species}_{\unit}$  & -725.74& 1509.49& -696.35& 1450.70 & $>$0.99 \\[1ex]
+$\varnothing$  & -701.17& 1428.34& -701.17& 1428.34 & --- & --- \\
+$\theta^{\species}_{S,\unit}$ & -705.50& 1468.99& -691.20& 1440.39 & $>$0.99 & --- \\
+$f^{\species}_{S,\unit}$ & -720.72& 1499.44& -692.71& 1443.43 & $>$0.99 & --- \\
+$r^{\species}_{\unit}$  & -725.74& 1509.49& -696.35& 1450.70 & $>$0.99 & --- \\[1ex]
  \hline
 \end{tabular}
 \end{center}
@@ -1069,14 +1073,14 @@ $\tau^{\invasive}_{S}$      &  Measurement dispersion for susceptible adult     
 \begin{table}[h!]
 \centering
 \begin{center}
-\begin{tabular}{||c |c |c |c|c|c||}
+\begin{tabular}{||c |c |c |c|c|c|c||}
  \hline
-Specific parameters  & Max log-likelihood & AIC & \makecell[c]{Max log-likelihood\\(block)} & \makecell[c]{AIC\\(block)} & \makecell[c]{LRT\\$p$-value}\\ [0.5ex]
+Specific parameters  & Max log-likelihood & AIC & \makecell[c]{Max log-likelihood\\(block)} & \makecell[c]{AIC\\(block)} & \makecell[c]{LRT\\$p$-value\\($\chi^2$)} & \makecell[c]{LRT\\$p$-value\\(bootstrap)}\\ [0.5ex]
  \hline\hline
-$\varnothing$ & -498.78& 1011.56& -498.78& 1011.56 & --- \\
-$\theta^{\native}_{S,\unit}$  & -490.57& 1013.14& -489.85& 1011.71 & 0.06 \\
-$r^{\native}_{\unit}$ & -497.43& 1026.85& -496.44& 1024.89 & 0.97 \\
-$f^{\native}_{S,\unit}$ & -497.43& 1026.86& -496.16& 1024.32 & 0.98\\[1ex]
+$\varnothing$ & -498.78& 1011.56& -498.78& 1011.56 & --- & --- \\
+$\theta^{\native}_{S,\unit}$  & -490.57& 1013.14& -489.85& 1011.71 & 0.06 & --- \\
+$r^{\native}_{\unit}$ & -497.43& 1026.85& -496.44& 1024.89 & 0.97 & --- \\
+$f^{\native}_{S,\unit}$ & -497.43& 1026.86& -496.16& 1024.32 & 0.98 & ---\\[1ex]
  \hline
 \end{tabular}
 \end{center}
@@ -1087,14 +1091,14 @@ $f^{\native}_{S,\unit}$ & -497.43& 1026.86& -496.16& 1024.32 & 0.98\\[1ex]
 \begin{table}[h!]
 \centering
 \begin{center}
-\begin{tabular}{||c |c |c |c|c|c||}
+\begin{tabular}{||c |c |c |c|c|c|c||}
  \hline
-Specific parameters  & Max log-likelihood & AIC & \makecell[c]{Max log-likelihood\\(block)} & \makecell[c]{AIC\\(block)} & \makecell[c]{LRT\\$p$-value}\\ [0.5ex]
+Specific parameters  & Max log-likelihood & AIC & \makecell[c]{Max log-likelihood\\(block)} & \makecell[c]{AIC\\(block)} & \makecell[c]{LRT\\$p$-value\\($\chi^2$)} & \makecell[c]{LRT\\$p$-value\\(bootstrap)}\\ [0.5ex]
  \hline\hline
-$\varnothing$ & -372.15& 758.294& -372.15& 758.294 & --- \\
-$\theta^{\invasive}_{S,\unit}$  & -365.33& 762.658& -365.37& 762.733 & 0.14 \\
-$r^{\invasive}_{\unit}$ & -366.84& 765.676& -366.29& 764.571 & 0.30 \\
-$f^{\invasive}_{S,\unit}$ & -368.15& 768.300& -368.07& 768.147 & 0.53 \\[1ex]
+$\varnothing$ & -372.15& 758.294& -372.15& 758.294 & --- & --- \\
+$\theta^{\invasive}_{S,\unit}$  & -365.33& 762.658& -365.37& 762.733 & 0.14 & --- \\
+$r^{\invasive}_{\unit}$ & -366.84& 765.676& -366.29& 764.571 & 0.30 & --- \\
+$f^{\invasive}_{S,\unit}$ & -368.15& 768.300& -368.07& 768.147 & 0.53 & --- \\[1ex]
  \hline
 \end{tabular}
 \end{center}
