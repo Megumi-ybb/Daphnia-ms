@@ -168,7 +168,7 @@ mf1 <- foreach(
     Np = Mp
   ) -> m1
 
-  ll <- replicate(n = Np_rep, unitlogLik(pfilter(m1, Np = Np)))
+  ll <- replicate(n = Np_rep, unitLogLik(pfilter(m1, Np = Np)))
   list(mif = m1, ll = panel_logmeanexp(x = ll, MARGIN = 1, se = TRUE))
 }
 
@@ -209,7 +209,7 @@ mf <- foreach(
     Np = Mp
   ) -> m1
 
-  ll <- replicate(n = Np_rep, unitlogLik(pfilter(m1, Np = Np)))
+  ll <- replicate(n = Np_rep, unitLogLik(pfilter(m1, Np = Np)))
   list(mif = m1, ll = panel_logmeanexp(x = ll, MARGIN = 1, se = TRUE))
 }
 
