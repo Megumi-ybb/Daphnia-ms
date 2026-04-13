@@ -40,3 +40,6 @@ Daphnia-paper-review
 
 # track bootstrap LRT command files
 !**/bootstrap_lrt/commands*.txt
+
+# local-only instructions
+bootstrap_lrt_instructions.md
