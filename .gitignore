@@ -7,8 +7,6 @@
 *.out
 *.txt
 *.sbat
-*/ms.tex
-*/si.tex
 *.log
 *.toc
 */cache
@@ -40,3 +38,13 @@ Daphnia-paper-review
 
 # track bootstrap LRT command files
 !**/bootstrap_lrt/commands*.txt
+
+# vscode temporary files
+*.fdb_latexmk
+*.fls
+
+
+# Rstudio temporary files
+*-concordance.tex
+si.tex
+ms.tex

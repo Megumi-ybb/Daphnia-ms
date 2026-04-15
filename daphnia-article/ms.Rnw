@@ -233,7 +233,7 @@ Partially observed Markov process (POMP) models, also known as hidden Markov mod
   Thus, mechanistic models are invaluable tools for addressing challenges in ecology \citep{mouquet15}.
 
   Collections of time series on related but disjoint systems are called panel data, also known as longitudinal data.
-  Each component system is called a unit, and the units may be sites in a field study (e.g., plots, lakes) or independent mesocosms or microcosms in a controlled laboratory setting.
+  \editMesocosm
   Studying the entire panel may allow precision in statistical conclusions that is unattainable from a single unit.
   Alternatively, scientists may be interested in specific differences between the units, requiring the investigation of the entire panel of data.
   For either of these goals, investigation of panel data leads to the challenging statistical task of fitting a collection of related nonlinear or non-Gaussian vector-valued POMP models, called a PanelPOMP model \citep{breto20,breto25}.
@@ -273,13 +273,14 @@ Section~\ref{sec:dis} is a concluding discussion.
 \section{A {\it Daphnia} mesocosm experiment}
 \label{sec:studysystem}
 
+\editDaphnia
 \textit{D.~dentifera} is native to North American stratified lakes, whereas \textit{D.~lumholtzi} is an invasive species originating from Africa, Asia, and Australia.
 First observed in North America in the 1990s, \textit{D.~lumholtzi} has rapidly expanded across the United States, impacting native species and ecosystem dynamics \citep{havel93,searle16salinization}.
 This leads to ecological interest in understanding competition between \textit{D.~dentifera} and \textit{D.~lumholtzi}, two species with high evolutionary divergence having their most recent common ancestor around 145 million years ago \citep{kotov11,cornetti19}.
 Here, we investigate how this competition is affected by a parasite that infects both species.
 \citet{searle16} hypothesized that the presence of a fast-growing invasive species, which has a high susceptibility to the native parasite {\it M.~bicuspidata}, could amplify the parasite in the native population.
 
-Female \textit{Daphnia} reproduce asexually in favorable situations, parthenogenetically producing female offspring equipped for parthenogenetic reproduction.
+\editParthenogenesis
 Maturation of juveniles to adults takes approximately five to ten days, depending on environmental conditions.
 In response to adverse environmental cues, \textit{Daphnia} produce males, and females reproduce sexually to produce durable resting eggs called ephippia \citep{radzikowski18,searle16salinization}.
 The ephippia can remain viable for many years, awaiting the return of favorable conditions.
