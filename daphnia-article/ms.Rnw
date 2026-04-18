@@ -1,6 +1,7 @@
 \documentclass[aoas,preprint]{imsart}
 
 \input{edits.tex}
+\newcommand\revision[1]{\textcolor{red}{#1}}
 \usepackage{lmodern}
 \PassOptionsToPackage{unicode}{hyperref}
 \PassOptionsToPackage{hyphens}{url}
@@ -233,7 +234,7 @@ Partially observed Markov process (POMP) models, also known as hidden Markov mod
   Thus, mechanistic models are invaluable tools for addressing challenges in ecology \citep{mouquet15}.
 
   Collections of time series on related but disjoint systems are called panel data, also known as longitudinal data.
-  \editMesocosm
+ \revision{\editMesocosm}
   Studying the entire panel may allow precision in statistical conclusions that is unattainable from a single unit.
   Alternatively, scientists may be interested in specific differences between the units, requiring the investigation of the entire panel of data.
   For either of these goals, investigation of panel data leads to the challenging statistical task of fitting a collection of related nonlinear or non-Gaussian vector-valued POMP models, called a PanelPOMP model \citep{breto20,breto25}.
@@ -251,8 +252,7 @@ Partially observed Markov process (POMP) models, also known as hidden Markov mod
   A major practical limitation has been the computational difficulty in carrying out inference.
   When Laplace approximations are applicable, the Template Model Builder approach is available \citep{kristensen16}.
 Iterated filtering techniques apply to a more general class of POMP models, but the high-dimensional nature of PanelPOMP models adds additional methodological challenges.
-At the same time, Bayesian method cannot accommodate the nonlinear, non-Gaussian mechanistic models considered here \citep{wigren22}, and no ecological study has yet achieved full-likelihood inference for them \citep{haggstrom25}. 
-  We are not aware of any previous scientific studies where nonlinear, non-Gaussian PanelPOMP models (with some parameters shared between units and some parameters specific to each unit) have been calibrated to multi-species panel data via maximum likelihood.
+\revision{\editBayes}
 
   A central question when using model-based statistical inference to investigate ecological dynamics is to discover which biological details are necessary to include in a model to provide an adequate statistical explanation for the data.
   Our approach to answering this question uses standard tools of likelihood-based inference.
