@@ -273,14 +273,14 @@ Section~\ref{sec:dis} is a concluding discussion.
 \section{A {\it Daphnia} mesocosm experiment}
 \label{sec:studysystem}
 
-\editDaphnia
+\revision{\editDaphnia}
 \textit{D.~dentifera} is native to North American stratified lakes, whereas \textit{D.~lumholtzi} is an invasive species originating from Africa, Asia, and Australia.
 First observed in North America in the 1990s, \textit{D.~lumholtzi} has rapidly expanded across the United States, impacting native species and ecosystem dynamics \citep{havel93,searle16salinization}.
 This leads to ecological interest in understanding competition between \textit{D.~dentifera} and \textit{D.~lumholtzi}, two species with high evolutionary divergence having their most recent common ancestor around 145 million years ago \citep{kotov11,cornetti19}.
 Here, we investigate how this competition is affected by a parasite that infects both species.
 \citet{searle16} hypothesized that the presence of a fast-growing invasive species, which has a high susceptibility to the native parasite {\it M.~bicuspidata}, could amplify the parasite in the native population.
 
-\editParthenogenesis
+\revision{\editParthenogenesis}
 Maturation of juveniles to adults takes approximately five to ten days, depending on environmental conditions.
 In response to adverse environmental cues, \textit{Daphnia} produce males, and females reproduce sexually to produce durable resting eggs called ephippia \citep{radzikowski18,searle16salinization}.
 The ephippia can remain viable for many years, awaiting the return of favorable conditions.
@@ -377,9 +377,9 @@ grid.arrange(p1, p2, ncol = 1)
 \caption{\label{fig:data_vis}
 The experimental data.
 Density (Individuals$/$Liter) of \textit{D.~dentifera} (solid lines) and \textit{D.~lumholtzi} (dashed lines).
-The top panel shows adult susceptibles (\textit{D.~dentifera}, blue; \textit{D.~lumholtzi}, black) and infecteds (\textit{D.~dentifera}, red; \textit{D.~lumholtzi}, purple).
+The top panel shows adult female susceptibles (\textit{D.~dentifera}, blue; \textit{D.~lumholtzi}, black) and infecteds (\textit{D.~dentifera}, red; \textit{D.~lumholtzi}, purple).
 The bottom panel shows juvenile susceptibles (\textit{D.~dentifera}, orange; \textit{D.~lumholtzi}, brown).
-There were negligible infected juveniles.
+There were negligible infected juveniles and males.
 Columns are buckets corresponding to replications with same treatment setting.
 }
 \end{figure}
@@ -431,8 +431,8 @@ Our hypothesized model is supported so far as it is the best model for the avail
 
 \draw [->, bendy] (Sn) to  (In);
 \draw [->, bendy] (Si) to  (Ii);
-\draw [->, bendy] (In) to  (Sn);
-\draw [->, bendy] (Ii) to  (Si);
+%\draw [->, bendy] (In) to  (Sn);
+%\draw [->, bendy] (Ii) to  (Si);
 \draw [->, bendy] (Jn) to  (Sn);
 \draw [->, bendy] (Ji) to  (Si);
 \draw [->, bendy] (Sn) to  (Jn);
@@ -472,8 +472,9 @@ Transition to the $R$ state represents death or removal of any species.
 \label{fig:flow_SIRJPF2}
 \end{figure}
 
-Fig.~\ref{fig:flow_SIRJPF2} shows a flow diagram for a two-species model where the \textit{Daphnia} are susceptible adult (S), infected adult (I), or juvenile (J), with a superscript $\invasive$ for invasive and $\native$ for native.
-We also keep track of the aquatic parasite spore density (P) and the food density (F).
+Fig.~\ref{fig:flow_SIRJPF2} shows a flow diagram for a two-species model where the \textit{Daphnia} are susceptible adult female (S), infected adult female (I), or juvenile (J), with a superscript $\invasive$ for invasive and $\native$ for native.
+\revision{\editMales}
+We keep track of the aquatic parasite spore density (P) and the food density (F).
 Removal (i.e., death, consumption or destructive sampling) for any species is described by transition to class R.
 Similar to many epidemiological models, this description of the dynamic system extends the basic SIR model \citep{weiss13}.
 Mathematically, the model is described by equations~(\ref{eq:model:first}--\ref{eq:model:last}), a system of stochastic differential equations which we interpret in the It\^{o} sense \citep{oksendal98}.
@@ -1159,7 +1160,7 @@ The flexibility of the PanelPOMP model class provides many opportunities for dev
 
 \section*{Significance Statement}
 
-\editSignificance
+\revision{\editSignificance}
 
 \begin{acks}[Acknowledgments]
 %% The corresponding author is Bo Yang with address 665 W 130th St, New York, NY 10027.
