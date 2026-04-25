@@ -932,9 +932,7 @@ To explore this assumption, we compared the model using the value $\xi_{J,{\unit
 Likelihood residual analysis is an effective tool for comparing alternative models by assessing differences in the conditional log-likelihood for each data point \citep{wheeler24,li24}.
 We maximized the log-likelihood subject to the fixed values of $\xi_{J,{\unit}}$, and we compared the conditional log-likelihood for each observation category at each time point for each fixed $\xi_{J,{\unit}}$ value, as shown in Fig.~S3(a).
 These results show that setting $\xi_{J,{\unit}} = 1$ leads to only a slightly higher maximized log-likelihood ($-881.13$) than $\xi_{J,{\unit}} = 0.001$ ($-882.24$), indicating that the parameter is weakly identified.
-Moreover, plotting the conditional log-likelihood for each state at each time, we observe that the log-likelihood components for susceptible and infected \textit{D. dentifera} and \textit{D. lumholtzi} are similar between the two parameter settings.
-These results suggest that both parameter values provide indistinguishable explanations of the observed data, which is a stronger conclusion than obtaining a similar total log-likelihood.
-
+Moreover, plotting the conditional log-likelihood for each state at each time, we observe that all the log-likelihood components for susceptible and infected \textit{D. dentifera} and \textit{D. lumholtzi} are similar between the two parameter settings.
 The choice of $\xi_{J,{\unit}}$ nevertheless affects the interpretation of the fitted model: the maximum likelihood estimates constrained to different values of $\xi_{J,{\unit}}$ lead to distinct behavior of juvenile \textit{Daphnia} in simulations, as shown in Fig.~S3(b).
 If $\xi_{J,{\unit}}$ is set to be lower than is biologically plausible, simulated trajectories from the fitted model have far fewer juveniles than was observed, which is shown in Fig.~S3(b) as well.
 This indicates model misspecification which could bias the estimates of $r^{\species}_{\unit}, p^{\species}_{\unit}$ and $ f^{\species}_{S,\unit}$.
@@ -1135,7 +1133,7 @@ Our general plug-and-play framework can be further extended, and information cri
 For example, we could have incorporated the phenomenon that \textit{Daphnia} with advanced infection have reduced feeding rate, or we could have allowed for the possibility that recently infected \textit{Daphnia} can continue to reproduce.
 Additional residual analysis can search for patterns suggesting model improvements, following a similar approach to the residual analysis carried out here.
 
-Although we did not calibrate the model using juvenile data, the addition of latent $J^{\species}_{\unit}$ states leads to an improved statistical fit.
+Although we did not calibrate the model using juvenile data {\revision\editJuveniles}, the addition of latent $J^{\species}_{\unit}$ states leads to an improved statistical fit.
 This could arise because the juvenile stage provides a delay in the {\em Daphnia} population growth dynamics, and because juveniles compete with adults for available food resources.
 Juveniles rarely exhibit disease, perhaps because of the latency in the parasite's development within its host, but they nevertheless play a significant role in the infection dynamics.
 While we have shown the relevance of age-structured dynamics for understanding the data on adults, future work could identify the role of juveniles in the system dynamics more precisely.
