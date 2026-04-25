@@ -550,7 +550,8 @@ Since the sampled volume is $1$ liter, the densities $S^{\species}_{\unit}(t_n)$
 We do not include the data on juveniles during the model fitting process, to keep our approach comparable to the investigation by \citet{searle16}.
 Therefore, these data are available for an out-of-sample model validation.
 
-Simpler treatments with a single \textit{Dapnia} species (SIRJPF) and without the parasite (SRJF and SRJF2) arise as special cases of SIRJPF2, with appropriate states and parameters set to zero.
+Simpler treatments with a single \textit{Dapnia} species (SIRJPF) and without the parasite (SRJF and SRJF2) arise as special cases of SIRJPF2, with appropriate states and parameters
+\revision{\editSetToZero}
 These experiment treatments and corresponding models are presented in Section~S4, S5 and S6.
 By isolating the food variable in the absence of parasites and/or inter-species competition among {\it Daphnia}, these results provide additional evidence on how food resource availability or scarcity impacts the population dynamics of native and invasive species.
 
@@ -763,14 +764,14 @@ load('data/benchmark_model_summary.rda')
 \resizebox{\textwidth}{!}{
 \begin{tabular}{||c|c |c|c|c||}
 \hline
-Parameter & Definition &Unit & Value & CI\\[0.5ex]
+Notation & Definition &Unit & Value & CI\\[0.5ex]
 \hline
 \hline
-$S^{k}$ & Susceptible host density for species $k$  & $\mathrm{individual} \cdot L ^{-1}$                 & Variable                & \\
-$I^{k}$ & Infected host density for species $k$     & $ \mathrm{individual} \cdot L ^{-1}$                & Variable                & \\
-$J^{k}$ & Juvenile host density for species $k$     & $ \mathrm{individual} \cdot L ^{-1}$                & Variable                & \\
-$F$   & Alga density                              & $10^6 \cdot \mathrm{cell} \cdot L ^{-1}$             & Variable                & \\
-$P$   & Spore density                             & $10^3 \cdot \mathrm{spore} \cdot L ^{-1}$            & Variable                & \\
+$S^{\species}_{\unit}(t)$ & Susceptible host density for species $\species\in\{\native,\invasive\}$  & $\mathrm{individual} \cdot L ^{-1}$                 & Variable                & \\
+$I^{\species}_{\unit}(t)$ & Infected host density for species $\species\in\{\native,\invasive\}$     & $ \mathrm{individual} \cdot L ^{-1}$                & Variable                & \\
+$J^{\species}_{\unit}(t)$ & Juvenile host density for species $\species\in\{\native,\invasive\}$     & $ \mathrm{individual} \cdot L ^{-1}$                & Variable                & \\
+$F_{\unit}(t)$   & Alga density                              & $10^6 \cdot \mathrm{cell} \cdot L ^{-1}$             & Variable                & \\
+$P_{\unit}(t)$   & Spore density                             & $10^3 \cdot \mathrm{spore} \cdot L ^{-1}$            & Variable                & \\
 $r^{\native}$ & Birth rate of native juvenile                         & $\mathrm{individual} \cdot 10^{-6}\cdot \mathrm{cell}^{-1}$ & \Sexpr{mysignif(rn,2)}  & (\Sexpr{mysignif(ci_table$rn[1],2)},\Sexpr{mysignif(ci_table$rn[2],2)})\\
 $r^{\invasive}$ & Birth rate of invasive juvenile                       & $\mathrm{individual} \cdot 10^{-6}\cdot \mathrm{cell}^{-1}$ & \Sexpr{mysignif(ri,2)}  & (\Sexpr{mysignif(ci_table$ri[1],2)}, $\infty$)\\
 $f_{S^{\native}}$ & Native susceptible adult host filtering rate   &  $\mathrm{L} \cdot \mathrm{individual}^{-1} \cdot \mathrm{day}^{-1}$   & \Sexpr{mysignif(f_Sn,2)}  & (\Sexpr{mysignif(ci_table$f_Sn[1],2)},\Sexpr{mysignif(ci_table$f_Sn[2],2)})\\
@@ -811,7 +812,8 @@ $\tau^{\invasive}_{I}$      &  Measurement dispersion for infected invasive adul
 \hline
 \end{tabular}}
 \caption{
-Variables and parameter definitions and estimates.
+\revision{\editResultsTableCaption}
+\revision{\editReminderShared}
 The superscript $\native$ and $\invasive$ represents native (\textit{D.~dentifera}) and invasive (\textit{D.~lumholtzi}) respectively.
 }
 \label{tab:estimates}
