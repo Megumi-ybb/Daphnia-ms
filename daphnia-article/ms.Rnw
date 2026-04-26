@@ -429,10 +429,8 @@ Our hypothesized model is supported so far as it is the best model for the avail
 
 
 
-\draw [->, bendy] (Sn) to  (In);
-\draw [->, bendy] (Si) to  (Ii);
-%\draw [->, bendy] (In) to  (Sn);
-%\draw [->, bendy] (Ii) to  (Si);
+\draw [->] (Sn) to  (In);
+\draw [->] (Si) to  (Ii);
 \draw [->, bendy] (Jn) to  (Sn);
 \draw [->, bendy] (Ji) to  (Si);
 \draw [->, bendy] (Sn) to  (Jn);
@@ -465,19 +463,19 @@ Our hypothesized model is supported so far as it is the best model for the avail
 }
 \end{center}
 \vspace{-5mm}
-\caption{A flow diagram for the SIRJPF2 model.
-The two species of \textit{Daphnia} interact with each other indirectly through $F$ (Food) and $P$ (Parasite) compartments.
+\caption{The SIRJPF2 model.
+The two species of \textit{Daphnia} (square blue compartments) interact with each other indirectly through $F$ (Food) and $P$ (Parasite) compartments.
 Transition to the $R$ state represents death or removal of any species.
 }
 \label{fig:flow_SIRJPF2}
 \end{figure}
 
-Fig.~\ref{fig:flow_SIRJPF2} shows a flow diagram for a two-species model where the \textit{Daphnia} are susceptible adult female (S), infected adult female (I), or juvenile (J), with a superscript $\invasive$ for invasive and $\native$ for native.
+Fig.~\ref{fig:flow_SIRJPF2} shows a diagram showing interactions in a two-species model where the \textit{Daphnia} are susceptible adult female (S), infected adult female (I), or juvenile (J), with a superscript $\invasive$ for invasive and $\native$ for native.
 \revision{\editMales}
 We keep track of the aquatic parasite spore density (P) and the food density (F).
 Removal (i.e., death, consumption or destructive sampling) for any species is described by transition to class R.
-Similar to many epidemiological models, this description of the dynamic system extends the basic SIR model \citep{weiss13}.
-Mathematically, the model is described by equations~(\ref{eq:model:first}--\ref{eq:model:last}), a system of stochastic differential equations which we interpret in the It\^{o} sense \citep{oksendal98}.
+This dynamic system extends the basic SIR model fundamental to epidemiology \citep{weiss13}.
+Mathematically, the SIRJPF2 model is described by equations~(\ref{eq:model:first}--\ref{eq:model:last}), a system of stochastic differential equations which we interpret in the It\^{o} sense \citep{oksendal98}.
 Nonlinearity arises through product terms in the infection and consumption specifications.
 We use Gaussian noise, though multiplicative gamma noise can be employed to enforce non-negativity of rates \citep{bhadra11}.
 A version of SIRJPF2 with gamma noise, called SIRJPF2-Gamma, is presented in Section~S9, though we found that a simpler Gaussian noise model is sufficient.
