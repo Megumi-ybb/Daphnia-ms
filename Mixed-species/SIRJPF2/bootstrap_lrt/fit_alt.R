@@ -186,7 +186,7 @@ parameter_candidates <- list(shared = result_params$shared_parameter,
                              specific = result_params$specific_mat)
 
 mf1 <- foreach(
-  i = 1:(10 * getDoParWorkers()),
+  i = 1:(5 * getDoParWorkers()),
   .packages = c("pomp", "panelPomp"),
   .inorder = FALSE,
   .options.multicore = list(set.seed = TRUE)
@@ -233,7 +233,7 @@ for (i in 1:length(specific_list)) {
 dent_rw.sd <- 0.04
 
 mf <- foreach(
-  i = 1:(10 * getDoParWorkers()),
+  i = 1:(5 * getDoParWorkers()),
   .packages = c("pomp", "panelPomp"),
   .inorder = FALSE,
   .options.multicore = list(set.seed = TRUE)

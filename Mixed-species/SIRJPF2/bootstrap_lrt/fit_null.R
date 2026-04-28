@@ -147,7 +147,7 @@ Mp <- 1000
 dent_rw.sd <- 0.05
 
 mf1 <- foreach(
-  i = 1:(10 * getDoParWorkers()),
+  i = 1:(5 * getDoParWorkers()),
   .packages = c("pomp", "panelPomp"),
   .inorder = FALSE,
   .options.multicore = list(set.seed = TRUE)
@@ -185,7 +185,7 @@ shared_dataframe <- shared_dataframe[rep(1:nrow(shared_dataframe), each = 4), ]
 dent_rw.sd <- 0.04
 
 mf <- foreach(
-  i = 1:(10 * getDoParWorkers()),
+  i = 1:(5 * getDoParWorkers()),
   .packages = c("pomp", "panelPomp"),
   .inorder = FALSE,
   .options.multicore = list(set.seed = TRUE)
