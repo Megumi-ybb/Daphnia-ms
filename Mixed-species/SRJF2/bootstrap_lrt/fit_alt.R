@@ -163,7 +163,7 @@ parameter_candidates <- list(shared = result_params$shared_parameter,
                              specific = result_params$specific_mat)
 
 mf1 <- foreach(
-  i = 1:(10 * getDoParWorkers()),
+  i = 1:(3 * getDoParWorkers()),
   .packages = c("pomp", "panelPomp"),
   .inorder = FALSE,
   .options.multicore = list(set.seed = TRUE)
@@ -185,7 +185,7 @@ mf1 <- foreach(
     Np = Mp
   ) -> m1
 
-  ll <- replicate(n = Np_rep, unitlogLik(pfilter(m1, Np = Np)))
+  ll <- replicate(n = Np_rep, unitLogLik(pfilter(m1, Np = Np)))
   list(mif = m1, ll = panel_logmeanexp(x = ll, MARGIN = 1, se = TRUE))
 }
 
@@ -210,7 +210,7 @@ for (i in 1:length(specific_list)) {
 dent_rw.sd <- 0.04
 
 mf <- foreach(
-  i = 1:(10 * getDoParWorkers()),
+  i = 1:(3 * getDoParWorkers()),
   .packages = c("pomp", "panelPomp"),
   .inorder = FALSE,
   .options.multicore = list(set.seed = TRUE)
@@ -236,7 +236,7 @@ mf <- foreach(
     Np = Mp
   ) -> m1
 
-  ll <- replicate(n = Np_rep, unitlogLik(pfilter(m1, Np = Np)))
+  ll <- replicate(n = Np_rep, unitLogLik(pfilter(m1, Np = Np)))
   list(mif = m1, ll = panel_logmeanexp(x = ll, MARGIN = 1, se = TRUE))
 }
 
@@ -249,7 +249,5 @@ result <- list(
   coef = coef(mf[[best]]$mif)
 )
 
-out_dir <- file.path("results_alt", alt_name)
-dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
-saveRDS(result, file = sprintf("%s/lrt_alt_%s_%03d.rds", out_dir, alt_name, b))
+saveRDS(result, file = paste0('results_alt/lrt_',alt_name,"_",b,'.rds'))
 cat("Done. ll =", result$ll, "se =", result$se, "\n")

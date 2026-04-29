@@ -111,7 +111,7 @@ Mp <- 1000
 dent_rw.sd <- 0.05
 
 mf1 <- foreach(
-  i = 1:(10 * getDoParWorkers()),
+  i = 1:(3 * getDoParWorkers()),
   .packages = c("pomp", "panelPomp"),
   .inorder = FALSE,
   .options.multicore = list(set.seed = TRUE)
@@ -128,7 +128,7 @@ mf1 <- foreach(
     Np = Mp
   ) -> m1
 
-  ll <- replicate(n = Np_rep, unitlogLik(pfilter(m1, Np = Np)))
+  ll <- replicate(n = Np_rep, unitLogLik(pfilter(m1, Np = Np)))
   list(mif = m1, ll = panel_logmeanexp(x = ll, MARGIN = 1, se = TRUE))
 }
 
@@ -145,7 +145,7 @@ shared_dataframe <- shared_dataframe[rep(1:nrow(shared_dataframe), each = 4), ]
 dent_rw.sd <- 0.04
 
 mf <- foreach(
-  i = 1:(10 * getDoParWorkers()),
+  i = 1:(3 * getDoParWorkers()),
   .packages = c("pomp", "panelPomp"),
   .inorder = FALSE,
   .options.multicore = list(set.seed = TRUE)
@@ -165,7 +165,7 @@ mf <- foreach(
     Np = Mp
   ) -> m1
 
-  ll <- replicate(n = Np_rep, unitlogLik(pfilter(m1, Np = Np)))
+  ll <- replicate(n = Np_rep, unitLogLik(pfilter(m1, Np = Np)))
   list(mif = m1, ll = panel_logmeanexp(x = ll, MARGIN = 1, se = TRUE))
 }
 
@@ -178,6 +178,5 @@ result <- list(
   coef = coef(mf[[best]]$mif)
 )
 
-dir.create("results_null", showWarnings = FALSE, recursive = TRUE)
-saveRDS(result, file = sprintf("results_null/lrt_null_%03d.rds", b))
+saveRDS(result, file = paste0('results_null/lrt_null_',b,'.rds'))
 cat("Done. ll =", result$ll, "se =", result$se, "\n")

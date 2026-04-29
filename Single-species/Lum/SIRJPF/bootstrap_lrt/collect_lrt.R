@@ -19,7 +19,7 @@ cat("Observed null log-likelihood:", null_ll_obs, "\n\n")
 null_lls <- numeric(B)
 null_completed <- 0
 for (b in 1:B) {
-  f <- sprintf("results_null/lrt_null_%03d.rds", b)
+  f <- sprintf("results_null/lrt_null_%d.rds", b)
   if (file.exists(f)) {
     res <- readRDS(f)
     null_lls[b] <- res$ll
@@ -69,7 +69,7 @@ for (alt in alt_names) {
   alt_lls <- numeric(B)
   alt_completed <- 0
   for (b in 1:B) {
-    f <- sprintf("results_alt/%s/lrt_alt_%s_%03d.rds", alt, alt, b)
+    f <- sprintf("results_alt/lrt_%s_%d.rds", alt, b)
     if (file.exists(f)) {
       res <- readRDS(f)
       alt_lls[b] <- res$ll

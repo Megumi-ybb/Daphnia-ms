@@ -8,7 +8,7 @@ set.seed(801)
 B <- 100
 
 # ---- Load MLE from model fitting ----
-load("../model/all_shared.RData")
+load("../model/all_shared_nosigS.RData")
 
 mif.estimate <- c(
   rn = 69.34499, f_Sn = 0.0007281269, probn = 0.3193476, xi = 14.43326,
