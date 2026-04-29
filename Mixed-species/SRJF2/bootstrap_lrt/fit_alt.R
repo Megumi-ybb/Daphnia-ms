@@ -3,7 +3,7 @@ Sys.setenv(PATH = paste("/user/by2418/.conda/envs/r-pomp/bin", Sys.getenv("PATH"
 
 library(foreach)
 library(doParallel)
-registerDoParallel(cores = detectCores())
+registerDoParallel(cores = 100)
 library(pomp)
 library(panelPomp)
 
