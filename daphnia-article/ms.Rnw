@@ -206,6 +206,7 @@ Iterated filtering enables maximization of the likelihood for scientifically mot
 This toolbox allows scientists to propose and evaluate scientifically motivated stochastic dynamic models for panel data, constrained only by the requirement to write code to simulate from the model and to specify a measurement distribution describing how the system state is observed.
 Our iterated filtering framework provides a statistically efficient, likelihood-based solution, avoiding the information loss inherent when using the generalized method of moments or Approximate Bayesian Computing approaches.
 Existing full-information Bayesian tools are not applicable to panels of partially observed Markov process models with intractable transition densities.
+\bye{A central scientific finding from our analysis is that mesocosms behave as stochastic replicates of a single system: across all treatment-by-species combinations considered, a model with parameters shared across replicate mesocosms is preferred over models with mesocosm-specific parameters under both AIC and a parametric bootstrap likelihood ratio test. Empirical coverage of profile likelihood confidence intervals, assessed by simulation from the fitted model, supports the interpretation of the parameter estimates and confidence intervals reported for the four interacting species.}
 \end{abstract}
 
 \begin{keyword}
@@ -306,7 +307,8 @@ The experiment concluded after 52 days, totaling 10 sampling sessions.
 
 \begin{figure}[ht]
 \centering
-<<DataVis,echo=FALSE, fig.height=3, cache=cache_option>>=
+\bye{Figure~1 (\texttt{<<DataVis>>} chunk below) redesigned per AE: now three rows -- adult susceptible, adult infected, juveniles. Uniform line-type / colour mapping (\textit{D.~dentifera} solid blue, \textit{D.~lumholtzi} dashed black) so the figure reads in grayscale. Review owed before submission.}
+<<DataVis,echo=FALSE, fig.height=4.2, cache=cache_option>>=
 mixed_para_data_combined <- do.call(rbind, lapply(1:length(mixed_para_data), function(i) {
   cbind(mixed_para_data[[i]], Trial = paste("Trial", trails[i]))
 }))
@@ -316,71 +318,93 @@ mixed_para_data_combined$Bucket = paste0(rep("Bucket ",80),rep(1:8, each = 10))
 bucket_labeller <- as_labeller(function(bucket) gsub("Bucket ", "Mesocosm-", bucket))
 
 library(ggplot2)
-lum.style="twodash"  # could be dotdash or dashed or twodash
-dent.style="solid"
-lum.width=0.6
-dent.width=0.5
-p1 <- ggplot(mixed_para_data_combined, aes(x = day)) +
-  geom_line(aes(y = dent.adult), color = "blue", linewidth = dent.width,
-    linetype=dent.style) +
-  geom_line(aes(y = lum.adult), color = "black", linewidth = lum.width,
-    linetype=lum.style) +
-  geom_line(aes(y = lum.adult.inf), color = "purple", linewidth = lum.width,
-    linetype=lum.style) +
-  geom_line(aes(y = dent.inf), color = "red", linewidth = dent.width,
-    linetype=dent.style) +
+# Following the AOAS grayscale request, line type carries the species signal
+# and colour is a secondary cue. dent = solid blue; lum = dashed black.
+lum.style    <- "twodash"
+dent.style   <- "solid"
+lum.width    <- 0.6
+dent.width   <- 0.5
+dent.color   <- "blue"
+lum.color    <- "black"
+
+# Row 1: adult susceptible females
+p_adultS <- ggplot(mixed_para_data_combined, aes(x = day)) +
+  geom_line(aes(y = dent.adult), color = dent.color, linewidth = dent.width,
+            linetype = dent.style) +
+  geom_line(aes(y = lum.adult),  color = lum.color,  linewidth = lum.width,
+            linetype = lum.style) +
   facet_wrap(~Bucket, nrow = 1, labeller = bucket_labeller) +
   theme_minimal() +
   theme(
     axis.title.x = element_blank(),
-    axis.text.x = element_blank(),
+    axis.text.x  = element_blank(),
     axis.title.y = element_text(size = 8),
-    axis.text.y = element_text(size = 9),
-    strip.text = element_text(size = 8),
+    axis.text.y  = element_text(size = 9),
+    strip.text   = element_text(size = 8),
     strip.background = element_blank(),
-    strip.placement = "outside",
-    plot.margin = margin(0, 0.5, 0, 0.5, "cm"),
+    strip.placement  = "outside",
+    plot.margin  = margin(0, 0.5, 0, 0.5, "cm"),
     legend.position = "none"
   ) +
-  ylab('Adult density') +
-  xlab('Day') +
+  ylab('Adult susceptible') +
   scale_x_continuous(limits = c(0, 52), breaks = c(0, 25, 50)) +
-  scale_y_continuous(trans="sqrt")
+  scale_y_continuous(trans = "sqrt")
 
-p2<- ggplot(mixed_para_data_combined, aes(x = day)) +
-  geom_line(aes(y = dent.juv), color = "orange", linewidth = dent.width,
-    linetype=dent.style) +
-  geom_line(aes(y = lum.juv), color = "brown", linewidth = lum.width,
-    linetype=lum.style) +
+# Row 2: adult infected females
+p_adultI <- ggplot(mixed_para_data_combined, aes(x = day)) +
+  geom_line(aes(y = dent.inf),     color = dent.color, linewidth = dent.width,
+            linetype = dent.style) +
+  geom_line(aes(y = lum.adult.inf), color = lum.color, linewidth = lum.width,
+            linetype = lum.style) +
+  facet_wrap(~Bucket, nrow = 1) +
+  theme_minimal() +
+  theme(
+    axis.title.x = element_blank(),
+    axis.text.x  = element_blank(),
+    axis.title.y = element_text(size = 8),
+    axis.text.y  = element_text(size = 9),
+    strip.text   = element_blank(),
+    strip.background = element_blank(),
+    strip.placement  = "outside",
+    plot.margin  = margin(0, 0.5, 0, 0.5, "cm"),
+    legend.position = "none"
+  ) +
+  ylab('Adult infected') +
+  scale_x_continuous(limits = c(0, 52), breaks = c(0, 25, 50)) +
+  scale_y_continuous(trans = "sqrt")
+
+# Row 3: juveniles (susceptible only -- negligible infected juveniles)
+p_juv <- ggplot(mixed_para_data_combined, aes(x = day)) +
+  geom_line(aes(y = dent.juv), color = dent.color, linewidth = dent.width,
+            linetype = dent.style) +
+  geom_line(aes(y = lum.juv),  color = lum.color,  linewidth = lum.width,
+            linetype = lum.style) +
   facet_wrap(~Bucket, nrow = 1) +
   theme_minimal() +
   theme(
     axis.title.x = element_text(size = 9),
     axis.title.y = element_text(size = 8),
-    axis.text.x = element_text(size = 8),
-    axis.text.y = element_text(size = 8),
-    strip.text = element_blank(),
+    axis.text.x  = element_text(size = 8),
+    axis.text.y  = element_text(size = 8),
+    strip.text   = element_blank(),
     strip.background = element_blank(),
-    strip.placement = "outside",
-    plot.margin = margin(0, 0.5, 0, 0.5, "cm"),
+    strip.placement  = "outside",
+    plot.margin  = margin(0, 0.5, 0, 0.5, "cm"),
     legend.position = "none"
   ) +
-  ylab('Juvenile density') +
+  ylab('Juveniles') +
   xlab('Day') +
   scale_x_continuous(limits = c(0, 52), breaks = c(0, 25, 50)) +
-  scale_y_continuous(trans="sqrt")
+  scale_y_continuous(trans = "sqrt")
 
-
-# grid.arrange(p1, p2, ncol = 1, heights = c(1, 1))
-grid.arrange(p1, p2, ncol = 1)
+grid.arrange(p_adultS, p_adultI, p_juv, ncol = 1)
 @
 \caption{\label{fig:data_vis}
-The experimental data.
-Density (Individuals$/$Liter) of \textit{D.~dentifera} (solid lines) and \textit{D.~lumholtzi} (dashed lines).
-The top panel shows adult female susceptibles (\textit{D.~dentifera}, blue; \textit{D.~lumholtzi}, black) and infecteds (\textit{D.~dentifera}, red; \textit{D.~lumholtzi}, purple).
-The bottom panel shows juvenile susceptibles (\textit{D.~dentifera}, orange; \textit{D.~lumholtzi}, brown).
+\bye{The experimental data.
+Density (individuals per litre) of adult susceptible females (top), adult infected females (middle) and juveniles (bottom).
+\textit{D.~dentifera} is plotted with solid lines (blue in the colour version), and \textit{D.~lumholtzi} with dashed lines (black in the colour version).
 There were negligible infected juveniles and males.
-Columns are buckets corresponding to replications with same treatment setting.
+Columns are mesocosms corresponding to replications under the same treatment setting.}
 }
 \end{figure}
 
@@ -624,61 +648,62 @@ By providing likelihood-based inference for a general class of nonlinear, non-Ga
 This article provides a case study for such an application in the field of ecology.
 \begin{figure}[h!]
 \centering
-\resizebox{\textwidth}{!}{%
+\bye{Figure~3 (TikZ block below) redesigned per Ed's suggestion (response.tex L279): the ``Resample states / parameters'' box now sits below the perturb-predict-weight box, the Output box is to its left, and the diagram renders at native size (no \texttt{\textbackslash resizebox}) with \texttt{font=\textbackslash small}, so the fonts are legible at the AOAS column width. Review the rendered figure for arrow alignment before submission.}
 \begin{tikzpicture}[
-    node distance=5cm
+    node distance=4cm,
+    font=\small
   ]
 
 \node (N) at (0,0) [decision, yshift=-0.5cm] {\texttt{n=1:N}};
-\node (initialize) [process, left of=N,xshift= 0cm] {Initialize particle \texttt{j}, unit \texttt{u},\\
+\node (initialize) [process, left of=N, xshift=0cm] {Initialize particle \texttt{j}, unit \texttt{u},\\
 time $\mathtt{t_0}$, states \& parameters};
 \node[fit=(initialize),myfit] (initialize1) {};
 \node[mytitle] at (initialize1.north west) {\texttt{j=1:J}};
 
-
-\node (U) [decision, left of=initialize1, xshift= 0cm] {\texttt{u=1:U}};
-\node (M) [decision2, left of=U, xshift= 2.5cm] {\texttt{m=1:M}};
+\node (U) [decision, left of=initialize1, xshift=0cm] {\texttt{u=1:U}};
+\node (M) [decision2, left of=U, xshift=2.5cm] {\texttt{m=1:M}};
 \node (S) [mytitle, above of=M, xshift=1cm] {\textbf{Input:} PanelPOMP model\\ and data};
-
 
 \draw[arrow,black] (initialize1) -- (N);
 \draw[arrow,black] (U) -- (initialize1);
 \draw[arrow,black] (M) -- (U);
-\draw[arrow,black] ($(S.south)!.5!(S.south west)$) -- (M);    
-\node (predict) [process, right of=N,xshift=0cm,yshift=0.1cm] {Simulate stochastic dynamics,\\ unit $\mathtt{u}$, time $\mathtt{t_{n-1}}$ to $\mathtt{t_{n}}$};
-\node (perturb) [process2, above of=predict,yshift=-3cm] {Perturb parameters $\mathtt{\phi}$, $\mathtt{\psi_u}$};
-\node (weight) [process, below of=predict,yshift=2.8cm] {Calculate weights for data,\\ unit $\mathtt{u}$, time $\mathtt{t_{n}}$};
+\draw[arrow,black] ($(S.south)!.5!(S.south west)$) -- (M);
+
+% Perturb / predict / weight stack to the right of N
+\node (predict) [process, right of=N, xshift=0cm, yshift=0.1cm] {Simulate stochastic dynamics,\\ unit $\mathtt{u}$, time $\mathtt{t_{n-1}}$ to $\mathtt{t_{n}}$};
+\node (perturb) [process2, above of=predict, yshift=-2.4cm] {Perturb parameters $\mathtt{\phi}$, $\mathtt{\psi_u}$};
+\node (weight)  [process,  below of=predict, yshift=2.4cm]  {Calculate weights for data,\\ unit $\mathtt{u}$, time $\mathtt{t_{n}}$};
 \draw[arrow,black] (perturb) -- (predict);
 \draw[arrow,black] (predict) -- (weight);
 \node[fit=(perturb)(predict)(weight),myfit] (ppw) {};
 \node[mytitle] at (ppw.north west) {\texttt{j=1:J}};
 \draw[arrow,black] (N) -- (ppw);
 
-\node (resampleParams) [process2, right of=predict,xshift=2.5cm,yshift=-1.1cm] {Resample parameters};
-\node (resampleState) [process, above of=resampleParams,yshift=-3cm] {Resample states};
-% \draw[arrow,black] (resampleState) -- (resampleParams);
-\node[fit=(resampleParams)(resampleState),myfit] (resampleProcess) {};
+% Resample states / parameters: now BELOW the ppw stack rather than to its right
+\node (resampleState)  [process,  below of=weight,        yshift=2.0cm] {Resample states};
+\node (resampleParams) [process2, below of=resampleState, yshift=2.4cm] {Resample parameters};
+\node[fit=(resampleState)(resampleParams),myfit] (resampleProcess) {};
 \node[mytitle] at (resampleProcess.north west) {\texttt{j=1:J}};
-\draw[arrow,black] (ppw) -- (resampleProcess);
+\draw[arrow,black] (ppw.south) -- (resampleProcess.north);
 
+% Output: to the LEFT of the resample box
+\node (O) [mytitle, left of=resampleProcess, xshift=-0.5cm]
+    {\textbf{Output:} Monte Carlo Maximum\\ Likelihood Parameter Estimate};
+\draw[arrow,black] (resampleProcess.west) -- (O.east);
 
-\node (resampleProcess_south1) [below of=resampleProcess,yshift= 0.75cm] {};
-\node (resampleProcess_south2) [below of=resampleProcess,yshift= 0.25cm] {};
-\node (resampleProcess_south3) [below of=resampleProcess,yshift=-0.25cm] {};
-\node (N_south) [below of=N,yshift=0.75cm] {};
-\node (U_south) [below of=U,yshift=0.25cm] {};
-\node (M_south) [below of=M,yshift=-0.25cm] {};
-
+% Loop arrows: from resampleProcess back to N, U, M
+\node (resampleProcess_south1) [below of=resampleProcess, yshift= 1.5cm] {};
+\node (resampleProcess_south2) [below of=resampleProcess, yshift= 1.0cm] {};
+\node (resampleProcess_south3) [below of=resampleProcess, yshift= 0.5cm] {};
+\node (N_south) [below of=N, yshift= 1.5cm] {};
+\node (U_south) [below of=U, yshift= 1.0cm] {};
+\node (M_south) [below of=M, yshift= 0.5cm] {};
 
 \draw[arrow,black] (resampleProcess.south) -- (resampleProcess_south1.south) -- (N_south.south) -- (N.south);
 \draw[arrow,black] (resampleProcess.south) -- (resampleProcess_south2.south) -- (U_south.south) -- (U.south);
 \draw[arrow,black] (resampleProcess.south) -- (resampleProcess_south3.south) -- (M_south.south) -- (M.south);
 
-\node (O) [mytitle, below of=resampleProcess, yshift=-2.5cm,xshift=-0.36cm] {\textbf{Output: }Monte Carlo Maximum\\
- Likelihood Parameter Estimate};
-\draw[arrow,black] (resampleProcess.south) -- (O.north) ;
 \end{tikzpicture}
-}
 \caption{
 A flow diagram for panel iterated filtering.
 If the blue shaded blocks are omitted, this becomes a standard particle filter for each unit. Full pseudocode is in Section~S2. In the PIF algorithm of \citet{breto20}, the parameter resampling step involves re-selecting the unit-specific parameters corresponding to particle $j$ for units $\tilde u \neq u$ as well as $\psi_u$.

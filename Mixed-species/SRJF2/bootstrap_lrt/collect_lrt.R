@@ -8,9 +8,20 @@ B <- 100
 
 alt_names <- c("f_Si_f_Sn", "rn_ri", "theta_Sn_theta_Si")
 
-# ---- Load observed LRT statistics from parameter table ----
-load("../../data/Target_dynamics/no_para/Target_no_para_loglik_df.rds")
-null_ll_obs <- target_no_para_parameter_table["all_shared", "ll"]
+# ---- Classical chi-square LRT p-value (mirrors si.Rnw lrt_pvalue helper) ----
+lrt_pvalue <- function(ll_alt, AIC_alt, ll_null, AIC_null) {
+  k_alt  <- (AIC_alt  + 2 * ll_alt)  / 2
+  k_null <- (AIC_null + 2 * ll_null) / 2
+  df <- round(k_alt - k_null)
+  if (df <= 0) return(NA_real_)
+  Lambda <- 2 * (ll_alt - ll_null)
+  if (Lambda < 0) return(1)
+  pchisq(Lambda, df = df, lower.tail = FALSE)
+}
+
+# ---- Load observed log-likelihoods from the SRJF2 (no_para) parameter table ----
+load("../../../data/Target_dynamics/no_para/Target_no_para_loglik_df.rds")
+null_ll_obs  <- target_no_para_parameter_table["all_shared", "ll"]
 null_AIC_obs <- target_no_para_parameter_table["all_shared", "AIC"]
 
 cat("Observed null log-likelihood:", null_ll_obs, "\n\n")
@@ -30,37 +41,45 @@ for (b in 1:B) {
 }
 cat("Null fits completed:", null_completed, "/", B, "\n")
 
-# ---- For each alternative, compute bootstrap p-value ----
-results <- data.frame(
-  alt_name = character(),
-  Lambda_obs = numeric(),
-  p_chisq = numeric(),
-  p_boot = numeric(),
-  B_completed = integer(),
-  stringsAsFactors = FALSE
-)
-
-# Row name mapping from parameter table to alt_name
-# Row 1: all_shared (null), Row 2: theta_Sn_theta_Si, Row 3: f_Si_f_Sn, Row 4: rn_ri
+# Row name mapping (rows: 1 all_shared, 2 theta_Si_theta_Sn, 3 f_Si_f_Sn, 4 ri_rn)
 row_map <- list(
   theta_Sn_theta_Si = 2,
   f_Si_f_Sn         = 3,
   rn_ri             = 4
 )
 
+results <- data.frame(
+  family       = character(),
+  alt_name     = character(),
+  k_null       = integer(),
+  k_alt        = integer(),
+  df           = integer(),
+  ll_null_obs  = numeric(),
+  ll_alt_obs   = numeric(),
+  Lambda_obs   = numeric(),
+  p_chisq      = numeric(),
+  p_boot       = numeric(),
+  B_completed  = integer(),
+  Lambda_boot_mean = numeric(),
+  Lambda_boot_sd   = numeric(),
+  stringsAsFactors = FALSE
+)
+
 for (alt in alt_names) {
   cat("\n--- Alternative:", alt, "---\n")
 
-  # Observed LRT statistic
-  row_idx <- row_map[[alt]]
-  alt_ll_obs <- target_no_para_parameter_table[row_idx, "ll"]
-  Lambda_obs <- 2 * (alt_ll_obs - null_ll_obs)
-  cat("  Observed Lambda:", Lambda_obs, "\n")
+  row_idx     <- row_map[[alt]]
+  alt_ll_obs  <- target_no_para_parameter_table[row_idx, "ll"]
+  alt_AIC_obs <- target_no_para_parameter_table[row_idx, "AIC"]
+  Lambda_obs  <- 2 * (alt_ll_obs - null_ll_obs)
+  k_alt       <- (alt_AIC_obs  + 2 * alt_ll_obs)  / 2
+  k_null      <- (null_AIC_obs + 2 * null_ll_obs) / 2
+  df          <- round(k_alt - k_null)
+  p_chisq     <- lrt_pvalue(alt_ll_obs, alt_AIC_obs, null_ll_obs, null_AIC_obs)
 
-  # Chi-square p-value (from existing table)
-  p_chisq <- target_no_para_parameter_table[row_idx, "lrt_pval"]
+  cat(sprintf("  k_null=%d  k_alt=%d  df=%d  Lambda_obs=%.3f\n",
+              as.integer(k_null), as.integer(k_alt), df, Lambda_obs))
 
-  # Load bootstrap alt results
   alt_lls <- numeric(B)
   alt_completed <- 0
   for (b in 1:B) {
@@ -75,47 +94,47 @@ for (alt in alt_names) {
   }
   cat("  Alt fits completed:", alt_completed, "/", B, "\n")
 
-  # Compute bootstrap LRT statistics (only for complete pairs)
   valid <- !is.na(null_lls) & !is.na(alt_lls)
   Lambda_boot <- 2 * (alt_lls[valid] - null_lls[valid])
   B_valid <- sum(valid)
 
-  # Bootstrap p-value with correction
   p_boot <- (1 + sum(Lambda_boot >= Lambda_obs)) / (1 + B_valid)
-  cat("  Bootstrap p-value:", p_boot, "(B =", B_valid, ")\n")
-  cat("  Chi-square p-value:", p_chisq, "\n")
+  cat(sprintf("  p_chisq = %.4f   p_boot = %.4f   (B = %d)\n", p_chisq, p_boot, B_valid))
 
   results <- rbind(results, data.frame(
-    alt_name = alt,
-    Lambda_obs = Lambda_obs,
-    p_chisq = ifelse(is.null(p_chisq), NA, p_chisq),
-    p_boot = p_boot,
-    B_completed = B_valid,
+    family       = "SRJF2",
+    alt_name     = alt,
+    k_null       = as.integer(k_null),
+    k_alt        = as.integer(k_alt),
+    df           = df,
+    ll_null_obs  = null_ll_obs,
+    ll_alt_obs   = alt_ll_obs,
+    Lambda_obs   = Lambda_obs,
+    p_chisq      = p_chisq,
+    p_boot       = p_boot,
+    B_completed  = B_valid,
+    Lambda_boot_mean = mean(Lambda_boot),
+    Lambda_boot_sd   = sd(Lambda_boot),
     stringsAsFactors = FALSE
   ))
 
-  # Diagnostic histogram
   if (B_valid > 10) {
-    # Compute df for chi-square overlay
-    alt_AIC_obs <- target_no_para_parameter_table[row_idx, "AIC"]
-    k_alt <- (alt_AIC_obs + 2 * alt_ll_obs) / 2
-    k_null <- (null_AIC_obs + 2 * null_ll_obs) / 2
-    df <- round(k_alt - k_null)
-
     p <- ggplot(data.frame(Lambda = Lambda_boot), aes(x = Lambda)) +
       geom_histogram(aes(y = after_stat(density)), bins = 30, fill = "steelblue", alpha = 0.7) +
       stat_function(fun = dchisq, args = list(df = max(df, 1)), color = "red", linewidth = 1) +
       geom_vline(xintercept = Lambda_obs, color = "darkgreen", linetype = "dashed", linewidth = 1) +
-      labs(title = paste0("Bootstrap LRT: ", alt, " (df=", df, ")"),
-           subtitle = paste0("p_boot=", round(p_boot, 3), ", p_chisq=", round(p_chisq, 3)),
+      labs(title = paste0("SRJF2 bootstrap LRT: ", alt, " (df=", df, ")"),
+           subtitle = sprintf("p_boot=%.3f, p_chisq=%.3f, B=%d",
+                              p_boot, p_chisq, B_valid),
            x = expression(Lambda), y = "Density") +
       theme_minimal()
     ggsave(sprintf("diagnostic_%s.pdf", alt), p, width = 6, height = 4)
   }
 }
 
-# ---- Save results ----
+# ---- Save ----
 saveRDS(results, file = "bootstrap_pvalues.rds")
+write.csv(results, file = "bootstrap_pvalues.csv", row.names = FALSE)
 cat("\n\n=== Summary ===\n")
-print(results)
-cat("\nResults saved to bootstrap_pvalues.rds\n")
+print(results, row.names = FALSE)
+cat("\nResults saved to bootstrap_pvalues.{rds,csv}\n")

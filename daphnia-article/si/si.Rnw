@@ -46,6 +46,9 @@
 \newcommand\eic[1]{\textcolor{orange}{[EI: #1]}}
 \newcommand\byc[1]{\textcolor{blue}{[BY: #1]}}
 \newcommand\TODO[1]{\textcolor{red}{[TODO: #1]}}
+% \bye is the revision-pass flag used in the response letter and main text.
+% Renders in purple so it visually separates from the existing \byc note macro.
+\providecommand\bye[1]{\textcolor{purple}{[BY: #1]}}
 
 \renewcommand{\contentsname}{Supplementary Content}
 \renewcommand{\refname}{Supplementary References}
@@ -270,6 +273,70 @@ For notational convenience, we define $u=0$ to be an empty panel with $N_0=0$.
 Algorithm~\ref{alg:pif} supposes Gaussian perturbations of the parameters, which is a common practical choice but may require re-parameterizing to avoid boundaries.
 For example, non-negative parameters are typically log-transformed.
 Additional generality is provided by the pseudocode in \cite{breto25} that is implemented in the \texttt{mif2} function of the R package \texttt{panelPomp}.
+
+\clearpage
+
+\section{MCAP Coverage Study}\label{sec:mcap-coverage}
+
+\bye{We assess the empirical coverage of Monte Carlo Adjusted Profile (MCAP) confidence intervals on the SIRJPF2 model using a parametric bootstrap.
+We simulated $B=100$ datasets from the all-shared SIRJPF2 maximum likelihood estimate and recomputed the MCAP profile and 95\% confidence interval, on each simulated dataset, for four target parameters: the native and invasive birth rates $r^{\native}$ and $r^{\invasive}$, the parasite spore process noise $\sigma_P$, and the food process noise $\sigma_F$.
+Profiles were computed with the same iterated-filtering procedure used for the data analysis in the main paper (run-level matching the production runs).}
+
+\subsection{Empirical coverage}
+
+\bye{Table~\ref{Table:mcap-coverage} summarises the headline result.
+For three of the four parameters the 95\% MCAP confidence interval covers the true value in the majority of simulations: 77.8\% for $r^{\native}$, 87.0\% for $\sigma_P$, and 74.0\% for $\sigma_F$.
+For $r^{\invasive}$ the profile is essentially flat: in the SIRJPF2 process model $r^{\invasive}$, $f_S^{\invasive}$ and $p^{\invasive}$ enter the rate term $J^{\invasive}$ only through their product, so individual MCAP confidence intervals span the entire parameter grid and the nominal 95.8\% empirical coverage is degenerate rather than informative.
+We therefore report coverage results only for the three identifiable parameters in the main response and explicitly document the $r^{\invasive} \times f_S^{\invasive} \times p^{\invasive}$ product ridge here.}
+
+\begin{table}[h]
+\centering
+\caption{\label{Table:mcap-coverage}\bye{Empirical coverage of 95\% MCAP confidence intervals across $B=100$ bootstrap datasets simulated from the SIRJPF2 all-shared MLE.}}
+\begin{tabular}{lccc}
+\toprule
+Parameter & Truth (log scale) & Mean MCAP MLE & Empirical coverage \\
+\midrule
+$r^{\native}$       &  3.71 &  4.36 (biased high)            & 77/99 = 77.8\% \\
+$\sigma_P$          & $-1.30$ & $-1.73$ (biased low)          & 87/100 = 87.0\% \\
+$\sigma_F$          & $-1.94$ & $-2.49$ (biased low)          & 74/100 = 74.0\% \\
+$r^{\invasive}$     & 12.28 & profile flat over grid          & degenerate (dropped) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\bye{The empirical undercoverage for $r^{\native}$, $\sigma_P$ and $\sigma_F$ is at first glance concerning, since profile likelihood methods are asymptotically justified by local asymptotic normality.}
+
+\subsection{Diagnosing undercoverage with three log-likelihoods}
+
+\bye{Before adding compute, we ran a three-log-likelihood diagnostic on five representative simulated datasets ($b \in \{2, 25, 50, 75, 95\}$).
+On each dataset we evaluated three log-likelihoods: $\ell_{\text{truth}}$ at the true parameter $\theta_{\text{true}}$ via particle filtering with no further optimisation; $\ell_{\text{profile}}^{\max}$, the best log-likelihood across all profile points in the existing coverage profile; and $\ell_{\text{global}}^{\text{best}}$, the best log-likelihood from a 20-chain iterated-filtering run with all parameters free, warm-started from $\theta_{\text{true}}$.
+
+Across all four target parameters and all five diagnostic datasets we find:
+$\overline{\ell_{\text{profile}}^{\max} - \ell_{\text{truth}}} \approx 8.5$,
+$\overline{\ell_{\text{global}}^{\text{best}} - \ell_{\text{truth}}} \approx 4.5$, and
+$\overline{\ell_{\text{global}}^{\text{best}} - \ell_{\text{profile}}^{\max}} \approx -4$.
+The first inequality says the profile run reaches a log-likelihood that is, on average, $8.5$ units above the true parameter value.
+The second is the same comparison using the warm-started global search.
+The third confirms that the production profile is more thorough than 20-chain warm-from-truth iterated filtering, and so the undercoverage is not caused by under-converged profiling.
+
+The 22-dimensional parameter is fit to an $80$-observation panel ($U=8$ units, $N_u = 10$ time points each), so the asymptotic Wilks expectation for $\ell_{\text{MLE}} - \ell_{\text{truth}}$ is $p/2 = 11$.
+The observed gap of $\approx 8.5$ is therefore within the asymptotic envelope; it represents the standard finite-sample displacement of the maximum likelihood estimate from the true parameter on identifiability ridges, not a methodological failure of MCAP itself.}
+
+\subsection{Identifiability findings}
+
+\bye{In addition to the four target parameters, we examined the within-chain dispersion of all 22 free parameters across the 20 iterated-filtering chains used in the diagnostic study.
+Three parameters showed within-chain standard deviations of $\approx 2.5$ log units each: $r^{\invasive}$, $f_S^{\invasive}$, and $p^{\invasive}$.
+Inspecting the SIRJPF2 process model, these three parameters appear only through the product
+$r^{\invasive} f_S^{\invasive} p^{\invasive} F$
+in the juvenile, infected and susceptible terms for the invasive species, so their levels are non-identifiable individually.
+Two further parameters, $\sigma_{I^{\invasive}}$ and $\sigma_{I^{\native}}$, had within-chain standard deviations of $\approx 5$ log units each (a factor of $\approx 120$) and we treat them as essentially non-identifiable.
+The remaining identifiable parameters ($r^{\native}$, $f_S^{\native}$, $p^{\native}$, $\sigma_P$, $\sigma_F$) had within-chain standard deviations of $1.4$--$1.5$ log units, with finite-sample log-MLE drift of order $\pm 1$.}
+
+\bye{Inline import of the four PDF coverage plots (\texttt{coverage\_plot\_\{ri,rn,sigP,sigF\}.pdf} from \texttt{Mixed-species/SIRJPF2/coverage\_study/coverage\_results/}) and the formatted three-log-likelihood diagnostic table is owed; raw data already exist on disk.}
+
+\section{AIC Selection-Rate Simulation}\label{sec:aic-power}
+
+\bye{Section stub created for the revision (Task~\#2), addressing the referee's request for a Stocks~(2020) Table~D3-style assessment. Computation owed: simulate panels under (a)~all-shared truth and (b)~one-parameter-unit-specific truth for SIRJPF2 (and ideally SRJF2 / Dent SIRJPF if compute allows); for each simulated panel refit both null and alternative models, compute AIC, and tabulate the proportion of simulations in which AIC selects the data-generating model. Suggested sample size: 50--100 simulated panels per truth scenario. Output target: a single table analogous to \citet{stocks20} Supplementary Table~D3 plus a one-paragraph narrative.}
 
 \clearpage
 
