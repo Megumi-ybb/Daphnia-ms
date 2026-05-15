@@ -188,9 +188,9 @@ load("data/raw_data.rda")
 
 \address[A]{Department of Marketing, Columbia University \printead[presep={,\ }]{e1}}
 \address[B]{Department of Mathematics and Statistics, Idaho State University\printead[presep={,\ }]{e2}}
-\address[C]{Department of Ecology and Evolutionary Biology, University of Michigan
+\address[C]{Department of Ecology and Evolutionary Biology, University of Michigan  \printead[presep={,\ }]{e3,e4}
 \address[D]{Department of Statistics, University of Michigan\printead[presep={,\ }]{e5}}
- \printead[presep={,\ }]{e3,e4}}
+}
 \end{aug}
 } \fi
 
@@ -204,9 +204,9 @@ We analyze data from a mesocosm experiment in which two species of the freshwate
 Time series data were collected on replicated mesocosms under six treatment conditions.
 Iterated filtering enables maximization of the likelihood for scientifically motivated nonlinear partially observed Markov process models, providing access to standard likelihood-based methods for parameter estimation, confidence intervals, hypothesis testing, model selection and diagnostics.
 This toolbox allows scientists to propose and evaluate scientifically motivated stochastic dynamic models for panel data, constrained only by the requirement to write code to simulate from the model and to specify a measurement distribution describing how the system state is observed.
-Our iterated filtering framework provides a statistically efficient, likelihood-based solution, avoiding the information loss inherent when using the generalized method of moments or Approximate Bayesian Computing approaches.
-Existing full-information Bayesian tools are not applicable to panels of partially observed Markov process models with intractable transition densities.
-\bye{A central scientific finding from our analysis is that mesocosms behave as stochastic replicates of a single system: across all treatment-by-species combinations considered, a model with parameters shared across replicate mesocosms is preferred over models with mesocosm-specific parameters under both AIC and a parametric bootstrap likelihood ratio test. Empirical coverage of profile likelihood confidence intervals, assessed by simulation from the fitted model, supports the interpretation of the parameter estimates and confidence intervals reported for the four interacting species.}
+%% Our iterated filtering framework provides a statistically efficient, likelihood-based solution, avoiding the information loss inherent when using the generalized method of moments or Approximate Bayesian Computing approaches.
+%% Existing full-information Bayesian tools are not applicable to panels of partially observed Markov process models with intractable transition densities.
+{\revision\editAbstractScience}
 \end{abstract}
 
 \begin{keyword}
@@ -307,7 +307,6 @@ The experiment concluded after 52 days, totaling 10 sampling sessions.
 
 \begin{figure}[ht]
 \centering
-\bye{Figure~1 (\texttt{<<DataVis>>} chunk below) redesigned per AE: now three rows -- adult susceptible, adult infected, juveniles. Uniform line-type / colour mapping (\textit{D.~dentifera} solid blue, \textit{D.~lumholtzi} dashed black) so the figure reads in grayscale. Review owed before submission.}
 <<DataVis,echo=FALSE, fig.height=4.2, cache=cache_option>>=
 mixed_para_data_combined <- do.call(rbind, lapply(1:length(mixed_para_data), function(i) {
   cbind(mixed_para_data[[i]], Trial = paste("Trial", trails[i]))
@@ -400,11 +399,11 @@ p_juv <- ggplot(mixed_para_data_combined, aes(x = day)) +
 grid.arrange(p_adultS, p_adultI, p_juv, ncol = 1)
 @
 \caption{\label{fig:data_vis}
-\bye{The experimental data.
+The experimental data.
 Density (individuals per litre) of adult susceptible females (top), adult infected females (middle) and juveniles (bottom).
-\textit{D.~dentifera} is plotted with solid lines (blue in the colour version), and \textit{D.~lumholtzi} with dashed lines (black in the colour version).
+\textit{D.~dentifera} is plotted with solid lines (blue in the color version), and \textit{D.~lumholtzi} with dashed lines (black in the color version).
 There were negligible infected juveniles and males.
-Columns are mesocosms corresponding to replications under the same treatment setting.}
+Each column corresponds to one mesocosm replicate.
 }
 \end{figure}
 
@@ -1120,7 +1119,7 @@ suppressWarnings(
   % \includegraphics[width=1\textwidth]{"Density_plot.png"}
 \caption{\label{fig:sim_plot}
 Simulated \textit{Daphnia} densities (Individuals$/$Liter), alga density ($10^6\cdot$cells$/$Liter) and parasite density ($10^3\cdot$spores$/$Liter), over time (days), in the mixed species parasitized dynamics with parameters from Table~\ref{Table:Model_comparison}. 
-Blue bands are $95\%$ pointwise confidence intervals; black lines show the mean; solid color lines are the experimental data.
+Shaded blue bands are $95\%$ pointwise confidence intervals; thick black lines show the mean; thin solid color lines are the experimental data.
 The parasite and food densities were not observed, and the dashed colored lines are simulations.
 }
 \end{figure}
