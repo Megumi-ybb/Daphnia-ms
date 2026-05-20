@@ -97,7 +97,7 @@
 <<Debug, include=FALSE>>=
 library(knitr)
 # Set global caching to FALSE for editing code, and TRUE for editing text
-# cache_option = TRUE 
+# cache_option = TRUE
 cache_option = FALSE
 opts_chunk$set(echo = TRUE, cache = cache_option)
 @
@@ -180,14 +180,14 @@ load("data/raw_data.rda")
 {
 \begin{aug}
 \author[A]{\fnms{Bo}~\snm{Yang}\ead[label=e1]{ybb@umich.edu}},
-\author[B]{\fnms{Jesse}~\snm{Wheeler}\ead[label=e2]{jeswheel@umich.edu}},
+\author[B]{\fnms{Jesse}~\snm{Wheeler}\ead[label=e2]{jesse.wheeler@usu.edu}},
 \author[C]{\fnms{Meghan A.}~\snm{Duffy}\ead[label=e3]{duffymeg@umich.edu}},
 \author[C]{\fnms{Aaron A.}~\snm{King}\ead[label=e4]{kingaa@umich.edu}}
 \and
 \author[D]{\fnms{Edward}~\snm{Ionides}\ead[label=e5]{ionides@umich.edu}}
 
 \address[A]{Department of Marketing, Columbia University \printead[presep={,\ }]{e1}}
-\address[B]{Department of Mathematics and Statistics, Idaho State University\printead[presep={,\ }]{e2}}
+\address[B]{Department of Mathematics and Statistics, Utah State University\printead[presep={,\ }]{e2}}
 \address[C]{Department of Ecology and Evolutionary Biology, University of Michigan  \printead[presep={,\ }]{e3,e4}
 \address[D]{Department of Statistics, University of Michigan\printead[presep={,\ }]{e5}}
 }
@@ -522,12 +522,12 @@ The experimentally determined sampling rate, $\delta = 0.013$ per liter per day,
     \big\{
     \theta^{\species}_{I,{\unit}} + \delta
     \big\}
-    \, I^{\species}_{\unit}(t)\, dt + I^{\species}_{\unit}(t) \, d\zeta^{\species}_{I,{\unit}},\\ 
+    \, I^{\species}_{\unit}(t)\, dt + I^{\species}_{\unit}(t) \, d\zeta^{\species}_{I,{\unit}},\\
     dJ^{\species}_{\unit}(t) &= r^{\species}_{\unit} \, f^{\species}_{S,{\unit}} \, F_{\unit}(t) \, S^{\species}_{\unit}(t)\, dt -
     \big\{
     \theta^{\species}_{J,{\unit}}  + \delta + \lambda^{\species}_{J,{\unit}}
-    \big\} 
-    \, J^{\species}_{\unit}(t)\, dt + J^{\species}_{\unit}(t)\, d\zeta^{\species}_{J,{\unit}}, \\ 
+    \big\}
+    \, J^{\species}_{\unit}(t)\, dt + J^{\species}_{\unit}(t)\, d\zeta^{\species}_{J,{\unit}}, \\
     dP_{\unit}(t) &= \hspace{-1mm} \sum_{\species \in \{\native, \invasive\}} \hspace{-1mm} \left(\beta^{\species}_{\unit} \, \theta^{\species}_{I,{\unit}} \,  I^{\species}_{\unit}(t) - f^{\species}_{S,{\unit}} \big\{ S^{\species}_{\unit}(t) + \xi_{\unit} I^{\species}_{\unit}(t) \big\} P_{\unit}(t)\right) \! dt
     \\ \nonumber & \hspace{5.5cm}
     - \theta_{P,{\unit}} \, P_{\unit}(t)\, dt + P_{\unit}(t)\, d\zeta_{P,{\unit}},\\
@@ -631,6 +631,7 @@ The likelihood function cannot generally be evaluated explicitly.
 However, techniques that let us approximately evaluate and maximize this likelihood, while making proper accommodation for the approximation error, let us employ likelihood-based inference tools for parameter estimation, confidence intervals, diagnosis of model misspecification, and model selection.
 Our subsequent investigation demonstrates all these aspects of data analysis.
 
+\jwc{This paragraph is quite long, could we shorten it?}
 Particle filters use a Monte Carlo swarm of latent state values, known as particles, to represent the conditional distribution of the latent variables given the data.
 Particles are updated according to the dynamics of the latent process and then resampled according to their likelihood given the data.
 This resampling is key to the particle filter's efficacy, since it allows the algorithm to focus its computational effort on the most probable states of the latent process, as indicated by the observed data.
@@ -640,6 +641,7 @@ The parameter values are the heritable DNA belonging to each particle.
 The parameter perturbations are analogous to mutations, and the resampling is analogous to natural selection which preferentially favors the fittest particles, i.e., those with parameter values most consistent with the data.
 \citet{kitagawa98} noticed that this favorable property of a particle filter, with perturbed parameters, can be empirically shown to move the population of these parameter values toward a region of increasing likelihood.
 \citet{ionides06} and \citet{ionides15} found ways to iterate this process that lead to concentration around the MLE.
+\jwc{Perhaps split the paragraph here?}
 The panel extension of iterated filtering by \citet{breto20} applies the same principle to PanelPOMP models.
 A flow diagram for a panel iterated filtering (PIF) algorithm is shown in Fig.~\ref{fig:pif}, and full details are given in Section~S2.
 At each iteration, $m=\seq{1}{M}$, the magnitude of the perturbations is reduced, and we use geometric ``cooling'' with a reduction factor $\rho<1$.
@@ -715,7 +717,7 @@ A sufficiently large number of particles is needed to maintain particle diversit
 However, computational cost increases with the number of particles.
 We found that for this model and data, $J=500$ particles and cooling parameter $\rho = 0.7^{1/50} = 0.993$ gave sufficient Monte Carlo accuracy and computational feasibility.
 The likelihood maximization via the PIF algorithm was conducted in three successive stages of $M=150$, $M=150$, and $M=250$ iterations, respectively.
-This tempering approach has commonly been found useful for iterated filtering applications \citep{bhadra11}. 
+This tempering approach has commonly been found useful for iterated filtering applications \citep{bhadra11}.
 After completing each stage, we selected the top 25\% of parameter values ranked by their corresponding log-likelihoods and used these as the initial parameter swarm for the subsequent stage.
 Numerical experimentation under this setting provided log-likelihood estimates with standard error $0.35$ and adequately supported parameter inference while keeping computations within the capabilities of one 36-core Linux machine.
 
@@ -880,7 +882,7 @@ Although these more flexible polynomial expansions do not represent latent biolo
 
 Table~\ref{Table:Model_comparison} includes the log-likelihood and AIC values for the fitted model and the deterministic ODE model of \citet{searle16}, which served as a starting point for our model.
 Although the mechanistic model of \citet{searle16} was successfully used to provide scientific insight into the ecological dynamics of the experiment, we found it does not provide a competitive statistical fit to the data compared to simple alternatives.
-We also consider several variants of the SIRJPF2 model described here, namely a model that excludes the juvenile state (SIRPF2, described in Section S7.3), and a version of the SIRJPF2 model where the Gaussian noise has been replaced with Gamma noise (SIRJPF2-Gamma, see Section S9). 
+We also consider several variants of the SIRJPF2 model described here, namely a model that excludes the juvenile state (SIRPF2, described in Section S7.3), and a version of the SIRJPF2 model where the Gaussian noise has been replaced with Gamma noise (SIRJPF2-Gamma, see Section S9).
 The SIRPF2 model ignores the process of maturation of juvenile and instead highlights the infection process of the \textit{Daphnia} adult populations.
 While this model does have an improved statistical fit compared to the deterministic ODE model of \citet{searle16} and other benchmark models, it has weaker performance than the model that accounts for the effect of juveniles on population dynamics.
 
@@ -902,16 +904,17 @@ For field data, one may expect the need for unit-specific parameters describing 
 For example, in a PanelPOMP analysis of pre-vaccine polio transmission dynamics for state-level data in USA, \citet{breto20} used unit-specific parameters to describe variations in the seasonality of transmission across units.
 Modeling decisions concerning shared and unit-specific parameters are testable hypotheses that are of scientific interest in the quest for a parsimonious understanding of the dynamics, and for understanding sources of variation.
 
+\jwc{The following paragraph is quite long. Could we split it in two parts?}
 In our selected model, the feeding rate of the invasive {\it Daphnia} species ($f^{\invasive}_{S}$) is not statistically significantly different from that of the native {\it Daphnia} species ($f^{\native}_{S}$).
 Also, the invasive species has a lower rate of infection per consumed spore ($p^{\native} < p^{\invasive}$), consistent with Fig.~1C of \citet{searle16}.
-The native parameters—juvenile growth $r^{\native}$, feeding rate $f^{\native}_{S}$ and infection probability $p^{\native}$ show full identifiability as shown in Fig.~S1, whereas the corresponding invasive parameters $r^{\invasive},\,f^{\invasive}_{S},\,p^{\invasive}$ are only bounded on one side. 
+The native parameters—juvenile growth $r^{\native}$, feeding rate $f^{\native}_{S}$ and infection probability $p^{\native}$ show full identifiability as shown in Fig.~S1, whereas the corresponding invasive parameters $r^{\invasive},\,f^{\invasive}_{S},\,p^{\invasive}$ are only bounded on one side.
 This limited identifiability is attributable to
 (i) the lower density of \textit{D. lumholtzi} which may increase stochastic effects;
 (ii) model complexity, since the parameters become identifiable in host-only experiments with simplified dynamics (Fig.~S8);
 (iii) the product of these parameters governs the juvenile growth and infection process, which allows individual invasive coefficients to vary so long as their products remain fixed.
 To investigate this last explanation, Table~\ref{tab:estimates} shows relatively precise identifiability of the effective infection rate ($p^{\native}f^{\native}_{S}$, $p^{\invasive}f^{\invasive}_{S}$), and the effective juvenile birth rate ($r^{\native}f^{\native}_{S}$, $r^{\invasive}f^{\invasive}_{S}$).
 At the same time, the identifiability of the measurement error parameter ($\tau^{\native}_{S},\,\tau^{\invasive}_{S},\,\tau^{\native}_{I},\,\tau^{\invasive}_{I}$) explains variability that would otherwise inflate weakly identified process-noise terms.
-Our results indicate that stochasticity in the juvenile stage ($\sigma^{\native}_{J}$ and $\sigma^{\invasive}_{J}$), food ($\sigma_{F}$) and parasite ($\sigma_{P}$) dynamics are important model features, needed to adequately describe the data (see the corresponding confidence intervals in Table~\ref{tab:estimates} and the profile likelihood plots in Fig.~S1).
+\jwc{Maybe split paragraph here} Our results indicate that stochasticity in the juvenile stage ($\sigma^{\native}_{J}$ and $\sigma^{\invasive}_{J}$), food ($\sigma_{F}$) and parasite ($\sigma_{P}$) dynamics are important model features, needed to adequately describe the data (see the corresponding confidence intervals in Table~\ref{tab:estimates} and the profile likelihood plots in Fig.~S1).
 That suggests the juvenile stage, food and parasite dynamics are particularly sensitive to unmodeled phenomena, such as lower fitness resulting from resource depletion, since unmodeled phenomena can be explained by the model as stochastic uncertainty.
 Noise in other stages is small, and often insignificantly different from zero, as shown by profile likelihood plots for $\sigma^{\native}_{I}$, $\sigma^{\invasive}_{I}$.
 Since the profile for $\sigma^{\native}_{S}$, $\sigma^{\invasive}_{S}$ is flat and insignificantly different from zero, we fixed the $\sigma^{\native}_{S}$ and $\sigma^{\invasive}_{S}$ to be zero as constants.
@@ -941,9 +944,9 @@ As shown in Table~\ref{tab:estimates}, the estimated values of $p^{\native}$ and
 This difference, in turn, affects the interactions between the two species.
 
 \section{Model diagnostics}
-Our best-fitting model includes explicit modeling of juveniles and their maturation, a feature not present in the model of \citet{searle16}. 
+Our best-fitting model includes explicit modeling of juveniles and their maturation, a feature not present in the model of \citet{searle16}.
 The extra delay in the adult dynamics introduced by the juvenile stage appears to be necessary for the model to provide a strong statistical fit to the data.
-In the original study, \citet{searle16} collected juvenile data but did not include it as part of the data analysis. 
+In the original study, \citet{searle16} collected juvenile data but did not include it as part of the data analysis.
 To make our analysis comparable to \citet{searle16}, we fitted to the same data, and therefore did not include a measurement model for juveniles.
 Instead, the juvenile data are available to use as model validation, which is done by comparing simulations from the fitted model to the unmodeled data in Fig.~\ref{fig:sim_plot}.
 
@@ -1118,7 +1121,7 @@ suppressWarnings(
 @
   % \includegraphics[width=1\textwidth]{"Density_plot.png"}
 \caption{\label{fig:sim_plot}
-Simulated \textit{Daphnia} densities (Individuals$/$Liter), alga density ($10^6\cdot$cells$/$Liter) and parasite density ($10^3\cdot$spores$/$Liter), over time (days), in the mixed species parasitized dynamics with parameters from Table~\ref{Table:Model_comparison}. 
+Simulated \textit{Daphnia} densities (Individuals$/$Liter), alga density ($10^6\cdot$cells$/$Liter) and parasite density ($10^3\cdot$spores$/$Liter), over time (days), in the mixed species parasitized dynamics with parameters from Table~\ref{Table:Model_comparison}.
 Shaded blue bands are $95\%$ pointwise confidence intervals; thick black lines show the mean; thin solid color lines are the experimental data.
 The parasite and food densities were not observed, and the dashed colored lines are simulations.
 }
@@ -1156,6 +1159,7 @@ For example, we could have incorporated the phenomenon that \textit{Daphnia} wit
 Additional residual analysis can search for patterns suggesting model improvements, following a similar approach to the residual analysis carried out here.
 
 Although we did not calibrate the model using juvenile data {\revision\editJuveniles}, the addition of latent $J^{\species}_{\unit}$ states leads to an improved statistical fit.
+\jwc{Suggestion: Rather than ``This could arise" I suggest: ``This may be explained" or similar, because this result \emph{did} arise, we are just trying to explain why.}
 This could arise because the juvenile stage provides a delay in the {\em Daphnia} population growth dynamics, and because juveniles compete with adults for available food resources.
 Juveniles rarely exhibit disease, perhaps because of the latency in the parasite's development within its host, but they nevertheless play a significant role in the infection dynamics.
 While we have shown the relevance of age-structured dynamics for understanding the data on adults, future work could identify the role of juveniles in the system dynamics more precisely.
@@ -1175,7 +1179,7 @@ This study has focused on the task of fitting models to understand the biologica
 This is closely related to the task of forecasting: fitting by maximum likelihood is equivalent to assessing one-step forecasting skill, and the AIC criterion is designed to evaluate out-of-sample predictive skill \citep{aic74}.
 Within this framework, the goals of model-based biological understanding and forecasting are therefore closely aligned.
 
-We have analyzed data collected in a controlled environment, raising the question of the applicability of our methods to field ecosystems. 
+We have analyzed data collected in a controlled environment, raising the question of the applicability of our methods to field ecosystems.
 The applicability of our approach is contingent on having panel data of sufficient length and quality to inform interactions between species.
 Such panel datasets are available, for example, on pathogen-host ecosystems \citep{martinez-bakker15} and fisheries \citep{naiman02}.
 The flexibility of the PanelPOMP model class provides many opportunities for developing new models that integrate ecological theory with panel time series data.
