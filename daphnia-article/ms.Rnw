@@ -631,7 +631,6 @@ The likelihood function cannot generally be evaluated explicitly.
 However, techniques that let us approximately evaluate and maximize this likelihood, while making proper accommodation for the approximation error, let us employ likelihood-based inference tools for parameter estimation, confidence intervals, diagnosis of model misspecification, and model selection.
 Our subsequent investigation demonstrates all these aspects of data analysis.
 
-\jwc{This paragraph is quite long, could we shorten it?}
 Particle filters use a Monte Carlo swarm of latent state values, known as particles, to represent the conditional distribution of the latent variables given the data.
 Particles are updated according to the dynamics of the latent process and then resampled according to their likelihood given the data.
 This resampling is key to the particle filter's efficacy, since it allows the algorithm to focus its computational effort on the most probable states of the latent process, as indicated by the observed data.
@@ -641,7 +640,7 @@ The parameter values are the heritable DNA belonging to each particle.
 The parameter perturbations are analogous to mutations, and the resampling is analogous to natural selection which preferentially favors the fittest particles, i.e., those with parameter values most consistent with the data.
 \citet{kitagawa98} noticed that this favorable property of a particle filter, with perturbed parameters, can be empirically shown to move the population of these parameter values toward a region of increasing likelihood.
 \citet{ionides06} and \citet{ionides15} found ways to iterate this process that lead to concentration around the MLE.
-\jwc{Perhaps split the paragraph here?}
+
 The panel extension of iterated filtering by \citet{breto20} applies the same principle to PanelPOMP models.
 A flow diagram for a panel iterated filtering (PIF) algorithm is shown in Fig.~\ref{fig:pif}, and full details are given in Section~S2.
 At each iteration, $m=\seq{1}{M}$, the magnitude of the perturbations is reduced, and we use geometric ``cooling'' with a reduction factor $\rho<1$.
@@ -904,7 +903,6 @@ For field data, one may expect the need for unit-specific parameters describing 
 For example, in a PanelPOMP analysis of pre-vaccine polio transmission dynamics for state-level data in USA, \citet{breto20} used unit-specific parameters to describe variations in the seasonality of transmission across units.
 Modeling decisions concerning shared and unit-specific parameters are testable hypotheses that are of scientific interest in the quest for a parsimonious understanding of the dynamics, and for understanding sources of variation.
 
-\jwc{The following paragraph is quite long. Could we split it in two parts?}
 In our selected model, the feeding rate of the invasive {\it Daphnia} species ($f^{\invasive}_{S}$) is not statistically significantly different from that of the native {\it Daphnia} species ($f^{\native}_{S}$).
 Also, the invasive species has a lower rate of infection per consumed spore ($p^{\native} < p^{\invasive}$), consistent with Fig.~1C of \citet{searle16}.
 The native parameters—juvenile growth $r^{\native}$, feeding rate $f^{\native}_{S}$ and infection probability $p^{\native}$ show full identifiability as shown in Fig.~S1, whereas the corresponding invasive parameters $r^{\invasive},\,f^{\invasive}_{S},\,p^{\invasive}$ are only bounded on one side.
@@ -914,7 +912,8 @@ This limited identifiability is attributable to
 (iii) the product of these parameters governs the juvenile growth and infection process, which allows individual invasive coefficients to vary so long as their products remain fixed.
 To investigate this last explanation, Table~\ref{tab:estimates} shows relatively precise identifiability of the effective infection rate ($p^{\native}f^{\native}_{S}$, $p^{\invasive}f^{\invasive}_{S}$), and the effective juvenile birth rate ($r^{\native}f^{\native}_{S}$, $r^{\invasive}f^{\invasive}_{S}$).
 At the same time, the identifiability of the measurement error parameter ($\tau^{\native}_{S},\,\tau^{\invasive}_{S},\,\tau^{\native}_{I},\,\tau^{\invasive}_{I}$) explains variability that would otherwise inflate weakly identified process-noise terms.
-\jwc{Maybe split paragraph here} Our results indicate that stochasticity in the juvenile stage ($\sigma^{\native}_{J}$ and $\sigma^{\invasive}_{J}$), food ($\sigma_{F}$) and parasite ($\sigma_{P}$) dynamics are important model features, needed to adequately describe the data (see the corresponding confidence intervals in Table~\ref{tab:estimates} and the profile likelihood plots in Fig.~S1).
+
+Our results indicate that stochasticity in the juvenile stage ($\sigma^{\native}_{J}$ and $\sigma^{\invasive}_{J}$), food ($\sigma_{F}$) and parasite ($\sigma_{P}$) dynamics are important model features, needed to adequately describe the data (see the corresponding confidence intervals in Table~\ref{tab:estimates} and the profile likelihood plots in Fig.~S1).
 That suggests the juvenile stage, food and parasite dynamics are particularly sensitive to unmodeled phenomena, such as lower fitness resulting from resource depletion, since unmodeled phenomena can be explained by the model as stochastic uncertainty.
 Noise in other stages is small, and often insignificantly different from zero, as shown by profile likelihood plots for $\sigma^{\native}_{I}$, $\sigma^{\invasive}_{I}$.
 Since the profile for $\sigma^{\native}_{S}$, $\sigma^{\invasive}_{S}$ is flat and insignificantly different from zero, we fixed the $\sigma^{\native}_{S}$ and $\sigma^{\invasive}_{S}$ to be zero as constants.
@@ -1159,8 +1158,7 @@ For example, we could have incorporated the phenomenon that \textit{Daphnia} wit
 Additional residual analysis can search for patterns suggesting model improvements, following a similar approach to the residual analysis carried out here.
 
 Although we did not calibrate the model using juvenile data {\revision\editJuveniles}, the addition of latent $J^{\species}_{\unit}$ states leads to an improved statistical fit.
-\jwc{Suggestion: Rather than ``This could arise" I suggest: ``This may be explained" or similar, because this result \emph{did} arise, we are just trying to explain why.}
-This could arise because the juvenile stage provides a delay in the {\em Daphnia} population growth dynamics, and because juveniles compete with adults for available food resources.
+The inclusion of the juvenile stage provides a delay in the {\em Daphnia} population growth dynamics, and introduces competition between juveniles and adults for available food resources.
 Juveniles rarely exhibit disease, perhaps because of the latency in the parasite's development within its host, but they nevertheless play a significant role in the infection dynamics.
 While we have shown the relevance of age-structured dynamics for understanding the data on adults, future work could identify the role of juveniles in the system dynamics more precisely.
 Adding juvenile data to the measurement model in the fitting procedure would enable higher statistical resolution on these dynamics.
