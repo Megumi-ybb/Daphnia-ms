@@ -48,7 +48,10 @@
 \newcommand\TODO[1]{\textcolor{red}{[TODO: #1]}}
 % \bye is the revision-pass flag used in the response letter and main text.
 % Renders in purple so it visually separates from the existing \byc note macro.
-\providecommand\bye[1]{\textcolor{purple}{[BY: #1]}}
+% Implemented as a colour group rather than \textcolor{...}{...} so the body
+% can span multiple paragraphs without LaTeX's "paragraph ended before
+% \@textcolor was complete" error.
+\providecommand\bye[1]{{\color{purple}[BY: #1]}}
 
 \renewcommand{\contentsname}{Supplementary Content}
 \renewcommand{\refname}{Supplementary References}

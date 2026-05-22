@@ -1,7 +1,9 @@
 
 % Bo Yang revision flag: marks items still owed for the revision pass.
 % Renders as purple bracketed text; should be empty in the submitted version.
-\providecommand\bye[1]{\textcolor{purple}{[BY: #1]}}
+% Implemented as a colour group so the body can span multiple paragraphs
+% (\textcolor{...}{...} forbids \par inside its argument).
+\providecommand\bye[1]{{\color{purple}[BY: #1]}}
 
 \newcommand\editSignificance{
 Collections of partially observed nonlinear stochastic dynamic systems arise in diverse scientific applications and raise methodologically challenging statistical inference problems.
