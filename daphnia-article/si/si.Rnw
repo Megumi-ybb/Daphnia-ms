@@ -319,12 +319,12 @@ The first inequality says the profile run reaches a log-likelihood that is, on a
 The second is the same comparison using the warm-started global search.
 The third confirms that the production profile is more thorough than 20-chain warm-from-truth iterated filtering, and so the undercoverage is not caused by under-converged profiling.
 
-The 22-dimensional parameter is fit to an $80$-observation panel ($U=8$ units, $N_u = 10$ time points each), so the asymptotic Wilks expectation for $\ell_{\text{MLE}} - \ell_{\text{truth}}$ is $p/2 = 11$.
+The SIRJPF2 model has $p = 24$ free interior parameters (the parameter vector has 26 entries, with $\sigma_{S^{\native}}$ and $\sigma_{S^{\invasive}}$ fixed at the boundary value zero), fit to an $80$-observation panel ($U=8$ units, $N_u = 10$ time points each), so the asymptotic Wilks expectation for $\ell_{\text{MLE}} - \ell_{\text{truth}}$ is $p/2 = 12$.
 The observed gap of $\approx 8.5$ is therefore within the asymptotic envelope; it represents the standard finite-sample displacement of the maximum likelihood estimate from the true parameter on identifiability ridges, not a methodological failure of MCAP itself.}
 
 \subsection{Identifiability findings}
 
-\bye{In addition to the four target parameters, we examined the within-chain dispersion of all 22 free parameters across the 20 iterated-filtering chains used in the diagnostic study.
+\bye{In addition to the four target parameters, we examined the within-chain dispersion of all 24 free parameters across the 20 iterated-filtering chains used in the diagnostic study.
 Three parameters showed within-chain standard deviations of $\approx 2.5$ log units each: $r^{\invasive}$, $f_S^{\invasive}$, and $p^{\invasive}$.
 Inspecting the SIRJPF2 process model, these three parameters appear only through the product
 $r^{\invasive} f_S^{\invasive} p^{\invasive} F$
@@ -332,7 +332,37 @@ in the juvenile, infected and susceptible terms for the invasive species, so the
 Two further parameters, $\sigma_{I^{\invasive}}$ and $\sigma_{I^{\native}}$, had within-chain standard deviations of $\approx 5$ log units each (a factor of $\approx 120$) and we treat them as essentially non-identifiable.
 The remaining identifiable parameters ($r^{\native}$, $f_S^{\native}$, $p^{\native}$, $\sigma_P$, $\sigma_F$) had within-chain standard deviations of $1.4$--$1.5$ log units, with finite-sample log-MLE drift of order $\pm 1$.}
 
-\bye{Inline import of the four PDF coverage plots (\texttt{coverage\_plot\_\{ri,rn,sigP,sigF\}.pdf} from \texttt{Mixed-species/SIRJPF2/coverage\_study/coverage\_results/}) and the formatted three-log-likelihood diagnostic table is owed; raw data already exist on disk.}
+\bye{
+\begin{figure}[h]
+\centering
+\begin{tabular}{cc}
+\includegraphics[width=0.45\linewidth]{coverage/coverage_plot_rn.pdf} &
+\includegraphics[width=0.45\linewidth]{coverage/coverage_plot_sigP.pdf} \\
+(a) $r^{\native}$ & (b) $\sigma_P$ \\[2mm]
+\includegraphics[width=0.45\linewidth]{coverage/coverage_plot_sigF.pdf} &
+\includegraphics[width=0.45\linewidth]{coverage/coverage_plot_ri.pdf} \\
+(c) $\sigma_F$ & (d) $r^{\invasive}$ (product ridge; dropped) \\
+\end{tabular}
+\caption{\label{fig:mcap-coverage-plots}Empirical coverage of MCAP 95\% confidence intervals across $B=100$ bootstrap datasets simulated from the SIRJPF2 all-shared MLE, for the four target parameters. In each panel, the horizontal lines mark each simulated dataset's MCAP confidence interval, ordered by midpoint; the vertical solid line marks the true parameter value; a CI ``covers'' if it intersects the true value. Panels~(a)--(c) show identifiable parameters with finite-sample undercoverage explained by Wilks-scale MLE displacement (see Table~\ref{Table:three-loglik}). Panel~(d) shows the $r^{\invasive}$ profile, which is flat on the parameter axis because $r^{\invasive}$ enters the SIRJPF2 process model only through the product $r^{\invasive} f_S^{\invasive} p^{\invasive}$.}
+\end{figure}
+
+\begin{table}[h]
+\centering
+\caption{\label{Table:three-loglik}Three-log-likelihood diagnostic for five representative simulated datasets. $\ell_{\text{truth}}$ is the particle-filter log-likelihood at the data-generating $\theta_{\text{true}}$. $\ell_{\text{prof}}^{\max}$ is the maximum across all profile points in the production coverage profiles (averaged across the four target parameters within each dataset). $\ell_{\text{glob}}^{\text{best}}$ is the best log-likelihood from a 20-chain iterated-filtering search warm-started at $\theta_{\text{true}}$ with all parameters free. Positive gap values indicate the corresponding estimator reached a higher likelihood than the truth on that dataset.}
+\begin{tabular}{rrrrrrr}
+\toprule
+$b$ & $\ell_{\text{truth}}$ & $\ell_{\text{prof}}^{\max}$ & $\ell_{\text{glob}}^{\text{best}}$ & $\ell_{\text{prof}}^{\max} - \ell_{\text{truth}}$ & $\ell_{\text{glob}}^{\text{best}} - \ell_{\text{truth}}$ & $\ell_{\text{glob}}^{\text{best}} - \ell_{\text{prof}}^{\max}$ \\
+\midrule
+ 2 & $-861.3$ & $-851.7$ & $-856.2$ &  $9.6$ &  $5.1$ & $-4.5$ \\
+25 & $-932.1$ & $-925.0$ & $-928.6$ &  $7.2$ &  $3.5$ & $-3.6$ \\
+50 & $-877.0$ & $-868.5$ & $-870.6$ &  $8.6$ &  $6.5$ & $-2.1$ \\
+75 & $-876.1$ & $-870.5$ & $-876.2$ &  $5.6$ & $-0.1$ & $-5.7$ \\
+95 & $-910.3$ & $-898.1$ & $-903.0$ & $12.1$ &  $7.4$ & $-4.9$ \\
+\midrule
+\textbf{mean} & & & & $\mathbf{8.6}$ & $\mathbf{4.5}$ & $\mathbf{-4.1}$ \\
+\bottomrule
+\end{tabular}
+\end{table}}
 
 \section{AIC Selection-Rate Simulation}\label{sec:aic-power}
 

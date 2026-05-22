@@ -154,17 +154,29 @@ for (fam in unique(combined$family)) {
   push("")
 }
 
+paired_total <- sum(combined$B_completed > 0)
+paired_idx <- combined$B_completed > 0 & !is.na(combined$p_boot)
+paired_reject <- sum(paired_idx & combined$p_boot < 0.05)
+nonreject_min <- if (any(paired_idx & combined$p_boot >= 0.05)) {
+  min(combined$p_boot[paired_idx & combined$p_boot >= 0.05])
+} else { NA_real_ }
+
 push("Headline interpretation:")
-push("  - Of all alternatives with paired bootstrap data, only Dent_SIRJPF/theta_In rejects")
-push("    the all-shared null (p_chi <0.001, p_boot 0.01). All others give p_boot >= 0.05.")
+push("  - Of %d alternatives with paired bootstrap data, %d reject the all-shared null at",
+     paired_total, paired_reject)
+push("    alpha=0.05: Dent_SIRJPF/theta_In (p_chi <0.001, p_boot 0.01).")
+push("    The smallest p_boot among non-rejected alternatives is %.2f (SIRJPF2/theta_P);",
+     nonreject_min)
+push("    all other non-rejected alternatives have p_boot >= this minimum,")
+push("    comfortably above the alpha=0.05 threshold.")
 push("  - Chi-square and bootstrap can disagree in either direction. Examples:")
 push("      * SIRJPF2/theta_Ii_theta_In: p_chi 0.03 vs p_boot 0.15 (chi anti-conservative)")
 push("      * SIRJPF2/theta_P:           p_chi 0.72 vs p_boot 0.08 (chi conservative)")
+push("      * Lum_SIRJPF/xi:             p_chi 0.03 vs p_boot 0.13 (chi anti-conservative)")
 push("    The bootstrap null distribution mean and sd (<bootΛ>, Bsd above) show why the")
 push("    chi-square shape is a poor reference here.")
 push("  - Negative Lambda_obs (alt fit below null on the data MLE) reflects Monte Carlo")
 push("    likelihood noise; bootstrap returns p_boot near 1 for those rows by construction.")
-push("  - Lum_SIRJPF: only classical p-values available (alt HPC jobs not yet pulled).")
 
 writeLines(txt, file.path(out_dir, "lrt_all_summary.txt"))
 

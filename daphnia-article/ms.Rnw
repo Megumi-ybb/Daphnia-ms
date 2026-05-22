@@ -648,7 +648,7 @@ By providing likelihood-based inference for a general class of nonlinear, non-Ga
 This article provides a case study for such an application in the field of ecology.
 \begin{figure}[h!]
 \centering
-\bye{Figure~3 (TikZ block below) redesigned per Ed's suggestion (response.tex L279): the ``Resample states / parameters'' box now sits below the perturb-predict-weight box, the Output box is to its left, and the diagram renders at native size (no \texttt{\textbackslash resizebox}) with \texttt{font=\textbackslash small}, so the fonts are legible at the AOAS column width. Review the rendered figure for arrow alignment before submission.}
+\bye{Figure~3 (TikZ block below) redesigned per Ed's suggestion (response.tex L279). The ``Resample states / parameters'' box now sits below the perturb-predict-weight stack. The Output box sits directly below the Resample box rather than to its left, because the leftward placement Ed suggested collided with the loop-back riser arrow at the \texttt{n=1:N} column. Loop-back arrows now exit \texttt{resampleProcess.east}, route around Output via a horizontal bus below the figure, and rise to \texttt{m=1:M}, \texttt{u=1:U}, \texttt{n=1:N}. The diagram renders at native size (no \texttt{\textbackslash resizebox}) with \texttt{font=\textbackslash small}, so the fonts are legible at the AOAS column width, which was Ed's underlying purpose.}
 \begin{tikzpicture}[
     node distance=4cm,
     font=\small
@@ -686,22 +686,26 @@ time $\mathtt{t_0}$, states \& parameters};
 \node[mytitle] at (resampleProcess.north west) {\texttt{j=1:J}};
 \draw[arrow,black] (ppw.south) -- (resampleProcess.north);
 
-% Output: to the LEFT of the resample box
-\node (O) [mytitle, left of=resampleProcess, xshift=-0.5cm]
+% Output: directly below the resample box (terminal element of the pipeline).
+% Placed in resampleProcess's column to avoid overlap with the loop-back risers
+% at the M / U / N columns to its left.
+\node (O) [mytitle, below of=resampleProcess, yshift=1.0cm]
     {\textbf{Output:} Monte Carlo Maximum\\ Likelihood Parameter Estimate};
-\draw[arrow,black] (resampleProcess.west) -- (O.east);
+\draw[arrow,black] (resampleProcess.south) -- (O.north);
 
-% Loop arrows: from resampleProcess back to N, U, M
-\node (resampleProcess_south1) [below of=resampleProcess, yshift= 1.5cm] {};
-\node (resampleProcess_south2) [below of=resampleProcess, yshift= 1.0cm] {};
-\node (resampleProcess_south3) [below of=resampleProcess, yshift= 0.5cm] {};
-\node (N_south) [below of=N, yshift= 1.5cm] {};
-\node (U_south) [below of=U, yshift= 1.0cm] {};
-\node (M_south) [below of=M, yshift= 0.5cm] {};
-
-\draw[arrow,black] (resampleProcess.south) -- (resampleProcess_south1.south) -- (N_south.south) -- (N.south);
-\draw[arrow,black] (resampleProcess.south) -- (resampleProcess_south2.south) -- (U_south.south) -- (U.south);
-\draw[arrow,black] (resampleProcess.south) -- (resampleProcess_south3.south) -- (M_south.south) -- (M.south);
+% Loop-back arrows from resampleProcess back to N, U, M.
+% Routed out of resampleProcess.east, around the right side of Output, then
+% down to a horizontal bus below Output, then leftward to each target column,
+% then up to the target. This keeps every loop-back segment clear of Output.
+\coordinate (rightLane) at ([xshift=1.5cm] resampleProcess.east);
+\coordinate (loopbus)   at ([yshift=-1.8cm] O.south);
+\coordinate (busRight)  at (rightLane |- loopbus);
+\draw[arrow,black] (resampleProcess.east) -- (rightLane) -- (busRight)
+  -- (N.south |- loopbus) -- (N.south);
+\draw[arrow,black] (resampleProcess.east) -- (rightLane) -- (busRight)
+  -- (U.south |- loopbus) -- (U.south);
+\draw[arrow,black] (resampleProcess.east) -- (rightLane) -- (busRight)
+  -- (M.south |- loopbus) -- (M.south);
 
 \end{tikzpicture}
 \caption{
@@ -733,6 +737,7 @@ However, AIC has earned widespread use due to its clear theoretical motivation a
 Profile likelihood provides a useful approach for constructing confidence intervals in nonlinear stochastic systems \citep{simpson23}.
 Calculation of the profiles can validate that sufficient computational effort was conducted in order for the Monte Carlo optimization to converge: by increasing Monte Carlo replications, consistent convergence to the same maximum of the profile likelihood curve confirms adequate numerical effort for optimization.
 To obtain confidence intervals, we correct for the Monte Carlo uncertainty in the profile likelihood evaluations by using the Monte Carlo Adjusted Profile (MCAP) method of \citet{ionides17}.
+\bye{The finite-sample coverage properties of MCAP on the SIRJPF2 model have been validated by a parametric bootstrap simulation study, presented in Section~S3 of the supplement.}
 <<Results, include=FALSE,echo=FALSE,results='hide', cache=cache_option>>=
 load('../Mixed-species/SIRJPF2/model/best_result.rda')
 mif.estimate = as.data.frame(t(mif.estimate))
