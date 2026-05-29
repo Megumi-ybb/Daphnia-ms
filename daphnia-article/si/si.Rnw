@@ -373,6 +373,36 @@ $b$ & $\ell_{\text{truth}}$ & $\ell_{\text{prof}}^{\max}$ & $\ell_{\text{glob}}^
 
 \clearpage
 
+\section{No-\texorpdfstring{$F$}{F} Ablation}\label{sec:no-F-ablation}
+
+\bye{To assess whether the latent food compartment $F$ is a load-bearing component of the SIRJPF2 model rather than an incidental modeling choice, we fit an ablated model in which $F$ is held fixed at its initial value $F(t_0)=16.667$ for the entire trajectory.
+Concretely, we remove the $F$ dynamics (its consumption losses, the renewal inflow, and the $F$ process noise $\sigma_F$) so that food no longer depletes as it is consumed by the Daphnia population; the birth terms still read $F$ through $r^{\species} f_S^{\species} F$, but because $F$ is now constant the per-capita recruitment rate no longer responds to a depletable resource.
+The ablated model is fit to the observed data with exactly the same panel iterated-filtering protocol as the all-shared SIRJPF2 model (three rounds of \texttt{mif2}, $N_{\mathrm{mif}}=150/150/400$, $N_p=1000$ particles, geometric cooling with \texttt{cooling.fraction.50}~$=0.7$), warm-started from the all-shared maximum likelihood estimate.
+Dropping $\sigma_F$ reduces the free-parameter count from $24$ to $23$ (the boundary-fixed $\sigma_{S^{\native}}=\sigma_{S^{\invasive}}=0$ remain excluded from both counts), so the ablation is favoured by the AIC complexity penalty; the two models are non-nested, since freezing the $F$ dynamics is a structural change rather than a parameter restriction, and we therefore compare them by AIC.}
+
+\begin{table}[h]
+\centering
+\caption{\label{Table:no-F-ablation}\bye{Comparison of the all-shared SIRJPF2 model against its no-$F$ ablation, in which the food compartment is held fixed at its initial value. Log-likelihoods are evaluated by particle filtering; the standard error shown for the ablation is the Monte Carlo standard error of the maximised log-likelihood across replicate searches. Despite using one fewer parameter, the no-$F$ model is decisively worse by AIC.}}
+\begin{tabular}{lccc}
+\toprule
+Model & Free parameters $k$ & Max log-likelihood & AIC \\
+\midrule
+All-shared (depletable $F$) & $24$ & $-880.6$            & $1809.1$ \\
+No-$F$ ($F$ held constant)  & $23$ & $-887.8\ (\pm 0.2)$ & $1821.6$ \\
+\midrule
+\multicolumn{3}{l}{$\Delta\mathrm{AIC}$ (no-$F$ $-$ all-shared)} & $+12.4$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\bye{Freezing the food compartment costs approximately $7.2$ log-likelihood units relative to the all-shared model, even though the ablated model is granted a free parameter back; on the AIC scale the depletable-$F$ model is preferred by $\Delta\mathrm{AIC}\approx 12.4$, which is decisive on the conventional evidential scale ($\Delta\mathrm{AIC}>10$).
+The mechanistic interpretation is direct.
+With a non-depleting resource, recruitment into the juvenile classes $J^{\native}$ and $J^{\invasive}$ continues at an undiminished rate as the adult population grows, so the model cannot reproduce the resource-limited turnover that drives the observed rise-and-fall in Daphnia abundance.
+The feedback in which a growing population draws down $F$, which in turn throttles recruitment, is precisely the mechanism that generates the peak-then-collapse signature in the data.
+This ablation therefore confirms that explicit modeling of resource depletion, via the latent food compartment, is necessary rather than incidental, addressing the editor's question of whether the role of $F$ should be demonstrated explicitly.}
+
+\clearpage
+
 \section{SIRJPF2 Model}
 \subsection{Results}
 \begin{figure}[!ht]
