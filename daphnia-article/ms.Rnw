@@ -648,66 +648,59 @@ By providing likelihood-based inference for a general class of nonlinear, non-Ga
 This article provides a case study for such an application in the field of ecology.
 \begin{figure}[h!]
 \centering
-\bye{Figure~3 (TikZ block below) redesigned per Ed's suggestion (response.tex L279). The ``Resample states / parameters'' box now sits below the perturb-predict-weight stack. The Output box sits directly below the Resample box rather than to its left, because the leftward placement Ed suggested collided with the loop-back riser arrow at the \texttt{n=1:N} column. Loop-back arrows now exit \texttt{resampleProcess.east}, route around Output via a horizontal bus below the figure, and rise to \texttt{m=1:M}, \texttt{u=1:U}, \texttt{n=1:N}. The diagram renders at native size (no \texttt{\textbackslash resizebox}) with \texttt{font=\textbackslash small}, so the fonts are legible at the AOAS column width, which was Ed's underlying purpose.}
+\resizebox{0.95\linewidth}{!}{%
 \begin{tikzpicture}[
     node distance=4cm,
     font=\small
   ]
 
 \node (N) at (0,0) [decision, yshift=-0.5cm] {\texttt{n=1:N}};
-\node (initialize) [process, left of=N, xshift=0cm] {Initialize particle \texttt{j}, unit \texttt{u},\\
+\node (initialize) [process, left of=N, xshift=-1cm] {Initialize particle \texttt{j}, unit \texttt{u},\\
 time $\mathtt{t_0}$, states \& parameters};
 \node[fit=(initialize),myfit] (initialize1) {};
 \node[mytitle] at (initialize1.north west) {\texttt{j=1:J}};
 
-\node (U) [decision, left of=initialize1, xshift=0cm] {\texttt{u=1:U}};
-\node (M) [decision2, left of=U, xshift=2.5cm] {\texttt{m=1:M}};
-\node (S) [mytitle, above of=M, xshift=1cm] {\textbf{Input:} PanelPOMP model\\ and data};
+\node (U) [decision, left of=initialize1, xshift=-1cm] {\texttt{u=1:U}};
+\node (M) [decision2, left of=U, xshift=-0.5cm] {\texttt{m=1:M}};
+\node (S) [mytitle, above of=M, xshift=-0.37cm, yshift = -2.2cm] {\textbf{Input:} PanelPOMP model\\ and data};
 
 \draw[arrow,black] (initialize1) -- (N);
 \draw[arrow,black] (U) -- (initialize1);
 \draw[arrow,black] (M) -- (U);
-\draw[arrow,black] ($(S.south)!.5!(S.south west)$) -- (M);
+\draw[arrow,black] (S) -- (M);
 
-% Perturb / predict / weight stack to the right of N
-\node (predict) [process, right of=N, xshift=0cm, yshift=0.1cm] {Simulate stochastic dynamics,\\ unit $\mathtt{u}$, time $\mathtt{t_{n-1}}$ to $\mathtt{t_{n}}$};
-\node (perturb) [process2, above of=predict, yshift=-2.4cm] {Perturb parameters $\mathtt{\phi}$, $\mathtt{\psi_u}$};
-\node (weight)  [process,  below of=predict, yshift=2.4cm]  {Calculate weights for data,\\ unit $\mathtt{u}$, time $\mathtt{t_{n}}$};
+\node (predict) [process, right of=N, xshift=1cm, yshift=0.1cm] {Simulate stochastic dynamics,\\ unit $\mathtt{u}$, time $\mathtt{t_{n-1}}$ to $\mathtt{t_{n}}$};
+\node (perturb) [process2, above of=predict, yshift=-2.7cm] {Perturb parameters $\mathtt{\phi}$, $\mathtt{\psi_u}$};
+\node (weight)  [process,  below of=predict, yshift=2.7cm]  {Calculate weights for data,\\ unit $\mathtt{u}$, time $\mathtt{t_{n}}$};
 \draw[arrow,black] (perturb) -- (predict);
 \draw[arrow,black] (predict) -- (weight);
 \node[fit=(perturb)(predict)(weight),myfit] (ppw) {};
 \node[mytitle] at (ppw.north west) {\texttt{j=1:J}};
 \draw[arrow,black] (N) -- (ppw);
 
-% Resample states / parameters: now BELOW the ppw stack rather than to its right
-\node (resampleState)  [process,  below of=weight,        yshift=2.0cm] {Resample states};
-\node (resampleParams) [process2, below of=resampleState, yshift=2.4cm] {Resample parameters};
+\node (resampleState)  [process,  below of=weight,        yshift=1cm] {Resample states};
+\node (resampleParams) [process2, below of=resampleState, yshift=2.5cm] {Resample parameters};
 \node[fit=(resampleState)(resampleParams),myfit] (resampleProcess) {};
 \node[mytitle] at (resampleProcess.north west) {\texttt{j=1:J}};
 \draw[arrow,black] (ppw.south) -- (resampleProcess.north);
 
-% Output: directly below the resample box (terminal element of the pipeline).
-% Placed in resampleProcess's column to avoid overlap with the loop-back risers
-% at the M / U / N columns to its left.
-\node (O) [mytitle, below of=resampleProcess, yshift=1.0cm]
+\node (O) [mytitle, left of=resampleProcess, xshift=-15.0cm]
     {\textbf{Output:} Monte Carlo Maximum\\ Likelihood Parameter Estimate};
-\draw[arrow,black] (resampleProcess.south) -- (O.north);
+\draw[arrow,black] (resampleProcess.west) -- (O.east);
 
-% Loop-back arrows from resampleProcess back to N, U, M.
-% Routed out of resampleProcess.east, around the right side of Output, then
-% down to a horizontal bus below Output, then leftward to each target column,
-% then up to the target. This keeps every loop-back segment clear of Output.
-\coordinate (rightLane) at ([xshift=1.5cm] resampleProcess.east);
-\coordinate (loopbus)   at ([yshift=-1.8cm] O.south);
+\coordinate (rightLane) at ([xshift=-0.5cm] resampleProcess.west);
+\coordinate (loopbus)   at ([yshift=2cm] O.south);
 \coordinate (busRight)  at (rightLane |- loopbus);
-\draw[arrow,black] (resampleProcess.east) -- (rightLane) -- (busRight)
+\draw[arrow,black] (resampleProcess.west) -- (rightLane) -- (busRight)
   -- (N.south |- loopbus) -- (N.south);
-\draw[arrow,black] (resampleProcess.east) -- (rightLane) -- (busRight)
+\draw[arrow,black] (resampleProcess.west) -- (rightLane) -- (busRight)
   -- (U.south |- loopbus) -- (U.south);
-\draw[arrow,black] (resampleProcess.east) -- (rightLane) -- (busRight)
+\draw[arrow,black] (resampleProcess.west) -- (rightLane) -- (busRight)
   -- (M.south |- loopbus) -- (M.south);
 
 \end{tikzpicture}
+%
+}
 \caption{
 A flow diagram for panel iterated filtering.
 If the blue shaded blocks are omitted, this becomes a standard particle filter for each unit. Full pseudocode is in Section~S2. In the PIF algorithm of \citet{breto20}, the parameter resampling step involves re-selecting the unit-specific parameters corresponding to particle $j$ for units $\tilde u \neq u$ as well as $\psi_u$.
