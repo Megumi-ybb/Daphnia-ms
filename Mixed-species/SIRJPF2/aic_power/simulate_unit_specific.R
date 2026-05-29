@@ -45,11 +45,15 @@ mif.estimate <- c(
   k_Sn      = 4.103463e+00
 )
 
-# Unit-specific theta_In: log-uniform spread of +/- 0.5 log units around the shared MLE.
-# Effect size 2.7x across units — same order as the Dent_SIRJPF/theta_In separation that
-# the bootstrap LRT detected on the real data.
+# Unit-specific theta_In: log-uniform spread of +/- 0.8 log units around the shared MLE.
+# Effect size ~5x across units (exp(1.6)). Widened from the original +/- 0.5 because the
+# pilot-oracle gate showed +/- 0.5 gives mean oracle Lambda ~ 4, well below the 14-unit AIC
+# penalty for the 7 extra parameters; at that effect size the study would mechanically report
+# AIC non-detection regardless of AIC's behaviour. The +/- 0.8 spread is chosen to exceed the
+# parameter penalty so the simulation measures the procedure's operating characteristics (its
+# ability to recover a genuinely unit-specific truth), as in Stocks (2020) Table D3.
 log_theta_In_shared <- log(mif.estimate[["theta_In"]])
-log_offsets <- seq(-0.5, 0.5, length.out = 8)
+log_offsets <- seq(-0.8, 0.8, length.out = 8)
 theta_In_unit_values <- exp(log_theta_In_shared + log_offsets)
 names(theta_In_unit_values) <- paste0("u", 1:8)
 
