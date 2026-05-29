@@ -227,7 +227,6 @@ These unobservable, or latent, components are often crucial to understanding sys
 Additionally, both the measurements obtained from the systems in question and their underlying dynamic processes often exhibit substantial stochasticity.
 The combination of these two factors complicates data interpretation and analysis in ecological studies.
 Given these inherent properties of ecological systems, it is essential to use models that can account for key latent mechanisms and the stochastic nature of the system when conducting inference \citep{young98,bjornstad01}.
-
 Partially observed Markov process (POMP) models, also known as hidden Markov models or state space models \citep{breto09,auger-methe21}, comprise a class of models suited to the description of such systems, which describe the latent process using a Markovian representation.
  A POMP model is mechanistic if it is based on scientific principles, which is usually equivalent to providing a causal description of the system that can explain the consequence of interventions.
   Statistical inferences on mechanistic models can provide insight into key latent mechanisms.
@@ -258,8 +257,7 @@ Iterated filtering techniques apply to a more general class of POMP models, but 
   A central question when using model-based statistical inference to investigate ecological dynamics is to discover which biological details are necessary to include in a model to provide an adequate statistical explanation for the data.
   Our approach to answering this question uses standard tools of likelihood-based inference.
   We compare the model likelihood to statistical benchmarks, such as linear or autoregressive models, seeking to continue improving a mechanistic model until it captures the predictability of the data with at least comparable skill to a simple non-mechanistic analysis \citep{wheeler24,li24}.
-  In doing so, we ensure that the proposed dynamic model provides a plausible mechanistic description of the dynamic system, supported by evidence that the model also provides a suitable quantitative description of data that arise from the system.
-
+ Our goal is to ensure that the proposed dynamic model provides a plausible mechanistic description of the dynamic system, supported by evidence that the model also provides a suitable quantitative description of data that arise from the system.
   To do this, we study residuals and conditional log-likelihood anomalies for each data point to identify relative weaknesses and strengths of different models.
   We calculate Akaike's Information Criterion (AIC) to compare the overall fit of rival mechanistic models \citep{aic74}.
 We compute profile likelihood confidence intervals, making appropriate adjustment for Monte Carlo uncertainty \citep{ionides17,ning21}.
@@ -647,8 +645,7 @@ At each iteration, $m=\seq{1}{M}$, the magnitude of the perturbations is reduced
 By providing likelihood-based inference for a general class of nonlinear, non-Gaussian PanelPOMP models, PIF has the potential to facilitate discoveries in a wide range of scientific domains.
 This article provides a case study for such an application in the field of ecology.
 \begin{figure}[h!]
-\centering
-\resizebox{0.95\linewidth}{!}{%
+\resizebox{\linewidth}{!}{%
 \begin{tikzpicture}[
     node distance=4cm,
     font=\small
@@ -661,13 +658,13 @@ time $\mathtt{t_0}$, states \& parameters};
 \node[mytitle] at (initialize1.north west) {\texttt{j=1:J}};
 
 \node (U) [decision, left of=initialize1, xshift=-1cm] {\texttt{u=1:U}};
-\node (M) [decision2, left of=U, xshift=-0.5cm] {\texttt{m=1:M}};
-\node (S) [mytitle, above of=M, xshift=-0.37cm, yshift = -2.2cm] {\textbf{Input:} PanelPOMP model\\ and data};
+\node (M) [decision2, left of=U, xshift=1.4cm] {\texttt{m=1:M}};
+\node (S) [mytitle, above of=M, xshift=0.37cm, yshift = -1.8cm] {\textbf{Input:} PanelPOMP model\\ and data};
 
 \draw[arrow,black] (initialize1) -- (N);
 \draw[arrow,black] (U) -- (initialize1);
 \draw[arrow,black] (M) -- (U);
-\draw[arrow,black] (S) -- (M);
+\draw[arrow,black] (S)+(-136:1.0cm) -- (M);
 
 \node (predict) [process, right of=N, xshift=1cm, yshift=0.1cm] {Simulate stochastic dynamics,\\ unit $\mathtt{u}$, time $\mathtt{t_{n-1}}$ to $\mathtt{t_{n}}$};
 \node (perturb) [process2, above of=predict, yshift=-2.7cm] {Perturb parameters $\mathtt{\phi}$, $\mathtt{\psi_u}$};
@@ -684,7 +681,7 @@ time $\mathtt{t_0}$, states \& parameters};
 \node[mytitle] at (resampleProcess.north west) {\texttt{j=1:J}};
 \draw[arrow,black] (ppw.south) -- (resampleProcess.north);
 
-\node (O) [mytitle, left of=resampleProcess, xshift=-15.0cm]
+\node (O) [mytitle, left of=resampleProcess, xshift=-12.75cm]
     {\textbf{Output:} Monte Carlo Maximum\\ Likelihood Parameter Estimate};
 \draw[arrow,black] (resampleProcess.west) -- (O.east);
 
