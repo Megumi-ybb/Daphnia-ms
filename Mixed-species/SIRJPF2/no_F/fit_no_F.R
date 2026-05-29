@@ -55,7 +55,7 @@ run_level <- 3
 # NOTE: model/all_shared.R reads "./Mesocosmdata.xlsx" sheet 3. The repo root
 # currently carries Mesocosmdata.xls; ensure the .xlsx used for the production
 # all-shared fit is reachable at the path below on the HPC node.
-Mesocosm_data <- read_excel("../../../Mesocosmdata.xlsx", 3)
+Mesocosm_data <- read_excel("../../../Mesocosmdata.xls", 3)
 
 dentNoPara <- Mesocosm_data[91:170, ]
 dentNoPara <- subset(dentNoPara, select = c(rep, day, dent.adult, dent.inf, lum.adult, lum.adult.inf))
