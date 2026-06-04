@@ -6,12 +6,11 @@
 # Default below = the parameters carrying a reported CI, minus the 4 already
 # run (rn, ri, sigF, sigP). ri/f_Si/probi are profiled so that the composites
 # ri*f_Si and probi*f_Si can be formed in collect_coverage.R.
-# NOTE: theta_Jn/theta_Ji (juvenile mortality) are profilable but are intentionally
-#       NOT in the default PARAMS below -- add them iff they carry a reported CI
-#       in the agreed scope (confirm with Ed before the full submission).
+# Default = all 20 individual params that carry a reported CI in Table 1, minus the
+# 4 already run (rn, ri, sigF, sigP). theta_Jn/theta_Ji ARE included (they carry CIs).
 set -euo pipefail
 
-PARAMS="xi theta_Sn theta_Si theta_In theta_Ii theta_P f_Sn f_Si probn probi k_Sn k_Si k_In k_Ii sigIn sigIi sigJn sigJi"
+PARAMS="xi theta_Sn theta_Si theta_In theta_Ii theta_P theta_Jn theta_Ji f_Sn f_Si probn probi k_Sn k_Si k_In k_Ii sigIn sigIi sigJn sigJi"
 B=100
 
 for p in $PARAMS; do

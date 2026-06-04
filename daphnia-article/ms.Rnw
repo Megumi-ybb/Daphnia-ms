@@ -272,6 +272,8 @@ Section~\ref{sec:dis} is a concluding discussion.
 \section{A {\it Daphnia} mesocosm experiment}
 \label{sec:studysystem}
 
+\bye{The experiment that motivates this article asks a question of broad ecological importance: how does competition between a native and an invasive species change when both are attacked by a shared parasite, and what drives the boom-and-collapse population dynamics that result? \citet{searle16} designed a replicated mesocosm experiment to address this, growing the North American native \textit{D.~dentifera} and the invasive \textit{D.~lumholtzi}, alone and together, with and without the fungal parasite \textit{M.~bicuspidata}, on a shared algal food supply. The replicated design, which is multiple mesocosms within each of six treatments, is exactly the panel structure that our inference methodology is built to exploit, and the rival biological explanations for the observed dynamics are exactly the kind of competing mechanistic hypotheses that likelihood-based model comparison can adjudicate. We therefore describe the experimental system, the relevant life history of the organisms, and the resulting time series data before introducing the models and inference methods used to analyze them.}
+
 \revision{\editDaphnia}
 \textit{D.~dentifera} is native to North American stratified lakes, whereas \textit{D.~lumholtzi} is an invasive species originating from Africa, Asia, and Australia.
 First observed in North America in the 1990s, \textit{D.~lumholtzi} has rapidly expanded across the United States, impacting native species and ecosystem dynamics \citep{havel93,searle16salinization}.
@@ -406,7 +408,7 @@ Each column corresponds to one mesocosm replicate.
 \end{figure}
 
 Here, we focus on the most complex experimental treatment, namely, the four species treatment with both host species, the alga and the parasite.
-The simpler treatments are presented in Supplementary Sections~S4,~S5 and~S6.
+The simpler treatments are presented in Supplementary Sections~S7,~S8 and~S9.
 Data from the four species treatment are displayed in Fig.~\ref{fig:data_vis}.
 The females and juveniles show a population peak around day 25, typically followed by a collapse and a mild resurgence around day 50.
 The males arise predominantly later in the experiment as shown in Table S12.
@@ -499,7 +501,7 @@ This dynamic system extends the basic SIR model fundamental to epidemiology \cit
 Mathematically, the SIRJPF2 model is described by equations~(\ref{eq:model:first}--\ref{eq:model:last}), a system of stochastic differential equations which we interpret in the It\^{o} sense \citep{oksendal98}.
 Nonlinearity arises through product terms in the infection and consumption specifications.
 We use Gaussian noise, though multiplicative gamma noise can be employed to enforce non-negativity of rates \citep{bhadra11}.
-A version of SIRJPF2 with gamma noise, called SIRJPF2-Gamma, is presented in Section~S9, though we found that a simpler Gaussian noise model is sufficient.
+A version of SIRJPF2 with gamma noise, called SIRJPF2-Gamma, is presented in Section~S12, though we found that a simpler Gaussian noise model is sufficient.
 
 
 The nonlinearity and intrinsic stochasticity of the SIRPF2 model are characteristic features of dynamics in biological systems \citep{coulson04,wilkinson18}.
@@ -571,7 +573,7 @@ Therefore, these data are available for an out-of-sample model validation.
 
 Simpler treatments with a single \textit{Dapnia} species (SIRJPF) and without the parasite (SRJF and SRJF2) arise as special cases of SIRJPF2, with appropriate states and parameters
 \revision{\editSetToZero}
-These experiment treatments and corresponding models are presented in Section~S4, S5 and S6.
+These experiment treatments and corresponding models are presented in Sections~S7, S8 and S9.
 By isolating the food variable in the absence of parasites and/or inter-species competition among {\it Daphnia}, these results provide additional evidence on how food resource availability or scarcity impacts the population dynamics of native and invasive species.
 
 
@@ -706,6 +708,8 @@ For the marginalized PIF algorithm, only $\phi$ and $\psi_u$ are reselected in t
 \label{fig:pif}
 \end{figure}
 Parameter estimates and corresponding confidence intervals were obtained using PIF.
+
+\bye{All likelihood maximization in this article uses the marginalized variant of panel iterated filtering (MPIF; Fig.~\ref{fig:pif}), rather than the panel iterated filter of \citet{breto20} in its original form. Both algorithms extend iterated filtering \citep{ionides15} to PanelPOMP models by associating a perturbed parameter value with each particle $j$ and using particle-filter resampling to concentrate the parameter swarm around the maximum likelihood estimate; they differ only in the parameter resampling step. When the swarm is filtered through the data of unit $u$, the algorithm of \citet{breto20} resamples not only the shared parameters $\phi$ and the focal unit's parameters $\psi_u$ but also the parameters $\psi_{\tilde u}$ of every other unit $\tilde u \neq u$, even though the data for unit $u$ are uninformative about $\psi_{\tilde u}$. The marginalized variant instead resamples only $\phi$ and $\psi_u$, leaving each $\psi_{\tilde u}$ unchanged while filtering through unit $u$. This respects the defining conditional-independence structure of a PanelPOMP, under which the latent processes are independent across units given $\phi$ (Section~\ref{sec:meth}), so that the resampling weights generated by a single unit do not perturb the parameter estimates of the others. We adopt MPIF here because it is what makes reliable likelihood maximization and unit-specific inference feasible for this eight-unit, weakly identified mechanistic panel: the eight mesocosms differ in species composition, density and parasite load, and under joint resampling the units that happen to fit poorly dominate the particle weights and degrade the diversity of the unit-specific parameter swarm. The marginalized variant is the block-resampling option of the \texttt{mif2} function in the \texttt{panelPomp} R package, and is specified in our implementation by setting $\mathrm{MARGINALIZE}=\mathrm{TRUE}$ in the algorithm of Section~S2; we found it to give substantially more reliable optimization than joint resampling for the model and data analyzed here. A contemporaneous theoretical and methodological treatment of marginalized panel iterated filtering, including its convergence properties, is provided by \citet{wheeler25}.}
 A sufficiently large number of particles is needed to maintain particle diversity and achieve robust exploration of the parameter space.
 However, computational cost increases with the number of particles.
 We found that for this model and data, $J=500$ particles and cooling parameter $\rho = 0.7^{1/50} = 0.993$ gave sufficient Monte Carlo accuracy and computational feasibility.
@@ -1168,6 +1172,12 @@ Subsequent experimentation could substantiate or refute this prediction, and our
 Deterministic dynamic models continue to be widely used for ecological theory, despite the fact that inclusion of stochasticity can both improve model fit and enable diagnosis of model shortcomings \citep{king15}.
 We demonstrate that including stochasticity can also lead to more parsimonious understanding of the system, since, in our case study, the dynamic stochasticity obviates a need for mesocosm-specific parameters to explain the difference between the experimental replicates.
 
+\bye{The stochastic formulation does more than improve numerical fit; it reframes the ecological conclusions we draw from these data and makes them falsifiable. The deterministic model of \citet{searle16} attributes the rise and collapse of the \textit{Daphnia} populations to a density-dependent switch in reproductive strategy, from the asexual production of juveniles to the sexual production of dormant eggs. Our analysis instead favors a model in which the load-bearing mechanism is the depletion of the algal food resource coupled to age-structured recruitment: as the population grows it draws down the latent food compartment $F$, throttling juvenile recruitment and precipitating the crash, after which $F$ rebounds through resupply. Crucially, embedding this mechanism in a stochastic dynamic model turns the comparison between these rival explanations into a likelihood-based model selection rather than a narrative choice. Holding the food compartment fixed at its initial value (the no-$F$ ablation of Section~S5) removes the resource feedback while returning a free parameter to the model, yet it costs approximately $7.2$ log-likelihood units and is decisively worse by $\Delta\mathrm{AIC}\approx 12.4$. The model with a depletable food compartment is thus the decisively better-supported description of the observed peak-then-collapse trajectory. We emphasize, consistent with the caveat above, that this is a statement about statistical support and not about direct measurement: no food-level data were collected, so the depletion feedback remains an inference from the dynamics of the observed stages rather than a directly validated quantity, and subsequent experiments measuring food could substantiate or refute it.
+
+Stochasticity is also what makes these mechanistic comparisons testable in the first place. Process noise in the juvenile, food and parasite dynamics absorbs the overdispersion and replicate-to-replicate variability that a deterministic model can only accommodate by positing systematic differences between otherwise identical replicates. Because the stochastic model treats each mesocosm as a conditionally independent realization of a shared dynamic process, likelihood-based model selection (Section~\ref{sec:res} and the supplement) lets us ask which mechanisms genuinely need to differ across replicates. For this eight-unit panel the answer is that none do: no unit-specific parameterization yields a statistically significant improvement over the all-shared model by the likelihood ratio test, so the heterogeneity between replicates is adequately explained by dynamic noise rather than by structural differences. Such hypothesis tests on the sources of variation are unavailable to a deterministic fit, which lacks a probability model for the data and therefore cannot separate process-level stochasticity from genuine between-unit structure. Embedding the mechanism in a stochastic dynamic model is therefore not a statistical refinement applied after the science is settled; it is the tool that lets us weigh resource depletion against a reproductive-strategy switch as competing, testable explanations of the same data.}
+
+\bye{Methodologically, this analysis was made feasible by the marginalized panel iterated filter, whose block resampling of each unit's parameters respects the conditional independence of the panel units; we found this variant well-suited to likelihood maximization for our high-dimensional, weakly identified model, and a theoretical treatment is given by \citet{wheeler25}.}
+
 This study has focused on the task of fitting models to understand the biological dynamics.
 This is closely related to the task of forecasting: fitting by maximum likelihood is equivalent to assessing one-step forecasting skill, and the AIC criterion is designed to evaluate out-of-sample predictive skill \citep{aic74}.
 Within this framework, the goals of model-based biological understanding and forecasting are therefore closely aligned.
@@ -1177,9 +1187,7 @@ The applicability of our approach is contingent on having panel data of sufficie
 Such panel datasets are available, for example, on pathogen-host ecosystems \citep{martinez-bakker15} and fisheries \citep{naiman02}.
 The flexibility of the PanelPOMP model class provides many opportunities for developing new models that integrate ecological theory with panel time series data.
 
-\section*{Significance Statement}
-
-\revision{\editSignificance}
+\bye{Mechanistic models help scientists learn how ecological systems work, but fitting them to data is hard when key quantities go unobserved, dynamics are noisy and nonlinear, and several replicate systems must be analyzed together. We show that a recently developed simulation-based method, panel iterated filtering, makes rigorous likelihood-based analysis of such replicated experiments practical, and we apply a refinement that improves its reliability. Studying a freshwater experiment with two competing water-flea species, their algal food, and a shared fungal parasite, we find that accounting for randomness reshapes the ecological conclusions: depletion of the food resource, rather than a switch in reproductive strategy, best explains the observed boom and collapse, with chance variation alone explaining differences between replicates.}
 
 \begin{acks}[Acknowledgments]
 %% The corresponding author is Bo Yang with address 665 W 130th St, New York, NY 10027.

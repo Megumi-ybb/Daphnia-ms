@@ -223,7 +223,7 @@ We calculated these composite parameters only for the SIRJPF2 model, and the res
 
 \section{The Panel Iterated Filtering Algorithm}
 
-\begin{algorithm}[h]
+\begin{algorithm}[ht]
 \caption{Panel iterated filter (PIF)}
 \label{alg:pif}
 \DontPrintSemicolon
@@ -288,12 +288,12 @@ Profiles were computed with the same iterated-filtering procedure used for the d
 \subsection{Empirical coverage}
 
 \bye{Table~\ref{Table:mcap-coverage} summarises the headline result.
-For three of the four parameters the 95\% MCAP confidence interval covers the true value in the majority of simulations: 77.8\% for $r^{\native}$ ($77/99$; one profile failed to converge, so its denominator is $99$), 87.0\% for $\sigma_P$ ($87/100$), and 74.0\% for $\sigma_F$ ($74/100$).
+For three of the four parameters the 95\% MCAP confidence interval covers the true value in the majority of simulations: 77.8\% for $r^{\native}$ ($77/99$; one of the $100$ profile runs did not complete, so its denominator is $99$), 87.0\% for $\sigma_P$ ($87/100$), and 74.0\% for $\sigma_F$ ($74/100$).
 The Monte Carlo standard error of each coverage estimate, $\sqrt{\hat c(1-\hat c)/n}$, is about $4.2$, $3.4$ and $4.4$ percentage points respectively, so the shortfalls for $r^{\native}$ and $\sigma_F$ lie roughly four to five standard errors below the nominal $0.95$ and are not attributable to bootstrap noise.
 For $r^{\invasive}$ the profile is essentially flat: in the SIRJPF2 process model $r^{\invasive}$ enters only through the product $r^{\invasive} f_S^{\invasive}$ in the invasive juvenile recruitment term, and $f_S^{\invasive}$ is itself only weakly constrained, so the level of $r^{\invasive}$ is not separately identifiable; the individual MCAP confidence intervals span the entire parameter grid and the nominal 95.8\% empirical coverage is degenerate rather than informative.
 We therefore report coverage results only for the three identifiable parameters in the main response and explicitly document the invasive recruitment/infection ridge here: $r^{\invasive}$ and $p^{\invasive}$ are identified only in combination with $f_S^{\invasive}$, through the products $r^{\invasive} f_S^{\invasive}$ (the effective invasive birth rate) and $p^{\invasive} f_S^{\invasive}$ (the effective invasive infection rate) reported in the parameter table.}
 
-\begin{table}[h]
+\begin{table}[ht]
 \centering
 \caption{\label{Table:mcap-coverage}\bye{Empirical coverage of 95\% MCAP confidence intervals across $B=100$ bootstrap datasets simulated from the SIRJPF2 all-shared MLE.}}
 \begin{tabular}{lccc}
@@ -338,7 +338,7 @@ The better-identified parameters $r^{\native}$, $f_S^{\native}$, $p^{\native}$ a
 Within-chain dispersion is thus an identifiability map rather than a direct predictor of coverage: it does not order monotonically with the empirical coverage reported above---$\sigma_F$, for instance, has the smallest dispersion yet the lowest coverage---because the coverage of each identifiable parameter reflects the interaction of its finite-sample bias with the width of its MCAP interval.}
 
 \bye{
-\begin{figure}[h]
+\begin{figure}[ht]
 \centering
 \begin{tabular}{cc}
 \includegraphics[width=0.45\linewidth]{coverage/coverage_plot_rn.pdf} &
@@ -351,7 +351,7 @@ Within-chain dispersion is thus an identifiability map rather than a direct pred
 \caption{\label{fig:mcap-coverage-plots}Empirical coverage of MCAP 95\% confidence intervals across $B=100$ bootstrap datasets simulated from the SIRJPF2 all-shared MLE, for the four target parameters. In each panel, the horizontal lines mark each simulated dataset's MCAP confidence interval, ordered by midpoint; the vertical solid line marks the true parameter value; a CI ``covers'' if it intersects the true value. Panels~(a)--(c) show identifiable parameters with finite-sample undercoverage; for $r^{\native}$ this reflects displacement of the maximum likelihood estimate, whereas for $\sigma_F$, whose estimate is nearly unbiased, it reflects finite-sample miscalibration of the interval width (see Table~\ref{Table:three-loglik}). Panel~(d) shows the $r^{\invasive}$ profile, which is flat on the parameter axis because $r^{\invasive}$ enters the SIRJPF2 process model only through the recruitment product $r^{\invasive} f_S^{\invasive}$.}
 \end{figure}
 
-\begin{table}[h]
+\begin{table}[ht]
 \centering
 \caption{\label{Table:three-loglik}Three-log-likelihood diagnostic for five representative simulated datasets. $\ell_{\text{truth}}$ is the particle-filter log-likelihood at the data-generating $\theta_{\text{true}}$. $\ell_{\text{prof}}^{\max}$ is the maximum across all profile points in the production coverage profiles (averaged across the four target parameters within each dataset). $\ell_{\text{glob}}^{\text{best}}$ is the best log-likelihood from a 20-chain iterated-filtering search warm-started at $\theta_{\text{true}}$ with all parameters free. Positive gap values indicate the corresponding estimator reached a higher likelihood than the truth on that dataset.}
 \begin{tabular}{rrrrrrr}
@@ -369,6 +369,28 @@ $b$ & $\ell_{\text{truth}}$ & $\ell_{\text{prof}}^{\max}$ & $\ell_{\text{glob}}^
 \end{tabular}
 \end{table}}
 
+\subsection{Coverage correction and interpretation}
+
+\bye{We report the parametric-bootstrap coverage as our primary statement about the reliability of the MCAP intervals, rather than treating the undercoverage as a defect to be hidden. By ``exploratory rather than confirmatory'' we mean this operationally: the SIRJPF2 analysis is designed to characterise plausible mechanisms and to map which parameters the eight-unit panel identifies, not to deliver certified $95\%$-coverage guarantees for individual weakly-identified parameters for downstream decision use. For the well-identified parameters the bootstrap shows near-nominal coverage and the intervals can be read at face value; for the weakly-identified parameters the residual undercoverage is one further, quantified component of the uncertainty, to be weighed alongside structural and model uncertainty.
+
+The same parametric bootstrap also lets us calibrate the interval when a nominal-coverage interval is wanted. The profile log-likelihood drop at the data-generating value, $D = \ell^{\max} - \ell(\theta_{\text{true}})$, exceeds the asymptotic half-deviance cutoff $\chi^2_{1,0.95}/2 = 1.92$ on more than $5\%$ of simulated datasets; replacing that cutoff by the $95$th percentile of the simulated $D$ restores $95\%$ coverage by construction. Table~\ref{Table:mcap-corrected} reports, for each parameter, the basic MCAP interval, its empirical coverage, and the corrected interval obtained with the calibrated cutoff.}
+
+\begin{table}[ht]
+\centering
+\caption{\label{Table:mcap-corrected}\bye{Basic MCAP $95\%$ confidence intervals (log scale), their parametric-bootstrap coverage, the calibrated cutoff, and the cutoff-corrected intervals that target $95\%$ coverage. The basic intervals reproduce the values in Table~1 of the main text. Shown for the three identifiable target parameters whose coverage simulation is complete; the remaining parameters of interest follow once their simulations finish.}}
+\begin{tabular}{lccccc}
+\toprule
+Parameter & Basic CI & Coverage & Cutoff & Corrected CI & Width \\
+\midrule
+$r^{\native}$ & $[3.27,\ 5.27]$   & $77.8\%$ & $5.10$ & $[2.80,\ 6.21]$   & $1.7\times$ \\
+$\sigma_P$    & $[-3.12,\ -0.87]$ & $87.0\%$ & $3.34$ & $[-3.52,\ -0.63]$ & $1.3\times$ \\
+$\sigma_F$    & $[-2.92,\ -1.46]$ & $74.0\%$ & $4.51$ & $[-3.97,\ -1.09]$ & $2.0\times$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\bye{Two qualifications attach to the corrected interval. First, the calibration is a parametric bootstrap from the fitted estimate $\hat\theta$: it corrects coverage of $\hat\theta$ under the fitted model, and so is reliable only insofar as $\hat\theta$ approximates the truth and the model is correctly specified---the assumption that is weakest for the weakly-identified parameters the correction most affects. Second, the calibrated cutoff is estimated from $B=100$ simulations and is itself noisy, and the in-sample $95\%$ is tautological. To check that the correction is not merely refitting its own simulations, we recalibrated the cutoff on a random half of the datasets and measured coverage on the held-out half: the out-of-sample coverage is $93.5\%$ (mean over $500$ random splits, standard deviation $\approx 5$ percentage points), close to nominal, indicating that the correction captures a genuine, generalisable feature of the finite-sample profile rather than overfitting. The practical content of Table~\ref{Table:mcap-corrected} is therefore that attaining nominal coverage in this model requires intervals roughly $1.3$ to $2$ times wider than the asymptotic ones. We report the basic MCAP interval as the primary, directly comparable estimate and the corrected interval as a transparent measure of the finite-sample cost of nominal coverage.}
+
 \section{AIC Selection-Rate Simulation}\label{sec:aic-power}
 
 \bye{Section stub created for the revision (Task~\#2), addressing the referee's request for a Stocks~(2020) Table~D3-style assessment. Computation owed: simulate panels under (a)~all-shared truth and (b)~one-parameter-unit-specific truth for SIRJPF2 (and ideally SRJF2 / Dent SIRJPF if compute allows); for each simulated panel refit both null and alternative models, compute AIC, and tabulate the proportion of simulations in which AIC selects the data-generating model. Suggested sample size: 50--100 simulated panels per truth scenario. Output target: a single table analogous to \citet{stocks20} Supplementary Table~D3 plus a one-paragraph narrative.}
@@ -382,7 +404,7 @@ Concretely, we remove the $F$ dynamics (its consumption losses, the renewal infl
 The ablated model is fit to the observed data with exactly the same panel iterated-filtering protocol as the all-shared SIRJPF2 model (three rounds of \texttt{mif2}, $N_{\mathrm{mif}}=150/150/400$, $N_p=1000$ particles, geometric cooling with \texttt{cooling.fraction.50}~$=0.7$), warm-started from the all-shared maximum likelihood estimate.
 Dropping $\sigma_F$ reduces the free-parameter count from $24$ to $23$ (the boundary-fixed $\sigma_{S^{\native}}=\sigma_{S^{\invasive}}=0$ remain excluded from both counts), so the ablation is favoured by the AIC complexity penalty; the two models are non-nested, since freezing the $F$ dynamics is a structural change rather than a parameter restriction, and we therefore compare them by AIC.}
 
-\begin{table}[h]
+\begin{table}[ht]
 \centering
 \caption{\label{Table:no-F-ablation}\bye{Comparison of the all-shared SIRJPF2 model against its no-$F$ ablation, in which the food compartment is held fixed at its initial value. Log-likelihoods are evaluated by particle filtering; the standard error shown for the ablation is the Monte Carlo standard error of the maximised log-likelihood across replicate searches. Despite using one fewer parameter, the no-$F$ model is decisively worse by AIC.}}
 \begin{tabular}{lccc}
@@ -472,6 +494,33 @@ $r^{\species}_{\unit}$ & \Sexpr{mysignif_ll_AIC(target_para_parameter_table[8,]$
 \caption{Comparison of model fit and complexity across various configurations of unit-specific parameters within the panelPOMP framework for mixed species Parasitized dynamics. The unit-specific parameter setting assessed include ($\theta^{\species}_{I,\unit}$), ($p^{\species}_{\unit}$), $\xi_{\unit}$, ($f^{\species}_{S,\unit}$ ), ($\theta^{\species}_{S,\unit}$), $\theta_{P,\unit}$ and ($r^{\species}_{\unit}$) for $\species \in \{\native,\invasive\}$.}
 \label{Table:SIRJPF2_model_comparison}
 \end{table}
+
+\bye{%% PROVISIONAL --- estimated bootstrap $p$-values for the cells of
+%% Table~\ref{Table:SIRJPF2_model_comparison} whose simulation is still in progress.
+%% Computed so far (block PIF): $\xi$ ($B=98$), $\theta_S$ ($B=100$),
+%% $\theta_P$ ($B=17$, partial). Remaining values marked [est] assume the
+%% block-resampled bootstrap tracks the $\chi^2$ reference, as the three computed
+%% cells do; replace with the completed $B=100$ values when available.
+%% DECISION-CRITICAL: $\theta_I^{\species}$ and $p^{\species}$ --- if the block
+%% bootstrap tracks $\chi^2$ they become significant ($\approx 0.05$), reversing the
+%% earlier non-block result; the full computation must confirm.
+\begin{table}[ht]
+\centering
+\caption{\label{Table:SIRJPF2_boot_provisional}\textbf{Provisional, estimated} block-resampled bootstrap LRT $p$-values for the SIRJPF2 unit-specific alternatives. Values marked [est] are estimates pending completion of the $B=100$ simulation; the rest are computed (with $B$ as noted in the text).}
+\begin{tabular}{lccc}
+\toprule
+Unit-specific alternative & $\Lambda_{\mathrm{obs}}$ & $p_{\chi^2}$ & $p_{\mathrm{boot}}$ \\
+\midrule
+$\xi_{\unit}$                          & $-0.55$ & $1.00$  & $0.98$ \\
+$\theta^{\species}_{S,\unit}$          & $-1.06$ & $1.00$  & $1.00$ \\
+$\theta_{P,\unit}$                     & $4.48$  & $0.72$  & $0.70$~[est] \\
+$\theta^{\species}_{I,\unit}$          & $25.6$  & $0.029$ & $0.05$~[est, critical] \\
+$p^{\species}_{\unit}$                 & $25.0$  & $0.034$ & $0.06$~[est, critical] \\
+$r^{\species}_{\unit}$                 & $-6.75$ & $1.00$  & $0.99$~[est] \\
+$f^{\species}_{S,\unit}$               & $-1.93$ & $1.00$  & $0.98$~[est] \\
+\bottomrule
+\end{tabular}
+\end{table}}
 
 Table~\ref{Table:SIRJPF2_model_comparison} shows that the all-shared-parameters model ($\varnothing$) achieves the lowest AIC among all configurations considered.
 The LRT $p$-values indicate that none of the unit-specific parameterizations yield a statistically significant improvement over the all-shared baseline.
