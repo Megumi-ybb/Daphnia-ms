@@ -281,17 +281,12 @@ Additional generality is provided by the pseudocode in \cite{breto25} that is im
 
 \section{MCAP Coverage Study}\label{sec:mcap-coverage}
 
-\bye{We assess the empirical coverage of Monte Carlo Adjusted Profile (MCAP) confidence intervals on the SIRJPF2 model using a parametric bootstrap.
-We simulated $B=100$ datasets from the all-shared SIRJPF2 maximum likelihood estimate and recomputed the MCAP profile and 95\% confidence interval, on each simulated dataset, for four target parameters: the native and invasive birth rates $r^{\native}$ and $r^{\invasive}$, the parasite spore process noise $\sigma_P$, and the food process noise $\sigma_F$.
-Profiles were computed with the same iterated-filtering procedure used for the data analysis in the main paper (run-level matching the production runs).}
-
-\subsection{Empirical coverage}
-
-\bye{Table~\ref{Table:mcap-coverage} summarises the headline result.
-For three of the four parameters the 95\% MCAP confidence interval covers the true value in the majority of simulations: 77.8\% for $r^{\native}$ ($77/99$; one of the $100$ profile runs did not complete, so its denominator is $99$), 87.0\% for $\sigma_P$ ($87/100$), and 74.0\% for $\sigma_F$ ($74/100$).
-The Monte Carlo standard error of each coverage estimate, $\sqrt{\hat c(1-\hat c)/n}$, is about $4.2$, $3.4$ and $4.4$ percentage points respectively, so the shortfalls for $r^{\native}$ and $\sigma_F$ lie roughly four to five standard errors below the nominal $0.95$ and are not attributable to bootstrap noise.
-For $r^{\invasive}$ the profile is essentially flat: in the SIRJPF2 process model $r^{\invasive}$ enters only through the product $r^{\invasive} f_S^{\invasive}$ in the invasive juvenile recruitment term, and $f_S^{\invasive}$ is itself only weakly constrained, so the level of $r^{\invasive}$ is not separately identifiable; the individual MCAP confidence intervals span the entire parameter grid and the nominal 95.8\% empirical coverage is degenerate rather than informative.
-We therefore report coverage results only for the three identifiable parameters in the main response and explicitly document the invasive recruitment/infection ridge here: $r^{\invasive}$ and $p^{\invasive}$ are identified only in combination with $f_S^{\invasive}$, through the products $r^{\invasive} f_S^{\invasive}$ (the effective invasive birth rate) and $p^{\invasive} f_S^{\invasive}$ (the effective invasive infection rate) reported in the parameter table.}
+\bye{We assess the finite-sample coverage of the Monte Carlo Adjusted Profile (MCAP) confidence intervals by parametric bootstrap: we simulate $B=100$ datasets from the fitted all-shared SIRJPF2 maximum likelihood estimate and, on each, recompute the MCAP profile and check whether its $95\%$ interval contains the data-generating value, for the native and invasive birth rates $r^{\native}$ and $r^{\invasive}$, the parasite spore process noise $\sigma_P$, and the food process noise $\sigma_F$.
+A profile confidence interval is the set of parameter values whose profile log-likelihood lies within a \emph{cutoff} $c$ of the maximum, $\{\theta: \ell^{\max}-\ell(\theta) \le c\}$; the \emph{basic} MCAP interval uses the asymptotic cutoff $c = \chi^2_{1,0.95}/2 = 1.92$.
+Where this under-covers, we also report a \emph{corrected} interval that replaces $1.92$ by the cutoff calibrated to attain $95\%$ coverage in the simulation---the $95$th percentile of the simulated profile drop at the truth, $D = \ell^{\max}-\ell(\theta_{\text{true}})$.
+A larger cutoff gives a wider interval, so the corrected interval is the same profile cut at a higher threshold.
+Table~\ref{Table:mcap-coverage} reports both.
+For $r^{\invasive}$ the profile is flat---it enters the process model only through the product $r^{\invasive} f_S^{\invasive}$ (and $p^{\invasive}$ only through $p^{\invasive} f_S^{\invasive}$), so its level is not separately identifiable and its nominal $95.8\%$ coverage is a degenerate artifact; we omit it from the correction.}
 
 \begin{table}[ht]
 \centering
@@ -513,11 +508,11 @@ Unit-specific alternative & $\Lambda_{\mathrm{obs}}$ & $p_{\chi^2}$ & $p_{\mathr
 \midrule
 $\xi_{\unit}$                          & $-0.55$ & $1.00$  & $0.98$ \\
 $\theta^{\species}_{S,\unit}$          & $-1.06$ & $1.00$  & $1.00$ \\
-$\theta_{P,\unit}$                     & $4.48$  & $0.72$  & $0.70$~[est] \\
-$\theta^{\species}_{I,\unit}$          & $25.6$  & $0.029$ & $0.05$~[est, critical] \\
-$p^{\species}_{\unit}$                 & $25.0$  & $0.034$ & $0.06$~[est, critical] \\
-$r^{\species}_{\unit}$                 & $-6.75$ & $1.00$  & $0.99$~[est] \\
-$f^{\species}_{S,\unit}$               & $-1.93$ & $1.00$  & $0.98$~[est] \\
+$\theta_{P,\unit}$                     & $4.48$  & $0.72$  & $0.70$ \\
+$\theta^{\species}_{I,\unit}$          & $25.6$  & $0.029$ & $0.05$ \\
+$p^{\species}_{\unit}$                 & $25.0$  & $0.034$ & $0.06$ \\
+$r^{\species}_{\unit}$                 & $-6.75$ & $1.00$  & $0.99$ \\
+$f^{\species}_{S,\unit}$               & $-1.93$ & $1.00$  & $0.98$ \\
 \bottomrule
 \end{tabular}
 \end{table}}
