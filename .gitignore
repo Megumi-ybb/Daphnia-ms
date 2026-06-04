@@ -39,7 +39,6 @@ Daphnia-paper-review
 # track bootstrap LRT command files
 !**/bootstrap_lrt/commands*.txt
 
-<<<<<<< HEAD
 # vscode temporary files
 *.fdb_latexmk
 *.fls
@@ -49,7 +48,7 @@ Daphnia-paper-review
 *-concordance.tex
 si.tex
 ms.tex
-=======
+
 # local-only instructions
 bootstrap_lrt_instructions.md
->>>>>>> refs/remotes/origin/main
+cluster_run_instructions.md

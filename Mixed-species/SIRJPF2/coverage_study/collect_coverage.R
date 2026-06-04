@@ -12,9 +12,12 @@ level <- 0.95
 ## True parameter values
 true_params <- readRDS("simulated_data/true_params.rds")
 
-## Parameters to process
-param_names <- c("ri", "rn","sigP",'sigF')
-# param_names <- c("ri", "rn")
+## Parameters to process: auto-detect every single-parameter profile on disk.
+## (To restrict, set param_names manually, e.g. c("rn","sigP","sigF").)
+profile_files_all <- list.files("coverage_results", pattern = "^profile_[A-Za-z_]+_[0-9]+\\.rds$")
+param_names <- sort(unique(sub("^profile_([A-Za-z_]+)_[0-9]+\\.rds$", "\\1", profile_files_all)))
+if (length(param_names) == 0) stop("No profile_<param>_<b>.rds files found in coverage_results/.")
+cat("Single-parameter profiles detected:", paste(param_names, collapse = ", "), "\n\n")
 ## Wilson score confidence interval for the coverage proportion
 wilson_ci <- function(p, n, z = 1.96) {
   denom <- 1 + z^2/n
@@ -145,10 +148,7 @@ for (param in param_names) {
 
   results$b_ordered <- rank(results$mle)
 
-  y_label <- switch(param,
-    ri = expression(log(r[i])),
-    rn = expression(log(r[n]))
-  )
+  y_label <- paste0("log(", param, ")")
 
   p <- ggplot(results, aes(x = b_ordered)) +
     geom_segment(aes(xend = b_ordered, y = ci_lo, yend = ci_hi,
@@ -189,3 +189,78 @@ for (param in names(all_results)) {
   cat(sprintf("  %s : %d/%d = %.1f%% coverage\n", param, sum(res$covers), n, cov*100))
 }
 cat("======================================\n")
+
+
+## ---------------------------------------------------------------------------
+## 8. Composite ridge targets (ri*f_Si, probi*f_Si)  --  METHOD NOT YET CONFIRMED
+## ---------------------------------------------------------------------------
+## ri and probi are individually non-identifiable; the identified quantities are the
+## products ri*f_Si (recruitment) and probi*f_Si (infection), reported in Table 1.
+## To assess composite coverage we read the profile of its DRIVING parameter (the
+## generalized coverage_profile.R persists ALL coef columns), form the composite at
+## each profile point, and run mcap on (loglik, log(composite)).
+##
+## REQUIRES profiles produced by the generalized coverage_profile.R (the old
+## profile_ri_*.rds carry only (ri, loglik, log_ri), no f_Si column -> skipped).
+## !! VERIFY before reporting: confirm this profile-derived composite CI matches the
+##    construction of the Table-1 composite CIs (data/.../profile_ci_table.rda).
+## Disabled by default so an unconfirmed method never enters the summary.
+do_composite <- FALSE
+composites <- list(
+  ri_f_Si    = c("ri",    "f_Si"),
+  probi_f_Si = c("probi", "f_Si")
+)
+composite_coverage <- function(name, factors, driver = factors[1], level = 0.95) {
+  true_comp_log <- log(prod(sapply(factors, function(p) as.numeric(true_params[p]))))
+  files  <- list.files("coverage_results",
+                       pattern = sprintf("^profile_%s_[0-9]+\\.rds$", driver), full.names = TRUE)
+  covers <- logical(0)
+  for (f in files) {
+    d <- readRDS(f)
+    if (!all(factors %in% names(d))) next            # need partner coef columns
+    log_comp <- log(Reduce(`*`, lapply(factors, function(p) d[[p]])))
+    m <- tryCatch(mcap(d$loglik, log_comp, level = level, span = 0.95, Ngrid = 1000),
+                  error = function(e) NULL)
+    if (is.null(m)) next
+    covers <- c(covers, true_comp_log >= m$ci[1] && true_comp_log <= m$ci[2])
+  }
+  n <- length(covers)
+  cat(sprintf("  %-12s : %d/%d = %.1f%% (true log = %.3f)\n",
+              name, sum(covers), n, if (n) 100*mean(covers) else NA, true_comp_log))
+}
+if (do_composite) {
+  cat("\n=== Composite ridge coverage (METHOD UNCONFIRMED -- verify vs Table 1) ===\n")
+  for (nm in names(composites)) composite_coverage(nm, composites[[nm]], level = level)
+}
+
+## ---------------------------------------------------------------------------
+## 9. One-sided / boundary parameters
+## ---------------------------------------------------------------------------
+## For a param whose MLE sits at a bound (e.g. theta_P, sigIi) the two-sided MCAP CI
+## can be degenerate; score coverage against the single finite bound instead.
+## side="lower": CI is [ci_lo, Inf), covered iff true_log >= ci_lo;
+## side="upper": CI is (-Inf, ci_hi], covered iff true_log <= ci_hi.
+## Disabled by default; set the sides from the actual boundary before reporting.
+do_onesided  <- FALSE
+onesided_side <- c(theta_P = "lower", sigIi = "lower")   # EDIT to match each param's bound
+onesided_coverage <- function(param, side, level = 0.95) {
+  true_log <- log(as.numeric(true_params[param]))
+  log_col  <- paste0("log_", param)
+  files    <- list.files("coverage_results",
+                         pattern = sprintf("^profile_%s_[0-9]+\\.rds$", param), full.names = TRUE)
+  covers <- logical(0)
+  for (f in files) {
+    d <- readRDS(f)
+    m <- tryCatch(mcap(d$loglik, d[[log_col]], level = level, span = 0.95, Ngrid = 1000),
+                  error = function(e) NULL)
+    if (is.null(m)) next
+    covers <- c(covers, if (side == "lower") true_log >= m$ci[1] else true_log <= m$ci[2])
+  }
+  n <- length(covers)
+  cat(sprintf("  %-10s (%s-bound): %d/%d = %.1f%%\n",
+              param, side, sum(covers), n, if (n) 100*mean(covers) else NA))
+}
+if (do_onesided) {
+  cat("\n=== One-sided coverage (CONFIRM each side) ===\n")
+  for (p in names(onesided_side)) onesided_coverage(p, onesided_side[[p]], level = level)
+}

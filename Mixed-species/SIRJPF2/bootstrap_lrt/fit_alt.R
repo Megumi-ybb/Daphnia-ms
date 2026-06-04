@@ -279,7 +279,7 @@ result <- list(
   Mp      = Mp,
   Np_rep  = Np_rep,
   block   = TRUE,
-  Nmif    = 150
+  Nmif    = c(round1 = 150, round2 = 250)   # saved fit is the round-2 best
 )
 
 saveRDS(result, file = paste0('results_alt/lrt_',alt_name,"_",b,'.rds'))

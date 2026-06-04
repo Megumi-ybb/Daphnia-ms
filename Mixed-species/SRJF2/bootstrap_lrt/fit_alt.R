@@ -170,6 +170,7 @@ mf1 <- foreach(
 ) %dopar% {
   mif2(
     panelfood,
+    block = TRUE,   # block-resample unit-specific params; matches specific_model_block real-data fits
     Nmif = 150,
     shared.start = parameter_candidates$shared,
     specific.start = parameter_candidates$specific,
@@ -221,6 +222,7 @@ mf <- foreach(
 
   mif2(
     panelfood,
+    block = TRUE,   # block-resample unit-specific params; matches specific_model_block real-data fits
     Nmif = 150,
     shared.start = share_para_temp,
     specific.start = specific_para_temp,
@@ -246,7 +248,13 @@ best <- which.max(lls[1,])
 result <- list(
   ll   = unname(mf[[best]]$ll[1]),
   se   = unname(mf[[best]]$ll[2]),
-  coef = coef(mf[[best]]$mif)
+  coef = coef(mf[[best]]$mif),
+  # provenance for the paired-settings guard in collect_lrt.R
+  Np      = Np,
+  Mp      = Mp,
+  Np_rep  = Np_rep,
+  block   = TRUE,
+  Nmif    = c(round1 = 150, round2 = 150)   # saved fit is the round-2 best
 )
 
 saveRDS(result, file = paste0('results_alt/lrt_',alt_name,"_",b,'.rds'))

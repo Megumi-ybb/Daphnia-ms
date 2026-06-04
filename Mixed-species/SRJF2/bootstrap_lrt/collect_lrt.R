@@ -29,12 +29,14 @@ cat("Observed null log-likelihood:", null_ll_obs, "\n\n")
 # ---- Load bootstrap null results ----
 null_lls <- numeric(B)
 null_completed <- 0
+null_meta <- NULL
 for (b in 1:B) {
   f <- sprintf("results_null/lrt_null_%d.rds", b)
   if (file.exists(f)) {
     res <- readRDS(f)
     null_lls[b] <- res$ll
     null_completed <- null_completed + 1
+    if (is.null(null_meta) && !is.null(res$Np)) null_meta <- res[c("Np", "Mp", "Np_rep", "block")]
   } else {
     null_lls[b] <- NA
   }
@@ -82,17 +84,34 @@ for (alt in alt_names) {
 
   alt_lls <- numeric(B)
   alt_completed <- 0
+  alt_meta <- NULL
   for (b in 1:B) {
     f <- sprintf("results_alt/lrt_%s_%d.rds", alt, b)
     if (file.exists(f)) {
       res <- readRDS(f)
       alt_lls[b] <- res$ll
       alt_completed <- alt_completed + 1
+      if (is.null(alt_meta) && !is.null(res$Np)) alt_meta <- res[c("Np", "Mp", "Np_rep", "block")]
     } else {
       alt_lls[b] <- NA
     }
   }
   cat("  Alt fits completed:", alt_completed, "/", B, "\n")
+
+  # ---- Guard: null and alt must be fit at identical particle settings ----
+  # Lambda_boot = 2*(ll_alt - ll_null); the particle-filter loglik is biased by
+  # ~ -O(1/Np), so unequal Np would bias Lambda (and p_boot) in the wrong
+  # direction. Refuse to report a p-value built from mismatched arms.
+  if (!is.null(null_meta) && !is.null(alt_meta)) {
+    if (!isTRUE(all.equal(null_meta[c("Np", "Mp", "Np_rep")], alt_meta[c("Np", "Mp", "Np_rep")]))) {
+      stop(sprintf(
+        "Particle-setting mismatch for %s: null (Np=%s, Mp=%s) vs alt (Np=%s, Mp=%s). Re-fit both arms at equal settings before collecting.",
+        alt, null_meta$Np, null_meta$Mp, alt_meta$Np, alt_meta$Mp))
+    }
+  } else {
+    warning(sprintf(
+      "Cannot verify null/alt particle symmetry for %s (results predate metadata).", alt))
+  }
 
   valid <- !is.na(null_lls) & !is.na(alt_lls)
   Lambda_boot <- 2 * (alt_lls[valid] - null_lls[valid])

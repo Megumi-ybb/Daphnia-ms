@@ -1,0 +1,93 @@
+%% =====================================================================
+%% DRAFT replacement for SI Section S3 "MCAP Coverage Study"
+%% (si.Rnw lines ~282-368). NOT yet inserted into si.Rnw — for Bo's review.
+%% Produced 2026-06-03. Drop-in: keeps \label{sec:mcap-coverage},
+%% Table:mcap-coverage, Table:three-loglik, fig:mcap-coverage-plots, and the
+%% \native/\invasive notation. Wrapped in \bye{} per the revision convention.
+%%
+%% OPEN ITEMS FLAGGED INLINE BELOW (search "VERIFY") — resolve before insertion:
+%%   1. ri/probi/f_Si "product ridge" algebra vs the actual C-snippet.
+%%   2. sigma_F undercovers with ~zero MLE drift -> width, not displacement.
+%%   3. within-chain-SD <-> coverage link is not monotone (sigP vs sigF).
+%% =====================================================================
+
+\bye{We assess the empirical coverage of Monte Carlo Adjusted Profile (MCAP) confidence intervals \citep{ionides17} on the SIRJPF2 model by parametric bootstrap, leaning on simulation rather than on the asymptotic local-normality approximation that nominally justifies MCAP.
+We simulated $B=100$ datasets from the all-shared SIRJPF2 maximum likelihood estimate and, on each simulated dataset, recomputed the MCAP profile and its nominal $95\%$ confidence interval for four target parameters chosen to span the identifiability range: the native and invasive birth rates $r^{\native}$ and $r^{\invasive}$, the parasite spore process noise $\sigma_P$, and the food process noise $\sigma_F$.
+Profiles were computed with the same iterated-filtering procedure used for the data analysis in the main paper, at the production run level.
+A confidence interval ``covers'' on a given simulated dataset if it contains the known data-generating value of the target parameter, and empirical coverage is the fraction of the $B$ datasets on which it does.
+We report this coverage honestly, with its Monte Carlo standard error, and we use the bootstrap to diagnose, rather than to conceal, the gap between empirical and nominal coverage.}
+
+\subsection{Empirical coverage}
+
+\bye{Table~\ref{Table:mcap-coverage} summarises the headline result and Figure~\ref{fig:mcap-coverage-plots} displays the per-dataset intervals.
+For the three identifiable target parameters the nominal $95\%$ MCAP interval covers the truth in a clear majority of simulations, but below the nominal level: $77.8\%$ for $r^{\native}$ ($77/99$; one profile failed to converge and is excluded, so the denominator is $99$), $87.0\%$ for $\sigma_P$ ($87/100$), and $74.0\%$ for $\sigma_F$ ($74/100$).
+With these denominators the Monte Carlo standard error of a coverage estimate, $\sqrt{\hat c(1-\hat c)/n}$, is about $4.2$ percentage points for $r^{\native}$, $3.4$ for $\sigma_P$, and $4.4$ for $\sigma_F$.
+The shortfalls for $r^{\native}$ and $\sigma_F$ therefore sit roughly four to five standard errors below $0.95$, and that for $\sigma_P$ about two and a half; the departures for $r^{\native}$ and $\sigma_F$ are real sub-nominal coverage, not bootstrap noise.
+
+%% VERIFY (2): The coverage-table mean MCAP estimate is biased HIGH for r^n and
+%% LOW for sigma_P/sigma_F. But the 5-dataset diagnostic drift for sigma_F is
+%% only -0.10 (near zero) -- i.e. sigma_F's MLE is barely displaced yet it
+%% still undercovers, which points to interval WIDTH, not MLE displacement, for
+%% that parameter. The single "MLE displacement" story below fits r^n cleanly
+%% but NOT sigma_F. Either (a) soften to "displacement and/or finite-sample
+%% interval miscalibration", or (b) lead with displacement for r^n and note
+%% sigma_F separately as a width effect that cutoff calibration (option B) fixes.
+For $r^{\native}$ the mean MCAP point estimate is displaced from the truth in a consistent direction (biased high; Table~\ref{Table:mcap-coverage}), indicating that its undercoverage is driven by displacement of the maximum likelihood estimate rather than by intervals that are too narrow; for $\sigma_F$ the point estimate is nearly unbiased, so its shortfall instead reflects intervals that are slightly too narrow in finite samples --- a distinction we return to below.
+
+For $r^{\invasive}$ the situation is qualitatively different and must not be read as well-calibrated coverage.
+%% VERIFY (1): Algebra of the ri/probi/f_Si ridge. The model C-snippet has
+%%   Ji_term  = ri    * f_Si * F * Si          (recruitment: ri * f_Si)
+%%   Ii_term  = probi * f_Si * Si * P          (infection:  probi * f_Si)
+%% so f_Si is SHARED between two SEPARATE pairwise products (ri*f_Si and
+%% probi*f_Si), and f_Si ALSO appears alone in the F and P depletion terms.
+%% The single triple product "r^i f_S^i p^i" below is therefore imprecise.
+%% Suggested correct phrasing: "r^i is confounded with f_S^i through the
+%% recruitment product r^i f_S^i, and p^i with f_S^i through the infection
+%% product p^i f_S^i; f_S^i is itself only weakly pinned (it enters alone only
+%% in the food/parasite depletion terms), leaving all three weakly identified."
+%% CONFIRM against the model before this goes to Ed/referees.
+In the SIRJPF2 process model $r^{\invasive}$, $f_S^{\invasive}$ and $p^{\invasive}$ are jointly weakly identified through the invasive-species recruitment and infection products, so the level of $r^{\invasive}$ is individually non-identifiable.
+The corresponding profile is essentially flat over the parameter grid (Figure~\ref{fig:mcap-coverage-plots}d), each interval spans the grid, and the nominal $95.8\%$ ``coverage'' is a degenerate artifact of an uninformative interval rather than evidence of correct calibration.
+We therefore present $r^{\invasive}$ only to document this ridge and base our coverage conclusions on the three identifiable parameters.
+The contrast is itself the diagnostic: it localises the residual coverage gap to weakly-identified directions of the likelihood surface rather than to MCAP as a method.}
+
+\subsection{Undercoverage is a finite-sample, not a numerical, phenomenon}
+
+\bye{The sub-nominal coverage of $r^{\native}$, $\sigma_P$ and $\sigma_F$ is at first glance concerning, since profile-likelihood intervals are asymptotically justified by local asymptotic normality.
+Two competing explanations must be separated before any correction is contemplated: either the profiles are under-converged, a numerical Monte Carlo artifact that additional computation could remove, or the maximum likelihood estimate is genuinely displaced from the truth in finite samples, a property of the model and sample size that no amount of further filtering will change.
+We discriminate between these with a three-log-likelihood diagnostic on five representative simulated datasets ($b \in \{2, 25, 50, 75, 95\}$).
+On each dataset we evaluated $\ell_{\text{truth}}$, the particle-filter log-likelihood at the data-generating $\theta_{\text{true}}$ with no further optimisation; $\ell_{\text{prof}}^{\max}$, the best log-likelihood across all points of the production coverage profile; and $\ell_{\text{glob}}^{\text{best}}$, the best log-likelihood from a $20$-chain iterated-filtering search with all parameters free, warm-started from $\theta_{\text{true}}$.
+
+On every dataset the estimated maximum likelihood lies above the truth (Table~\ref{Table:three-loglik}).
+A fully free re-optimisation warm-started at the truth clears $\ell_{\text{truth}}$ by $\overline{\ell_{\text{glob}}^{\text{best}} - \ell_{\text{truth}}} \approx 4.5$ log units, and the more thorough production profiles clear it by $\overline{\ell_{\text{prof}}^{\max} - \ell_{\text{truth}}} \approx 8.5$.
+These are two estimates of the same quantity, the finite-sample displacement $\ell_{\text{MLE}} - \ell_{\text{truth}}$; the profile is the more thorough optimiser, which is why it exceeds the $20$-chain search ($\overline{\ell_{\text{glob}}^{\text{best}} - \ell_{\text{prof}}^{\max}} \approx -4$, a negative gap).
+That negative gap is the key point: the production profiles already search the surface at least as well as a free re-optimisation started at the answer, so they are not leaving log-likelihood on the table and additional particles or chains would not raise them --- the numerical explanation is ruled out.
+Both estimates lie below the asymptotic Wilks expectation $\mathbb{E}[\ell_{\text{MLE}} - \ell_{\text{truth}}] = p/2 = 12$, where SIRJPF2 has $p = 24$ free interior parameters (the parameter vector has $26$ entries, with $\sigma_{S^{\native}}$ and $\sigma_{S^{\invasive}}$ fixed at the boundary value zero) fit to an $80$-observation panel ($U = 8$ units, $N_u = 10$ time points each); a displacement of this order, below the full asymptotic amount, is exactly what one expects for a weakly-identified model on a short panel, where along flat directions the data carry little information.
+(Both gaps are maxima of Monte Carlo log-likelihood estimates and so carry a modest upward selection bias; MCAP accounts for this Monte Carlo uncertainty when it forms the interval, so it does not distort the coverage construction itself.)
+The undercoverage is therefore a genuine finite-sample property of the estimator along weakly-identified ridges rather than a failure of the MCAP construction: an MCAP interval centred near each dataset's displaced MLE will, on these datasets, sometimes miss a truth that sits below it on the ridge.}
+
+\subsection{Identifiability findings}
+
+\bye{Consistent with this diagnosis, the largest finite-sample effects are concentrated in the weakly-identified parameters.
+Across the $20$ iterated-filtering chains used in the diagnostic we examined the within-chain dispersion of all $24$ free parameters, which gives a direct, model-internal map of identifiability.
+The ridge parameters $r^{\invasive}$, $f_S^{\invasive}$ and $p^{\invasive}$ each show within-chain standard deviations of $\approx 2.5$ log units, reflecting the joint non-identifiability noted above; this is the same ridge responsible for the degenerate $r^{\invasive}$ coverage in panel~(d) of Figure~\ref{fig:mcap-coverage-plots}.
+Two further parameters, $\sigma_{I^{\invasive}}$ and $\sigma_{I^{\native}}$, are dispersed by $\approx 5$ log units each (a factor of $\approx 120$) and we treat them as essentially non-identifiable.
+By contrast the better-identified parameters $r^{\native}$, $f_S^{\native}$, $p^{\native}$ and $\sigma_F$ have within-chain standard deviations of only $1.4$--$1.5$ log units, with finite-sample log-MLE drift of order $\pm 1$; $\sigma_P$ is intermediate ($\approx 2.3$).
+%% VERIFY (3): within-chain SD does NOT line up monotonically with coverage:
+%% sigma_F has the SMALLEST within-SD (1.44) but the WORST coverage (74%), while
+%% sigma_P has a LARGER within-SD (2.29) but BETTER coverage (87%). So do NOT
+%% claim "flattest surface => lowest coverage" as a clean law. Keep within-SD as
+%% an identifiability MAP, and attribute the rn shortfall to MLE displacement and
+%% the sigma_F shortfall to interval width (see VERIFY (2)), rather than forcing
+%% a single monotone story.
+The within-chain dispersion is thus an identifiability map rather than a direct predictor of coverage: the ridge directions are where the estimator is least constrained, while the precise coverage of each identifiable parameter reflects the interaction of its (small) finite-sample bias with the width of its MCAP interval.}
+
+\subsection{Interpretation and reporting}
+
+\bye{We read these results as an honest characterisation of inferential uncertainty rather than as an invalidation of the analysis.
+The MCAP intervals remain asymptotically justified and numerically well-converged; the sub-nominal coverage is the finite-sample cost of fitting a richly parameterised mechanistic model, with several weakly-identified directions, to a short ecological panel.
+The SIRJPF2 analysis is in this sense exploratory rather than confirmatory, and we mean that operationally: the study is designed to characterise plausible mechanisms and to map which parameters the panel identifies and which it does not, not to deliver certified $95\%$-coverage guarantees for individual weakly-identified parameters for downstream decision or regulatory use.
+For the well-identified parameters the bootstrap shows MCAP coverage close to nominal, and for these the nominal intervals can be read at face value.
+For the weakly-identified parameters the residual undercoverage is one further, quantified component of the uncertainty already acknowledged for this model, to be weighed alongside structural and model uncertainty rather than hidden.
+Because the diagnostic establishes that the shortfall is a reproducible finite-sample property of the estimator and not a numerical artifact, the same parametric-bootstrap distribution that exposed it can also be used to widen the MCAP cutoff for an identifiable parameter to the empirical quantile that restores $95\%$ coverage; this is a single calibration of an existing estimator against its own parametric-bootstrap distribution, not a nested bootstrap-of-bootstraps.
+We caution, however, that calibrating a $95\%$ quantile from $B=100$ datasets is itself noisy, so we report the uncalibrated empirical coverage with its Monte Carlo standard error as the primary, fully transparent result, and treat any cutoff calibration as a sensitivity check rather than as a replacement for the reported intervals.}

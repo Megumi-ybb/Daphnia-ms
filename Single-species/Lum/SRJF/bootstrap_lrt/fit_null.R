@@ -118,6 +118,7 @@ mf1 <- foreach(
 ) %dopar% {
   mif2(
     panelfood,
+    block = TRUE,   # no-op for the all-shared null; mirrors the alt procedure
     Nmif = 150,
     shared.start = true_params,
     rw.sd = rw_sd(sigSi=0, sigF=dent_rw.sd, theta_Si=dent_rw.sd,
@@ -155,6 +156,7 @@ mf <- foreach(
 
   mif2(
     panelfood,
+    block = TRUE,   # no-op for the all-shared null; mirrors the alt procedure
     Nmif = 150,
     shared.start = share_para_temp,
     rw.sd = rw_sd(sigSi=0, sigF=dent_rw.sd, theta_Si=dent_rw.sd,
@@ -175,7 +177,13 @@ best <- which.max(lls[1,])
 result <- list(
   ll   = unname(mf[[best]]$ll[1]),
   se   = unname(mf[[best]]$ll[2]),
-  coef = coef(mf[[best]]$mif)
+  coef = coef(mf[[best]]$mif),
+  # provenance for the paired-settings guard in collect_lrt.R
+  Np      = Np,
+  Mp      = Mp,
+  Np_rep  = Np_rep,
+  block   = TRUE,
+  Nmif    = c(round1 = 150, round2 = 150)   # saved fit is the round-2 best
 )
 
 saveRDS(result, file = paste0('results_null/lrt_null_',b,'.rds'))

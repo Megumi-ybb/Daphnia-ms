@@ -108,7 +108,7 @@ for (alt in alt_names) {
   # ~ -O(1/Np), so unequal Np would bias Lambda (and p_boot) in the wrong
   # direction. Refuse to report a p-value built from mismatched arms.
   if (!is.null(null_meta) && !is.null(alt_meta)) {
-    if (!isTRUE(all.equal(null_meta[c("Np", "Mp")], alt_meta[c("Np", "Mp")]))) {
+    if (!isTRUE(all.equal(null_meta[c("Np", "Mp", "Np_rep")], alt_meta[c("Np", "Mp", "Np_rep")]))) {
       stop(sprintf(
         "Particle-setting mismatch for %s: null (Np=%s, Mp=%s) vs alt (Np=%s, Mp=%s). Re-fit both arms at equal settings before collecting.",
         alt, null_meta$Np, null_meta$Mp, alt_meta$Np, alt_meta$Mp))
