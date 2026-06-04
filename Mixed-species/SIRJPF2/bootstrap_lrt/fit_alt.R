@@ -175,9 +175,11 @@ panelfood <- panelPomp(pomplist, shared = result_params$shared_parameter,
                        specific = result_params$specific_mat)
 
 # ---- Algorithmic parameters ----
-Np <- 1000
-Np_rep <- 10
-Mp <- 1000
+# Particle counts raised from 1000 (more particles -> lower Monte Carlo error in
+# each unit log-likelihood, hence a sharper bootstrap Lambda distribution).
+Np <- 1500      # particles for the final pfilter likelihood evaluation (was 1000)
+Np_rep <- 10    # independent pfilter replicates fed to panel_logmeanexp
+Mp <- 1500      # particles used inside mif2 (was 1000)
 
 # ---- Round 1: mif2 from warm start ----
 dent_rw.sd <- 0.05
@@ -193,6 +195,7 @@ mf1 <- foreach(
 ) %dopar% {
   mif2(
     panelfood,
+    block = TRUE,   # block-resample unit-specific params; matches specific_model_block real-data fits
     Nmif = 150,
     shared.start = parameter_candidates$shared,
     specific.start = parameter_candidates$specific,
@@ -244,7 +247,8 @@ mf <- foreach(
 
   mif2(
     panelfood,
-    Nmif = 150,
+    block = TRUE,   # block-resample unit-specific params; matches specific_model_block real-data fits
+    Nmif = 250,
     shared.start = share_para_temp,
     specific.start = specific_para_temp,
     rw.sd = rw_sd(xi=dent_rw.sd, sigSn=0, sigIn=dent_rw.sd, sigSi=0, sigIi=dent_rw.sd,
@@ -267,9 +271,15 @@ mf <- foreach(
 lls <- matrix(unlist(sapply(mf, getElement, "ll")), nrow = 2)
 best <- which.max(lls[1,])
 result <- list(
-  ll   = unname(mf[[best]]$ll[1]),
-  se   = unname(mf[[best]]$ll[2]),
-  coef = coef(mf[[best]]$mif)
+  ll      = unname(mf[[best]]$ll[1]),
+  se      = unname(mf[[best]]$ll[2]),
+  coef    = coef(mf[[best]]$mif),
+  # provenance for the paired-settings guard in collect_lrt.R
+  Np      = Np,
+  Mp      = Mp,
+  Np_rep  = Np_rep,
+  block   = TRUE,
+  Nmif    = 150
 )
 
 saveRDS(result, file = paste0('results_alt/lrt_',alt_name,"_",b,'.rds'))

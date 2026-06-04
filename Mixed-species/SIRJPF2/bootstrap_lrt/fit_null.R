@@ -139,9 +139,10 @@ names(pomplist) <- paste0("u", 1:8)
 panelfood <- panelPomp(pomplist, shared = true_params)
 
 # ---- Algorithmic parameters ----
-Np <- 1000
-Np_rep <- 10
-Mp <- 1000
+# Particle counts raised from 1000 to match fit_alt.R (lower Monte Carlo error).
+Np <- 1500      # particles for the final pfilter likelihood evaluation (was 1000)
+Np_rep <- 10    # independent pfilter replicates fed to panel_logmeanexp
+Mp <- 1500      # particles used inside mif2 (was 1000)
 
 # ---- Round 1: mif2 from warm start ----
 dent_rw.sd <- 0.05
@@ -154,6 +155,9 @@ mf1 <- foreach(
 ) %dopar% {
   mif2(
     panelfood,
+    # block has no effect for the all-shared null (no unit-specific params to
+    # block-resample); set only to mirror the fit_alt.R / specific_model_block call
+    block = TRUE,
     Nmif = 150,
     shared.start = true_params,
     rw.sd = rw_sd(xi=dent_rw.sd, sigSn=0, sigIn=dent_rw.sd, sigSi=0, sigIi=dent_rw.sd,
@@ -195,7 +199,8 @@ mf <- foreach(
 
   mif2(
     panelfood,
-    Nmif = 150,
+    block = TRUE,   # no-op for the all-shared null; mirrors the alt procedure
+    Nmif = 250,
     shared.start = share_para_temp,
     rw.sd = rw_sd(xi=dent_rw.sd, sigSn=0, sigIn=dent_rw.sd, sigSi=0, sigIi=dent_rw.sd,
                   sigF=dent_rw.sd, theta_Sn=dent_rw.sd, theta_In=dent_rw.sd,
@@ -216,9 +221,15 @@ mf <- foreach(
 lls <- matrix(unlist(sapply(mf, getElement, "ll")), nrow = 2)
 best <- which.max(lls[1,])
 result <- list(
-  ll   = unname(mf[[best]]$ll[1]),
-  se   = unname(mf[[best]]$ll[2]),
-  coef = coef(mf[[best]]$mif)
+  ll      = unname(mf[[best]]$ll[1]),
+  se      = unname(mf[[best]]$ll[2]),
+  coef    = coef(mf[[best]]$mif),
+  # provenance for the paired-settings guard in collect_lrt.R
+  Np      = Np,
+  Mp      = Mp,
+  Np_rep  = Np_rep,
+  block   = TRUE,
+  Nmif    = 150
 )
 
 saveRDS(result, file = paste0('results_null/lrt_null_',b,'.rds'))

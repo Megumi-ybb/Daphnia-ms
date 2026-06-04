@@ -161,11 +161,11 @@ lrt_pvalue <- function(ll_alt, AIC_alt, ll_null, AIC_null) {
 # Add LRT p-values to a parameter table (null model identified by rowname "all_shared")
 add_lrt_pvalues <- function(ptable) {
   null_row <- which(rownames(ptable) == "all_shared")
-  null_ll <- ptable[null_row, "ll"]
-  null_AIC <- ptable[null_row, "AIC"]
+  null_ll <- ptable[null_row, "block_ll"]
+  null_AIC <- ptable[null_row, "block_AIC"]
   ptable$lrt_pval <- sapply(1:nrow(ptable), function(i) {
     if (i == null_row) return(NA)
-    lrt_pvalue(ptable[i, "ll"], ptable[i, "AIC"], null_ll, null_AIC)
+    lrt_pvalue(ptable[i, "block_ll"], ptable[i, "block_AIC"], null_ll, null_AIC)
   })
   ptable
 }
