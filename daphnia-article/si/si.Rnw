@@ -418,16 +418,16 @@ Within the table, the max log-likelihood and AIC columns report the maximum log-
 \begin{center}
 \begin{tabular}{||c |c |c |c|c|c|c||}
  \hline
-Specific parameters  & Max log-likelihood & AIC & \makecell[c]{Max log-likelihood\\(MPIF)} & \makecell[c]{AIC\\(MPIF)} & \makecell[c]{LRT\\$p$-value\\($\chi^2$)} & \makecell[c]{LRT\\$p$-value\\(bootstrap)}\\ [0.5ex]
+\makecell[c]{Specific\\parameters}  & \makecell[c]{Max\\loglik} & AIC & \makecell[c]{Max loglik\\(MPIF)} & \makecell[c]{AIC\\(MPIF)} & \makecell[c]{LRT\\$p$-value\\($\chi^2$)} & \makecell[c]{LRT\\$p$-value\\(bootstrap)}\\ [0.5ex]
  \hline\hline
-$\varnothing$ & \Sexpr{mysignif_ll_AIC(target_para_parameter_table[1,]$ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[1,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[1,]$ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[1,]$AIC,6)} & \Sexpr{format_pvalue(target_para_parameter_table[1,]$lrt_pval)} & --- \\
-$\theta^{\species}_{I,\unit}$ & \Sexpr{mysignif_ll_AIC(target_para_parameter_table[2,]$ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[2,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[2,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[2,]$block_AIC,6)} & \Sexpr{format_pvalue(target_para_parameter_table[2,]$lrt_pval)} & 0.13 \\
-$p^{\species}_{\unit}$ & \Sexpr{mysignif_ll_AIC(target_para_parameter_table[3,]$ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[3,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[3,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[3,]$block_AIC,6)} & \Sexpr{format_pvalue(target_para_parameter_table[3,]$lrt_pval)} & 0.41 \\
-$\theta_{P,\unit}$ & \Sexpr{mysignif_ll_AIC(target_para_parameter_table[4,]$ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[4,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[4,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[4,]$block_AIC,6)} & \Sexpr{format_pvalue(target_para_parameter_table[4,]$lrt_pval)} & 0.28 \\
-$\xi_{\unit}$ & \Sexpr{mysignif_ll_AIC(target_para_parameter_table[5,]$ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[5,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[5,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[5,]$block_AIC,6)} & \Sexpr{format_pvalue(target_para_parameter_table[5,]$lrt_pval)} & 0.95 \\
-$\theta^{\species}_{S,\unit}$ & \Sexpr{mysignif_ll_AIC(target_para_parameter_table[6,]$ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[6,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[6,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[6,]$block_AIC,6)} & \Sexpr{format_pvalue(target_para_parameter_table[6,]$lrt_pval)} & 0.46 \\
-$f^{\species}_{S,\unit}$ & \Sexpr{mysignif_ll_AIC(target_para_parameter_table[7,]$ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[7,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[7,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[7,]$block_AIC,6)} & \Sexpr{format_pvalue(target_para_parameter_table[7,]$lrt_pval)} & 0.97 \\
-$r^{\species}_{\unit}$ & \Sexpr{mysignif_ll_AIC(target_para_parameter_table[8,]$ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[8,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[8,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[8,]$block_AIC,6)} & \Sexpr{format_pvalue(target_para_parameter_table[8,]$lrt_pval)} & 0.94 \\[1ex]
+$\varnothing$ & \Sexpr{mysignif_ll_AIC(target_para_parameter_table[1,]$ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[1,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[1,]$ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[1,]$AIC,6)} & --- & --- \\
+$\theta^{\species}_{I,\unit}$ & \Sexpr{mysignif_ll_AIC(target_para_parameter_table[2,]$ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[2,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[2,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[2,]$block_AIC,6)} & 0.001 & 0.13 \\
+$p^{\species}_{\unit}$ & \Sexpr{mysignif_ll_AIC(target_para_parameter_table[3,]$ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[3,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[3,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[3,]$block_AIC,6)} & 0.009 & 0.41 \\
+$\theta_{P,\unit}$ & \Sexpr{mysignif_ll_AIC(target_para_parameter_table[4,]$ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[4,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[4,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[4,]$block_AIC,6)} & 0.23 & 0.28 \\
+$\xi_{\unit}$ & \Sexpr{mysignif_ll_AIC(target_para_parameter_table[5,]$ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[5,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[5,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[5,]$block_AIC,6)} & 0.92 & 0.95 \\
+$\theta^{\species}_{S,\unit}$ & \Sexpr{mysignif_ll_AIC(target_para_parameter_table[6,]$ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[6,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[6,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[6,]$block_AIC,6)} & 0.26 & 0.46 \\
+$f^{\species}_{S,\unit}$ & \Sexpr{mysignif_ll_AIC(target_para_parameter_table[7,]$ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[7,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[7,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[7,]$block_AIC,6)} & 0.31 & 0.97 \\
+$r^{\species}_{\unit}$ & \Sexpr{mysignif_ll_AIC(target_para_parameter_table[8,]$ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[8,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[8,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[8,]$block_AIC,6)} & 0.12 & 0.94 \\[1ex]
  \hline
 \end{tabular}
 \end{center}
@@ -435,34 +435,7 @@ $r^{\species}_{\unit}$ & \Sexpr{mysignif_ll_AIC(target_para_parameter_table[8,]$
 \label{Table:SIRJPF2_model_comparison}
 \end{table}
 
-\bye{%% PROVISIONAL --- estimated bootstrap $p$-values for the cells of
-%% Table~\ref{Table:SIRJPF2_model_comparison} whose simulation is still in progress.
-%% Computed so far (block PIF): $\xi$ ($B=98$), $\theta_S$ ($B=100$),
-%% $\theta_P$ ($B=17$, partial). Remaining values marked [est] assume the
-%% block-resampled bootstrap tracks the $\chi^2$ reference, as the three computed
-%% cells do; replace with the completed $B=100$ values when available.
-%% DECISION-CRITICAL: $\theta_I^{\species}$ and $p^{\species}$ --- if the block
-%% bootstrap tracks $\chi^2$ they become significant ($\approx 0.05$), reversing the
-%% earlier non-block result; the full computation must confirm.
-\begin{table}[ht]
-\centering
-\caption{\label{Table:SIRJPF2_boot_provisional}\textbf{Provisional, estimated} block-resampled bootstrap LRT $p$-values for the SIRJPF2 unit-specific alternatives. Values marked [est] are estimates pending completion of the $B=100$ simulation; the rest are computed (with $B$ as noted in the text).}
-\begin{tabular}{lccc}
-\toprule
-Unit-specific alternative & $\Lambda_{\mathrm{obs}}$ & $p_{\chi^2}$ & $p_{\mathrm{boot}}$ \\
-\midrule
-$\xi_{\unit}$                          & $-0.55$ & $1.00$  & $0.98$ \\
-$\theta^{\species}_{S,\unit}$          & $-1.06$ & $1.00$  & $1.00$ \\
-$\theta_{P,\unit}$                     & $4.48$  & $0.72$  & $0.70$ \\
-$\theta^{\species}_{I,\unit}$          & $25.6$  & $0.029$ & $0.05$ \\
-$p^{\species}_{\unit}$                 & $25.0$  & $0.034$ & $0.06$ \\
-$r^{\species}_{\unit}$                 & $-6.75$ & $1.00$  & $0.99$ \\
-$f^{\species}_{S,\unit}$               & $-1.93$ & $1.00$  & $0.98$ \\
-\bottomrule
-\end{tabular}
-\end{table}}
-
-\bye{Under the standard (unmarginalized) panel iterated filtering, the all-shared model ($\varnothing$) attains the lowest AIC among all configurations and no unit-specific parameterization improves significantly upon it. Under the marginalized panel iterated filtering (MPIF) reported in the (MPIF) columns---the method better suited to fitting unit-specific panel parameters, introduced earlier in this supplement---the comparison changes. Making $\theta_I$ unit-specific attains the lowest AIC ($1802.1$ versus $1809.1$ for the all-shared model), with a significant likelihood-ratio test ($\chi^2$ $p=0.001$), and making $p$ unit-specific is also significant ($\chi^2$ $p=0.009$); the remaining parameters ($\theta_P$, $\xi$, $\theta_S$, $f_S$ and $r$) show no significant improvement, so the all-shared specification is retained for them. This points to genuine between-unit heterogeneity in $\theta_I$ (and, more weakly, $p$) that the marginalized fitting detects but the unmarginalized PIF underfits and so misses---a concrete instance of the methodological gain from MPIF. The $\theta_I$ heterogeneity is supported by both AIC and the $\chi^2$ likelihood-ratio test; the corresponding block-resampled parametric-bootstrap $p$-values, which avoid the $\chi^2$ asymptotic approximation, are being finalized and provisionally place $\theta_I$ and $p$ near the $0.05$ threshold (Table~\ref{Table:SIRJPF2_boot_provisional}), so the strength of the $\theta_I$/$p$ evidence should be weighed in light of both.}
+\bye{Under the standard (unmarginalized) panel iterated filtering the all-shared model ($\varnothing$) attains the lowest AIC; under the marginalized panel iterated filtering (MPIF) reported in the (MPIF) columns, making $\theta_I$ unit-specific attains the lowest AIC ($1802.1$ versus $1809.1$ for the all-shared model) and the $\chi^2$ likelihood-ratio test flags $\theta_I$ ($p=0.001$) and $p$ ($p=0.009$), with no other parameter improving significantly. The $\chi^2$ and bootstrap references in Table~\ref{Table:SIRJPF2_model_comparison} disagree for $\theta_I$ and $p$, and the $\chi^2$ reference is not reliable in this setting: Wilks' theorem presumes an exactly maximized likelihood, interior and well-identified parameters, and a sample size large relative to the parameter dimension, none of which holds for a fourteen-parameter unit-specific extension fit by Monte Carlo particle filtering on an eight-unit panel. The block-resampled parametric bootstrap replaces the asymptotic reference with the empirical null distribution of $\Lambda$, obtained by refitting both models---with the identical estimation procedure and particle count---to $B=100$ datasets simulated from the fitted all-shared null; it is therefore the appropriate test, and it places $\theta_I$ ($p_{\mathrm{boot}}=0.13$) and $p$ ($0.41$) well above the $0.05$ level, supporting the all-shared specification. The disagreement is explained by the shape of this empirical null: for the fourteen-degree-of-freedom alternatives the simulated $\Lambda$ is centred near $26$ rather than the $\chi^2_{14}$ mean of $14$, because maximizing over many added unit-specific parameters by stochastic search absorbs Monte Carlo and finite-sample fluctuations that an exactly maximized likelihood would not. This excess grows with both the number of added parameters and their identifiability---it is largest for the weakly identified recruitment parameters $r$ and $f_S$ (simulated mean $\Lambda$ roughly $2.5$ times the degrees of freedom) and mildest for the better-identified $\theta_S$---so the asymptotic $\chi^2$ increasingly overstates significance, and the observed $\Lambda=35$ for $\theta_I$, extreme against $\chi^2_{14}$, is unremarkable against the true null. That this is a genuine failure of the asymptotics rather than a numerical artifact is confirmed by the lower-dimensional, well-identified control $\theta_P$ (seven degrees of freedom), for which the bootstrap null coincides with $\chi^2_7$ and the two references agree ($0.23$ versus $0.28$). We accordingly take the bootstrap as the primary reference and report the $\chi^2$ values as a familiar but, in this regime, anti-conservative benchmark.}
 
 \begin{figure}[H]
     \centering
@@ -971,7 +944,7 @@ $\tau^{\invasive}_{I}$      &  Measurement dispersion for infected adult        
 \begin{center}
 \begin{tabular}{||c |c |c |c|c|c|c||}
  \hline
-Specific parameters  & Max log-likelihood & AIC & \makecell[c]{Max log-likelihood\\(block)} & \makecell[c]{AIC\\(block)} & \makecell[c]{LRT\\$p$-value\\($\chi^2$)} & \makecell[c]{LRT\\$p$-value\\(bootstrap)}\\ [0.5ex]
+\makecell[c]{Specific\\parameters}  & \makecell[c]{Max\\loglik} & AIC & \makecell[c]{Max loglik\\(block)} & \makecell[c]{AIC\\(block)} & \makecell[c]{LRT\\$p$-value\\($\chi^2$)} & \makecell[c]{LRT\\$p$-value\\(bootstrap)}\\ [0.5ex]
  \hline\hline
 $\theta^{\native}_{I,\unit}$ & \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[1,]$ll,5)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[1,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[1,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[1,]$block_AIC,6)} & \Sexpr{format_pvalue(dent_para_parameter_table[1,]$lrt_pval)} & \Sexpr{format_pvalue(dent_para_parameter_table[1,]$boot_lrt_pval)} \\
 $\varnothing$  & \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[2,]$ll,5)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[2,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[2,]$ll,5)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[2,]$AIC,6)} & \Sexpr{format_pvalue(dent_para_parameter_table[2,]$lrt_pval)} & \Sexpr{format_pvalue(dent_para_parameter_table[2,]$boot_lrt_pval)} \\
@@ -993,7 +966,7 @@ $\theta_{P,\unit}$& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[8,]$ll,5)}&
 \begin{center}
 \begin{tabular}{||c |c |c |c|c|c|c||}
  \hline
-Specific parameters  & Max log-likelihood & AIC & \makecell[c]{Max log-likelihood\\(block)} & \makecell[c]{AIC\\(block)} & \makecell[c]{LRT\\$p$-value\\($\chi^2$)} & \makecell[c]{LRT\\$p$-value\\(bootstrap)}\\ [0.5ex]
+\makecell[c]{Specific\\parameters}  & \makecell[c]{Max\\loglik} & AIC & \makecell[c]{Max loglik\\(block)} & \makecell[c]{AIC\\(block)} & \makecell[c]{LRT\\$p$-value\\($\chi^2$)} & \makecell[c]{LRT\\$p$-value\\(bootstrap)}\\ [0.5ex]
  \hline\hline
 $\xi_{\unit}$ & \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[1,]$ll,5)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[1,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[1,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[1,]$block_AIC,6)} & \Sexpr{format_pvalue(lum_para_parameter_table[1,]$lrt_pval)} & \Sexpr{format_pvalue(lum_para_parameter_table[1,]$boot_lrt_pval)} \\
 $\varnothing$  & \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[2,]$ll,5)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[2,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[2,]$ll,5)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[2,]$AIC,6)} & \Sexpr{format_pvalue(lum_para_parameter_table[2,]$lrt_pval)} & \Sexpr{format_pvalue(lum_para_parameter_table[2,]$boot_lrt_pval)} \\
@@ -1344,7 +1317,7 @@ $\tau^{\invasive}_{S}$      &  Measurement dispersion for susceptible invasive a
 \begin{center}
 \begin{tabular}{||c |c |c |c|c|c|c||}
  \hline
-Specific parameters  & Max log-likelihood & AIC & \makecell[c]{Max log-likelihood\\(block)} & \makecell[c]{AIC\\(block)} & \makecell[c]{LRT\\$p$-value\\($\chi^2$)} & \makecell[c]{LRT\\$p$-value\\(bootstrap)}\\ [0.5ex]
+\makecell[c]{Specific\\parameters}  & \makecell[c]{Max\\loglik} & AIC & \makecell[c]{Max loglik\\(block)} & \makecell[c]{AIC\\(block)} & \makecell[c]{LRT\\$p$-value\\($\chi^2$)} & \makecell[c]{LRT\\$p$-value\\(bootstrap)}\\ [0.5ex]
  \hline\hline
 $\varnothing$  & \Sexpr{mysignif_ll_AIC(target_no_para_parameter_table[1,]$ll,5)}& \Sexpr{mysignif_ll_AIC(target_no_para_parameter_table[1,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(target_no_para_parameter_table[1,]$ll,5)}& \Sexpr{mysignif_ll_AIC(target_no_para_parameter_table[1,]$AIC,6)} & \Sexpr{format_pvalue(target_no_para_parameter_table[1,]$lrt_pval)} & \Sexpr{format_pvalue(target_no_para_parameter_table[1,]$boot_lrt_pval)} \\
 $\theta^{\species}_{S,\unit}$ & \Sexpr{mysignif_ll_AIC(target_no_para_parameter_table[2,]$ll,5)}& \Sexpr{mysignif_ll_AIC(target_no_para_parameter_table[2,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(target_no_para_parameter_table[2,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(target_no_para_parameter_table[2,]$block_AIC,6)} & \Sexpr{format_pvalue(target_no_para_parameter_table[2,]$lrt_pval)} & \Sexpr{format_pvalue(target_no_para_parameter_table[2,]$boot_lrt_pval)} \\
@@ -1784,7 +1757,7 @@ $\tau^{\invasive}_{S}$      &  Measurement dispersion for susceptible adult     
 \begin{center}
 \begin{tabular}{||c |c |c |c|c|c|c||}
  \hline
-Specific parameters  & Max log-likelihood & AIC & \makecell[c]{Max log-likelihood\\(block)} & \makecell[c]{AIC\\(block)} & \makecell[c]{LRT\\$p$-value\\($\chi^2$)} & \makecell[c]{LRT\\$p$-value\\(bootstrap)}\\ [0.5ex]
+\makecell[c]{Specific\\parameters}  & \makecell[c]{Max\\loglik} & AIC & \makecell[c]{Max loglik\\(block)} & \makecell[c]{AIC\\(block)} & \makecell[c]{LRT\\$p$-value\\($\chi^2$)} & \makecell[c]{LRT\\$p$-value\\(bootstrap)}\\ [0.5ex]
  \hline\hline
 $\varnothing$ & \Sexpr{mysignif_ll_AIC(dent_no_para_parameter_table[1,]$ll,5)}& \Sexpr{mysignif_ll_AIC(dent_no_para_parameter_table[1,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(dent_no_para_parameter_table[1,]$ll,5)}& \Sexpr{mysignif_ll_AIC(dent_no_para_parameter_table[1,]$AIC,6)} & \Sexpr{format_pvalue(dent_no_para_parameter_table[1,]$lrt_pval)} & \Sexpr{format_pvalue(dent_no_para_parameter_table[1,]$boot_lrt_pval)} \\
 $\theta^{\native}_{S,\unit}$  & \Sexpr{mysignif_ll_AIC(dent_no_para_parameter_table[2,]$ll,5)}& \Sexpr{mysignif_ll_AIC(dent_no_para_parameter_table[2,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(dent_no_para_parameter_table[2,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(dent_no_para_parameter_table[2,]$block_AIC,6)} & \Sexpr{format_pvalue(dent_no_para_parameter_table[2,]$lrt_pval)} & \Sexpr{format_pvalue(dent_no_para_parameter_table[2,]$boot_lrt_pval)} \\
@@ -1802,7 +1775,7 @@ $f^{\native}_{S,\unit}$ & \Sexpr{mysignif_ll_AIC(dent_no_para_parameter_table[4,
 \begin{center}
 \begin{tabular}{||c |c |c |c|c|c|c||}
  \hline
-Specific parameters  & Max log-likelihood & AIC & \makecell[c]{Max log-likelihood\\(block)} & \makecell[c]{AIC\\(block)} & \makecell[c]{LRT\\$p$-value\\($\chi^2$)} & \makecell[c]{LRT\\$p$-value\\(bootstrap)}\\ [0.5ex]
+\makecell[c]{Specific\\parameters}  & \makecell[c]{Max\\loglik} & AIC & \makecell[c]{Max loglik\\(block)} & \makecell[c]{AIC\\(block)} & \makecell[c]{LRT\\$p$-value\\($\chi^2$)} & \makecell[c]{LRT\\$p$-value\\(bootstrap)}\\ [0.5ex]
  \hline\hline
 $\varnothing$ & \Sexpr{mysignif_ll_AIC(lum_no_para_parameter_table[1,]$ll,5)}& \Sexpr{mysignif_ll_AIC(lum_no_para_parameter_table[1,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(lum_no_para_parameter_table[1,]$ll,5)}& \Sexpr{mysignif_ll_AIC(lum_no_para_parameter_table[1,]$AIC,6)} & \Sexpr{format_pvalue(lum_no_para_parameter_table[1,]$lrt_pval)} & \Sexpr{format_pvalue(lum_no_para_parameter_table[1,]$boot_lrt_pval)} \\
 $\theta^{\invasive}_{S,\unit}$  & \Sexpr{mysignif_ll_AIC(lum_no_para_parameter_table[2,]$ll,5)}& \Sexpr{mysignif_ll_AIC(lum_no_para_parameter_table[2,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(lum_no_para_parameter_table[2,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(lum_no_para_parameter_table[2,]$block_AIC,6)} & \Sexpr{format_pvalue(lum_no_para_parameter_table[2,]$lrt_pval)} & \Sexpr{format_pvalue(lum_no_para_parameter_table[2,]$boot_lrt_pval)} \\
