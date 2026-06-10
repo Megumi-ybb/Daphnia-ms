@@ -76,8 +76,8 @@ for (alt in alt_names) {
   cat("\n--- Alternative:", alt, "---\n")
 
   row_idx     <- row_map[[alt]]
-  alt_ll_obs  <- target_para_parameter_table[row_idx, "ll"]
-  alt_AIC_obs <- target_para_parameter_table[row_idx, "AIC"]
+  alt_ll_obs  <- target_para_parameter_table[row_idx, "block_ll"]
+  alt_AIC_obs <- target_para_parameter_table[row_idx, "block_AIC"]
   Lambda_obs  <- 2 * (alt_ll_obs - null_ll_obs)
   k_alt       <- (alt_AIC_obs  + 2 * alt_ll_obs)  / 2
   k_null      <- (null_AIC_obs + 2 * null_ll_obs) / 2

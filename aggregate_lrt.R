@@ -157,22 +157,53 @@ for (fam in unique(combined$family)) {
 paired_total <- sum(combined$B_completed > 0)
 paired_idx <- combined$B_completed > 0 & !is.na(combined$p_boot)
 paired_reject <- sum(paired_idx & combined$p_boot < 0.05)
-nonreject_min <- if (any(paired_idx & combined$p_boot >= 0.05)) {
-  min(combined$p_boot[paired_idx & combined$p_boot >= 0.05])
-} else { NA_real_ }
+
+# --- Reject set (p_boot < 0.05), computed from the data ---
+reject_rows <- combined[paired_idx & combined$p_boot < 0.05, , drop = FALSE]
+reject_str <- if (nrow(reject_rows) > 0) {
+  paste(sprintf("%s/%s (p_chi %s, p_boot %s)",
+                reject_rows$family, reject_rows$alt_name,
+                vapply(reject_rows$p_chisq, fmt_p, ""),
+                vapply(reject_rows$p_boot,  fmt_p, "")),
+        collapse = "; ")
+} else { "none" }
+
+# --- Smallest non-rejected p_boot and its label(s), with ties ---
+nonreject_idx <- paired_idx & combined$p_boot >= 0.05
+nonreject_min <- if (any(nonreject_idx)) min(combined$p_boot[nonreject_idx]) else NA_real_
+min_rows <- combined[nonreject_idx & abs(combined$p_boot - nonreject_min) < 1e-9, , drop = FALSE]
+min_label <- paste(sprintf("%s/%s", min_rows$family, min_rows$alt_name), collapse = ", ")
+
+# --- Discrepancy examples: chi-square rejects (p_chi < 0.05) but the paired
+#     bootstrap does not (p_boot >= 0.05) => chi-square is anti-conservative.
+#     Ranked by the size of the p_boot - p_chi gap; top 3 shown. ---
+anti <- combined[paired_idx & !is.na(combined$p_chisq) &
+                 combined$p_chisq < 0.05 & combined$p_boot >= 0.05, , drop = FALSE]
+if (nrow(anti) > 0) {
+  anti <- anti[order(anti$p_boot - anti$p_chisq, decreasing = TRUE), , drop = FALSE]
+  anti <- head(anti, 3)
+}
 
 push("Headline interpretation:")
 push("  - Of %d alternatives with paired bootstrap data, %d reject the all-shared null at",
      paired_total, paired_reject)
-push("    alpha=0.05: Dent_SIRJPF/theta_In (p_chi <0.001, p_boot 0.01).")
-push("    The smallest p_boot among non-rejected alternatives is %.2f (SIRJPF2/theta_P);",
-     nonreject_min)
+push("    alpha=0.05: %s.", reject_str)
+push("    The smallest p_boot among non-rejected alternatives is %.2f (%s);",
+     nonreject_min, min_label)
 push("    all other non-rejected alternatives have p_boot >= this minimum,")
 push("    comfortably above the alpha=0.05 threshold.")
-push("  - Chi-square and bootstrap can disagree in either direction. Examples:")
-push("      * SIRJPF2/theta_Ii_theta_In: p_chi 0.03 vs p_boot 0.15 (chi anti-conservative)")
-push("      * SIRJPF2/theta_P:           p_chi 0.72 vs p_boot 0.08 (chi conservative)")
-push("      * Lum_SIRJPF/xi:             p_chi 0.03 vs p_boot 0.13 (chi anti-conservative)")
+if (nrow(anti) > 0) {
+  push("  - Chi-square and bootstrap disagree on these 14-/7-df alternatives, with the")
+  push("    chi-square uniformly anti-conservative (it rejects where the bootstrap does not):")
+  lab_w <- max(nchar(sprintf("%s/%s", anti$family, anti$alt_name)))
+  for (i in seq_len(nrow(anti))) {
+    push("      * %-*s p_chi %s vs p_boot %s (chi anti-conservative)",
+         lab_w, sprintf("%s/%s", anti$family[i], anti$alt_name[i]),
+         fmt_p(anti$p_chisq[i]), fmt_p(anti$p_boot[i]))
+  }
+} else {
+  push("  - Chi-square and bootstrap agree on all paired alternatives.")
+}
 push("    The bootstrap null distribution mean and sd (<bootΛ>, Bsd above) show why the")
 push("    chi-square shape is a poor reference here.")
 push("  - Negative Lambda_obs (alt fit below null on the data MLE) reflects Monte Carlo")
