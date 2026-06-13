@@ -55,3 +55,7 @@ cluster_run_instructions.md
 progress_summary.md
 revision_prose_drafts.md
 changes_log.html
+
+# Python (pypomp/GPU port)
+__pycache__/
+*.pyc
