@@ -27,7 +27,8 @@ Environment toggles (defaults reproduce the R run):
 
 REQUIRES the development pypomp tree (PanelPomp/PanelParameters/RWSigma/ParTrans),
 NOT the old PyPI pypomp 0.0.4 -- put the dev pypomp on PYTHONPATH on the GPU host.
-Also requires R (readxl + jsonlite) to read the .xls exactly as all_shared.R does.
+NO R is needed for this script: the .xls is read with pandas (`pip install xlrd` for
+the legacy .xls format), and the result is written as CSV/JSON.
 
 FIDELITY NOTE
 -------------
@@ -283,60 +284,41 @@ def _find_data_file() -> Path:
 
 
 def read_mesocosm_data(data_path: Path) -> dict[str, pd.DataFrame]:
-    code = r"""
-    args <- commandArgs(trailingOnly = TRUE)
-    suppressMessages(library(readxl))
-    if (!requireNamespace("jsonlite", quietly = TRUE)) stop("R pkg jsonlite required")
-    Mesocosm_data <- read_excel(args[1], 3)                 # [R: sheet 3]
-    dentNoPara <- Mesocosm_data[91:170, ]                   # [R: rows 91:170]
-    dentNoPara <- subset(dentNoPara,
-        select = c(rep, day, dent.adult, dent.inf, lum.adult, lum.adult.inf))
-    dentNoPara <- dentNoPara[80:1, ]                        # [R: reverse]
-    dentNoPara$day <- (dentNoPara$day - 1) * 5 + 7          # [R: day transform]
-    trails <- c("K","L","M","N","O","P","Q","S")            # [R: trails -> u1..u8]
-    out <- list()
-    for (i in 1:8) {
-      d <- subset(dentNoPara,
-          select = c("day","dent.adult","dent.inf","lum.adult","lum.adult.inf"),
-          dentNoPara$rep == trails[i])
-      out[[paste0("u", i)]] <- d
-    }
-    cat(jsonlite::toJSON(out, dataframe = "rows", auto_unbox = TRUE, digits = 17))
-    """
-    raw = subprocess.run(["Rscript", "--vanilla", "-e", code, str(data_path)],
-                         check=True, text=True,
-                         stdout=subprocess.PIPE, stderr=subprocess.PIPE).stdout
-    parsed = json.loads(raw)
+    """Read Mesocosmdata sheet 3 with PANDAS (no R), exactly as all_shared.R subsets it.
+    [R: lines 10-26].  Reading a legacy .xls needs the `xlrd` engine: `pip install xlrd`
+    (or convert Mesocosmdata.xls to .xlsx and point PYPOMP_DATA at it -> openpyxl)."""
+    try:
+        raw = pd.read_excel(data_path, sheet_name="both species combined")  # [R: sheet 3]
+    except ImportError as e:
+        raise ImportError(
+            "Reading the legacy .xls needs xlrd:  pip install xlrd  "
+            "(or convert Mesocosmdata.xls to .xlsx and set PYPOMP_DATA to it)."
+        ) from e
+    raw.columns = raw.columns.str.strip()
+    cols = ["rep", "day", "dent.adult", "dent.inf", "lum.adult", "lum.adult.inf"]
+    sub = raw.iloc[90:170][cols].copy()                 # [R: rows 91:170]
+    sub["day"] = (sub["day"] - 1) * 5 + 7                # [R: day -> (day-1)*5+7]
+    trails = ["K", "L", "M", "N", "O", "P", "Q", "S"]   # [R: trails -> u1..u8]
+    obs = ["dent.adult", "dent.inf", "lum.adult", "lum.adult.inf"]
     out = {}
-    for u in UNIT_NAMES:
-        df = pd.DataFrame(parsed[u])
-        df.columns = ["day", "dentadult", "dentinf", "lumadult", "luminf"]
-        out[u] = df.astype(float).sort_values("day")
+    for i, rep in enumerate(trails, start=1):
+        d = sub[sub["rep"] == rep][["day"] + obs].copy()
+        d.columns = ["day", "dentadult", "dentinf", "lumadult", "luminf"]
+        out[f"u{i}"] = d.astype(float).sort_values("day")   # sort by day (== R reverse + order)
     return out
 
 
-def save_result_rds(mif_estimate: dict[str, float], loglik: float, se: float,
-                    path: Path) -> None:
-    """Save mif.estimate + loglik + se to an .rds for side-by-side R comparison."""
-    path.parent.mkdir(parents=True, exist_ok=True)
-    payload = {"name": list(mif_estimate.keys()) + ["loglik", "se"],
-               "value": [mif_estimate[k] for k in mif_estimate] + [loglik, se]}
-    with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False) as tmp:
-        json.dump(payload, tmp)
-        tmp_path = Path(tmp.name)
-    try:
-        code = r"""
-        args <- commandArgs(trailingOnly = TRUE)
-        if (!requireNamespace("jsonlite", quietly = TRUE)) stop("R pkg jsonlite required")
-        x <- jsonlite::fromJSON(args[1])
-        v <- as.numeric(x$value); names(v) <- x$name
-        saveRDS(v, file = args[2])
-        """
-        subprocess.run(["Rscript", "--vanilla", "-e", code, str(tmp_path), str(path)],
-                       check=True, text=True,
-                       stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    finally:
-        tmp_path.unlink(missing_ok=True)
+def save_result(mif_estimate: dict[str, float], loglik: float, se: float,
+                base: Path) -> Path:
+    """Save mif.estimate + loglik + se as CSV (+ JSON) -- no R required.
+    Compare in R with:  read.csv('all_shared_pypomp.csv')  vs  all_shared.RData."""
+    names = list(mif_estimate.keys()) + ["loglik", "se"]
+    values = [mif_estimate[k] for k in mif_estimate] + [loglik, se]
+    out_csv = base / "all_shared_pypomp.csv"
+    pd.DataFrame({"name": names, "value": values}).to_csv(out_csv, index=False)
+    (base / "all_shared_pypomp.json").write_text(
+        json.dumps({"loglik": loglik, "se": se, "mif_estimate": mif_estimate}, indent=2))
+    return out_csv
 
 
 # ----------------------------------------------------------------------------
@@ -493,13 +475,12 @@ def main(argv) -> int:
     pf_loglik = float(best_row["loglik"])
     pf_se = float(best_row["se"])
 
-    out_path = base / "all_shared_pypomp.rds"
-    save_result_rds(mif_estimate, pf_loglik, pf_se, out_path)
+    out_csv = save_result(mif_estimate, pf_loglik, pf_se, base)
 
     print("\n================= RESULT (compare to all_shared.RData) =================")
     print(f"pf.loglik.of.mif.estimate = {pf_loglik:.4f}   (R all-shared published ll ~= -880.56)")
     print(f"s.e.                      = {pf_se:.4f}")
-    print(f"saved mif.estimate + loglik + se -> {out_path}")
+    print(f"saved mif.estimate + loglik + se -> {out_csv}")
     print("\n  param        start (MLE)        pypomp estimate")
     for n in PARAM_NAMES:
         print(f"  {n:<10} {SHARED_PARAMETER[n]:>16.6g}   {mif_estimate[n]:>16.6g}")
