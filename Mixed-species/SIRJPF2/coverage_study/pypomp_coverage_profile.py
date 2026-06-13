@@ -32,8 +32,9 @@ Environment toggles (read BEFORE the heavy work; defaults reproduce the R run):
                                                  independent fit, exactly as in R's foreach).
 
 REQUIRES the development pypomp (>=0.4.6, with PanelPomp/PanelParameters/RWSigma/ParTrans;
-`pip install -e` it). Also needs:  pip install rdata pyreadr  (R-free .rds I/O) and a CUDA
-JAX (`pip install -U "jax[cuda12]"`).  NO Rscript is required (unlike the older version).
+`pip install -e` it) and a CUDA JAX (`pip install -U "jax[cuda12]"`).  Inputs are the
+committed CSVs (sim_data_all.csv, true_params.csv) read with pandas, so NO R and NO rdata
+are needed; the only I/O dependency is `pip install pyreadr` (to write the output .rds).
 
 ================================  FIDELITY NOTE  ===============================
 JAX's PRNG is NOT the same generator as R's, so the particle draws and the mif
@@ -332,44 +333,33 @@ sirjpf_par_trans = pp.ParTrans(to_est=sirjpf_to_est, from_est=sirjpf_from_est)
 
 
 # ----------------------------------------------------------------------------
-# 3. R-FREE I/O (the GPU node has no Rscript): read .rds with `rdata`, build the
+# 3. R-FREE I/O: read pre-converted CSVs with pandas (NO R, NO rdata), build the
 #    profile design in NumPy, write the output .rds with `pyreadr`.
-#    Needs:  pip install rdata pyreadr
+#    The CSVs (simulated_data/sim_data_all.csv, true_params.csv) are produced ONCE
+#    from the original .rds and committed, so the GPU node needs no R-data reader.
+#    Only dependency for I/O is `pyreadr` (output write):  pip install pyreadr
 # ----------------------------------------------------------------------------
-# true_params.rds is a NAMED numeric vector; rdata returns the values in file
-# order but drops the names, so we map by this fixed order (the order written by
-# simulate_datasets.R; verified against the actual file).
-TRUE_PARAMS_RDS_ORDER = [
-    "ri", "rn", "f_Si", "f_Sn", "probi", "probn", "xi",
-    "theta_Sn", "theta_Si", "theta_Ii", "theta_In", "theta_P", "theta_Ji", "theta_Jn",
-    "sigSn", "sigSi", "sigIn", "sigIi", "sigJi", "sigJn", "sigF", "sigP",
-    "k_Ii", "k_In", "k_Si", "k_Sn",
-]
-
-
-def read_sim_data_rds(path: Path) -> dict[str, pd.DataFrame]:
-    """Read simulated_data/sim_data_<b>.rds (R list u1..u8 of data.frames) with rdata."""
-    import rdata
-    sd = rdata.read_rds(str(path))                       # dict {u1..u8: DataFrame}
+def read_sim_data(sim_dir: Path, b: int) -> dict[str, pd.DataFrame]:
+    """Read the b-th simulated panel from sim_data_all.csv (cols: b,unit,day,4 obs)."""
+    df = pd.read_csv(sim_dir / "sim_data_all.csv")
+    df = df[df["b"] == b]
+    if df.empty:
+        raise ValueError(f"no rows for dataset b={b} in {sim_dir/'sim_data_all.csv'}")
     out = {}
     for unit_name in UNIT_NAMES:
-        df = pd.DataFrame(sd[unit_name]).reset_index(drop=True)
-        df.columns = ["day", "dentadult", "dentinf", "lumadult", "luminf"]
-        out[unit_name] = df.astype(float).sort_values("day")
+        out[unit_name] = (df[df["unit"] == unit_name]
+                          [["day", "dentadult", "dentinf", "lumadult", "luminf"]]
+                          .astype(float).sort_values("day").reset_index(drop=True))
     return out
 
 
-def read_params_rds(path: Path) -> dict[str, float]:
-    """Read simulated_data/true_params.rds (named numeric vector of 26) with rdata."""
-    import rdata
-    vals = np.asarray(rdata.read_rds(str(path)), dtype=float).ravel()
-    if len(vals) != len(TRUE_PARAMS_RDS_ORDER):
-        raise ValueError(f"true_params.rds has {len(vals)} values, "
-                         f"expected {len(TRUE_PARAMS_RDS_ORDER)}")
-    params = {name: float(v) for name, v in zip(TRUE_PARAMS_RDS_ORDER, vals)}
+def read_params(sim_dir: Path) -> dict[str, float]:
+    """Read true_params.csv (name,value)."""
+    tp = pd.read_csv(sim_dir / "true_params.csv")
+    params = dict(zip(tp["name"].astype(str), tp["value"].astype(float)))
     missing = [n for n in PARAM_NAMES if n not in params]
     if missing:
-        raise ValueError(f"true_params.rds missing parameters: {missing}")
+        raise ValueError(f"true_params.csv missing parameters: {missing}")
     return params
 
 
@@ -611,12 +601,11 @@ def main(argv: list[str]) -> int:
           f"devices = {jax.devices()}   vmap_chunk = {vmap_chunk}")
 
     base = Path(__file__).resolve().parent
-    sim_path = base / "simulated_data" / f"sim_data_{b:03d}.rds"
-    params_path = base / "simulated_data" / "true_params.rds"
+    sim_dir = base / "simulated_data"
     out_path = base / "coverage_results" / f"profile_{name_str}_{b:03d}.rds"
 
-    sim_data = read_sim_data_rds(sim_path)
-    true_params = read_params_rds(params_path)
+    sim_data = read_sim_data(sim_dir, b)
+    true_params = read_params(sim_dir)
     pomp_dict = build_pomp_dict(sim_data, true_params)
     parameter_shared = generate_parameter_profile(true_params, b, name_str, args.nprof)
     print(f"profile design rows = {len(parameter_shared)}")
