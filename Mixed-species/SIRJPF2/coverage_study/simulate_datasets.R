@@ -2,10 +2,12 @@
 Sys.setenv(PATH = paste("/user/by2418/.conda/envs/r-pomp/bin", Sys.getenv("PATH"), sep = ":"))
 library(pomp)
 library(panelPomp)
+library(ggplot2)
 
 set.seed(801)
 
 B <- 100
+max_attempts <- 300
 
 mif.estimate <- c(
   ri        = 2.152877e+05,
@@ -163,21 +165,155 @@ panelfood <- panelPomp(pomplist, shared = mif.estimate)
 
 dir.create("simulated_data", showWarnings = FALSE, recursive = TRUE)
 
-cat("Simulating", B, "datasets from MLE...\n")
+passes_bounds <- function(sim_data_list) {
+  all(vapply(sim_data_list, function(sim_data) {
+    all(
+      sim_data$dentadult < 250,
+      sim_data$lumadult <= 100,
+      sim_data$dentinf < 100,
+      sim_data$luminf < 100,
+      na.rm = TRUE
+    )
+  }, logical(1)))
+}
 
-for (b in 1:B) {
+validate_output_format <- function(sim_data_list) {
+  expected_names <- paste0("u", 1:8)
+  expected_cols <- c("day", "dentadult", "dentinf", "lumadult", "luminf")
+
+  if (!identical(names(sim_data_list), expected_names)) {
+    stop("Selected simulated dataset does not have unit names u1 through u8.")
+  }
+
+  valid_units <- vapply(sim_data_list, function(sim_data) {
+    identical(names(sim_data), expected_cols)
+  }, logical(1))
+
+  if (!all(valid_units)) {
+    stop("Selected simulated dataset does not have columns: day, dentadult, dentinf, lumadult, luminf.")
+  }
+
+  TRUE
+}
+
+make_preview_data <- function(selected_data) {
+  species_labels <- c(
+    dentadult = "D. dentifera adult",
+    dentinf = "D. dentifera infected",
+    lumadult = "D. lumholtzi adult",
+    luminf = "D. lumholtzi infected"
+  )
+
+  do.call(rbind, lapply(seq_along(selected_data), function(dataset_id) {
+    do.call(rbind, lapply(names(selected_data[[dataset_id]]), function(unit_name) {
+      sim_data <- selected_data[[dataset_id]][[unit_name]]
+      data.frame(
+        dataset = dataset_id,
+        unit = unit_name,
+        day = rep(sim_data$day, times = length(species_labels)),
+        species = rep(unname(species_labels), each = nrow(sim_data)),
+        density = c(
+          sim_data$dentadult,
+          sim_data$dentinf,
+          sim_data$lumadult,
+          sim_data$luminf
+        )
+      )
+    }))
+  }))
+}
+
+make_preview_band <- function(preview_data) {
+  grouped_data <- split(preview_data, list(preview_data$day, preview_data$species), drop = TRUE)
+
+  do.call(rbind, lapply(grouped_data, function(group_data) {
+    density <- group_data$density
+
+    data.frame(
+      day = group_data$day[[1]],
+      species = group_data$species[[1]],
+      q025 = unname(quantile(density, 0.025, na.rm = TRUE)),
+      q25 = unname(quantile(density, 0.25, na.rm = TRUE)),
+      median = median(density, na.rm = TRUE),
+      q75 = unname(quantile(density, 0.75, na.rm = TRUE)),
+      q975 = unname(quantile(density, 0.975, na.rm = TRUE))
+    )
+  }))
+}
+
+plot_preview <- function(selected_data) {
+  preview_data <- make_preview_data(selected_data)
+  band_data <- make_preview_band(preview_data)
+
+  ggplot(band_data, aes(x = day)) +
+    geom_ribbon(aes(ymin = q025, ymax = q975), fill = "#7aa6c2", alpha = 0.25) +
+    geom_ribbon(aes(ymin = q25, ymax = q75), fill = "#2f78a0", alpha = 0.35) +
+    geom_line(aes(y = median), color = "#123c54", linewidth = 0.8) +
+    geom_line(
+      data = preview_data,
+      aes(y = density, group = interaction(dataset, unit)),
+      color = "grey35",
+      linewidth = 0.2,
+      alpha = 0.18
+    ) +
+    facet_wrap(~ species, scales = "free_y", ncol = 2) +
+    labs(
+      x = "Time",
+      y = "Density",
+      title = "Preview of Selected Simulated Datasets",
+      subtitle = "Dark band: 25-75%; light band: 2.5-97.5%; blue line: median"
+    ) +
+    theme_bw(base_size = 12) +
+    theme(
+      panel.grid.minor = element_blank(),
+      strip.background = element_rect(fill = "grey90", color = NA),
+      plot.title = element_text(face = "bold")
+    )
+}
+
+cat("Simulating", max_attempts, "candidate datasets from MLE...\n")
+
+candidate_data <- vector("list", max_attempts)
+
+for (candidate_id in seq_len(max_attempts)) {
   sim_data_list <- list()
+
   for (u in names(panelfood)) {
     unit_model <- unit_objects(panelfood)[[u]]
     sim <- pomp::simulate(unit_model, nsim = 1, format = "data.frame",
                           params = mif.estimate)
     sim_data_list[[u]] <- sim[, c("day","dentadult","dentinf","lumadult","luminf")]
   }
-  saveRDS(sim_data_list, file = sprintf("simulated_data/sim_data_%03d.rds", b))
-  cat("  Dataset", b, "saved.\n")
+
+  candidate_data[[candidate_id]] <- sim_data_list
+  cat("  Candidate", candidate_id, "simulated.\n")
+}
+
+valid_candidates <- which(vapply(candidate_data, passes_bounds, logical(1)))
+
+if (length(valid_candidates) < B) {
+  stop("Only ", length(valid_candidates), " of ", max_attempts,
+       " candidate datasets satisfy Sn < 250, Si <= 100, In < 100, Ii < 100.")
+}
+
+selected_candidate_ids <- valid_candidates[seq_len(B)]
+selected_data <- candidate_data[selected_candidate_ids]
+
+preview_plot <- plot_preview(selected_data)
+print(preview_plot)
+
+if (interactive()) {
+  readline("Preview plotted. Press Enter to save the selected simulated datasets.")
+}
+
+for (b in seq_len(B)) {
+  candidate_id <- selected_candidate_ids[[b]]
+  validate_output_format(selected_data[[b]])
+  saveRDS(selected_data[[b]], file = sprintf("simulated_data/sim_data_%03d.rds", b))
+  cat("  Candidate", candidate_id, "selected as dataset", b, "\n")
 }
 
 saveRDS(mif.estimate, file = "simulated_data/true_params.rds")
 
-cat("Done. All", B, "simulated datasets saved in simulated_data/\n")
+cat("Done. Selected and saved", B, "datasets from", max_attempts, "candidates in simulated_data/\n")
 cat("True log(ri) =", log(mif.estimate["ri"]), "\n")
