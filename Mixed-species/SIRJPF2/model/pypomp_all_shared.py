@@ -351,7 +351,7 @@ def build_pomp_dict(sim_data, theta):
         ys_u = (sim_data[u].set_index("day")[["dentadult", "dentinf", "lumadult", "luminf"]]
                 .astype(float))
         pomp_dict[u] = pp.Pomp(
-            ys=ys_u, theta=theta, statenames=SIRJPF_STATENAMES, t0=1.0,
+            ys=ys_u, theta=pp.PompParameters(theta), statenames=SIRJPF_STATENAMES, t0=1.0,
             rinit=sirjpf_rinit, rproc=sirjpf_rproc, dmeas=sirjpf_dmeas,
             rmeas=sirjpf_rmeas, par_trans=sirjpf_par_trans, dt=0.25,
             accumvars=("error_count",),
@@ -378,9 +378,12 @@ def panel_theta_to_params(theta_dict) -> dict[str, float]:
 def _run_mif_batch(pomp_dict, starts_batch, rw_sd_dict, nmif, Mp, Np, Np_rep,
                    mif_key, pf_key, vmap_chunk_size):
     panel = pp.PanelPomp(Pomp_dict=pomp_dict, theta=make_panel_parameters(starts_batch))
-    # [R: mif2(Nmif, rw.sd, cooling.fraction.50=0.7, Np=Mp)]  block=True == MPIF; all-shared => PIF
-    panel.mif(J=Mp, M=nmif, rw_sd=pp.RWSigma(sigmas=rw_sd_dict, init_names=[]),
-              a=COOLING_A, key=mif_key, block=True, vmap_chunk_size=vmap_chunk_size)
+    # [R: mif2(Nmif, rw.sd, cooling.fraction.50=0.7, Np=Mp)]  block=True == MPIF; all-shared => PIF.
+    # pypomp >=0.4.6: cooling is carried by the RWSigma via .geometric_cooling(a=...),
+    # NOT a mif(a=...) kwarg.  a=0.7 == R cooling.fraction.50=0.7.
+    panel.mif(J=Mp, M=nmif,
+              rw_sd=pp.RWSigma(sigmas=rw_sd_dict, init_names=[]).geometric_cooling(a=COOLING_A),
+              key=mif_key, block=True, vmap_chunk_size=vmap_chunk_size)
     # [R: replicate(Np_rep, unitlogLik(pfilter(m1, Np))); panel_logmeanexp(MARGIN=1, se=TRUE)]
     panel.pfilter(J=Np, reps=Np_rep, key=pf_key,
                   chunk_size=vmap_chunk_size if vmap_chunk_size else 1)
@@ -390,7 +393,7 @@ def _run_mif_batch(pomp_dict, starts_batch, rw_sd_dict, nmif, Mp, Np, Np_rep,
     panel_ll = np.nansum(unit_est, axis=1)                      # sum over units
     panel_se = np.sqrt(np.nansum(unit_se ** 2, axis=1))         # combine unit SEs
     rows = []
-    for idx, td in enumerate(panel.theta.to_list()):
+    for idx, td in enumerate(panel.theta._to_list()):
         p = panel_theta_to_params(td)
         p["loglik"] = float(panel_ll[idx])
         p["se"] = float(panel_se[idx])

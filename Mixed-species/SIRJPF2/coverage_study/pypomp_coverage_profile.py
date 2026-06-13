@@ -468,7 +468,7 @@ def build_pomp_dict(sim_data: dict[str, pd.DataFrame], true_params: dict[str, fl
                 .set_index("day")[["dentadult", "dentinf", "lumadult", "luminf"]]
                 .astype(float))
         pomp_dict[unit_name] = pp.Pomp(
-            ys=ys_u, theta=theta, statenames=SIRJPF_STATENAMES, t0=1.0,
+            ys=ys_u, theta=pp.PompParameters(theta), statenames=SIRJPF_STATENAMES, t0=1.0,
             rinit=sirjpf_rinit, rproc=sirjpf_rproc,
             dmeas=sirjpf_dmeas, rmeas=sirjpf_rmeas,
             par_trans=sirjpf_par_trans, dt=0.25,
@@ -513,10 +513,12 @@ def _run_mif_batch(pomp_dict, starts_batch, rw_sd_dict, nmif, mif_particles,
     # [R: mif2(Nmif=nmif, rw.sd=..., cooling.fraction.50=0.7, Np=Mp)]
     # block=True is pypomp's MPIF; for an ALL-SHARED model it equals PIF (block is a
     # no-op without unit-specific params), so it matches the R all-shared mif2.
+    # pypomp >=0.4.6: cooling is carried by RWSigma via .geometric_cooling(a=...),
+    # not a mif(a=...) kwarg.  a=0.7 == R cooling.fraction.50=0.7.
     panel.mif(
         J=mif_particles, M=nmif,
-        rw_sd=pp.RWSigma(sigmas=rw_sd_dict, init_names=[]),
-        a=COOLING_A, key=mif_key, block=True, vmap_chunk_size=vmap_chunk_size,
+        rw_sd=pp.RWSigma(sigmas=rw_sd_dict, init_names=[]).geometric_cooling(a=COOLING_A),
+        key=mif_key, block=True, vmap_chunk_size=vmap_chunk_size,
     )
 
     # [R: ll <- replicate(Np_rep, unitLogLik(pfilter(m1, Np=Np)))]
@@ -536,7 +538,7 @@ def _run_mif_batch(pomp_dict, starts_batch, rw_sd_dict, nmif, mif_particles,
     panel_loglik = np.nansum(per_unit_lme, axis=1)       # (Nstarts,)
 
     rows = []
-    for idx, theta_dict in enumerate(panel.theta.to_list()):
+    for idx, theta_dict in enumerate(panel.theta._to_list()):
         params = panel_theta_to_params(theta_dict)
         params["loglik"] = float(panel_loglik[idx])
         rows.append(params)
