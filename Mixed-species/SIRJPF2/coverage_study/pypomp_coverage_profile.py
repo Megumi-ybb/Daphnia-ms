@@ -367,20 +367,27 @@ def read_params(sim_dir: Path) -> dict[str, float]:
 
 
 def generate_parameter_profile(true_params: dict[str, float], dataset_index: int,
-                               prof_name: str, nprof: int = 60) -> pd.DataFrame:
+                               prof_name: str, nprof: int = 60,
+                               nstarts: int | None = None) -> pd.DataFrame:
     """
     Build the profile design in NumPy, reproducing pomp::profile_design's structure
     [R: coverage_profile.R lines 183-205]:
       * the profiled parameter takes `nprof` values on a log-uniform GRID over
-        [true*0.1, true*10];
-      * the other shared params (excluding sigSn, sigSi, profiled) get `nprof`
-        random log-uniform starting points over the same per-parameter box;
-      * the grid is crossed with the random starts -> nprof*nprof rows
-        (6400 at nprof=80, matching the R design).  sigSn = sigSi = 0.
+        [true*0.1, true*10]  (this sets the PROFILE RESOLUTION);
+      * the other shared params (excluding sigSn, sigSi, profiled) get `nstarts`
+        random log-uniform starting points over the same per-parameter box
+        (this sets the MULTISTART robustness at each grid point);
+      * the grid is crossed with the random starts -> nprof*nstarts rows.  sigSn = sigSi = 0.
+    nstarts defaults to nprof (the R design: nprof^2, e.g. 80^2=6400).  Decoupling them
+    lets you KEEP a fine profile grid while cutting compute: e.g. nprof=60 grid x
+    nstarts=12 = 720 starts (vs 3600) is 5x cheaper but still a 60-point profile.
+    Round 2 re-optimizes the top 25% (x4 replicates), which buffers fewer restarts.
     NB: NumPy RNG != R RNG, so the *specific* random starts differ from a run of
     coverage_profile.R; the design is statistically equivalent (uniform multistart
     in the same box) -- consistent with the FIDELITY note.
     """
+    if nstarts is None:
+        nstarts = nprof
     pidx = PROFILABLE.index(prof_name) + 1               # 1-based, used in the seed
     seed = 805 * 1000 + 1000 * pidx + dataset_index      # reproducible (NumPy RNG)
     rng = np.random.default_rng(seed)
@@ -390,10 +397,10 @@ def generate_parameter_profile(true_params: dict[str, float], dataset_index: int
     others = [n for n in PARAM_NAMES if n not in ("sigSn", "sigSi", prof_name)]
     lo = np.array([np.log(lb[n]) for n in others])
     hi = np.array([np.log(ub[n]) for n in others])
-    free_pts = np.exp(rng.uniform(lo, hi, size=(nprof, len(others))))   # nprof starts
+    free_pts = np.exp(rng.uniform(lo, hi, size=(nstarts, len(others))))   # nstarts starts
     rows = []
     for g in grid:                                       # cross grid x free starts
-        for r in range(nprof):
+        for r in range(nstarts):
             row = {n: float(free_pts[r, j]) for j, n in enumerate(others)}
             row[prof_name] = float(g)
             row["sigSn"] = 0.0
@@ -582,7 +589,12 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
                    default=int(os.environ.get("PYPOMP_RUN_LEVEL", "3")),
                    choices=[1, 2, 3], help="particle/iteration budget (default 3)")
     p.add_argument("--nprof", type=int, default=60,
-                   help="profile grid resolution (R used 80; 60 here -> 60*60=3600 starts)")
+                   help="profile GRID resolution (number of profiled-param values; R used 80)")
+    p.add_argument("--nstarts", type=int,
+                   default=int(os.environ["PYPOMP_NSTARTS"]) if os.environ.get("PYPOMP_NSTARTS") else None,
+                   help="random restarts PER grid point (default = nprof). "
+                        "Total starts = nprof*nstarts; lower nstarts cuts compute while "
+                        "keeping the grid (e.g. 60*12=720 vs 60*60=3600).")
     return p.parse_args(argv)
 
 
@@ -611,8 +623,11 @@ def main(argv: list[str]) -> int:
     sim_data = read_sim_data(sim_dir, b)
     true_params = read_params(sim_dir)
     pomp_dict = build_pomp_dict(sim_data, true_params)
-    parameter_shared = generate_parameter_profile(true_params, b, name_str, args.nprof)
-    print(f"profile design rows = {len(parameter_shared)}")
+    parameter_shared = generate_parameter_profile(true_params, b, name_str,
+                                                   args.nprof, args.nstarts)
+    nstarts_eff = args.nstarts if args.nstarts is not None else args.nprof
+    print(f"profile design rows = {len(parameter_shared)}  "
+          f"(grid={args.nprof} x restarts={nstarts_eff})")
 
     print("Round 1 starting...")
     round_one = run_mif_round(
