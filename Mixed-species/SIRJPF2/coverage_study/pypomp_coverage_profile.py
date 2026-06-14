@@ -105,17 +105,20 @@ UNIT_NAMES = [f"u{i}" for i in range(1, N_UNITS + 1)]
 # and 300 (round 2) in the R mif2() calls, NOT taken from algorithmic.params$Nmif.
 ALGORITHMIC_PARAMS = {
     "Np": [50, 320, 1000],      # final pfilter particles      [R: $Np]
-    "Np_rep": [2, 10, 20],      # pfilter replicates           [R: $Np_rep]
+    "Np_rep": [2, 10, 15],      # pfilter replicates  [R: $Np_rep=20; run_level-3 trimmed 20->15 for speed]
     "Mp": [50, 400, 500],       # mif2 particles               [R: $Mp]
 }
 NMIF_ROUND1 = 200               # [R: line 248  Nmif = 200]
 NMIF_ROUND2 = 300               # [R: line 319  Nmif = 300]
 COOLING_A = 0.7                 # [R: cooling.fraction.50 = 0.7]  (pypomp a == R cooling.fraction.50)
 
-# Outer batch size over profile STARTS (the GPU-memory knob).  With nprof=80 the
-# design has 6400 starts; pypomp vmaps the whole start axis at once, so we feed it
-# in batches of BATCH_SIZE.  Each start is an independent fit (exactly as R's
-# foreach over 6400 rows), so batching does NOT change results -- only peak memory.
+# Outer batch size over profile STARTS (the GPU-memory / pass-count knob).  With
+# nprof=60 the design has 3600 starts; pypomp vmaps the whole start axis at once, so
+# we feed it in batches of BATCH_SIZE.  Each start is an independent fit (exactly as
+# R's foreach), so batching does NOT change results -- it only sets peak memory and
+# how many sequential passes the mif loop runs.  Pick a value that DIVIDES the start
+# count evenly (3600 -> 1800 or 3600) so the final batch is not a new array shape
+# that forces an extra recompile.
 BATCH_SIZE = int(os.environ.get("PYPOMP_BATCH", "400"))
 
 # Profilable parameters in EXACTLY the R order; index gives the seed offset.
@@ -364,7 +367,7 @@ def read_params(sim_dir: Path) -> dict[str, float]:
 
 
 def generate_parameter_profile(true_params: dict[str, float], dataset_index: int,
-                               prof_name: str, nprof: int = 80) -> pd.DataFrame:
+                               prof_name: str, nprof: int = 60) -> pd.DataFrame:
     """
     Build the profile design in NumPy, reproducing pomp::profile_design's structure
     [R: coverage_profile.R lines 183-205]:
@@ -578,7 +581,8 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     p.add_argument("--run-level", type=int,
                    default=int(os.environ.get("PYPOMP_RUN_LEVEL", "3")),
                    choices=[1, 2, 3], help="particle/iteration budget (default 3)")
-    p.add_argument("--nprof", type=int, default=80, help="profile grid resolution (R: 80)")
+    p.add_argument("--nprof", type=int, default=60,
+                   help="profile grid resolution (R used 80; 60 here -> 60*60=3600 starts)")
     return p.parse_args(argv)
 
 

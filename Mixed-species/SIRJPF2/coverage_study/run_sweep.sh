@@ -32,6 +32,14 @@ if [ "${CONDA_DEFAULT_ENV:-}" != "py313" ]; then
 fi
 
 export XLA_PYTHON_CLIENT_PREALLOCATE="${XLA_PYTHON_CLIENT_PREALLOCATE:-false}"
+# Persistent XLA compile cache shared across ALL jobs/GPUs.  Each (param,b) runs in
+# a fresh `python` process, so without this every one of the ~400 jobs recompiles the
+# whole mif/pfilter graph from scratch (~minutes each).  All jobs have identical array
+# shapes (same units/obs/batch), so after the first compile they all hit the cache.
+# Safe for concurrent processes (JAX writes cache entries atomically).
+export JAX_COMPILATION_CACHE_DIR="${JAX_COMPILATION_CACHE_DIR:-$HOME/.jax_cache}"
+# NB: pick PYPOMP_BATCH to divide 6400 evenly (1600/3200/6400) -- a ragged final
+# batch is a new array shape and forces an extra full recompile for that batch.
 export PYPOMP_BATCH="${PYPOMP_BATCH:-400}"
 PY="${PYPOMP_PY:-python}"
 LOG="sweep_${TAG}.log"
