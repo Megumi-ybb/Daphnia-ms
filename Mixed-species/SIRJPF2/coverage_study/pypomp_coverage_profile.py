@@ -65,6 +65,7 @@ import os
 import subprocess
 import sys
 import tempfile
+import time
 from pathlib import Path
 
 # ----------------------------------------------------------------------------
@@ -629,7 +630,8 @@ def main(argv: list[str]) -> int:
     print(f"profile design rows = {len(parameter_shared)}  "
           f"(grid={args.nprof} x restarts={nstarts_eff})")
 
-    print("Round 1 starting...")
+    print("Round 1 starting...", flush=True)
+    _t0 = time.time()
     round_one = run_mif_round(
         pomp_dict, parameter_shared, generate_sd(0.05, name_str),
         nmif=NMIF_ROUND1, mif_particles=ALGORITHMIC_PARAMS["Mp"][rl_i],
@@ -638,11 +640,12 @@ def main(argv: list[str]) -> int:
         key_seed=10_000 + 1000 * (PROFILABLE.index(name_str) + 1) + b,
         vmap_chunk_size=vmap_chunk,
     )
-    print("Round 1 done.")
+    print(f"Round 1 done. ({(time.time() - _t0) / 60:.1f} min)", flush=True)
 
     round_two_starts = select_round_two_starts(round_one)
 
-    print("Round 2 starting...")
+    print("Round 2 starting...", flush=True)
+    _t1 = time.time()
     round_two = run_mif_round(
         pomp_dict, round_two_starts, generate_sd(0.04, name_str),
         nmif=NMIF_ROUND2, mif_particles=ALGORITHMIC_PARAMS["Mp"][rl_i],
@@ -651,7 +654,8 @@ def main(argv: list[str]) -> int:
         key_seed=20_000 + 1000 * (PROFILABLE.index(name_str) + 1) + b,
         vmap_chunk_size=vmap_chunk,
     )
-    print("Round 2 done.")
+    print(f"Round 2 done. ({(time.time() - _t1) / 60:.1f} min)  "
+          f"[job total {(time.time() - _t0) / 60:.1f} min]", flush=True)
 
     output_profile = make_output_profile(round_two, name_str)
     write_profile_rds(output_profile, out_path)
