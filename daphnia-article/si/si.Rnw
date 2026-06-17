@@ -68,8 +68,8 @@
 <<Debug, include=FALSE>>=
 library(knitr)
 # Set global caching
-# cache_option = FALSE
-cache_option = FALSE # only use when editing text
+cache_option = FALSE
+cache_option = TRUE # only use when editing text
 opts_chunk$set(echo = TRUE, cache = cache_option)
 @
 
@@ -331,9 +331,622 @@ $r^{\invasive}$ & $12.28$ & flat    & \multicolumn{5}{c}{non-identifiable; nomin
 \caption{\label{fig:mcap-coverage-plots}Empirical coverage of MCAP 95\% confidence intervals across $B=100$ bootstrap datasets simulated from the SIRJPF2 all-shared MLE, for the four target parameters. In each panel, the horizontal lines mark each simulated dataset's MCAP confidence interval, ordered by midpoint; the vertical solid line marks the true parameter value; a CI ``covers'' if it intersects the true value. Panels~(a)--(c) show identifiable parameters with finite-sample undercoverage; for $r^{\native}$ this reflects displacement of the maximum likelihood estimate, whereas for $\sigma_F$, whose estimate is nearly unbiased, it reflects finite-sample miscalibration of the interval width. Panel~(d) shows the $r^{\invasive}$ profile, which is flat on the parameter axis because $r^{\invasive}$ enters the SIRJPF2 process model only through the recruitment product $r^{\invasive} f_S^{\invasive}$.}
 \end{figure}}
 
-\section{AIC Selection-Rate Simulation}\label{sec:aic-power}
+\section{Model selection: Simulation study of AIC and LRT}\label{sec:aic-power}
 
 \bye{Section stub created for the revision (Task~\#2), addressing the referee's request for a Stocks~(2020) Table~D3-style assessment. Computation owed: simulate panels under (a)~all-shared truth and (b)~one-parameter-unit-specific truth for SIRJPF2 (and ideally SRJF2 / Dent SIRJPF if compute allows); for each simulated panel refit both null and alternative models, compute AIC, and tabulate the proportion of simulations in which AIC selects the data-generating model. Suggested sample size: 50--100 simulated panels per truth scenario. Output target: a single table analogous to \citet{stocks20} Supplementary Table~D3 plus a one-paragraph narrative.}
+
+\eic{ALSO PUT HERE THE EXPLANATION OF THE SIMULATION-BASED LRT?}
+
+\section{A toy model suggesting why the LRT is not chi-square when testing for unit-specific parameters}
+
+We were initially surprised when the simulation study showed that the likelihood ratio test statistics had considerable deviation from the chi-square distribution suggested by a Wilks approximation.
+To validate this finding, and to investigate whether it might be a general property of a class of POMP models, we developed a simple toy model demonstrating this behavior.
+Consider a model
+\[
+Y_{un}=\mu_u+\eta_u+\epsilon_{un},
+\]
+for $u=1,\dots,U$ and $n=1,\dots,N$, with $\epsilon_{un}\sim \Normal[0,\sigma^2]$ and $\eta_u\sim \Normal[0,\tau^2]$.
+This is a mixed effect model with $U$ units, each with $N$ measurements, where each unit mean may have a random effect and/or a fixed effect.
+The null hypothesis of a shared mean, $H_0: \mu_u=\mu$, is to be tested against the unit-specific alternative $H_1$ for which $\mu_u$ is unconstrained.
+The random effect $\eta_u$ is a simplification of the process noise in a POMP model, and $\epsilon_{un}$ is a simple measurement error model.
+Under $H_0$ and $H_1$, the likelihood of data $y^*_{un}$ can be obtained directly by a multivariate normal calculation.
+Under $H_1$, the likelihood is maximized when $\tau=0$ for all $U$ and $N$.
+Therefore, the MLE is inconsistent in a limit as $U$ and/or $N$ increase to infinity.
+
+General theory for the likelihood ratio test gives a chi-square distribution under local asymptotic normality \citep[][Theorem 16.7]{vandervaart00}, without necessarily requiring independence \citep{geyer94}.
+However, these results requires a consistent MLE under $H_1$.
+Chi-square approximations to likelihood ratio test statistics have been found to be useful even in some situations where the theoretical asymptotic limit does not apply \citep{anisimova01}.
+In our situation, when $\tau$ is large, we may expect that the log-likelihood advantage of using a fixed effect becomes large and so the chi-square approximation becomes poor.
+Empirically, this is the case, and Figure~\ref{fig:lrt-sim} shows that even a moderate value of $\tau$ can give rise to a substantial discrepancy between the actual null distribution and the chi-square approximation.
+
+<<lrt-test,echo=FALSE>>=
+############################################################
+## Random effects versus fixed effects LRT simulation
+## Base R only
+############################################################
+
+############################################################
+## Model:
+##
+## H0: Y_ij = mu + R_i + epsilon_ij
+##     R_i ~ N(0, tau^2), epsilon_ij ~ N(0, sigma^2)
+##
+## H1: Y_ij = mu_i + R_i + epsilon_ij
+##
+## Balanced panel: i = 1,...,I, j = 1,...,J
+##
+## We use the marginal likelihood integrating out R_i.
+##
+## The text uses U in place of I and V in place of J, for
+## consistency with PanelPOMP notation
+############################################################
+
+
+############################################################
+## Sufficient statistics
+############################################################
+
+suff_stats <- function(y) {
+  y <- as.matrix(y)
+  I <- nrow(y)
+  J <- ncol(y)
+  
+  if (I < 2) stop("Need I >= 2.")
+  if (J < 2) stop("Need J >= 2 for H1 to have finite residual variation.")
+  
+  ybar_i <- rowMeans(y)
+  ybar <- mean(ybar_i)
+  
+  SSW <- sum(sweep(y, 1, ybar_i, "-")^2)
+  SSB <- sum((ybar_i - ybar)^2)
+  
+  list(
+    I = I,
+    J = J,
+    ybar_i = ybar_i,
+    ybar = ybar,
+    SSW = SSW,
+    SSB = SSB
+  )
+}
+
+
+############################################################
+## Marginal likelihood details
+##
+## For one unit, covariance is
+##
+##   Sigma = sigma^2 I_J + tau^2 11'
+##
+## Define
+##
+##   A = sigma^2
+##   B = sigma^2 + J tau^2
+##
+## Then
+##
+##   |Sigma| = A^(J-1) B
+##
+## and the quadratic form decomposes into
+##
+##   SSW_i / A + J (ybar_i - mean)^2 / B.
+##
+## Under H0, mean = mu.
+## Under H1, mean = mu_i, so the second term is zero
+## after setting mu_i = ybar_i.
+############################################################
+
+
+############################################################
+## H0 fit by closed-form marginal MLE
+############################################################
+
+fit_h0_stats <- function(I, J, SSW, SSB) {
+  if (I < 2) stop("Need I >= 2.")
+  if (J < 2) stop("Need J >= 2.")
+  if (SSW <= 0) stop("Degenerate SSW <= 0.")
+  
+  ## Unconstrained MLEs in terms of
+  ## A = sigma^2 and B = sigma^2 + J tau^2.
+  A_unc <- SSW / (I * (J - 1))
+  B_unc <- J * SSB / I
+  
+  ## Constraint is B >= A, equivalent to tau^2 >= 0.
+  if (B_unc >= A_unc) {
+    A <- A_unc
+    B <- B_unc
+    boundary <- FALSE
+  } else {
+    ## Boundary tau^2 = 0, so B = A.
+    A <- (SSW + J * SSB) / (I * J)
+    B <- A
+    boundary <- TRUE
+  }
+  
+  sigma2 <- A
+  tau2 <- max((B - A) / J, 0)
+  
+  loglik <- -0.5 * (
+    I * J * log(2 * pi) +
+      I * (J - 1) * log(A) +
+      I * log(B) +
+      SSW / A +
+      J * SSB / B
+  )
+  
+  list(
+    loglik = loglik,
+    sigma2 = sigma2,
+    tau2 = tau2,
+    A = A,
+    B = B,
+    boundary_tau0 = boundary
+  )
+}
+
+
+fit_h0 <- function(y) {
+  s <- suff_stats(y)
+  fit <- fit_h0_stats(
+    I = s$I,
+    J = s$J,
+    SSW = s$SSW,
+    SSB = s$SSB
+  )
+  fit$mu <- s$ybar
+  fit$I <- s$I
+  fit$J <- s$J
+  fit$SSW <- s$SSW
+  fit$SSB <- s$SSB
+  fit
+}
+
+
+############################################################
+## H1 fit by closed-form marginal MLE
+##
+## Under H1:
+##
+##   mu_i_hat = ybar_i
+##
+## and the likelihood is maximized at tau^2_hat = 0.
+##
+## Therefore:
+##
+##   sigma2_hat = SSW / (I J)
+##
+## This is the usual ML denominator, not the unbiased
+## residual denominator I(J - 1).
+############################################################
+
+fit_h1_stats <- function(I, J, SSW) {
+  if (I < 2) stop("Need I >= 2.")
+  if (J < 2) stop("Need J >= 2.")
+  if (SSW <= 0) {
+    stop("Degenerate SSW <= 0. H1 likelihood is unbounded.")
+  }
+  
+  sigma2 <- SSW / (I * J)
+  tau2 <- 0
+  
+  loglik <- -0.5 * (
+    I * J * log(2 * pi) +
+      I * J * log(sigma2) +
+      SSW / sigma2
+  )
+  
+  list(
+    loglik = loglik,
+    sigma2 = sigma2,
+    tau2 = tau2,
+    boundary_tau0 = TRUE
+  )
+}
+
+
+fit_h1 <- function(y) {
+  s <- suff_stats(y)
+  fit <- fit_h1_stats(
+    I = s$I,
+    J = s$J,
+    SSW = s$SSW
+  )
+  fit$mu_i <- s$ybar_i
+  fit$I <- s$I
+  fit$J <- s$J
+  fit$SSW <- s$SSW
+  fit$SSB <- s$SSB
+  fit
+}
+
+
+############################################################
+## LRT statistic
+############################################################
+
+lrt_stats <- function(I, J, SSW, SSB) {
+  h0 <- fit_h0_stats(I = I, J = J, SSW = SSW, SSB = SSB)
+  h1 <- fit_h1_stats(I = I, J = J, SSW = SSW)
+  
+  LRT <- 2 * (h1$loglik - h0$loglik)
+  
+  ## Protect against tiny negative numerical roundoff.
+  LRT <- max(LRT, 0)
+  
+  list(
+    LRT = LRT,
+    h0 = h0,
+    h1 = h1
+  )
+}
+
+
+lrt <- function(y) {
+  s <- suff_stats(y)
+  lrt_stats(
+    I = s$I,
+    J = s$J,
+    SSW = s$SSW,
+    SSB = s$SSB
+  )
+}
+
+
+############################################################
+## Simulate a full panel under H0
+############################################################
+
+simulate_panel_h0 <- function(I, J, mu = 0, sigma = 1, tau = 1) {
+  R <- rnorm(I, mean = 0, sd = tau)
+  eps <- matrix(rnorm(I * J, mean = 0, sd = sigma), nrow = I, ncol = J)
+  
+  y <- matrix(mu + R, nrow = I, ncol = J) + eps
+  y
+}
+
+
+############################################################
+## Faster simulation using exact null distribution of
+## sufficient statistics
+##
+## Under H0:
+##
+##   SSW / sigma^2 ~ chi-square_{I(J-1)}
+##
+## and
+##
+##   SSB / (tau^2 + sigma^2 / J) ~ chi-square_{I-1}
+##
+## independently.
+############################################################
+
+simulate_suff_h0 <- function(I, J, sigma = 1, tau = 1) {
+  SSW <- sigma^2 * rchisq(1, df = I * (J - 1))
+  SSB <- (tau^2 + sigma^2 / J) * rchisq(1, df = I - 1)
+  
+  list(
+    I = I,
+    J = J,
+    SSW = SSW,
+    SSB = SSB
+  )
+}
+
+
+############################################################
+## Main simulation routine
+############################################################
+
+simulate_lrt <- function(nsim = 10000,
+                         I = 10,
+                         J = 20,
+                         mu = 0,
+                         sigma = 1,
+                         tau = 1,
+                         seed = NULL,
+                         method = c("suff", "panel")) {
+  
+  method <- match.arg(method)
+  
+  if (!is.null(seed)) set.seed(seed)
+  
+  out <- data.frame(
+    sim = seq_len(nsim),
+    LRT = numeric(nsim),
+    p_chisq = numeric(nsim),
+    h0_sigma2 = numeric(nsim),
+    h0_tau2 = numeric(nsim),
+    h0_boundary_tau0 = logical(nsim),
+    h1_sigma2 = numeric(nsim),
+    h1_tau2 = numeric(nsim)
+  )
+  
+  df_chisq <- I - 1
+  
+  for (b in seq_len(nsim)) {
+    
+    if (method == "suff") {
+      s <- simulate_suff_h0(I = I, J = J, sigma = sigma, tau = tau)
+      fit <- lrt_stats(I = I, J = J, SSW = s$SSW, SSB = s$SSB)
+    } else {
+      y <- simulate_panel_h0(I = I, J = J, mu = mu, sigma = sigma, tau = tau)
+      fit <- lrt(y)
+    }
+    
+    out$LRT[b] <- fit$LRT
+    out$p_chisq[b] <- pchisq(fit$LRT, df = df_chisq, lower.tail = FALSE)
+    
+    out$h0_sigma2[b] <- fit$h0$sigma2
+    out$h0_tau2[b] <- fit$h0$tau2
+    out$h0_boundary_tau0[b] <- fit$h0$boundary_tau0
+    
+    out$h1_sigma2[b] <- fit$h1$sigma2
+    out$h1_tau2[b] <- fit$h1$tau2
+  }
+  
+  attr(out, "I") <- I
+  attr(out, "J") <- J
+  attr(out, "sigma") <- sigma
+  attr(out, "tau") <- tau
+  attr(out, "df_chisq") <- df_chisq
+  attr(out, "method") <- method
+  
+  out
+}
+
+
+############################################################
+## Summaries
+############################################################
+
+summarize_lrt <- function(sim,
+                          alpha = c(0.10, 0.05, 0.01),
+                          probs = c(0.50, 0.90, 0.95, 0.99)) {
+  
+  df_chisq <- attr(sim, "df_chisq")
+  
+  empirical_quantiles <- quantile(sim$LRT, probs = probs, names = FALSE)
+  chisq_quantiles <- qchisq(probs, df = df_chisq)
+  
+  qtab <- data.frame(
+    prob = probs,
+    empirical = empirical_quantiles,
+    chisq = chisq_quantiles,
+    ratio_empirical_to_chisq = empirical_quantiles / chisq_quantiles
+  )
+  
+  rtab <- data.frame(
+    alpha = alpha,
+    nominal_chisq_cutoff = qchisq(1 - alpha, df = df_chisq),
+    empirical_rejection_rate = sapply(alpha, function(a) mean(sim$p_chisq <= a))
+  )
+  
+  list(
+    settings = list(
+      I = attr(sim, "I"),
+      J = attr(sim, "J"),
+      sigma = attr(sim, "sigma"),
+      tau = attr(sim, "tau"),
+      df_chisq = df_chisq,
+      method = attr(sim, "method"),
+      nsim = nrow(sim)
+    ),
+    mean_LRT = mean(sim$LRT),
+    median_LRT = median(sim$LRT),
+    sd_LRT = sd(sim$LRT),
+    h0_boundary_tau0_frequency = mean(sim$h0_boundary_tau0),
+    h1_tau0_frequency = mean(sim$h1_tau2 == 0),
+    quantiles = qtab,
+    rejection_rates = rtab
+  )
+}
+
+
+############################################################
+## Plots
+############################################################
+
+plot_lrt_hist <- function(sim, breaks = 60, main = NULL,...) {
+  df_chisq <- attr(sim, "df_chisq")
+  
+  if (is.null(main)) {
+    main <- paste0(
+      "LRT under H0: I=", attr(sim, "I"),
+      ", J=", attr(sim, "J"),
+      ", tau=", attr(sim, "tau")
+    )
+  }
+  
+  hist(
+    sim$LRT,
+    breaks = breaks,
+    freq = FALSE,
+    col = "gray85",
+    border = "white",
+    main = main,
+    xlab = "LRT statistic",
+    ...
+  )
+  
+  curve(
+    dchisq(x, df = df_chisq),
+    add = TRUE,
+    col = "red",
+    lwd = 2
+  )
+  
+  legend(
+    "topright",
+    legend = c("Simulation", paste0("Chi-square df=", df_chisq)),
+    col = c("gray50", "red"),
+    lwd = c(8, 2),
+    bty = "n"
+  )
+}
+
+
+plot_lrt_qq <- function(sim, main = NULL) {
+  df_chisq <- attr(sim, "df_chisq")
+  
+  if (is.null(main)) {
+    main <- paste0(
+      "QQ plot against chi-square df=", df_chisq
+    )
+  }
+  
+  n <- nrow(sim)
+  theo <- qchisq(ppoints(n), df = df_chisq)
+  emp <- sort(sim$LRT)
+  
+  plot(
+    theo,
+    emp,
+    pch = 19,
+    cex = 0.5,
+    xlab = paste0("Chi-square(", df_chisq, ") quantiles"),
+    ylab = "Empirical LRT quantiles",
+    main = main
+  )
+  abline(0, 1, col = "red", lwd = 2)
+}
+
+
+############################################################
+## Grid experiment
+############################################################
+
+run_grid <- function(nsim = 5000,
+                     I = 10,
+                     J_values = c(3, 5, 10, 20, 50),
+                     tau_values = c(0, 0.25, 0.5, 1, 2),
+                     sigma = 1,
+                     seed = 1) {
+  
+  set.seed(seed)
+  
+  grid <- expand.grid(
+    J = J_values,
+    tau = tau_values
+  )
+  
+  ans <- vector("list", nrow(grid))
+  
+  for (k in seq_len(nrow(grid))) {
+    J <- grid$J[k]
+    tau <- grid$tau[k]
+    
+    sim <- simulate_lrt(
+      nsim = nsim,
+      I = I,
+      J = J,
+      sigma = sigma,
+      tau = tau,
+      method = "suff",
+      seed = NULL
+    )
+    
+    df_chisq <- I - 1
+    
+    ans[[k]] <- data.frame(
+      I = I,
+      J = J,
+      sigma = sigma,
+      tau = tau,
+      nsim = nsim,
+      mean_LRT = mean(sim$LRT),
+      median_LRT = median(sim$LRT),
+      q90_LRT = as.numeric(quantile(sim$LRT, 0.90)),
+      q95_LRT = as.numeric(quantile(sim$LRT, 0.95)),
+      q99_LRT = as.numeric(quantile(sim$LRT, 0.99)),
+      chisq_q90 = qchisq(0.90, df = df_chisq),
+      chisq_q95 = qchisq(0.95, df = df_chisq),
+      chisq_q99 = qchisq(0.99, df = df_chisq),
+      reject_10 = mean(sim$p_chisq <= 0.10),
+      reject_05 = mean(sim$p_chisq <= 0.05),
+      reject_01 = mean(sim$p_chisq <= 0.01),
+      h0_boundary_tau0_frequency = mean(sim$h0_boundary_tau0)
+    )
+  }
+  
+  do.call(rbind, ans)
+}
+
+
+############################################################
+## Parametric bootstrap p-value for an observed panel
+############################################################
+
+bootstrap_lrt_pvalue <- function(y,
+                                 nsim = 5000,
+                                 seed = NULL,
+                                 method = c("suff", "panel")) {
+  
+  method <- match.arg(method)
+  
+  if (!is.null(seed)) set.seed(seed)
+  
+  s <- suff_stats(y)
+  fit0 <- fit_h0(y)
+  obs <- lrt(y)$LRT
+  
+  sim <- simulate_lrt(
+    nsim = nsim,
+    I = s$I,
+    J = s$J,
+    mu = fit0$mu,
+    sigma = sqrt(fit0$sigma2),
+    tau = sqrt(fit0$tau2),
+    method = method,
+    seed = NULL
+  )
+  
+  p_boot <- (1 + sum(sim$LRT >= obs)) / (nsim + 1)
+  p_chisq <- pchisq(obs, df = s$I - 1, lower.tail = FALSE)
+  
+  list(
+    observed_LRT = obs,
+    p_bootstrap = p_boot,
+    p_chisq = p_chisq,
+    fit_h0 = fit0,
+    sim = sim
+  )
+}
+
+@
+
+\begin{figure}[h]
+\centering
+<<fig-lrt-sim, fig.width=7,fig.height=4,out.width="\\textwidth", echo=FALSE, cache=cache_option>>=
+
+U = 10
+N = 20
+sigma = 1
+tau = 0.5
+
+sim <- simulate_lrt(
+  nsim = 20000,
+  I = U,
+  J = N,
+  sigma = sigma,
+  tau = tau,
+  seed = 123,
+  method = "suff"
+)
+
+summ <- summarize_lrt(sim)
+# print(summ)
+
+plot_lrt_hist(sim,main="",ylim = c(0,0.1),xlim=c(0,42))
+@
+\caption{\label{fig:lrt-sim}
+Histogram of the likelihood ratio statistic (twice the difference of the maximized log-likelihoods) for simulations from $H_0$ with $U=\Sexpr{U}$, $N=\Sexpr{N}$, $\sigma=\Sexpr{sigma}$, $\tau = \Sexpr{tau}$..
+The red line shows the chi-square approximation based on Wilks' Theorem.
+}
+\end{figure}
+
+We conclude that chi-square approximations to the null distribution of the likelihood ratio test statistic are anti-conserative in this context, biasing inference against the null hypothesis.
+For likelihood ratio tests of shared versus unit-specific parameters, in the presence of random effects and therefore in the presence of dynamic process noise in POMP models, this example suggests the use of a simulation-based null distribution in preference to a chi-square approximation.
+
 
 \clearpage
 
