@@ -120,9 +120,12 @@ names(pomplist) <- paste0("u", 1:9)
 panelfood <- panelPomp(pomplist, shared = true_params)
 
 # ---- Algorithmic parameters ----
-Np <- 1000
-Np_rep <- 10
-Mp <- 1000
+# Particle counts raised from 1000 to 1500 to match fit_alt.R and the corrected
+# SIRJPF2 reference (more particles -> lower Monte Carlo error -> sharper Lambda).
+# Np and Mp MUST stay equal between fit_null.R and fit_alt.R (see collect_lrt.R guard).
+Np <- 1500      # particles for the final pfilter likelihood evaluation (was 1000)
+Np_rep <- 10    # independent pfilter replicates fed to panel_logmeanexp
+Mp <- 1500      # particles used inside mif2 (was 1000)
 
 # ---- Round 1: mif2 from warm start ----
 dent_rw.sd <- 0.05
@@ -178,7 +181,7 @@ mf <- foreach(
   mif2(
     panelfood,
     block = TRUE,   # no-op for the all-shared null; mirrors the alt procedure
-    Nmif = 150,
+    Nmif = 250,
     shared.start = share_para_temp,
     rw.sd = rw_sd(sigSn=0, sigSi=0, sigF=dent_rw.sd,
                   theta_Sn=dent_rw.sd, theta_Si=dent_rw.sd,
@@ -208,7 +211,7 @@ result <- list(
   Mp      = Mp,
   Np_rep  = Np_rep,
   block   = TRUE,
-  Nmif    = c(round1 = 150, round2 = 150)   # saved fit is the round-2 best
+  Nmif    = c(round1 = 150, round2 = 250)   # saved fit is the round-2 best
 )
 
 saveRDS(result, file = paste0('results_null/lrt_null_',b,'.rds'))

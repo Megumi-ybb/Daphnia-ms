@@ -122,9 +122,9 @@ names(pomplist) <- paste0("u", 1:9)
 panelfood <- panelPomp(pomplist, shared = true_params)
 
 # ---- Algorithmic parameters ----
-Np <- 1000
+Np <- 1500
 Np_rep <- 10
-Mp <- 1000
+Mp <- 1500
 
 # ---- Round 1: mif2 from warm start ----
 dent_rw.sd <- 0.05
@@ -178,7 +178,7 @@ mf <- foreach(
   mif2(
     panelfood,
     block = TRUE,   # no-op for the all-shared null; mirrors the alt procedure
-    Nmif = 150,
+    Nmif = 250,
     shared.start = share_para_temp,
     rw.sd = rw_sd(xi=dent_rw.sd, sigSi=0, sigIi=dent_rw.sd,
                   sigF=dent_rw.sd, theta_Si=dent_rw.sd, theta_Ii=dent_rw.sd,
@@ -206,7 +206,7 @@ result <- list(
   Mp      = Mp,
   Np_rep  = Np_rep,
   block   = TRUE,
-  Nmif    = c(round1 = 150, round2 = 150)   # saved fit is the round-2 best
+  Nmif    = c(round1 = 150, round2 = 250)   # saved fit is the round-2 best
 )
 
 saveRDS(result, file = paste0('results_null/lrt_null_',b,'.rds'))

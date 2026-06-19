@@ -75,8 +75,10 @@ for (alt in alt_names) {
   cat("\n--- Alternative:", alt, "---\n")
 
   row_name    <- row_map[[alt]]
-  alt_ll_obs  <- lum_para_parameter_table[row_name, "ll"]
-  alt_AIC_obs <- lum_para_parameter_table[row_name, "AIC"]
+  # Observed alt fit must be the BLOCK fit, consistent with block=TRUE bootstrap
+  # (mirrors the corrected SIRJPF2 collect_lrt.R: block_ll / block_AIC).
+  alt_ll_obs  <- lum_para_parameter_table[row_name, "block_ll"]
+  alt_AIC_obs <- lum_para_parameter_table[row_name, "block_AIC"]
   Lambda_obs  <- 2 * (alt_ll_obs - null_ll_obs)
   k_alt       <- (alt_AIC_obs  + 2 * alt_ll_obs)  / 2
   k_null      <- (null_AIC_obs + 2 * null_ll_obs) / 2

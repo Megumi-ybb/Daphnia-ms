@@ -8,8 +8,19 @@ B <- 100
 
 alt_names <- c("theta_Si", "ri", "f_Si")
 
+# ---- Classical chi-square LRT p-value (mirrors si.Rnw lrt_pvalue helper) ----
+lrt_pvalue <- function(ll_alt, AIC_alt, ll_null, AIC_null) {
+  k_alt  <- (AIC_alt  + 2 * ll_alt)  / 2
+  k_null <- (AIC_null + 2 * ll_null) / 2
+  df <- round(k_alt - k_null)
+  if (df <= 0) return(NA_real_)
+  Lambda <- 2 * (ll_alt - ll_null)
+  if (Lambda < 0) return(1)
+  pchisq(Lambda, df = df, lower.tail = FALSE)
+}
+
 # ---- Load observed LRT statistics from parameter table ----
-load("../../data/Simple_dynamics/Lum/no_para/Lum_no_para_loglik_df.rds")
+load("../../../../data/Simple_dynamics/Lum/no_para/Lum_no_para_loglik_df.rds")
 null_ll_obs <- lum_no_para_parameter_table["all_shared", "ll"]
 null_AIC_obs <- lum_no_para_parameter_table["all_shared", "AIC"]
 
@@ -52,14 +63,16 @@ row_map <- list(
 for (alt in alt_names) {
   cat("\n--- Alternative:", alt, "---\n")
 
-  # Observed LRT statistic
+  # Observed LRT statistic -- use the BLOCK fit (block_ll/block_AIC) so the
+  # observed-vs-bootstrap comparison is consistent with the block=TRUE bootstrap.
   row_name <- row_map[[alt]]
-  alt_ll_obs <- lum_no_para_parameter_table[row_name, "ll"]
+  alt_ll_obs  <- lum_no_para_parameter_table[row_name, "block_ll"]
+  alt_AIC_obs <- lum_no_para_parameter_table[row_name, "block_AIC"]
   Lambda_obs <- 2 * (alt_ll_obs - null_ll_obs)
   cat("  Observed Lambda:", Lambda_obs, "\n")
 
-  # Chi-square p-value (from existing table)
-  p_chisq <- lum_no_para_parameter_table[row_name, "lrt_pval"]
+  # Chi-square p-value (computed from block-fit observed stats vs null)
+  p_chisq <- lrt_pvalue(alt_ll_obs, alt_AIC_obs, null_ll_obs, null_AIC_obs)
 
   # Load bootstrap alt results
   alt_lls <- numeric(B)
@@ -114,8 +127,7 @@ for (alt in alt_names) {
 
   # Diagnostic histogram
   if (B_valid > 10) {
-    # Compute df for chi-square overlay
-    alt_AIC_obs <- lum_no_para_parameter_table[row_name, "AIC"]
+    # Compute df for chi-square overlay (block-fit AIC, set above)
     k_alt <- (alt_AIC_obs + 2 * alt_ll_obs) / 2
     k_null <- (null_AIC_obs + 2 * null_ll_obs) / 2
     df <- round(k_alt - k_null)

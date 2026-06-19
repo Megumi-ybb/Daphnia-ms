@@ -19,20 +19,11 @@ lrt_pvalue <- function(ll_alt, AIC_alt, ll_null, AIC_null) {
   pchisq(LRT, df = df, lower.tail = FALSE)
 }
 
-add_lrt_pvalues <- function(ptable) {
-  null_row <- which(rownames(ptable) == "all_shared")
-  null_ll <- ptable[null_row, "ll"]
-  null_AIC <- ptable[null_row, "AIC"]
-  ptable$lrt_pval <- sapply(1:nrow(ptable), function(i) {
-    if (i == null_row) return(NA)
-    lrt_pvalue(ptable[i, "ll"], ptable[i, "AIC"], null_ll, null_AIC)
-  })
-  ptable
-}
-
 # ---- Load observed LRT statistics from parameter table ----
+# The all-shared null has no unit-specific parameters, so blocking is a no-op
+# for it; its plain ll / AIC ARE its block ll / AIC. The alt observed
+# log-likelihoods are read from block_ll / block_AIC inside the loop below.
 load("../../../../data/Simple_dynamics/Dent/no_para/Dent_no_para_loglik_df.rds")
-dent_no_para_parameter_table <- add_lrt_pvalues(dent_no_para_parameter_table)
 null_ll_obs <- dent_no_para_parameter_table["all_shared", "ll"]
 null_AIC_obs <- dent_no_para_parameter_table["all_shared", "AIC"]
 
@@ -79,14 +70,21 @@ row_map <- list(
 for (alt in alt_names) {
   cat("\n--- Alternative:", alt, "---\n")
 
-  # Observed LRT statistic
+  # Observed LRT statistic.
+  # The bootstrap alt fits use block = TRUE, so the OBSERVED alt log-likelihood
+  # must come from the BLOCK fit (block_ll / block_AIC) for the observed and
+  # bootstrap Lambda to be on the same footing. Mirrors the corrected SIRJPF2
+  # collect_lrt.R, which loads block_ll / block_AIC for the alt arm.
   row_idx <- row_map[[alt]]
-  alt_ll_obs <- dent_no_para_parameter_table[row_idx, "ll"]
+  alt_ll_obs  <- dent_no_para_parameter_table[row_idx, "block_ll"]
+  alt_AIC_obs <- dent_no_para_parameter_table[row_idx, "block_AIC"]
   Lambda_obs <- 2 * (alt_ll_obs - null_ll_obs)
   cat("  Observed Lambda:", Lambda_obs, "\n")
 
-  # Chi-square p-value (from existing table)
-  p_chisq <- dent_no_para_parameter_table[row_idx, "lrt_pval"]
+  # Chi-square p-value, computed from the block-fit alt vs the all-shared null
+  # (the all-shared null has no unit-specific params, so block is a no-op and
+  # its plain ll / AIC are the block ll / AIC).
+  p_chisq <- lrt_pvalue(alt_ll_obs, alt_AIC_obs, null_ll_obs, null_AIC_obs)
 
   # Load bootstrap alt results
   alt_lls <- numeric(B)
@@ -136,8 +134,7 @@ for (alt in alt_names) {
 
   # Diagnostic histogram
   if (B_valid > 10) {
-    # Compute df for chi-square overlay
-    alt_AIC_obs <- dent_no_para_parameter_table[row_idx, "AIC"]
+    # Compute df for chi-square overlay (block fit, consistent with above)
     k_alt <- (alt_AIC_obs + 2 * alt_ll_obs) / 2
     k_null <- (null_AIC_obs + 2 * null_ll_obs) / 2
     df <- round(k_alt - k_null)

@@ -137,9 +137,9 @@ panelfood <- panelPomp(pomplist, shared = result_params$shared_parameter,
                        specific = result_params$specific_mat)
 
 # ---- Algorithmic parameters ----
-Np <- 1000
+Np <- 1500
 Np_rep <- 10
-Mp <- 1000
+Mp <- 1500
 
 # ---- Round 1: mif2 from warm start ----
 dent_rw.sd <- 0.05
@@ -204,7 +204,7 @@ mf <- foreach(
   mif2(
     panelfood,
     block = TRUE,   # block-resample unit-specific params; matches specific_model_block real-data fits
-    Nmif = 150,
+    Nmif = 250,
     shared.start = share_para_temp,
     specific.start = specific_para_temp,
     rw.sd = rw_sd(sigSn=0, sigF=dent_rw.sd, theta_Sn=dent_rw.sd,
@@ -231,7 +231,7 @@ result <- list(
   Mp      = Mp,
   Np_rep  = Np_rep,
   block   = TRUE,
-  Nmif    = c(round1 = 150, round2 = 150)   # saved fit is the round-2 best
+  Nmif    = c(round1 = 150, round2 = 250)   # saved fit is the round-2 best
 )
 
 saveRDS(result, file = paste0('results_alt/lrt_',alt_name,"_",b,'.rds'))
