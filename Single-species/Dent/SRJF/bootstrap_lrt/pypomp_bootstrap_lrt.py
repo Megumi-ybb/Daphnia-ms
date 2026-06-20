@@ -321,7 +321,8 @@ dent_par_trans = pp.ParTrans(to_est=dent_to_est, from_est=dent_from_est)
 
 # ----------------------------------------------------------------------------
 # 3. R-FREE I/O: read the pre-converted CSVs with pandas, write the .rds output
-#    in collect_lrt.R's schema with pyreadr (CSV+JSON fallback if pyreadr absent).
+#    in collect_lrt.R's schema with pyreadr (required; raises clearly if absent --
+#    no silent CSV/JSON fallback).
 #    The CSVs (simulated_data/sim_data_all.csv, true_params.csv) are produced ONCE
 #    by the R converter below from the real .rds files (which are NOT modified).
 # ----------------------------------------------------------------------------
