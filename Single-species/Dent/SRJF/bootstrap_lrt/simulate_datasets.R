@@ -6,6 +6,7 @@ library(panelPomp)
 set.seed(801)
 
 B <- 100
+max_attempts <- 500   # draw this many candidates; keep the first B that pass the abnormality bounds
 
 # ---- Load MLE from model fit ----
 load("../model/best_result.rda")
@@ -106,9 +107,21 @@ panelfood <- panelPomp(pomplist, shared = mif.estimate)
 # ---- Simulate B datasets ----
 dir.create("simulated_data", showWarnings = FALSE, recursive = TRUE)
 
-cat("Simulating", B, "datasets from MLE...\n")
+# ---- Abnormality filter (mirrors SIRJPF2 passes_bounds): reject a candidate if
+#      ANY unit's ANY observation exceeds 4x the real-data max.
+#      dent.adult real max 404 -> 1616. ----
+passes_bounds <- function(sim_data_list) {
+  all(vapply(sim_data_list, function(sim_data) {
+    all(
+      sim_data$dentadult <= 1616,
+      na.rm = TRUE
+    )
+  }, logical(1)))
+}
 
-for (b in 1:B) {
+cat("Simulating up to", max_attempts, "candidate datasets from MLE...\n")
+candidate_data <- vector("list", max_attempts)
+for (candidate_id in seq_len(max_attempts)) {
   sim_data_list <- list()
   for (u in names(panelfood)) {
     unit_model <- unit_objects(panelfood)[[u]]
@@ -116,8 +129,19 @@ for (b in 1:B) {
                           params = mif.estimate)
     sim_data_list[[u]] <- sim[, c("day", "dentadult")]
   }
-  saveRDS(sim_data_list, file = sprintf("simulated_data/sim_data_%03d.rds", b))
-  cat("  Dataset", b, "saved.\n")
+  candidate_data[[candidate_id]] <- sim_data_list
+}
+
+valid_candidates <- which(vapply(candidate_data, passes_bounds, logical(1)))
+cat(" ", length(valid_candidates), "of", max_attempts, "candidates passed the abnormality bounds.\n")
+if (length(valid_candidates) < B) {
+  stop("Only ", length(valid_candidates), " of ", max_attempts,
+       " candidates satisfy the abnormality bounds; raise max_attempts.")
+}
+selected_candidate_ids <- valid_candidates[seq_len(B)]
+for (b in seq_len(B)) {
+  saveRDS(candidate_data[[selected_candidate_ids[[b]]]],
+          file = sprintf("simulated_data/sim_data_%03d.rds", b))
 }
 
 saveRDS(mif.estimate, file = "simulated_data/true_params.rds")
