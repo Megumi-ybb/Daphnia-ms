@@ -19,6 +19,9 @@ However, the direction can be reversed at the individual level, as an instance o
 \newcommand\editSubscript{The subscript $u$ ranges in $1:U$, with $U$ = 8, 9, or 10 depending on the experiment.
 }
 
+\newcommand\editExperimentalGoal{The experiment that motivates our case study asks a question of broad ecological importance: how does competition between a native and an invasive species change when both are attacked by a shared parasite, and what biological factors drive the boom-and-collapse population dynamics that result? \citet{searle16} designed a replicated mesocosm experiment to address this, growing the North American native \textit{Daphnia dentifera} and the invasive \textit{D.~lumholtzi}, alone and together, with and without the fungal parasite \textit{M.~bicuspidata}, with an algal food supply.
+}
+
 \newcommand\editDaphnia{{\it Daphnia} is a genus of filter-feeding zooplankton commonly known as ``water fleas.'' This diverse genus is a dominant grazer of algae and bacteria in freshwater lakes and rivers worldwide.
 }
 
@@ -33,7 +36,18 @@ Pseudomarginal Markov chain Monte Carlo methods are applicable in principle, but
 We are not aware of any previous scientific study where non-Gaussian PanelPOMP models, with some parameters shared between units and some parameters specific to each unit, have been calibrated to multi-species panel data via maximum likelihood or pseudomarginal Bayesian inference.
 }
 
+
 \newcommand\editMales{Male \textit{Daphnia} are excluded from this model because they are absent until late in the experiment, are physically smaller than females, and have low observed infection rates.}
+
+
+\newcommand\editMPIF{
+\eic{IT IS NOT CLEAR TO ME HOW THIS NEW PARAGRAPH ADDRESSES REFEREE FEEDBACK. WE SHOULD FOCUS ON MATERIAL DIRECTLY RESPONDING TO THE REFEREES. INCORPORATING THE EDITS ALSO IN THE LETTER HELPS TO MAKE SURE THE CHANGES ARE PUT IN THE CONTEXT OF THE REFEREE REQUESTS.}
+All likelihood maximization in this article uses the marginalized variant of panel iterated filtering (MPIF; Fig.~\ref{fig:pif}; Algorithm~S1), rather than the panel iterated filter of \citet{breto20} in its original form.
+Both algorithms extend iterated filtering \citep{ionides15} to PanelPOMP models by associating a perturbed parameter value with each particle $j$ and using particle-filter resampling to concentrate the parameter swarm around the maximum likelihood estimate; they differ only in the parameter resampling step.
+When the swarm is filtered through the data of unit $u$, the algorithm of \citet{breto20} resamples not only the shared parameters $\phi$ and the focal unit's parameters $\psi_u$ but also the parameters $\psi_{\tilde u}$ of every other unit $\tilde u \neq u$, even though the data for unit $u$ are uninformative about $\psi_{\tilde u}$.
+The marginalized variant instead resamples only $\phi$ and $\psi_u$, leaving each $\psi_{\tilde u}$ unchanged while filtering through unit $u$.
+MPIF and PIF become different only in the presence of unit-specific parameters; they are identical when all parameters are shared between all units.
+We adopt MPIF here because \citet{wheeler25} show that it has favorable theoretical and practical properties.}
 
 \newcommand\editSetToZero{fixed at zero.}
 
