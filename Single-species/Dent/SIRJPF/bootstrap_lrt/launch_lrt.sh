@@ -22,12 +22,15 @@ K="${2:?need <K> (workers on this GPU)}"
 shift 2
 TARGETS=("$@"); [ "${#TARGETS[@]}" -eq 0 ] && { echo "need targets (null + alts)"; exit 2; }
 HERE="$(cd "$(dirname "$0")" && pwd)"
-N=100
-per=$(( (N + K - 1) / K ))           # ceil(100/K) -> K contiguous chunks
+# b sub-range (default full 1..100). Set LRT_B0/LRT_B1 to split ONE family across
+# GPUs, e.g. GPU 1 does LRT_B0=1 LRT_B1=50, GPU 2 does LRT_B0=51 LRT_B1=100.
+N0="${LRT_B0:-1}"; N1="${LRT_B1:-100}"
+span=$(( N1 - N0 + 1 ))
+per=$(( (span + K - 1) / K ))        # ceil(span/K) -> K contiguous chunks within [N0,N1]
 
-i=0; b0=1
-while [ "$b0" -le "$N" ]; do
-  i=$((i+1)); b1=$(( b0 + per - 1 )); [ "$b1" -gt "$N" ] && b1=$N
+i=0; b0=$N0
+while [ "$b0" -le "$N1" ]; do
+  i=$((i+1)); b1=$(( b0 + per - 1 )); [ "$b1" -gt "$N1" ] && b1=$N1
   tag="g${GPU}w${i}"; sess="lrt_${tag}"
   tmux new -d -s "$sess" \
     "cd '$HERE' && CUDA_VISIBLE_DEVICES=$GPU PYPOMP_BATCH=${PYPOMP_BATCH:-300} PYPOMP_NSTARTS=${PYPOMP_NSTARTS:-300} ./run_lrt_sweep.sh $tag $b0 $b1 ${TARGETS[*]}"

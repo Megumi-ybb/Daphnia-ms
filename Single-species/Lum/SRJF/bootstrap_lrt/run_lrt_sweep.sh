@@ -58,6 +58,11 @@ echo "=== LRT sweep $TAG | GPU=${CUDA_VISIBLE_DEVICES:-?} | b ${B0}..${B1} | tar
 
 for b in $(seq "$B0" "$B1"); do
   for t in "${TARGETS[@]}"; do
+    # Resume on canonical OUTPUT existence too (not just the per-worker done-list),
+    # so the run can be re-sharded across GPUs without redoing finished fits.
+    # Safe here: this run's results dirs started empty, so any lrt_*.rds present is fresh.
+    if [ "$t" = "null" ]; then outf="results_null/lrt_null_${b}.rds"; else outf="results_alt/lrt_${t}_${b}.rds"; fi
+    if [ -f "$outf" ]; then echo "skip (output exists) target=$t b=$b" | tee -a "$LOG"; continue; fi
     if grep -qx "$t $b" "$DONE"; then
       echo "skip (done) target=$t b=$b" | tee -a "$LOG"; continue
     fi
