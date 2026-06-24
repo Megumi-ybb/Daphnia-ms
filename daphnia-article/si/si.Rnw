@@ -46,11 +46,6 @@
 \newcommand\eic[1]{\textcolor{orange}{[EI: #1]}}
 \newcommand\byc[1]{\textcolor{blue}{[BY: #1]}}
 \newcommand\TODO[1]{\textcolor{red}{[TODO: #1]}}
-% \bye is the revision-pass flag used in the response letter and main text.
-% Renders in purple so it visually separates from the existing \byc note macro.
-% Implemented as a colour group rather than \textcolor{...}{...} so the body
-% can span multiple paragraphs without LaTeX's "paragraph ended before
-% \@textcolor was complete" error.
 \providecommand\bye[1]{{\color{purple}[BY: #1]}}
 
 \renewcommand{\contentsname}{Supplementary Content}
@@ -147,7 +142,7 @@ else{
 }
 }
 
-# LRT helper: compute p-value comparing alternative (unit-specific) vs null (all-shared) model
+
 lrt_pvalue <- function(ll_alt, AIC_alt, ll_null, AIC_null) {
   if (any(is.na(c(ll_alt, AIC_alt, ll_null, AIC_null)))) return(NA_real_)
   k_alt <- (AIC_alt + 2 * ll_alt) / 2
@@ -159,11 +154,6 @@ lrt_pvalue <- function(ll_alt, AIC_alt, ll_null, AIC_null) {
   pchisq(LRT, df = df, lower.tail = FALSE)
 }
 
-# Add LRT p-values to a parameter table (null model identified by rowname "all_shared").
-# Uses the marginalized (MPIF / block) log-likelihood and AIC. Block resampling is a
-# no-op for the all-shared null (no unit-specific parameters), so block_ll/block_AIC are
-# NA there; we fall back to the ordinary ll/AIC, which equal the marginalized values for
-# that model. This keeps the LRT a like-for-like MPIF-vs-MPIF comparison.
 add_lrt_pvalues <- function(ptable) {
   has_block <- all(c("block_ll", "block_AIC") %in% colnames(ptable))
   get_ll  <- function(i) if (has_block && !is.na(ptable[i, "block_ll"]))  ptable[i, "block_ll"]  else ptable[i, "ll"]
@@ -178,7 +168,6 @@ add_lrt_pvalues <- function(ptable) {
   ptable
 }
 
-# Format p-value for LaTeX display
 format_pvalue <- function(p) {
   if (is.na(p)) return("---")
   if (p >= 1) return("$>$0.99")
@@ -187,11 +176,6 @@ format_pvalue <- function(p) {
   sprintf("%.2f", p)
 }
 
-# Attach simulation-based (parametric bootstrap) LRT p-values to a parameter table.
-# Reads bootstrap_pvalues.rds (produced by each family's collect_lrt.R) and joins
-# the p_boot column to ptable by row index using alt_to_row mapping.
-# If the file doesn't exist (HPC jobs not yet complete) the column is all NA,
-# which format_pvalue() renders as "---".
 add_bootstrap_pvalues <- function(ptable, boot_path, alt_to_row) {
   ptable$boot_lrt_pval <- NA_real_
   if (!file.exists(boot_path)) return(ptable)
@@ -289,55 +273,91 @@ Additional generality is provided by the pseudocode in \cite{breto25} that is im
 
 \section{MCAP Coverage Study}\label{sec:mcap-coverage}
 
-\bye{We assess the finite-sample coverage of the Monte Carlo Adjusted Profile (MCAP) confidence intervals by parametric bootstrap: we simulate $B=100$ datasets from the fitted all-shared SIRJPF2 maximum likelihood estimate and, on each, recompute the MCAP profile and check whether its $95\%$ interval contains the data-generating value, for the native and invasive birth rates $r^{\native}$ and $r^{\invasive}$, the parasite spore process noise $\sigma_P$, and the food process noise $\sigma_F$.
-A profile confidence interval is the set of parameter values whose profile log-likelihood lies within a \emph{cutoff} $c$ of the maximum, $\{\theta: \ell^{\max}-\ell(\theta) \le c\}$; the \emph{basic} MCAP interval uses the asymptotic cutoff $c = \chi^2_{1,0.95}/2 = 1.92$.
-Where this under-covers, we also report a \emph{corrected} interval that replaces $1.92$ by the cutoff calibrated to attain $95\%$ coverage in the simulation---the $95$th percentile of the simulated profile drop at the truth, $D = \ell^{\max}-\ell(\theta_{\text{true}})$.
-A larger cutoff gives a wider interval, so the corrected interval is the same profile cut at a higher threshold.
-Table~\ref{Table:mcap-coverage} reports both.
-For $r^{\invasive}$ the profile is flat---it enters the process model only through the product $r^{\invasive} f_S^{\invasive}$ (and $p^{\invasive}$ only through $p^{\invasive} f_S^{\invasive}$), so its level is not separately identifiable and its nominal $94.0\%$ coverage is a degenerate artifact; we omit it from the correction.}
+\bye{
+To see how well the MCAP confidence intervals perform in finite samples, we carried out a parametric bootstrap.
+We simulated $B=100$ datasets from the fitted all-shared SIRJPF2 maximum likelihood estimate, and on each one we recomputed the MCAP profile and asked whether its $95\%$ interval contained the value that generated the data. 
+We did this for four parameters chosen to span the range of identifiability: the native and invasive birth rates $r^{\native}$ and $r^{\invasive}$, the parasite-spore process noise $\sigma_P$, and the food process noise $\sigma_F$.
+
+A profile confidence interval collects the parameter values whose profile log-likelihood lies within a cutoff $c$ of the maximum, $\{\theta:\ell^{\max}-\ell(\theta)\le c\}$.
+The basic MCAP interval uses the asymptotic cutoff $c=\chi^2_{1,0.95}/2=1.92$.
+Where this under-covers, we also report a corrected interval that replaces $1.92$ by the cutoff needed to reach $95\%$ coverage in the simulation, namely the $95$th percentile of the profile drop at the truth, $D=\ell^{\max}-\ell(\theta_{\text{true}})$.
+A larger cutoff widens the interval, so the corrected interval is simply the same profile cut at a higher threshold. Table~\ref{Table:mcap-coverage} reports both.
+
+The invasive birth rate $r^{\invasive}$ is a special case.
+It enters the process model only through the product $r^{\invasive}f_S^{\invasive}$, just as $p^{\invasive}$ enters only through $p^{\invasive}f_S^{\invasive}$, so its level is not separately identifiable and its profile is essentially flat.
+Its nominal $94.0\%$ coverage is therefore a degenerate artifact, and we leave it out of the correction.
+}
 
 \begin{table}[ht]
 \centering
 \small
 \setlength{\tabcolsep}{4pt}
-\caption{\label{Table:mcap-coverage}\bye{Parametric-bootstrap coverage of the MCAP $95\%$ confidence intervals (log scale) across $B=100$ datasets simulated from the SIRJPF2 all-shared maximum likelihood estimate. The \emph{basic} interval uses the asymptotic cutoff $c=1.92$ and reproduces Table~1 of the main text; the \emph{corrected} interval re-cuts the same profile at the calibrated cutoff $c$ that targets $95\%$ coverage. The native birth rate $r^{\native}$ is biased high and the noise parameters $\sigma_P,\sigma_F$ biased low, all on weakly-identified ridges; $r^{\invasive}$ is non-identifiable (flat profile) and omitted from the correction.}}
+\caption{\label{Table:mcap-coverage}\bye{
+Parametric-bootstrap coverage of the MCAP $95\%$ confidence intervals, on the log scale, across $B=100$ datasets simulated from the all-shared SIRJPF2 maximum likelihood estimate.
+The basic interval uses the asymptotic cutoff $c=1.92$ and matches Table~1 of the main text; the corrected interval re-cuts the same profile at the calibrated cutoff $c$ that targets $95\%$ coverage. 
+The native birth rate $r^{\native}$ is biased a little high and the noise parameters $\sigma_P$ and $\sigma_F$ a little low, all on weakly identified ridges. 
+The invasive birth rate $r^{\invasive}$ has a flat profile and is not separately identifiable, so we omit it from the correction.
+}}
 \begin{tabular}{lccccccc}
 \toprule
- & Truth & Mean MCAP & \multicolumn{2}{c}{Basic ($c=1.92$)} & \multicolumn{3}{c}{Corrected} \\
+ & Truth & MCAP & \multicolumn{2}{c}{Basic ($c=1.92$)} & \multicolumn{3}{c}{Corrected} \\
 \cmidrule(lr){4-5}\cmidrule(lr){6-8}
 Parameter & (log) & MLE (log) & $95\%$ CI & cov. & cutoff $c$ & $95\%$ CI & cov. \\
 \midrule
-$r^{\native}$   & $3.71$  & $4.17$  & $[3.27,\,5.27]$   & $88.0\%$ & $2.79$ & $[3.12,\,5.71]$   & $95.0\%$ \\
-$\sigma_P$      & $-1.30$ & $-1.72$ & $[-3.12,\,-0.87]$ & $87.0\%$ & $3.91$ & $[-3.52,\,-0.56]$ & $95.0\%$ \\
-$\sigma_F$      & $-1.94$ & $-2.49$ & $[-2.92,\,-1.46]$ & $76.0\%$ & $4.78$ & $[-4.11,\,-1.06]$ & $95.0\%$ \\
+$r^{\native}$   & $3.71$  & $4.03$  & $[3.27,\,5.27]$   & $88.0\%$ & $2.79$ & $[3.12,\,5.71]$   & $95.0\%$ \\
+$\sigma_P$      & $-1.30$ & $-1.59$ & $[-3.12,\,-0.87]$ & $87.0\%$ & $3.91$ & $[-3.52,\,-0.56]$ & $95.0\%$ \\
+$\sigma_F$      & $-1.94$ & $-2.17$ & $[-2.92,\,-1.46]$ & $76.0\%$ & $4.77$ & $[-4.11,\,-1.06]$ & $95.0\%$ \\
 $r^{\invasive}$ & $12.28$ & flat    & \multicolumn{5}{c}{non-identifiable; nominal $94.0\%$ coverage degenerate} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\bye{Two points frame these numbers. First, the undercoverage is a genuine finite-sample displacement of the maximum likelihood estimate along weakly-identified ridges, not a numerical artifact: a three-log-likelihood diagnostic on representative simulated datasets shows the production profiles reach a higher likelihood than a 20-chain global search warm-started at the truth (so they are not under-converged), and the implied MLE-to-truth gap of about $4.5$--$8.5$ log-likelihood units sits below the asymptotic Wilks envelope $p/2 = 12$ for the $p = 24$ free parameters---consistent with a weakly-identified model on a short, eight-unit panel rather than a failure of the MCAP construction. Second, the corrected interval is a parametric-bootstrap calibration from the fitted estimate, reliable only insofar as the model is correctly specified and $\hat\theta$ approximates the truth, with a cutoff that is itself noisy at $B = 100$; recalibrating the cutoff on a random half of the datasets and measuring coverage on the held-out half gives about $93\%$ out-of-sample coverage (mean over $500$ splits; $93.0$--$93.3\%$ across the three parameters), so the correction captures a genuine, generalisable feature rather than overfitting its own simulations. We therefore read the parametric-bootstrap coverage as an honest, exploratory characterisation of uncertainty: with several weakly-identified parameters, the analysis maps which mechanisms the panel identifies and quantifies their finite-sample uncertainty rather than certifying $95\%$ coverage for downstream decisions. The practical content of Table~\ref{Table:mcap-coverage} is that attaining nominal coverage in this richly parameterised model requires intervals roughly $1.3$ to $2.1$ times wider than the asymptotic ones; we report the basic MCAP interval as the primary, directly comparable estimate and the corrected interval as a transparent measure of that finite-sample cost.}
+\bye{
+Two things are worth saying about these numbers.
+The first is that the undercoverage is a genuine finite-sample effect rather than a numerical artifact.
+A three-log-likelihood diagnostic on representative simulated datasets shows that the production profiles reach a higher likelihood than a twenty-chain global search started from the truth, so the profiles are not simply under-converged.
+The resulting gap between the maximum likelihood estimate and the truth, about $4.5$ to $8.5$ log-likelihood units, sits below the asymptotic Wilks expectation of $p/2=12$ for the $p=24$ free parameters.
+This is what we would expect from a weakly identified model fit to a short panel of eight units, and not a failure of the MCAP construction itself.
+
+The second is that the corrected interval should be read with the same caution.
+It is a parametric-bootstrap calibration from the fitted estimate, so it is reliable only to the extent that the model is correctly specified and $\hat\theta$ is close to the truth, and its cutoff is itself noisy at $B=100$.
+To check that the correction captures something real rather than fitting its own simulations, we recalibrated the cutoff on a random half of the datasets and measured coverage on the held-out half; averaged over $500$ such splits this gives about $93\%$ out-of-sample coverage. 
+We therefore read the coverage study as an honest, exploratory description of uncertainty rather than a guarantee of $95\%$ coverage for downstream decisions. 
+In practical terms, Table~\ref{Table:mcap-coverage} shows that reaching nominal coverage in this richly parameterized model takes intervals roughly $1.3$ to $2.1$ times wider than the asymptotic ones. 
+We report the basic MCAP interval as the primary, directly comparable estimate, and the corrected interval as a transparent measure of that finite-sample cost.
+}
 
 \bye{
 \begin{figure}[ht]
 \centering
-\begin{tabular}{cc}
-\includegraphics[width=0.45\linewidth]{coverage/coverage_plot_rn.pdf} &
-\includegraphics[width=0.45\linewidth]{coverage/coverage_plot_sigP.pdf} \\
-(a) $r^{\native}$ & (b) $\sigma_P$ \\[2mm]
-\includegraphics[width=0.45\linewidth]{coverage/coverage_plot_sigF.pdf} &
-\includegraphics[width=0.45\linewidth]{coverage/coverage_plot_ri.pdf} \\
-(c) $\sigma_F$ & (d) $r^{\invasive}$ (product ridge; dropped) \\
-\end{tabular}
-\caption{\label{fig:mcap-coverage-plots}Empirical coverage of MCAP 95\% confidence intervals across $B=100$ bootstrap datasets simulated from the SIRJPF2 all-shared MLE, for the four target parameters. In each panel, the horizontal lines mark each simulated dataset's MCAP confidence interval, ordered by midpoint; the vertical solid line marks the true parameter value; a CI ``covers'' if it intersects the true value. Panels~(a)--(c) show identifiable parameters with finite-sample undercoverage driven by displacement of the profile maximum likelihood estimate along weakly-identified ridges---$r^{\native}$ biased high, $\sigma_P$ and $\sigma_F$ biased low, with the largest displacement and the lowest coverage for $\sigma_F$---which the calibrated cutoff widens the interval to correct. Panel~(d) shows the $r^{\invasive}$ profile, which is flat on the parameter axis because $r^{\invasive}$ enters the SIRJPF2 process model only through the recruitment product $r^{\invasive} f_S^{\invasive}$.}
+\includegraphics[width=\linewidth]{coverage/coverage_combined.pdf}
+\caption{\label{fig:mcap-coverage-plots}
+Empirical coverage of the MCAP $95\%$ confidence intervals across $B=100$ bootstrap datasets simulated from the all-shared SIRJPF2 maximum likelihood estimate, for the four target parameters. 
+In each panel the horizontal lines are the simulated datasets' MCAP intervals, ordered by midpoint, and the vertical line marks the true value; an interval covers if it crosses that line. 
+Panels~(a)--(c) are the identifiable parameters, whose undercoverage comes from the maximum likelihood estimate being displaced along weakly identified ridges: $r^{\native}$ a little high, $\sigma_P$ and $\sigma_F$ a little low, with the largest displacement and the lowest coverage for $\sigma_F$. 
+Panel~(d) is the $r^{\invasive}$ profile, which is flat because $r^{\invasive}$ enters the process model only through the recruitment product $r^{\invasive}f_S^{\invasive}$.}
 \end{figure}}
 
 \section{Model selection: Simulation study of AIC and LRT}\label{sec:aic-power}
 
-\bye{Section stub created for the revision (Task~\#2), addressing the referee's request for a Stocks~(2020) Table~D3-style assessment. Computation owed: simulate panels under (a)~all-shared truth and (b)~one-parameter-unit-specific truth for SIRJPF2 (and ideally SRJF2 / Dent SIRJPF if compute allows); for each simulated panel refit both null and alternative models, compute AIC, and tabulate the proportion of simulations in which AIC selects the data-generating model. Suggested sample size: 50--100 simulated panels per truth scenario. Output target: a single table analogous to \citet{stocks20} Supplementary Table~D3 plus a one-paragraph narrative.}
+\bye{The referee asked for simulation studies, in the style of \citet{stocks20}, to check that our model-selection tools behave well for these partially observed stochastic models. We do this in two complementary ways. The simulation-based, or parametric bootstrap, likelihood-ratio test is reported next to the classical $\chi^2$ test in each model-comparison table, for the SIRJPF2 model in Table~\ref{Table:SIRJPF2_model_comparison}, and the following section explains with a simple toy model why the two references disagree for these high-dimensional comparisons. Here we address the complementary question of how reliably AIC selects the data-generating model.
 
-\eic{ALSO PUT HERE THE EXPLANATION OF THE SIMULATION-BASED LRT?}
+We focus on the native infection clearance rate $\theta_I^{\native}$, the one parameter whose unit-specific version was favoured by the asymptotic tests. We simulate panels under two truths: one in which every parameter is shared, at the fitted all-shared SIRJPF2 estimate, and one in which $\theta_I^{\native}$ is genuinely unit-specific, varying across the eight units while the other parameters stay at the all-shared estimate. For each simulated panel we fit both the all-shared model and the $\theta_I^{\native}$-unit-specific model with the same iterated-filtering protocol used in the main analysis, compute the AIC of each, and record which model AIC prefers. The entries below are proportions over the simulated panels, so the diagonal gives the rate at which AIC recovers the truth.
 
-\section{A toy model suggesting why the LRT is not chi-square when testing for unit-specific parameters}
+\begin{center}
+\begin{tabular}{lcc}
+\hline
+Data-generating truth & AIC selects all-shared & AIC selects $\theta_I^{\native}$ unit-specific \\
+\hline
+All-shared                       & ?? & ?? \\
+$\theta_I^{\native}$ unit-specific & ?? & ?? \\
+\hline
+\end{tabular}
+\end{center}
+
+The two diagonal entries are the quantities of interest: AIC's specificity under the all-shared truth, and its power under a genuinely unit-specific truth. We will report them here once the simulation completes, and connect them to the bootstrap likelihood-ratio finding that, on the observed data, no unit-specific elaboration improves on the all-shared model.}
+
+\section{Discussion about the failure of chi-square LRT}
 
 We were initially surprised when the simulation study showed that the likelihood ratio test statistics had considerable deviation from the chi-square distribution suggested by a Wilks approximation.
 To validate this finding, and to investigate whether it might be a general property of a class of POMP models, we developed a simple toy model demonstrating this behavior.
@@ -350,8 +370,10 @@ This is a mixed effect model with $U$ units, each with $N$ measurements, where e
 The null hypothesis of a shared mean, $H_0: \mu_u=\mu$, is to be tested against the unit-specific alternative $H_1$ for which $\mu_u$ is unconstrained.
 The random effect $\eta_u$ is a simplification of the process noise in a POMP model, and $\epsilon_{un}$ is a simple measurement error model.
 Under $H_0$ and $H_1$, the likelihood of data $y^*_{un}$ can be obtained directly by a multivariate normal calculation.
-Under $H_1$, the likelihood is maximized when $\tau=0$ for all $U$ and $N$.
-Therefore, the MLE is inconsistent in a limit as $U$ and/or $N$ increase to infinity.
+\bye{
+Under $H_1$, with the unit means $\mu_u$ free, the random-effect variance is estimated at its boundary, $\hat\tau=0$, for every $U$ and $N$, because the free fixed effects absorb the between-unit variation that the random effect would otherwise explain. 
+The alternative therefore does not recover the data-generating $\tau$, and it is this boundary behaviour, not the shared structure of the null, that voids the regularity conditions behind the chi-square limit.
+}
 
 General theory for the likelihood ratio test gives a chi-square distribution under local asymptotic normality \citep[][Theorem 16.7]{vandervaart00}, without necessarily requiring independence \citep{geyer94}.
 However, these results requires a consistent MLE under $H_1$.
@@ -360,31 +382,6 @@ In our situation, when $\tau$ is large, we may expect that the log-likelihood ad
 Empirically, this is the case, and Figure~\ref{fig:lrt-sim} shows that even a moderate value of $\tau$ can give rise to a substantial discrepancy between the actual null distribution and the chi-square approximation.
 
 <<lrt-test,echo=FALSE>>=
-############################################################
-## Random effects versus fixed effects LRT simulation
-## Base R only
-############################################################
-
-############################################################
-## Model:
-##
-## H0: Y_ij = mu + R_i + epsilon_ij
-##     R_i ~ N(0, tau^2), epsilon_ij ~ N(0, sigma^2)
-##
-## H1: Y_ij = mu_i + R_i + epsilon_ij
-##
-## Balanced panel: i = 1,...,I, j = 1,...,J
-##
-## We use the marginal likelihood integrating out R_i.
-##
-## The text uses U in place of I and V in place of J, for
-## consistency with PanelPOMP notation
-############################################################
-
-
-############################################################
-## Sufficient statistics
-############################################################
 
 suff_stats <- function(y) {
   y <- as.matrix(y)
@@ -409,37 +406,6 @@ suff_stats <- function(y) {
     SSB = SSB
   )
 }
-
-
-############################################################
-## Marginal likelihood details
-##
-## For one unit, covariance is
-##
-##   Sigma = sigma^2 I_J + tau^2 11'
-##
-## Define
-##
-##   A = sigma^2
-##   B = sigma^2 + J tau^2
-##
-## Then
-##
-##   |Sigma| = A^(J-1) B
-##
-## and the quadratic form decomposes into
-##
-##   SSW_i / A + J (ybar_i - mean)^2 / B.
-##
-## Under H0, mean = mu.
-## Under H1, mean = mu_i, so the second term is zero
-## after setting mu_i = ybar_i.
-############################################################
-
-
-############################################################
-## H0 fit by closed-form marginal MLE
-############################################################
 
 fit_h0_stats <- function(I, J, SSW, SSB) {
   if (I < 2) stop("Need I >= 2.")
@@ -501,23 +467,6 @@ fit_h0 <- function(y) {
   fit
 }
 
-
-############################################################
-## H1 fit by closed-form marginal MLE
-##
-## Under H1:
-##
-##   mu_i_hat = ybar_i
-##
-## and the likelihood is maximized at tau^2_hat = 0.
-##
-## Therefore:
-##
-##   sigma2_hat = SSW / (I J)
-##
-## This is the usual ML denominator, not the unbiased
-## residual denominator I(J - 1).
-############################################################
 
 fit_h1_stats <- function(I, J, SSW) {
   if (I < 2) stop("Need I >= 2.")
@@ -914,32 +863,11 @@ bootstrap_lrt_pvalue <- function(y,
 
 @
 
-\begin{figure}[h]
+\begin{figure}[ht]
 \centering
-<<fig-lrt-sim, fig.width=7,fig.height=4,out.width="\\textwidth", echo=FALSE, cache=cache_option>>=
-
-U = 10
-N = 20
-sigma = 1
-tau = 0.5
-
-sim <- simulate_lrt(
-  nsim = 20000,
-  I = U,
-  J = N,
-  sigma = sigma,
-  tau = tau,
-  seed = 123,
-  method = "suff"
-)
-
-summ <- summarize_lrt(sim)
-# print(summ)
-
-plot_lrt_hist(sim,main="",ylim = c(0,0.1),xlim=c(0,42))
-@
+\includegraphics[width=0.7\linewidth]{fig_S2_lrt_sim.pdf}
 \caption{\label{fig:lrt-sim}
-Histogram of the likelihood ratio statistic (twice the difference of the maximized log-likelihoods) for simulations from $H_0$ with $U=\Sexpr{U}$, $N=\Sexpr{N}$, $\sigma=\Sexpr{sigma}$, $\tau = \Sexpr{tau}$..
+Histogram of the likelihood ratio statistic (twice the difference of the maximized log-likelihoods) for simulations from $H_0$ with $U=10$, $N=20$, $\sigma=1$, $\tau = 0.5$.
 The red line shows the chi-square approximation based on Wilks' Theorem.
 }
 \end{figure}
@@ -952,31 +880,40 @@ For likelihood ratio tests of shared versus unit-specific parameters, in the pre
 
 \section{No-\texorpdfstring{$F$}{F} Ablation}\label{sec:no-F-ablation}
 
-\bye{To assess whether the latent food compartment $F$ is a load-bearing component of the SIRJPF2 model rather than an incidental modeling choice, we fit an ablated model in which $F$ is held fixed at its initial value $F(t_0)=16.667$ for the entire trajectory.
-Concretely, we remove the $F$ dynamics (its consumption losses, the renewal inflow, and the $F$ process noise $\sigma_F$) so that food no longer depletes as it is consumed by the Daphnia population; the birth terms still read $F$ through $r^{\species} f_S^{\species} F$, but because $F$ is now constant the per-capita recruitment rate no longer responds to a depletable resource.
-The ablated model is fit to the observed data with exactly the same panel iterated-filtering protocol as the all-shared SIRJPF2 model (three rounds of \texttt{mif2}, $N_{\mathrm{mif}}=150/150/400$, $N_p=1000$ particles, geometric cooling with \texttt{cooling.fraction.50}~$=0.7$), warm-started from the all-shared maximum likelihood estimate.
-Dropping $\sigma_F$ reduces the free-parameter count from $24$ to $23$ (the boundary-fixed $\sigma_{S^{\native}}=\sigma_{S^{\invasive}}=0$ remain excluded from both counts), so the ablation is favoured by the AIC complexity penalty; the two models are non-nested, since freezing the $F$ dynamics is a structural change rather than a parameter restriction, and we therefore compare them by AIC.}
+\bye{
+The latent food compartment $F$ is central to the way the model explains the population dynamics,  we fit an ablated model in which $F$ is held fixed at its initial value $F(t_0)=16.667$ for the whole trajectory. 
+In effect we remove the food dynamics, that is, its consumption losses, its renewal inflow, and the process noise $\sigma_F$, so that food no longer depletes as the Daphnia consume it. 
+The birth terms still read the food level through $r^{\species}f_S^{\species}F$, but with $F$ held constant the per-capita recruitment rate no longer responds to a depletable resource. We fit the ablated model to the observed data using the same panel iterated-filtering protocol as the all-shared SIRJPF2 model, warm-started from the all-shared maximum likelihood estimate. 
+Dropping $\sigma_F$ lowers the free-parameter count from $24$ to $23$, so the ablation is actually favoured by the AIC penalty. 
+Because freezing the food dynamics is a structural change rather than a parameter restriction, the two models are non-nested and we compare them by AIC.
+}
 
 \begin{table}[ht]
 \centering
-\caption{\label{Table:no-F-ablation}\bye{Comparison of the all-shared SIRJPF2 model against its no-$F$ ablation, in which the food compartment is held fixed at its initial value. Log-likelihoods are evaluated by particle filtering; the standard error shown for the ablation is the Monte Carlo standard error of the maximised log-likelihood across replicate searches. Despite using one fewer parameter, the no-$F$ model is decisively worse by AIC.}}
+\caption{\label{Table:no-F-ablation}\bye{
+Comparison of the all-shared SIRJPF2 model with its no-$F$ ablation, in which the food compartment is held fixed at its initial value. 
+Log-likelihoods are evaluated by particle filtering, and the standard error shown for the ablation is the Monte Carlo standard error of the maximized log-likelihood across replicate searches. 
+Despite using one fewer parameter, the no-$F$ model is decisively worse by AIC.
+}}
 \begin{tabular}{lccc}
 \toprule
 Model & Free parameters $k$ & Max log-likelihood & AIC \\
 \midrule
 All-shared (depletable $F$) & $24$ & $-880.6$            & $1809.1$ \\
-No-$F$ ($F$ held constant)  & $23$ & $-887.8\ (\pm 0.2)$ & $1821.6$ \\
+No-$F$ ($F$ held constant)  & $23$ & $-887.8$ & $1821.6$ \\
 \midrule
 \multicolumn{3}{l}{$\Delta\mathrm{AIC}$ (no-$F$ $-$ all-shared)} & $+12.4$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\bye{Freezing the food compartment costs approximately $7.2$ log-likelihood units relative to the all-shared model, even though the ablated model is granted a free parameter back; on the AIC scale the depletable-$F$ model is preferred by $\Delta\mathrm{AIC}\approx 12.4$, which is decisive on the conventional evidential scale ($\Delta\mathrm{AIC}>10$).
-The mechanistic interpretation is direct.
-With a non-depleting resource, recruitment into the juvenile classes $J^{\native}$ and $J^{\invasive}$ continues at an undiminished rate as the adult population grows, so the model cannot reproduce the resource-limited turnover that drives the observed rise-and-fall in Daphnia abundance.
-The feedback in which a growing population draws down $F$, which in turn throttles recruitment, is precisely the mechanism that generates the peak-then-collapse signature in the data.
-This ablation therefore confirms that explicit modeling of resource depletion, via the latent food compartment, is necessary rather than incidental, addressing the editor's question of whether the role of $F$ should be demonstrated explicitly.}
+\bye{
+Holding the food compartment fixed costs about $7.2$ log-likelihood units, even though the ablated model is handed a free parameter back. 
+On the AIC scale the model with a depletable food compartment is preferred by $\Delta\mathrm{AIC}\approx 12.4$, which is decisive on the conventional evidential scale. 
+When the resource does not deplete, recruitment into the juvenile classes $J^{\native}$ and $J^{\invasive}$ continues at an undiminished rate as the adult population grows, and the model cannot reproduce the resource-limited turnover that drives the observed rise and fall in Daphnia abundance.
+It is exactly the feedback in which a growing population draws down the food supply, which in turn slows its own recruitment, that produces the peak-then-collapse signature in the data. 
+The ablation confirms that explicitly modeling resource depletion through the latent food compartment is a necessary part of the model rather than an incidental choice.
+}
 
 \clearpage
 
@@ -1025,7 +962,7 @@ Since the log-likelihoods in our framework are evaluated via Monte Carlo methods
 The following table shows the comparison of different models under different settings of unit specific parameter.
 Each row represents a different model configuration, with specific parameters designated as either unit-specific or shared across all units.
 Within the table, the max log-likelihood and AIC columns report the maximum log-likelihood and AIC values for each model configuration, where a lower AIC indicates a more favorable balance between model fit and complexity. Similarly, the max log-likelihood (MPIF) and AIC (MPIF) columns provide analogous metrics under the marginalized method setting for the PIF procedure. The LRT $p$-value column reports the $p$-value from the likelihood ratio test of each unit-specific model against the all-shared baseline, with ``---'' denoting the reference model.
-\begin{table}[h!]
+\begin{table}[ht]
 \centering
 \small
 \begin{center}
@@ -1048,7 +985,29 @@ $r^{\species}_{\unit}$ & \Sexpr{mysignif_ll_AIC(target_para_parameter_table[8,]$
 \label{Table:SIRJPF2_model_comparison}
 \end{table}
 
-\bye{Under the standard (unmarginalized) panel iterated filtering the all-shared model ($\varnothing$) attains the lowest AIC; under the marginalized panel iterated filtering (MPIF) reported in the (MPIF) columns, making $\theta_I$ unit-specific attains the lowest AIC ($1802.1$ versus $1809.1$ for the all-shared model) and the $\chi^2$ likelihood-ratio test flags $\theta_I$ ($p=0.001$) and $p$ ($p=0.009$), with no other parameter improving significantly. The $\chi^2$ and bootstrap references in Table~\ref{Table:SIRJPF2_model_comparison} disagree for $\theta_I$ and $p$, and the $\chi^2$ reference is not reliable in this setting: Wilks' theorem presumes an exactly maximized likelihood, interior and well-identified parameters, and a sample size large relative to the parameter dimension, none of which holds for a fourteen-parameter unit-specific extension fit by Monte Carlo particle filtering on an eight-unit panel. The block-resampled parametric bootstrap replaces the asymptotic reference with the empirical null distribution of $\Lambda$, obtained by refitting both models---with the identical estimation procedure and particle count---to $B=100$ datasets simulated from the fitted all-shared null; it is therefore the appropriate test, and it places $\theta_I$ ($p_{\mathrm{boot}}=0.13$) and $p$ ($0.41$) well above the $0.05$ level, supporting the all-shared specification. The disagreement is explained by the shape of this empirical null: for the fourteen-degree-of-freedom alternatives the simulated $\Lambda$ is centred near $26$ rather than the $\chi^2_{14}$ mean of $14$, because maximizing over many added unit-specific parameters by stochastic search absorbs Monte Carlo and finite-sample fluctuations that an exactly maximized likelihood would not. This excess grows with both the number of added parameters and their identifiability---it is largest for the weakly identified recruitment parameters $r$ and $f_S$ (simulated mean $\Lambda$ roughly $2.5$ times the degrees of freedom) and mildest for the better-identified $\theta_S$---so the asymptotic $\chi^2$ increasingly overstates significance, and the observed $\Lambda=35$ for $\theta_I$, extreme against $\chi^2_{14}$, is unremarkable against the true null. That this is a genuine failure of the asymptotics rather than a numerical artifact is confirmed by the lower-dimensional, well-identified control $\theta_P$ (seven degrees of freedom), for which the bootstrap null coincides with $\chi^2_7$ and the two references agree ($0.23$ versus $0.28$). We accordingly take the bootstrap as the primary reference and report the $\chi^2$ values as a familiar but, in this regime, anti-conservative benchmark.}
+\bye{
+Under the standard panel iterated filter the all-shared model attains the lowest AIC while under the marginalized (block) filter reported in the MPIF columns the picture changes. 
+Making $\theta_I$ unit-specific gives the lowest AIC, and the $\chi^2$ likelihood-ratio test flags both $\theta_I$ ($p=0.001$) and $p$ ($p=0.009$), with no other parameter significant. 
+We do not trust these signals. 
+Wilks' theorem asks for an exactly maximized likelihood, interior and well-identified parameters, asymptotic assumption, and a sample size large relative to the number of parameters under test, and a fourteen-parameter unit-specific extension fit by Monte Carlo particle filtering on an eight-unit panel meets none of these conditions.
+
+We therefore replace the asymptotic reference with a parametric bootstrap. 
+For each alternative we simulate $B=100$ datasets from the fitted all-shared model and refit both the null and the alternative to every one of them, with the identical estimation procedure and particle count, which gives the empirical null distribution of the likelihood-ratio statistic $\Lambda$. 
+Against this reference neither $\theta_I$ ($p_{\mathrm{boot}}=0.13$) nor $p$ ($p_{\mathrm{boot}}=0.41$) is significant, and we retain the all-shared model.
+
+The disagreement between the two references is visible in the bootstrap null itself. 
+For the fourteen-parameter alternatives the simulated $\Lambda$ does not sit near the $\chi^2_{14}$ mean of $14$: its average across these alternatives is about $28$, ranging from roughly $17$ for $\theta_S$ to $39$ for $r$. 
+This excess arises because maximizing over many added unit-specific parameters by stochastic search absorbs Monte Carlo and finite-sample fluctuation that an exactly maximized likelihood would not, and it grows with how weakly the added parameters are identified. 
+Measured against its own bootstrap null, which is centred near $26$, the observed $\Lambda=35$ for $\theta_I$ is unremarkable, even though it is extreme against $\chi^2_{14}$.
+
+That this is a failure of the asymptotics rather than an artifact of our search is confirmed by a low-dimensional, well-identified control. 
+For $\theta_P$, which adds only seven parameters, the bootstrap null is close to $\chi^2_7$---its mean is about $7$---and the two references agree ($p=0.23$ against $p_{\mathrm{boot}}=0.28$). 
+Where Wilks' conditions hold the bootstrap reproduces the chi-square, and where they fail it corrects it.
+
+We accordingly take the bootstrap as the primary test and report the $\chi^2$ values as a familiar but, in this regime, anti-conservative benchmark. 
+One caveat concerns $\theta_I$, the closest of the seven alternatives to significance: at $B=100$ its bootstrap $p$-value of $0.13$ carries its own Monte Carlo uncertainty, and we are increasing the number of bootstrap replicates to estimate it more precisely. 
+It nonetheless sits well above the conventional $0.05$ level, so for this panel the conclusion that no unit-specific elaboration improves on the all-shared model is significant.
+}
 
 \begin{figure}[H]
     \centering
@@ -1552,7 +1511,7 @@ $\tau^{\invasive}_{I}$      &  Measurement dispersion for infected adult        
     \label{fig:SIRJPF_native_profile}
 \end{figure}
 
-\begin{table}[h!]
+\begin{table}[ht]
 \centering
 \begin{center}
 \begin{tabular}{||c |c |c |c|c|c|c||}
@@ -1574,7 +1533,7 @@ $\theta_{P,\unit}$& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[8,]$ll,5)}&
 \label{Table:SIRJPF_dent_model_comparison}
 \end{table}
 
-\begin{table}[h!]
+\begin{table}[ht]
 \centering
 \begin{center}
 \begin{tabular}{||c |c |c |c|c|c|c||}
@@ -1925,7 +1884,7 @@ $\tau^{\invasive}_{S}$      &  Measurement dispersion for susceptible invasive a
 \end{figure}
 
 
-\begin{table}[h!]
+\begin{table}[ht]
 \centering
 \begin{center}
 \begin{tabular}{||c |c |c |c|c|c|c||}
@@ -2365,7 +2324,7 @@ $\tau^{\invasive}_{S}$      &  Measurement dispersion for susceptible adult     
     \label{fig:SRJF_lum_profile}
 \end{figure}
 
-\begin{table}[h!]
+\begin{table}[ht]
 \centering
 \begin{center}
 \begin{tabular}{||c |c |c |c|c|c|c||}
@@ -2383,7 +2342,7 @@ $f^{\native}_{S,\unit}$ & \Sexpr{mysignif_ll_AIC(dent_no_para_parameter_table[4,
 \label{Table:SRJF_dent_model_comparison}
 \end{table}
 
-\begin{table}[h!]
+\begin{table}[ht]
 \centering
 \begin{center}
 \begin{tabular}{||c |c |c |c|c|c|c||}
