@@ -48,11 +48,19 @@ cat("Null fits completed:", null_completed, "/", B, "\n")
 
 # ---- For each alternative, compute bootstrap p-value ----
 results <- data.frame(
-  alt_name = character(),
-  Lambda_obs = numeric(),
-  p_chisq = numeric(),
-  p_boot = numeric(),
-  B_completed = integer(),
+  family       = character(),
+  alt_name     = character(),
+  k_null       = integer(),
+  k_alt        = integer(),
+  df           = integer(),
+  ll_null_obs  = numeric(),
+  ll_alt_obs   = numeric(),
+  Lambda_obs   = numeric(),
+  p_chisq      = numeric(),
+  p_boot       = numeric(),
+  B_completed  = integer(),
+  Lambda_boot_mean = numeric(),
+  Lambda_boot_sd   = numeric(),
   stringsAsFactors = FALSE
 )
 
@@ -85,6 +93,11 @@ for (alt in alt_names) {
   # (the all-shared null has no unit-specific params, so block is a no-op and
   # its plain ll / AIC are the block ll / AIC).
   p_chisq <- lrt_pvalue(alt_ll_obs, alt_AIC_obs, null_ll_obs, null_AIC_obs)
+
+  # Parameter counts and df (block-fit alt vs all-shared null)
+  k_alt  <- (alt_AIC_obs  + 2 * alt_ll_obs)  / 2
+  k_null <- (null_AIC_obs + 2 * null_ll_obs) / 2
+  df     <- round(k_alt - k_null)
 
   # Load bootstrap alt results
   alt_lls <- numeric(B)
@@ -124,11 +137,19 @@ for (alt in alt_names) {
   cat("  Chi-square p-value:", p_chisq, "\n")
 
   results <- rbind(results, data.frame(
-    alt_name = alt,
-    Lambda_obs = Lambda_obs,
-    p_chisq = ifelse(is.null(p_chisq), NA, p_chisq),
-    p_boot = p_boot,
-    B_completed = B_valid,
+    family       = "Dent_SRJF",
+    alt_name     = alt,
+    k_null       = as.integer(k_null),
+    k_alt        = as.integer(k_alt),
+    df           = df,
+    ll_null_obs  = null_ll_obs,
+    ll_alt_obs   = alt_ll_obs,
+    Lambda_obs   = Lambda_obs,
+    p_chisq      = ifelse(is.null(p_chisq), NA, p_chisq),
+    p_boot       = p_boot,
+    B_completed  = B_valid,
+    Lambda_boot_mean = if (B_valid > 0) mean(Lambda_boot) else NA_real_,
+    Lambda_boot_sd   = if (B_valid > 0) sd(Lambda_boot)   else NA_real_,
     stringsAsFactors = FALSE
   ))
 
@@ -153,6 +174,7 @@ for (alt in alt_names) {
 
 # ---- Save results ----
 saveRDS(results, file = "bootstrap_pvalues.rds")
+write.csv(results, file = "bootstrap_pvalues.csv", row.names = FALSE)
 cat("\n\n=== Summary ===\n")
-print(results)
-cat("\nResults saved to bootstrap_pvalues.rds\n")
+print(results, row.names = FALSE)
+cat("\nResults saved to bootstrap_pvalues.{rds,csv}\n")

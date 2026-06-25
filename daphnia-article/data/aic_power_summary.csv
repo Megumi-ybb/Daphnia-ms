@@ -1,0 +1,3 @@
+"truth","n","selects_null","selects_alt","pct_select_alt","mean_Delta_AIC","median_Delta_AIC"
+"shared",50,39,11,22,5.01492953067244,5.88961177948522
+"unit_specific",50,4,46,92,-12.914033375516,-12.1250041843714
