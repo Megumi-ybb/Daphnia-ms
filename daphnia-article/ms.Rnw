@@ -204,6 +204,7 @@ We analyze data from a mesocosm experiment in which two species of the freshwate
 Time series data were collected on replicated mesocosms under six treatment conditions.
 Iterated filtering enables maximization of the likelihood for scientifically motivated nonlinear partially observed Markov process models, providing access to standard likelihood-based methods for parameter estimation, confidence intervals, hypothesis testing, model selection and diagnostics.
 This toolbox allows scientists to propose and evaluate scientifically motivated stochastic dynamic models for panel data, constrained only by the requirement to write code to simulate from the model and to specify a measurement distribution describing how the system state is observed.
+{\revision\editAbstractScience}
 \end{abstract}
 
 \begin{keyword}
@@ -231,6 +232,7 @@ Partially observed Markov process (POMP) models, also known as hidden Markov mod
   Thus, mechanistic models are invaluable tools for addressing challenges in ecology \citep{mouquet15}.
 
   Collections of time series on related but disjoint systems are called panel data, also known as longitudinal data.
+\revision{\editMesocosm}
   Studying the entire panel may allow precision in statistical conclusions that is unattainable from a single unit.
   Alternatively, scientists may be interested in specific differences between the units, requiring the investigation of the entire panel of data.
   For either of these goals, investigation of panel data leads to the challenging statistical task of fitting a collection of related nonlinear or non-Gaussian vector-valued POMP models, called a PanelPOMP model \citep{breto20,breto25}.
@@ -248,6 +250,7 @@ Partially observed Markov process (POMP) models, also known as hidden Markov mod
   A major practical limitation has been the computational difficulty in carrying out inference.
   When Laplace approximations are applicable, the Template Model Builder approach is available \citep{kristensen16}.
 Iterated filtering techniques apply to a more general class of POMP models, but the high-dimensional nature of PanelPOMP models adds additional methodological challenges.
+\revision{\editBayes}
 
   A central question when using model-based statistical inference to investigate ecological dynamics is to discover which biological details are necessary to include in a model to provide an adequate statistical explanation for the data.
   Our approach to answering this question uses standard tools of likelihood-based inference.
@@ -267,12 +270,14 @@ Section~\ref{sec:dis} is a concluding discussion.
 \section{A {\it Daphnia} mesocosm experiment}
 \label{sec:studysystem}
 
+\revision{\editExperimentalGoal}
+\revision{\editDaphnia}
 \textit{D.~dentifera} is native to North American stratified lakes, whereas \textit{D.~lumholtzi} is an invasive species originating from Africa, Asia, and Australia.
 First observed in North America in the 1990s, \textit{D.~lumholtzi} has rapidly expanded across the United States, impacting native species and ecosystem dynamics \citep{havel93,searle16salinization}.
 This leads to ecological interest in understanding competition between \textit{D.~dentifera} and \textit{D.~lumholtzi}, two species with high evolutionary divergence having their most recent common ancestor around 145 million years ago \citep{kotov11,cornetti19}.
 \citet{searle16} hypothesized that the presence of a fast-growing invasive species, which has a high susceptibility to the native parasite {\it M.~bicuspidata}, could amplify the parasite in the native population.
 
-
+\revision{\editParthenogenesis}
 Maturation of juveniles to adults takes approximately five to ten days, depending on environmental conditions.
 In response to adverse environmental cues, \textit{Daphnia} produce males, and females reproduce sexually to produce durable resting eggs called ephippia \citep{radzikowski18,searle16salinization}.
 The ephippia can remain viable for many years, awaiting the return of favorable conditions.
@@ -485,7 +490,7 @@ Transition to the $R$ state represents death or removal of any species.
 \end{figure}
 
 Fig.~\ref{fig:flow_SIRJPF2} shows a diagram showing interactions in a two-species model where the \textit{Daphnia} are susceptible adult female (S), infected adult female (I), or juvenile (J), with a superscript $\invasive$ for invasive and $\native$ for native.
-Male \textit{Daphnia} are excluded from this model because they are absent until late in the experiment, are physically smaller than females, and have low observed infection rates.
+\revision{\editMales}
 We keep track of the aquatic parasite spore density (P) and the food density (F).
 Removal (i.e., death, consumption or destructive sampling) for any species is described by transition to class R.
 This dynamic system extends the basic SIR model fundamental to epidemiology \citep{weiss13}.
@@ -824,8 +829,8 @@ $\tau^{\invasive}_{I}$      &  Measurement dispersion for infected invasive adul
 \hline
 \end{tabular}}
 \caption{
-\byc{Summary of latent dynamic random variables and parameters in the SIRJPF2 model.
-  Estimated parameters have a point estimate and a 95\% Monte Carlo adjusted profile confidence interval (CI).}
+\revision{\editResultsTableCaption}
+\revision{\editReminderShared}
 The superscript $\native$ and $\invasive$ represents native (\textit{D.~dentifera}) and invasive (\textit{D.~lumholtzi}) respectively.
 }
 \label{tab:estimates}
@@ -914,7 +919,7 @@ By contrast, these parameters are better identified in the treatments without th
 
 Alternative  SIRJPF2 model specifications were fitted with various parameters taken to be unit-specific.
 The log-likelihood estimates and corresponding AIC values for these models are presented in Supplementary Table~S-3.
-\bye{Under AIC and the chi-square likelihood-ratio test, making $\theta_I$ unit-specific appears favoured: it attains the lowest AIC in Table~S-3, and the chi-square test gives $p=0.001$. However, these signals are unreliable for these high-dimensional comparisons fitted by Monte-Carlo particle filtering on a short eight-unit panel, where Wilks' regularity conditions fail. A calibrated parametric bootstrap, which provides the appropriate reference distribution here, finds that no unit-specific elaboration yields a statistically significant improvement over the all-shared model.}
+\revision{\editParametricBootstrap}
 Similar results hold for the other treatments (Tables~S-6, S-7, S-9, S-12, S-13).
 Consequently, we choose to select the model with all shared parameters, as it offers a more parsimonious and robust representation of the system dynamics without substantially compromising the explanatory power.
 And the confidence intervals are obtained by the MCAP are shown in Fig.~S-3 for the SIRJPF2 model, and Figs.~S-9, S-10, S-17, S-23, S-24 for other treatments.
@@ -1146,7 +1151,7 @@ Our general plug-and-play framework can be further extended, and information cri
 For example, we could have incorporated the phenomenon that \textit{Daphnia} with advanced infection have reduced feeding rate, or we could have allowed for the possibility that recently infected \textit{Daphnia} can continue to reproduce.
 Additional residual analysis can search for patterns suggesting model improvements, following a similar approach to the residual analysis carried out here.
 
-Although we did not calibrate the model using juvenile data, the addition of latent $J^{\species}_{\unit}$ states leads to an improved statistical fit.
+Although we did not calibrate the model using juvenile data {\revision\editJuveniles}, the addition of latent $J^{\species}_{\unit}$ states leads to an improved statistical fit.
 The inclusion of the juvenile stage provides a delay in the {\em Daphnia} population growth dynamics, and introduces competition between juveniles and adults for available food resources.
 Juveniles rarely exhibit disease, perhaps because of the latency in the parasite's development within its host, but they nevertheless play a significant role in the infection dynamics.
 While we have shown the relevance of age-structured dynamics for understanding the data on adults, future work could identify the role of juveniles in the system dynamics more precisely.
@@ -1181,11 +1186,7 @@ The flexibility of the PanelPOMP model class provides many opportunities for dev
 
 \section*{Significance Statement}
 
-\byc{
-Collections of partially observed nonlinear stochastic dynamic systems arise in diverse scientific applications and raise methodologically challenging statistical inference problems.
-We considered this task in the context of analyzing panel time series data collected from ecological studies.
-We developed and demonstrated data analysis techniques that apply to a flexible model class, permitting scientists to obtain statistically efficient inference on models describing scientifically plausible mechanisms.
-For our experiment, a model with stochastic dynamics provided simpler interpretation than previous determinstic models: variation between experimental replicates was adequately described by dynamic noise rather than systematic differences between replicates.}
+\revision{\editSignificance}
 
 \begin{acks}[Acknowledgments]
 %% The corresponding author is Bo Yang with address 665 W 130th St, New York, NY 10027.
