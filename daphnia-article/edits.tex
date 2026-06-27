@@ -50,13 +50,14 @@ We are not aware of any previous scientific study where non-Gaussian PanelPOMP m
 \newcommand\editJuveniles{\citep[to faciliate comparison with the analysis of][]{searle16}}
 
 
-\newcommand\editMPIF{
-All likelihood maximization in this article uses the marginalized variant of panel iterated filtering (MPIF; Fig.~\ref{fig:pif}; Algorithm~S1), rather than the panel iterated filter of \citet{breto20} in its original form.
+\newcommand\editMPIF{All likelihood maximization in this article uses the marginalized variant of panel iterated filtering (MPIF; Fig.~\ref{fig:pif}; Algorithm~S1), rather than the panel iterated filter of \citet{breto20} in its original form.
 Both algorithms extend iterated filtering \citep{ionides15} to PanelPOMP models by associating a perturbed parameter value with each particle $j$ and using particle-filter resampling to concentrate the parameter swarm around the maximum likelihood estimate; they differ only in the parameter resampling step.
 When the swarm is filtered through the data of unit $u$, the algorithm of \citet{breto20} resamples not only the shared parameters $\phi$ and the focal unit's parameters $\psi_u$ but also the parameters $\psi_{\tilde u}$ of every other unit $\tilde u \neq u$, even though the data for unit $u$ are uninformative about $\psi_{\tilde u}$.
 The marginalized variant instead resamples only $\phi$ and $\psi_u$, leaving each $\psi_{\tilde u}$ unchanged while filtering through unit $u$.
 MPIF and PIF become different only in the presence of unit-specific parameters; they are identical when all parameters are shared between all units.
 We adopt MPIF here because \citet{wheeler25} show that it has favorable theoretical and practical properties.}
+
+\newcommand\editMPIFdiscussion{Our analysis was faciliated by the development of marginalized panel iteratated filtering methodology \citep{wheeler25}.}
 
 \newcommand\editAbstractScience{Scientifically, we found that mesocosms in a treatment group behave as stochastic replicates: across all treatment-by-species combinations considered, a model with parameters shared across replicate mesocosms is preferred over models with mesocosm-specific parameters under both AIC and a parametric bootstrap likelihood ratio test. Thus, stochastic models can provide a parsimonious explanation of the observed variation between replicates.}
 
