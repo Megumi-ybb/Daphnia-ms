@@ -726,7 +726,7 @@ However, AIC has earned widespread use due to its clear theoretical motivation a
 Profile likelihood provides a useful approach for constructing confidence intervals in nonlinear stochastic systems \citep{simpson23}.
 Calculation of the profiles can validate that sufficient computational effort was conducted in order for the Monte Carlo optimization to converge: by increasing Monte Carlo replications, consistent convergence to the same maximum of the profile likelihood curve confirms adequate numerical effort for optimization.
 To obtain confidence intervals, we correct for the Monte Carlo uncertainty in the profile likelihood evaluations by using the Monte Carlo Adjusted Profile (MCAP) method of \citet{ionides17}.
-\bye{The finite-sample coverage properties of MCAP on the SIRJPF2 model have been validated by a parametric bootstrap simulation study, presented in Section~S3 of the supplement.}
+\revision{\editBootstrapMCAP}}
 <<Results, include=FALSE,echo=FALSE,results='hide', cache=cache_option>>=
 load('../Mixed-species/SIRJPF2/model/best_result.rda')
 mif.estimate = as.data.frame(t(mif.estimate))
