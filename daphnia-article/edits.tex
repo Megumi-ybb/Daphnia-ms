@@ -69,5 +69,16 @@ AIC is justified by an asymptotic quadratic approximation to the log-likelihood 
 Large discrepancies of AIC are plausibly resistant to violations of asymptotic justifications.
 Small discrepancies should not be considered strong evidence for model selection.}
 
-\newcommand\editBootstrapMCAP{A simulation study showed under-coverage when using the asymptotically justified profile cutoff so the MCAP cutoff was increased to match the nominal coverage at the MLE (see Section~S3).}
+\newcommand\editBootstrapMCAP{A simulation study showed some under-coverage when using the asymptotically justified profile cutoff (Section~S3).
+The null distribution can be computed by simulation to obtain the correct coverage at the MLE. and we demonstrate this procedure for some parameters of interest in Section~S3.
+For other paramters, where computational resources and scientific priorities do not support this intensive computation, we simply bear in mind that the coverage may be less than the target 95\%.}
+
+
+\newcommand\editLANandAICforPOMP{A general theoretical justification of the $2p$ penalty used by AIC is based on a local asymptotic quadratic approximation to the log likelihood in a neighborhood of the MLE, together with a normal approximation to the Fisher score \citep{aic74,konishi08}.
+This is essentially the same as the local asymptotic normality (LAN) property of Le Cam and the requirements for Wilks' Theorem.
+LAN has been studied for a general class of partially observed Markov processes \citep{bickel98}.
+Finite sample behavior of the likelihood ratio statistic has been found to match asymptotic theory fairly accurately in other POMP model contexts \citep{bhadra11,stocks20,wheeler25}.}
+
+
+
 
