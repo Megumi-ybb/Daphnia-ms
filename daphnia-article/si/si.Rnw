@@ -29,6 +29,17 @@
 \bibliographystyle{apalike}
 \newcommand{\blind}{1}
 
+%\usepackage{tocloft}  %% to configure the table of contents
+%\setlength{\cftsecnumwidth}{4.0em} %% add to default to make room for the S
+
+\makeatletter
+% Default for section is usually 1.5em. We change it to 4.0em here:
+\patchcmd{\l@section}{1.5em}{4.0em}{}{}
+% Default for subsection is usually 2.3em. We change it to 5.0em here:
+%\patchcmd{\l@subsection}{2.3em}{5.0em}{}{}
+%\makeatletter
+\setcounter{tocdepth}{1}
+
 \newcommand\Unit{U}
 \newcommand\unit{u}
 \newcommand\seq[2]{{#1}\!:\!{#2}}
@@ -54,7 +65,7 @@
 \renewcommand\thesection{S\arabic{section}}
 \renewcommand\theequation{S\arabic{equation}}
 \renewcommand\thealgocf{S\arabic{algocf}}
-\setcounter{tocdepth}{2}
+
 
 \begin{document}
 
@@ -81,11 +92,11 @@ opts_chunk$set(echo = TRUE, cache = cache_option)
 \and
 \author[D]{\fnms{Edward}~\snm{Ionides}\ead[label=e5]{ionides@umich.edu}}
 
-\address[A]{Department of Marketing, Columbia University \printead[presep={,\ }]{e1}}
+\address[A]{Department of Marketing, Columbia University\printead[presep={,\ }]{e1}}
 \address[B]{Department of Mathematics and Statistics, Idaho State University\printead[presep={,\ }]{e2}}
-\address[C]{Department of Ecology and Evolutionary Biology, University of Michigan
+\address[C]{Department of Ecology and Evolutionary Biology, University of Michigan\printead[presep={,\ }]{e3,e4}}
 \address[D]{Department of Statistics, University of Michigan\printead[presep={,\ }]{e5}}
- \printead[presep={,\ }]{e3,e4}}
+ 
 \end{aug}
 } \fi
 \end{frontmatter}
@@ -191,7 +202,7 @@ add_bootstrap_pvalues <- function(ptable, boot_path, alt_to_row) {
 
 \tableofcontents
 \newpage
-\section{Monte Carlo Adjusted Profile}
+\section{Monte Carlo Adjusted Profile (MCAP)}
 
 Monte Carlo Adjusted Profile (MCAP) methods \citep{ionides17,ning21} provide confidence intervals for situations where the likelihood is evaluated and maximized by Monte Carlo algorithms.
 A smoothed estimate of the profile likelihood is used to reduce Monte Carlo error, quantify this error, and adjust the confidence intervals accordingly to maintain their coverage.
@@ -271,7 +282,6 @@ Additional generality is provided by the pseudocode in \cite{breto25} that is im
 
 \section{MCAP Coverage Study}\label{sec:mcap-coverage}
 
-\bye{
 To see how well the MCAP confidence intervals perform in finite samples, we carried out a parametric bootstrap.
 We simulated $B=100$ datasets from the fitted all-shared SIRJPF2 maximum likelihood estimate, and on each one we recomputed the MCAP profile and asked whether its $95\%$ interval contained the value that generated the data. 
 We did this for four parameters chosen to span the range of identifiability: the native and invasive birth rates $r^{\native}$ and $r^{\invasive}$, the parasite-spore process noise $\sigma_P$, and the food process noise $\sigma_F$.
@@ -282,20 +292,20 @@ Where this under-covers, we also report a corrected interval that replaces $1.92
 A larger cutoff widens the interval, so the corrected interval is simply the same profile cut at a higher threshold. Table~\ref{Table:mcap-coverage} reports both.
 
 The invasive birth rate $r^{\invasive}$ is a special case.
-It enters the process model only through the product $r^{\invasive}f_S^{\invasive}$, just as $p^{\invasive}$ enters only through $p^{\invasive}f_S^{\invasive}$, so its level is not separately identifiable and its profile is essentially flat.
-Its nominal $94.0\%$ coverage is therefore a degenerate artifact, and we leave it out of the correction.
-}
+It enters the process model only through the product $r^{\invasive}f_S^{\invasive}$, just as $p^{\invasive}$ enters only through $p^{\invasive}f_S^{\invasive}$, so it is weakly identifiable, with a profile that is essentially flat.
+It has a nominal $94.0\%$ coverage, since some extreme simulations have confidence intervals that fail to cover the truth, but the parameter is better classified as practically non-identifiable.
+
 
 \begin{table}[ht]
 \centering
 \small
 \setlength{\tabcolsep}{4pt}
-\caption{\label{Table:mcap-coverage}\bye{
+\caption{\label{Table:mcap-coverage}
 Parametric-bootstrap coverage of the MCAP $95\%$ confidence intervals, on the log scale, across $B=100$ datasets simulated from the all-shared SIRJPF2 maximum likelihood estimate.
 The basic interval uses the asymptotic cutoff $c=1.92$ and matches Table~1 of the main text; the corrected interval re-cuts the same profile at the calibrated cutoff $c$ that targets $95\%$ coverage. 
 The native birth rate $r^{\native}$ is biased a little high and the noise parameters $\sigma_P$ and $\sigma_F$ a little low, all on weakly identified ridges. 
 The invasive birth rate $r^{\invasive}$ has a flat profile and is not separately identifiable, so we omit it from the correction.
-}}
+}
 \begin{tabular}{lccccccc}
 \toprule
  & Truth & MCAP & \multicolumn{2}{c}{Basic ($c=1.92$)} & \multicolumn{3}{c}{Corrected} \\
@@ -310,22 +320,22 @@ $r^{\invasive}$ & $12.28$ & flat    & \multicolumn{5}{c}{non-identifiable; nomin
 \end{tabular}
 \end{table}
 
-\bye{
-Two things are worth saying about these numbers.
-The first is that the undercoverage is a genuine finite-sample effect rather than a numerical artifact.
-A three-log-likelihood diagnostic on representative simulated datasets shows that the production profiles reach a higher likelihood than a twenty-chain global search started from the truth, so the profiles are not simply under-converged.
-The resulting gap between the maximum likelihood estimate and the truth, about $4.5$ to $8.5$ log-likelihood units, sits below the asymptotic Wilks expectation of $p/2=12$ for the $p=24$ free parameters.
-This is what we would expect from a weakly identified model fit to a short panel of eight units, and not a failure of the MCAP construction itself.
+%\bye{
+%Two things are worth saying about these numbers.
+%The first is that the undercoverage is a genuine finite-sample effect rather than a numerical artifact.
+%A three-log-likelihood diagnostic on representative simulated datasets shows that the production profiles reach a higher likelihood than a twenty-chain global search started from the truth, so the profiles are not simply under-converged.
+%The resulting gap between the maximum likelihood estimate and the truth, about $4.5$ to $8.5$ log-likelihood units, sits below the asymptotic Wilks expectation of $p/2=12$ for the $p=24$ free parameters.
+%This is what we would expect from a weakly identified model fit to a short panel of eight units, and not a failure of the MCAP construction itself.
+%}
 
-The second is that the corrected interval should be read with the same caution.
-It is a parametric-bootstrap calibration from the fitted estimate, so it is reliable only to the extent that the model is correctly specified and $\hat\theta$ is close to the truth, and its cutoff is itself noisy at $B=100$.
-To check that the correction captures something real rather than fitting its own simulations, we recalibrated the cutoff on a random half of the datasets and measured coverage on the held-out half; averaged over $500$ such splits this gives about $93\%$ out-of-sample coverage. 
-We therefore read the coverage study as an honest, exploratory description of uncertainty rather than a guarantee of $95\%$ coverage for downstream decisions. 
-In practical terms, Table~\ref{Table:mcap-coverage} shows that reaching nominal coverage in this richly parameterized model takes intervals roughly $1.3$ to $2.1$ times wider than the asymptotic ones. 
-We report the basic MCAP interval as the primary, directly comparable estimate, and the corrected interval as a transparent measure of that finite-sample cost.
-}
+The corrected MCAP cutoff has the target 95\% coverage by construction, on the simulations used to build this cutoff.
+To check that the correction captures something real and is not over-fitted to the simulations, we recalibrated the cutoff on a random half of the datasets and measured coverage on the held-out half; averaged over $500$ such splits this gives about $93\%$ out-of-sample coverage. 
+We therefore read the coverage study as a reliable exploratory description of uncertainty rather than a guarantee of $95\%$ coverage for downstream decisions. 
+In practical terms, Table~\ref{Table:mcap-coverage} shows that reaching nominal coverage in this richly parameterized model takes intervals roughly $1.3$ to $2.1$ times wider than the asymptotic ones.
+It was not practical to compute the corrected confidence intervals for every parameter in all the models.
+We therefore report the basic MCAP interval in Table~1, with the understanding that more precise results are available for parameters of particular interest.
 
-\bye{
+
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\linewidth]{coverage/coverage_combined.pdf}
@@ -334,7 +344,7 @@ Empirical coverage of the MCAP $95\%$ confidence intervals across $B=100$ bootst
 In each panel the horizontal lines are the simulated datasets' MCAP intervals, ordered by midpoint, and the vertical line marks the true value; an interval covers if it crosses that line. 
 Panels~(a)--(c) are the identifiable parameters, whose undercoverage comes from the maximum likelihood estimate being displaced along weakly identified ridges: $r^{\native}$ a little high, $\sigma_P$ and $\sigma_F$ a little low, with the largest displacement and the lowest coverage for $\sigma_F$. 
 Panel~(d) is the $r^{\invasive}$ profile, which is flat because $r^{\invasive}$ enters the process model only through the recruitment product $r^{\invasive}f_S^{\invasive}$.}
-\end{figure}}
+\end{figure}
 
 \section{Model selection: Simulation study of AIC and LRT}\label{sec:aic-power}
 
@@ -357,7 +367,7 @@ The two diagonal entries are the quantities of interest: AIC's specificity under
 
 \section{Discussion about the failure of chi-square LRT}
 
-We were initially surprised when the simulation study showed that the likelihood ratio test statistics had considerable deviation from the chi-square distribution suggested by a Wilks approximation.
+We were initially surprised when the simulation study showed that the likelihood ratio test (LRT) statistic had considerable deviation from the chi-square distribution suggested by a Wilks approximation.
 To validate this finding, and to investigate whether it might be a general property of a class of POMP models, we developed a simple toy model demonstrating this behavior.
 Consider a model
 \[
