@@ -1,4 +1,71 @@
 
+% macros for supplementary sections, tables and figures.
+% to be copied into ms.Rnw at some later point, perhaps after the revision is submitted
+
+\newcommand\suppAlgMPIF{S1}
+
+\newcommand\suppSecMCAP{S1}
+\newcommand\suppSecPIF{S2}
+\newcommand\suppSecMCAPcoverage{S3}
+\newcommand\suppSecSimModelSelection{S4}
+\newcommand\suppSecFailureChiSquare{S5}
+\newcommand\suppSecFablation{S6}
+\newcommand\suppSecSIRJPFii{S7}
+\newcommand\suppSecSIRJPF{S8}
+\newcommand\suppSecSRJFii{S9}
+\newcommand\suppSecSRJF{S10}
+\newcommand\suppSecBenchmark{S11}
+\newcommand\suppSecPeakDensity{S12}
+\newcommand\suppSecSIRJPFgamma{S13}
+
+
+\newcommand\suppTableMCAPcoverage{S1}
+\newcommand\suppTableAICspecificity{S2}
+\newcommand\suppTableFablation{S3}
+\newcommand\suppTableUnitSpecificTest{S4}
+\newcommand\suppTableSIRJPFdentiferaResults{S5}
+\newcommand\suppTableSIRJPFlumholtziResults{S6}
+\newcommand\suppTableSIRJPFdentiferaUnitSpecific{S7}
+\newcommand\suppTableSIRJPLumholtziUnitSpecific{S8}
+\newcommand\suppTableSRJFiiResults{S9}
+\newcommand\suppTableSRJFiiUnitSpecific{S10}
+\newcommand\suppTableSRJFdentiferaResults{S11}
+\newcommand\suppTableSRJFlumholtziResults{S12}
+\newcommand\suppTableSRJFdentiferaUnitSpecific{S13}
+\newcommand\suppTableSRJFlumholtziUnitSpecific{S14}
+\newcommand\suppTablePeakDensityTiming{S15}
+
+\newcommand\suppFigMCAPcoverage{S1}
+\newcommand\suppFigLRTtoy{S2}
+\newcommand\suppFigSIRJPFiiProfiles{S3}
+\newcommand\suppFigSimulations{S4}
+\newcommand\suppFigDiagnostics{S5}
+\newcommand\suppFigSIRJPFdiagram{S6}
+\newcommand\suppFigSIRJPFdentiferaData{S7}
+\newcommand\suppFigSIRJPFlumholtziData{S8}
+\newcommand\suppFigSIRJPFdentiferaProfiles{S9}
+\newcommand\suppFigSIRJPFlumholtziProfiles{S10}
+\newcommand\suppFigSIRJPFdentiferaSimAggregate{S11}
+\newcommand\suppFigSIRJPFdentiferaSimByUnit{S12}
+\newcommand\suppFigSIRJPFlumholtziSimAggregate{S13}
+\newcommand\suppFigSIRJPFlumholtziSimByUnit{S14}
+\newcommand\suppFigSRJFiiDiagram{S15}
+\newcommand\suppFigSRJFiiData{S16}
+\newcommand\suppFigSRJFiiProfiles{S17}
+\newcommand\suppFigSRJFsimAggregate{S18}
+\newcommand\suppFigSRJFdentiferasimByUnit{S19}
+\newcommand\suppFigSRJFdiagram{S20}
+\newcommand\suppFigSRJFdentiferaData{S21}
+\newcommand\suppFigSRJFlumholtziData{S22}
+\newcommand\suppFigSRJFdentiferaProfiles{S23}
+\newcommand\suppFigSRJFlumholtziProfiles{S24}
+\newcommand\suppFigSRJFdentiferaSimAggregate{S25}
+\newcommand\suppFigSRJFdentiferaSimByUnit{S26}
+\newcommand\suppFigSRJFlumholtziSimAggregate{S27}
+\newcommand\suppFigSRJFlumholtziSimByUnit{S28}
+\newcommand\suppFigSIRPFiiDiagram{S20}
+
+
 % Bo Yang revision flag: marks items still owed for the revision pass.
 % Renders as purple bracketed text; should be empty in the submitted version.
 % Implemented as a colour group so the body can span multiple paragraphs
@@ -50,7 +117,7 @@ We are not aware of any previous scientific study where non-Gaussian PanelPOMP m
 \newcommand\editJuveniles{\citep[to faciliate comparison with the analysis of][]{searle16}}
 
 
-\newcommand\editMPIF{All likelihood maximization in this article uses the marginalized variant of panel iterated filtering (MPIF; Fig.~\ref{fig:pif}; Algorithm~S1), rather than the panel iterated filter of \citet{breto20} in its original form.
+\newcommand\editMPIF{All likelihood maximization in this article uses the marginalized variant of panel iterated filtering (MPIF; Fig.~\ref{fig:pif}; Algorithm~{\suppAlgMPIF}), rather than the panel iterated filter of \citet{breto20} in its original form.
 Both algorithms extend iterated filtering \citep{ionides15} to PanelPOMP models by associating a perturbed parameter value with each particle $j$ and using particle-filter resampling to concentrate the parameter swarm around the maximum likelihood estimate; they differ only in the parameter resampling step.
 When the swarm is filtered through the data of unit $u$, the algorithm of \citet{breto20} resamples not only the shared parameters $\phi$ and the focal unit's parameters $\psi_u$ but also the parameters $\psi_{\tilde u}$ of every other unit $\tilde u \neq u$, even though the data for unit $u$ are uninformative about $\psi_{\tilde u}$.
 The marginalized variant instead resamples only $\phi$ and $\psi_u$, leaving each $\psi_{\tilde u}$ unchanged while filtering through unit $u$.
@@ -61,16 +128,16 @@ We adopt MPIF here because \citet{wheeler25} show that it has favorable theoreti
 
 \newcommand\editAbstractScience{Scientifically, we found that mesocosms in a treatment group behave as stochastic replicates: across all treatment-by-species combinations considered, a model with parameters shared across replicate mesocosms is preferred over models with mesocosm-specific parameters under both AIC and a parametric bootstrap likelihood ratio test. Thus, stochastic models can provide a parsimonious explanation of the observed variation between replicates.}
 
-\newcommand\editParametricBootstrap{A simulation study showed that the chi-square approximation to the likelihood ratio test, supported by Wilks' Theorem, is not accurate in this situation (Section~S4).
+\newcommand\editParametricBootstrap{A simulation study showed that the chi-square approximation to the likelihood ratio test, supported by Wilks' Theorem, is not accurate in this situation (Section~\suppSecSimModelSelection).
 To better understand this, we present a simple toy model caricaturing the task of testing for shared parameters in a PanelPOMP model.
-In this toy model (Section~S5), it is apparent that the regularity conditions for Wilks' Theorem fail.
+In this toy model (Section~\suppSecFailureChiSquare), it is apparent that the regularity conditions for Wilks' Theorem fail.
 We therefore test using a simulation-based distribution for the likelihood ratio statistic at the MLE.
 AIC is justified by an asymptotic quadratic approximation to the log-likelihood \citep{aic74} similar to Wilks' Theorem, and so these results also bring into question the accuracy of AIC for model selection.
 Large discrepancies of AIC are plausibly resistant to violations of asymptotic justifications.
 Small discrepancies should not be considered strong evidence for model selection.}
 
-\newcommand\editBootstrapMCAP{A simulation study showed some under-coverage when using the asymptotically justified profile cutoff (Section~S3).
-The null distribution can be computed by simulation to obtain the correct coverage at the MLE. and we demonstrate this procedure for some parameters of interest in Section~S3.
+\newcommand\editBootstrapMCAP{A simulation study showed some under-coverage when using the asymptotically justified profile cutoff (Section~\suppSecMCAPcoverage).
+The null distribution can be computed by simulation to obtain the correct coverage at the MLE. and we demonstrate this procedure for some parameters of interest in Section~\suppSecMCAPcoverage.
 For other paramters, where computational resources and scientific priorities do not support this intensive computation, we simply bear in mind that the coverage may be less than the target 95\%.}
 
 

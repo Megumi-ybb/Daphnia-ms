@@ -59,9 +59,9 @@
 
 \renewcommand{\contentsname}{Supplementary Content}
 \renewcommand{\refname}{Supplementary References}
-\renewcommand\thefigure{S-\arabic{figure}}
-\renewcommand\thetable{S-\arabic{table}}
-%\renewcommand\thepage{S-\arabic{page}}
+\renewcommand\thefigure{S\arabic{figure}}
+\renewcommand\thetable{S\arabic{table}}
+%\renewcommand\thepage{S\arabic{page}}
 \renewcommand\thesection{S\arabic{section}}
 \renewcommand\theequation{S\arabic{equation}}
 \renewcommand\thealgocf{S\arabic{algocf}}
@@ -348,10 +348,14 @@ Panel~(d) is the $r^{\invasive}$ profile, which is flat because $r^{\invasive}$ 
 
 \section{Model selection: Simulation study of AIC and LRT}\label{sec:aic-power}
 
-\bye{The referee asked for simulation studies, in the style of \citet{stocks20}, to check that our model-selection tools behave well for these partially observed stochastic models. We do this in two complementary ways. The simulation-based, or parametric bootstrap, likelihood-ratio test is reported next to the classical $\chi^2$ test in each model-comparison table, for the SIRJPF2 model in Table~\ref{Table:SIRJPF2_model_comparison}, and the following section explains with a simple toy model why the two references disagree for these high-dimensional comparisons. Here we address the complementary question of how reliably AIC selects the data-generating model.
+\bye{The referee asked for simulation studies, in the style of \citet{stocks20}, to check that our model-selection tools behave well for these partially observed stochastic models. We do this in two complementary ways. The simulation-based, or parametric bootstrap, likelihood-ratio test is reported next to the classical $\chi^2$ test in each model-comparison table, for the SIRJPF2 model in Table~\ref{Table:SIRJPF2_model_comparison}, and the following section explains with a simple toy model why the two references disagree for these high-dimensional comparisons.
+Here we address the complementary question of how reliably AIC selects the data-generating model.
 
-We focus on the native infection clearance rate $\theta_I^{\native}$, the one parameter whose unit-specific version was favoured by the asymptotic tests. We simulate panels under two truths: one in which every parameter is shared, at the fitted all-shared SIRJPF2 estimate, and one in which $\theta_I^{\native}$ is genuinely unit-specific, varying across the eight units while the other parameters stay at the all-shared estimate. For each simulated panel we fit both the all-shared model and the $\theta_I^{\native}$-unit-specific model with the same iterated-filtering protocol used in the main analysis, compute the AIC of each, and record which model AIC prefers. The entries below are proportions over the simulated panels, so the diagonal gives the rate at which AIC recovers the truth.
+We focus on the native infection clearance rate $\theta_I^{\native}$, the one parameter whose unit-specific version was favoured by the asymptotic tests. We simulate panels under two truths: one in which every parameter is shared, at the fitted all-shared SIRJPF2 estimate, and one in which $\theta_I^{\native}$ is genuinely unit-specific, varying across the eight units while the other parameters stay at the all-shared estimate. For each simulated panel we fit both the all-shared model and the $\theta_I^{\native}$-unit-specific model with the same iterated-filtering protocol used in the main analysis, compute the AIC of each, and record which model AIC prefers.
+Table~\ref{tab:aic:specificity} presents proportions of model selections via AIC in 100 simulations, so the diagonal terms give the rate at which AIC recovers the truth under these hypotheses.
+}
 
+\begin{table}[ht]
 \begin{center}
 \begin{tabular}{lcc}
 \hline
@@ -362,8 +366,11 @@ $\theta_I^{\native}$ unit-specific & 0.08 & 0.92 \\
 \hline
 \end{tabular}
 \end{center}
+\caption{Specificity of AIC when used to choose between shared and unit-specific models}
+\label{tab:aic:specificity}
+\end{table}
 
-The two diagonal entries are the quantities of interest: AIC's specificity under the all-shared truth, and its power under a genuinely unit-specific truth. Under the all-shared truth AIC recovers the correct all-shared model on $78\%$ of panels (mean $\Delta\mathrm{AIC}=+5.0$ in its favour), over-selecting the $\theta_I^{\native}$-unit-specific elaboration on the remaining $22\%$; under the unit-specific truth it recovers the unit-specific model on $92\%$ of panels (mean $\Delta\mathrm{AIC}=-12.9$). AIC therefore detects genuine unit-specific heterogeneity reliably, but spuriously prefers the more complex model on about one panel in five when none is present, which is precisely why a raw AIC or asymptotic $\chi^2$ advantage must be checked against the calibrated bootstrap likelihood-ratio test of Table~\ref{Table:SIRJPF2_model_comparison}, which on the observed data finds that no unit-specific elaboration improves on the all-shared model.}
+The two diagonal entries are the quantities of interest: AIC's specificity under the all-shared truth, and its power under a genuinely unit-specific truth. Under the all-shared truth AIC recovers the correct all-shared model on $78\%$ of panels (mean $\Delta\mathrm{AIC}=+5.0$ in its favour), over-selecting the $\theta_I^{\native}$-unit-specific elaboration on the remaining $22\%$; under the unit-specific truth it recovers the unit-specific model on $92\%$ of panels (mean $\Delta\mathrm{AIC}=-12.9$). AIC therefore detects genuine unit-specific heterogeneity reliably, but spuriously prefers the more complex model on about one panel in five when none is present, which is precisely why a raw AIC or asymptotic $\chi^2$ advantage must be checked against the calibrated bootstrap likelihood-ratio test of Table~\ref{Table:SIRJPF2_model_comparison}, which on the observed data finds that no unit-specific elaboration improves on the all-shared model.
 
 \section{Discussion about the failure of chi-square LRT}
 

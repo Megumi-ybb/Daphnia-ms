@@ -404,10 +404,10 @@ Each column corresponds to one mesocosm replicate.
 \end{figure}
 
 Here, we focus on the most complex experimental treatment, namely, the four species treatment with both host species, the alga and the parasite.
-The simpler treatments are presented in Supplementary Sections~S8,~S9 and~S10.
+The simpler treatments are presented in Supplementary Sections~{\suppSecSIRJPF},~{\suppSecSRJFii} and~{\suppSecSRJF}.
 Data from the four species treatment are displayed in Fig.~\ref{fig:data_vis}.
 The females and juveniles show a population peak around day 25, typically followed by a collapse and a mild resurgence around day 50.
-The males arise predominantly later in the experiment as shown in Table~S-14.
+The males arise predominantly later in the experiment as shown in Table~{\suppTablePeakDensityTiming}.
 The hypothesis that motivated the model of \citet{searle16} is that the arrival of the males, and the subsequent switch to the generation of ephippia by sexually reproduction, explains the decay of the other populations.
 This hypothesis is related to resource depletion, since shortage of food and high population density are both triggers for a change in reproductive strategy \citep{radzikowski18,searle16salinization}.
 However, resource depletion affects parthenogenetic reproduction as well influencing a switch to sexual reproduction.
@@ -875,7 +875,7 @@ Although these more flexible polynomial expansions do not represent latent biolo
 
 Table~\ref{Table:Model_comparison} includes the log-likelihood and AIC values for the fitted model and the deterministic ODE model of \citet{searle16}, which served as a starting point for our model.
 Although the mechanistic model of \citet{searle16} was successfully used to provide scientific insight into the ecological dynamics of the experiment, we found it does not provide a competitive statistical fit to the data compared to simple alternatives.
-We also consider several variants of the SIRJPF2 model described here, namely a model that excludes the juvenile state (SIRPF2, described in Section~S11.3), and a version of the SIRJPF2 model where the Gaussian noise has been replaced with Gamma noise (SIRJPF2-Gamma, see Section~S13).
+We also consider several variants of the SIRJPF2 model described here, namely a model that excludes the juvenile state (SIRPF2, described in Section~{\suppSecBenchmark}.3)\eic{THIS COULD BE IN ITS OWN SECTION. IT IS AN ABLATION STUDY, REMOVING J, COMPARABLE TO THE F ABLATION STUDY}, and a version of the SIRJPF2 model where the Gaussian noise has been replaced with Gamma noise (SIRJPF2-Gamma, see Section~{\suppSecSIRJPFgamma}).
 The SIRPF2 model ignores the process of maturation of juvenile and instead highlights the infection process of the \textit{Daphnia} adult populations.
 While this model does have an improved statistical fit compared to the deterministic ODE model of \citet{searle16} and other benchmark models, it has weaker performance than the model that accounts for the effect of juveniles on population dynamics.
 
@@ -885,7 +885,7 @@ Having assessed the fit of our model, we have some support for interpreting the 
 It is hard to rule out the possibility that some biological details in the model are misspecified in ways that may lead to confounding with the modeled mechanisms and therefore bias in the causal interpretation of estimated parameters \citep{wheeler24}.
 With that caveat acknowledged, we proceed to interpret the model and parameters at face value.
 
-There are some substantial differences in the observed trajectories between experimental replicates (Figs.~\ref{fig:data_vis}, S-7, S-8, S-16, S-21, S-22).
+There are some substantial differences in the observed trajectories between experimental replicates (Figs.~\ref{fig:data_vis}, {\suppFigSIRJPFdentiferaData}, {\suppFigSIRJPFlumholtziData}, {\suppFigSRJFiiData}, {\suppFigSRJFdentiferaData}, {\suppFigSRJFlumholtziData}).
 This could result from small differences in the initialization of the replicates, or it could simply be a consequence of the natural variation in any biological system.
 In the context of our model, these hypotheses correspond to unit-specific parameters and stochastic dynamics, respectively.
 Here, the evidence suggests that stochastic dynamics are sufficient to explain the variation in the data.
@@ -902,27 +902,27 @@ Also, the invasive species has a lower rate of infection per consumed spore ($p^
 The native parameters—juvenile growth $r^{\native}$, feeding rate $f^{\native}_{S}$ and infection probability $p^{\native}$ show full identifiability as shown in Fig.~S-3, whereas the corresponding invasive parameters $r^{\invasive},\,f^{\invasive}_{S},\,p^{\invasive}$ are only bounded on one side.
 This limited identifiability is attributable to
 (i) the lower density of \textit{D. lumholtzi} which may increase stochastic effects;
-(ii) model complexity, since the parameters become identifiable in host-only experiments with simplified dynamics (Fig.~S-10);
+(ii) model complexity, since the parameters become identifiable in host-only experiments with simplified dynamics (Fig.~\suppFigSIRJPFlumholtziProfiles);
 (iii) the product of these parameters governs the juvenile growth and infection process, which allows individual invasive coefficients to vary so long as their products remain fixed.
 To investigate this last explanation, Table~\ref{tab:estimates} shows relatively precise identifiability of the effective infection rate ($p^{\native}f^{\native}_{S}$, $p^{\invasive}f^{\invasive}_{S}$), and the effective juvenile birth rate ($r^{\native}f^{\native}_{S}$, $r^{\invasive}f^{\invasive}_{S}$).
 At the same time, the identifiability of the measurement error parameter ($\tau^{\native}_{S},\,\tau^{\invasive}_{S},\,\tau^{\native}_{I},\,\tau^{\invasive}_{I}$) explains variability that would otherwise inflate weakly identified process-noise terms.
 
-Our results indicate that stochasticity in the juvenile stage ($\sigma^{\native}_{J}$ and $\sigma^{\invasive}_{J}$), food ($\sigma_{F}$) and parasite ($\sigma_{P}$) dynamics are important model features, needed to adequately describe the data (see the corresponding confidence intervals in Table~\ref{tab:estimates} and the profile likelihood plots in Fig.~S-3).
+Our results indicate that stochasticity in the juvenile stage ($\sigma^{\native}_{J}$ and $\sigma^{\invasive}_{J}$), food ($\sigma_{F}$) and parasite ($\sigma_{P}$) dynamics are important model features, needed to adequately describe the data (see the corresponding confidence intervals in Table~\ref{tab:estimates} and the profile likelihood plots in Fig.~\suppFigSIRJPFiiProfiles).
 That suggests the juvenile stage, food and parasite dynamics are particularly sensitive to unmodeled phenomena, such as lower fitness resulting from resource depletion, since unmodeled phenomena can be explained by the model as stochastic uncertainty.
 Noise in other stages is small, and often insignificantly different from zero, as shown by profile likelihood plots for $\sigma^{\native}_{I}$, $\sigma^{\invasive}_{I}$.
 Since the profile for $\sigma^{\native}_{S}$, $\sigma^{\invasive}_{S}$ is flat and insignificantly different from zero, we fixed the $\sigma^{\native}_{S}$ and $\sigma^{\invasive}_{S}$ to be zero as constants.
 The proposed model is flexible enough to describe the predictability and uncertainty inherent in the system in various ways, and the data have come down in favor of $\sigma^{\native}_{J}$ and $\sigma^{\invasive}_{J}$.
 This indicates that the model might be recalibrated after fixing some or all of the other noise intensities to zero, but there is no pressing need to do so.
-The noise term is helpful when describing other dynamics, for example, dynamics with two species of \textit{Daphnia} and no parasite as shown in Supplement~S9.
+The noise term is helpful when describing other dynamics, for example, dynamics with two species of \textit{Daphnia} and no parasite as shown in Section~\suppSecSRJFii.
 Natural death rates, ($\theta^{\native}_{S}$, $\theta^{\invasive}_{S}$, $\theta^{\native}_{J}$ and $\theta^{\invasive}_{J}$), are poorly identified in the presence of the parasite since most death comes through the infection process.
-By contrast, these parameters are better identified in the treatments without the parasite (Fig.~S-17).
+By contrast, these parameters are better identified in the treatments without the parasite (Fig.~\suppFigSRJFiiProfiles).
 
 Alternative  SIRJPF2 model specifications were fitted with various parameters taken to be unit-specific.
-The log-likelihood estimates and corresponding AIC values for these models are presented in Supplementary Table~S-3.
+The log-likelihood estimates and corresponding AIC values for these models are presented in Supplementary Table~{\suppTableUnitSpecificTest}.
 \revision{\editParametricBootstrap}
-Similar results hold for the other treatments (Tables~S-6, S-7, S-9, S-12, S-13).
+Similar results hold for the other treatments (Tables~{\suppTableSIRJPFdentiferaUnitSpecific}, {\suppTableSIRJPLumholtziUnitSpecific}, {\suppTableSRJFiiUnitSpecific}, {\suppTableSRJFdentiferaUnitSpecific}, {\suppTableSRJFlumholtziUnitSpecific}).
 Consequently, we choose to select the model with all shared parameters, as it offers a more parsimonious and robust representation of the system dynamics without substantially compromising the explanatory power.
-And the confidence intervals are obtained by the MCAP are shown in Fig.~S-3 for the SIRJPF2 model, and Figs.~S-9, S-10, S-17, S-23, S-24 for other treatments.
+The confidence intervals are obtained by MCAP, as shown in Fig.~{\suppFigSIRJPFiiProfiles} for the SIRJPF2 model, and Figs.~{\suppFigSIRJPFdentiferaProfiles}, {\suppFigSIRJPFlumholtziProfiles}, {\suppFigSRJFiiProfiles}, {\suppFigSRJFdentiferaProfiles}, {\suppFigSRJFlumholtziProfiles} for other treatments.
 
 Our estimated value of the filtration rate factor for infected {\it Daphnia} is $\xi > 1$, which is superficially incompatible with previous empirical observations that infection leads to reduced filtration, especially as disease progresses \citep{searle16,penczykowski14}.
 One way to reconcile these results is the possibility that \textit{Daphnia} which filter faster are exposed to more spores and are consequently more likely to become infected.
@@ -948,11 +948,11 @@ Yet, without fitting to juvenile data, it is unclear whether that question is id
 To explore this assumption, we compared the model using the value $\xi_{J,{\unit}} = 1$ (juveniles and adults filter at the same rate) against the extreme value $\xi_{J,{\unit}} = 0.001$ (juveniles filter much slower than adults).
 
 Likelihood residual analysis is an effective tool for comparing alternative models by assessing differences in the conditional log-likelihood for each data point \citep{wheeler24,li24}.
-We maximized the log-likelihood subject to the fixed values of $\xi_{J,{\unit}}$, and we compared the conditional log-likelihood for each observation category at each time point for each fixed $\xi_{J,{\unit}}$ value, as shown in Fig.~S-5(a).
+We maximized the log-likelihood subject to the fixed values of $\xi_{J,{\unit}}$, and we compared the conditional log-likelihood for each observation category at each time point for each fixed $\xi_{J,{\unit}}$ value, as shown in Fig.~{\suppFigDiagnostics}(a).
 These results show that setting $\xi_{J,{\unit}} = 1$ leads to only a slightly higher maximized log-likelihood ($-881.13$) than $\xi_{J,{\unit}} = 0.001$ ($-882.24$), indicating that the parameter is weakly identified.
 Moreover, plotting the conditional log-likelihood for each state at each time, we observe that all the log-likelihood components for susceptible and infected \textit{D. dentifera} and \textit{D. lumholtzi} are similar between the two parameter settings.
-The choice of $\xi_{J,{\unit}}$ nevertheless affects the interpretation of the fitted model: the maximum likelihood estimates constrained to different values of $\xi_{J,{\unit}}$ lead to distinct behavior of juvenile \textit{Daphnia} in simulations, as shown in Fig.~S-5(b).
-If $\xi_{J,{\unit}}$ is set to be lower than is biologically plausible, simulated trajectories from the fitted model have far fewer juveniles than was observed, which is shown in Fig.~S-5(b) as well.
+The choice of $\xi_{J,{\unit}}$ nevertheless affects the interpretation of the fitted model: the maximum likelihood estimates constrained to different values of $\xi_{J,{\unit}}$ lead to distinct behavior of juvenile \textit{Daphnia} in simulations, as shown in Fig.~{\suppFigDiagnostics}(b).
+If $\xi_{J,{\unit}}$ is set to be lower than is biologically plausible, simulated trajectories from the fitted model have far fewer juveniles than was observed, which is shown in Fig.~{\suppFigDiagnostics}(b) as well.
 This indicates model misspecification which could bias the estimates of $r^{\species}_{\unit}, p^{\species}_{\unit}$ and $ f^{\species}_{S,\unit}$.
 When a weakly identified parameter has consequences for the biological interpretation of the model, it is appropriate to fix that parameter at a biologically plausible value, and we therefore fixed $\xi_{J,{\unit}} = 1$ for subsequent analysis, reasoning that larger juveniles should have filtering rates of the same order of magnitude as adults.
 
@@ -1122,10 +1122,10 @@ The parasite and food densities were not observed, and the dashed colored lines 
 
 In addition to comparing model fit using AIC, we further validate the calibrated SIRJPF2 model via a simulation study.
 We generate 1000 simulations from the model and compare these simulations to the data (Fig.~\ref{fig:sim_plot}).
-Unit level simulation plots are shown in Fig.~S-4.
+Unit level simulation plots are shown in Fig.~\suppFigSimulations.
 The simulation bands presented in Fig.~\ref{fig:sim_plot} closely align with the empirical data curves from the actual experiment, underscoring the model's capability to replicate the observed dynamics.
 Notably, the model captures not only the trends but also the variability of the experimental data.
-Simulations from other models considered are included in the supplementary Figs.~S-11--S-14, S-18, S-19, S-25--S-28.
+Simulations from other models considered are included in the supplement (Figs.~{\suppFigSIRJPFdentiferaSimAggregate}--{\suppFigSIRJPFlumholtziSimByUnit}, {\suppFigSRJFsimAggregate}, {\suppFigSRJFdentiferasimByUnit}, {\suppFigSRJFdentiferaSimAggregate}--{\suppFigSRJFlumholtziSimByUnit}).
 
 
 The consistency of simulated data with the empirical data provides a qualitative indicator of the fit of the model that complements a comparison of log-likelihood values.
