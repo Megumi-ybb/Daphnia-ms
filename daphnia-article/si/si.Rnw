@@ -323,14 +323,6 @@ $r^{\invasive}$ & $12.28$ & flat    & \multicolumn{5}{c}{non-identifiable; nomin
 \end{tabular}
 \end{table}
 
-%\bye{
-%Two things are worth saying about these numbers.
-%The first is that the undercoverage is a genuine finite-sample effect rather than a numerical artifact.
-%A three-log-likelihood diagnostic on representative simulated datasets shows that the production profiles reach a higher likelihood than a twenty-chain global search started from the truth, so the profiles are not simply under-converged.
-%The resulting gap between the maximum likelihood estimate and the truth, about $4.5$ to $8.5$ log-likelihood units, sits below the asymptotic Wilks expectation of $p/2=12$ for the $p=24$ free parameters.
-%This is what we would expect from a weakly identified model fit to a short panel of eight units, and not a failure of the MCAP construction itself.
-%}
-
 The corrected MCAP cutoff has the target 95\% coverage by construction, on the simulations used to build this cutoff.
 To check that the correction captures something real and is not over-fitted to the simulations, we recalibrated the cutoff on a random half of the datasets and measured coverage on the held-out half; averaged over $500$ such splits this gives about $93\%$ out-of-sample coverage. 
 We therefore read the coverage study as a reliable exploratory description of uncertainty rather than a guarantee of $95\%$ coverage for downstream decisions. 
@@ -896,7 +888,7 @@ For likelihood ratio tests of shared versus unit-specific parameters, in the pre
 
 \clearpage
 
-\section{\texorpdfstring{$F$}{F} Ablation}\label{sec:no-F-ablation}
+\section{SIRJP2: An $F$ Ablation of the Full Model}\label{sec:no-F-ablation}
 
 We considered an SIRJP2 model derived by removing the latent food dynamics from the SIRJPF2 model.
 This ablation experiment tests whether the latent food compartment $F$ is central to the way the model explains the population dynamics.
@@ -926,17 +918,16 @@ No-$F$ ($F$ held constant)  & $23$ & $-887.8$ & $1821.6$ \\
 \end{tabular}
 \end{table}
 
-\bye{
 Holding the food compartment fixed costs about $7.2$ log-likelihood units, even though the ablated model is handed a free parameter back. 
 On the AIC scale the model with a depletable food compartment is preferred by $\Delta\mathrm{AIC}\approx 12.4$, which is decisive on the conventional evidential scale. 
-When the resource does not deplete, recruitment into the juvenile classes $J^{\native}$ and $J^{\invasive}$ continues at an undiminished rate as the adult population grows, and the model cannot reproduce the resource-limited turnover that drives the observed rise and fall in Daphnia abundance.
+When the resource does not deplete, recruitment into the juvenile classes $J^{\native}$ and $J^{\invasive}$ continues at an undiminished rate as the adult population grows, and the model cannot reproduce the resource-limited turnover that drives the observed rise and fall in {\it Daphnia} abundance.
 It is exactly the feedback in which a growing population draws down the food supply, which in turn slows its own recruitment, that produces the peak-then-collapse signature in the data. 
-The ablation confirms that explicitly modeling resource depletion through the latent food compartment is a necessary part of the model rather than an incidental choice.
-}
+The ablation confirms that explicitly modeling resource depletion through the latent food compartment adds significantly to the model's ability to explain the data.
 
-\clearpage
 
-\section{SIRJPF2 Model}
+%\clearpage
+
+\section{SIRJPF2: The Full Model for Two {\it Daphnia} Species}
 \subsection{Results}
 \begin{figure}[!ht]
     \centering
@@ -976,9 +967,7 @@ The test statistic $\Lambda = 2[\ell(\text{alternative}) - \ell(\text{null})]$ i
 However, the regularity conditions for Wilks' theorem do not necessarily hold for our panelPOMP models: the latent-state dynamics are non-standard, some parameters may lie near boundaries, and the log-likelihoods themselves are evaluated by particle filtering and so are subject to Monte Carlo noise.
 To address this, we additionally report a \emph{simulation-based} (parametric bootstrap) LRT $p$-value that does not rely on the $\chi^2$ reference distribution.
 For each comparison we simulate $B=100$ datasets from the fitted all-shared (null) model, refit both the null and the unit-specific alternative model to each simulated dataset, form the bootstrap test statistic $\Lambda^{(b)} = 2[\ell_{\text{alt}}(y^{(b)}) - \ell_{\text{null}}(y^{(b)})]$, and compute $p_{\text{boot}} = (1 + \#\{b:\,\Lambda^{(b)} \ge \Lambda_{\text{obs}}\}) / (1 + B)$.
-Empty cells in the bootstrap column correspond to comparisons for which the simulation study is still in progress.
-Since the log-likelihoods in our framework are evaluated via Monte Carlo methods, both the AIC values and LRT $p$-values are subject to Monte Carlo variability, and we interpret them accordingly.
-The following table shows the comparison of different models under different settings of unit specific parameter.
+Table~\ref{Table:SIRJPF2_model_comparison} shows the comparison of different models under different settings of unit specific parameter.
 Each row represents a different model configuration, with specific parameters designated as either unit-specific or shared across all units.
 Within the table, the max log-likelihood and AIC columns report the maximum log-likelihood and AIC values for each model configuration, where a lower AIC indicates a more favorable balance between model fit and complexity. Similarly, the max log-likelihood (MPIF) and AIC (MPIF) columns provide analogous metrics under the marginalized method setting for the PIF procedure. The LRT $p$-value column reports the $p$-value from the likelihood ratio test of each unit-specific model against the all-shared baseline, with ``---'' denoting the reference model.
 \begin{table}[ht]
@@ -1004,28 +993,25 @@ $r^{\species}_{\unit}$ & \Sexpr{mysignif_ll_AIC(target_para_parameter_table[8,]$
 \label{Table:SIRJPF2_model_comparison}
 \end{table}
 
-\bye{
-Under the standard panel iterated filter the all-shared model attains the lowest AIC while under the marginalized filter reported in the MPIF columns the picture changes. 
-Making $\theta_I$ unit-specific gives the lowest AIC, and the $\chi^2$ likelihood-ratio test flags both $\theta_I$ ($p=0.001$) and $p$ ($p=0.009$), with no other parameter significant. 
-We do not trust these signals. 
-Wilks' theorem asks for an exactly maximized likelihood, interior and well-identified parameters, asymptotic assumption, and a sample size large relative to the number of parameters under test, and a fourteen-parameter unit-specific extension fit by Monte Carlo particle filtering on an eight-unit panel meets none of these conditions.
+%Under the standard panel iterated filter the all-shared model attains the lowest AIC while under the marginalized filter reported in the MPIF columns the picture changes. 
+%Making $\theta_I$ unit-specific gives the lowest AIC, and the $\chi^2$ likelihood-ratio test flags both $\theta_I$ ($p=0.001$) and $p$ ($p=0.009$), with no other parameter significant. 
+%We do not trust these signals. 
+%Wilks' theorem asks for an exactly maximized likelihood, interior and well-identified parameters, asymptotic assumption, and a sample size large relative to the number of parameters under test, and a fourteen-parameter unit-specific extension fit by Monte Carlo particle filtering on an eight-unit panel meets none of these conditions.
 
-We therefore replace the asymptotic reference with a parametric bootstrap. 
-For each alternative we simulate $B=100$ datasets from the fitted all-shared model and refit both the null and the alternative to every one of them, with the identical estimation procedure and particle count, which gives the empirical null distribution of the likelihood-ratio statistic $\Lambda$. 
-Against this reference neither $\theta_I$ ($p_{\mathrm{boot}}=0.10$) nor $p$ ($p_{\mathrm{boot}}=0.39$) is significant, and we retain the all-shared model.
+%We therefore replace the asymptotic reference with a parametric bootstrap. 
+%For each alternative we simulate $B=100$ datasets from the fitted all-shared model and refit both the null and the alternative to every one of them, with the identical estimation procedure and particle count, which gives the empirical null distribution of the likelihood-ratio statistic $\Lambda$. 
+%Against this reference neither $\theta_I$ ($p_{\mathrm{boot}}=0.10$) nor $p$ ($p_{\mathrm{boot}}=0.39$) is significant, and we retain the all-shared model.
 
-For the fourteen-parameter alternatives (38 parameters in unit-specific model and 24 parameters in all-shared model) the simulated $\Lambda$ does not sit near the $\chi^2_{14}$ mean of $14$: its average across these alternatives is about $27$, ranging from roughly $16$ for $\theta_S$ to $36$ for $r$.
+For example, in the fourteen-parameter alternatives for testing whether $\theta_I$ is unit-specific (38 parameters in unit-specific model and 24 parameters in all-shared model) the simulated log-likelihood ratio statistic does not sit near the $\chi^2_{14}$ mean of $14$: its average across these alternatives is about $27$, ranging from roughly $16$ for $\theta_S$ to $36$ for $r$.
 This excess arises because maximizing over many added unit-specific parameters by stochastic search absorbs Monte Carlo and finite-sample fluctuation that an exactly maximized likelihood would not, and it grows with how weakly the added parameters are identified. 
 Measured against its own bootstrap null, which is centred near $23$, the observed $\Lambda=35$ for $\theta_I$ is unremarkable, even though it is extreme against $\chi^2_{14}$.
 
-That this is a failure of the asymptotics rather than an artifact of our search is confirmed by a low-dimensional, well-identified control. 
-For $\theta_P$, which adds only seven parameters, the bootstrap null is close to $\chi^2_7$---its mean is about $7$---and the two references agree ($p=0.23$ against $p_{\mathrm{boot}}=0.28$). 
-Where Wilks' conditions hold the bootstrap reproduces the chi-square, and where they fail it corrects it.
-
+This violation of the asymptotic chi-square null distribution is not evident for all parameters.
+For example, consider adding unit-specific variation to $\theta_P$, which adds only seven parameters.
+The bootstrap null is close to $\chi^2_7$---its mean is about $7$---and the two references agree fairly closely ($p=0.23$ against $p_{\mathrm{boot}}=0.28$). 
 We accordingly take the bootstrap as the primary test and report the $\chi^2$ values as a familiar but, in this regime, anti-conservative benchmark. 
 One caveat concerns $\theta_I$, the closest of the seven alternatives to significance: at $B=100$ its bootstrap $p$-value of $0.10$ carries its own Monte Carlo uncertainty, and we are increasing the number of bootstrap replicates to estimate it more precisely.
 It nonetheless sits well above the conventional $0.05$ level, so for this panel the conclusion that no unit-specific elaboration improves on the all-shared model is significant.
-}
 
 \begin{figure}[H]
     \centering
@@ -1060,7 +1046,7 @@ The observed densities are represented by the solid colorful curves.}
 
 
 
-\section{SIRJPF Model}
+\section{SIRJPF: A Single {\it Daphnia} Species with Parasites}
 The SIRJPF model presented here encapsulates the dynamics in each bucket($\unit$) among susceptible individuals ($S^{\species}$), infected individuals ($I^{\species}$), juvenile population ($J^{\species}$), algae as a food resource ($F$), the parasite population ($P$).
 The superscript $\species$ denotes the species, which represents native or invasive species.
 Each stochastic differential equation accounts for various biological and ecological processes, augmented with stochastic terms to capture the inherent randomness within the systems.
@@ -1632,7 +1618,7 @@ The model’s ability to reproduce these patterns accurately highlights its pote
 \end{figure}
 
 
-\section{SRJF2 Model}
+\section{SRJF2: Two {\it Daphnia} Species and No Parasites}
 In this section, we introduce the SRJF2 model, which analyze the dynamics between native and invasive species competing for a shared food resource, algae ($F$) in each bucket($\unit$).
 The stochastic differential equations governing the system are:
 {\small
@@ -1957,7 +1943,7 @@ By incorporating resource-consumption feedback into the population dynamics, the
 
 
 
-\section{SRJF Model}
+\section{SRJF: A Model Without Parasites}
 In this section, we introduce the SRJF model, which formalizes the dynamics among susceptible individuals ($S^{\species}$), the juvenile population ($J^{\species}$), and algae serving as a food resource ($F$) as follows:
 {\small
 \begin{align}
@@ -2505,7 +2491,7 @@ and the log-likelihood is:
 \end{align}
 The calculated log-likelihood used to compute the AIC for model comparison. And the result of the model fitting of model~\ref{model:GLMM_linear},~\ref{model:GLMM_quad} and \ref{model:GLMM_cubic} can be found in the Table~2 in the main article.
 
-\section{$J$ ablation}
+\section{SIRPF2: A $J$ Ablation of the Full Model}
 
 The SIRPF2 model presented here ignores the state of juvenile \textit{Daphnia} and describes the dynamics in each bucket ($\unit$) among susceptible individuals ($S^{\species}$), infected individuals ($I^{\species}$), alga as a food resource ($F$), the parasite population ($P$).
 The superscript $\species$ denotes the species, which represents native or invasive species.

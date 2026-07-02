@@ -1182,8 +1182,6 @@ The applicability of our approach is contingent on having panel data of sufficie
 Such panel datasets are available, for example, on pathogen-host ecosystems \citep{martinez-bakker15} and fisheries \citep{naiman02}.
 The flexibility of the PanelPOMP model class provides many opportunities for developing new models that integrate ecological theory with panel time series data.
 
-\eic{IT IS A GOOD IDEA TO INCLUDE A PARAGRAPH IN THE DISCUSSION RETURNING TO THE SCIENTIFIC PESPECTIVE. ONE ANGLE IS TO POINT OUT THAT OUR EXAMPLE IS CHARACTERISTIC OF THE COMPLEXITY OF MULTI-SPECIES ECOLOGICAL SYSTEMS, AND THE NEED FOR ONGOING METHODS AND APPLICATION DEVELOPMENT TO IMPROVE UNDERSTANDING OF THE POPULATION DYNAMICS. I'LL REWRITE THIS PARAGRAPH.
-Mechanistic models help scientists learn how ecological systems work, but fitting them to data is hard when key quantities go unobserved, dynamics are noisy and nonlinear, and several replicate systems must be analyzed together. We show that a recently developed simulation-based method, panel iterated filtering, makes rigorous likelihood-based analysis of such replicated experiments practical, and we apply a refinement that improves its reliability. Studying a freshwater experiment with two competing water-flea species, their algal food, and a shared fungal parasite, we find that accounting for randomness reshapes the ecological conclusions: depletion of the food resource, rather than a switch in reproductive strategy, best explains the observed boom and collapse, with chance variation alone explaining differences between replicates.}
 
 \section*{Significance Statement}
 
