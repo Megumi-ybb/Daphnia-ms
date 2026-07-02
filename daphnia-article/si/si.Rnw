@@ -987,7 +987,7 @@ Within the table, the max log-likelihood and AIC columns report the maximum log-
 \begin{center}
 \begin{tabular}{||c |c |c |c|c|c|c||}
  \hline
-\makecell[c]{Specific\\parameters}  & \makecell[c]{Max\\loglik} & AIC & \makecell[c]{Max loglik\\(MPIF)} & \makecell[c]{AIC\\(MPIF)} & \makecell[c]{LRT\\$p$-value\\($\chi^2$)} & \makecell[c]{LRT\\$p$-value\\(bootstrap)}\\ [0.5ex]
+\makecell[c]{Specific\\parameters}  & \makecell[c]{Max\\loglik\\(PIF)} &  \makecell[c]{AIC\\(PIF)} & \makecell[c]{Max loglik\\(MPIF)} & \makecell[c]{AIC\\(MPIF)} & \makecell[c]{LRT\\$p$-value\\($\chi^2$)} & \makecell[c]{LRT\\$p$-value\\(bootstrap)}\\ [0.5ex]
  \hline\hline
 $\varnothing$ & \Sexpr{mysignif_ll_AIC(target_para_parameter_table[1,]$ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[1,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[1,]$ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[1,]$AIC,6)} & --- & --- \\
 $\theta^{\species}_{I,\unit}$ & \Sexpr{mysignif_ll_AIC(target_para_parameter_table[2,]$ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[2,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[2,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(target_para_parameter_table[2,]$block_AIC,6)} & 0.001 & 0.10 \\
@@ -1535,7 +1535,7 @@ $\tau^{\invasive}_{I}$      &  Measurement dispersion for infected adult        
 \begin{center}
 \begin{tabular}{||c |c |c |c|c|c|c||}
  \hline
-\makecell[c]{Specific\\parameters}  & \makecell[c]{Max\\loglik} & AIC & \makecell[c]{Max loglik\\(block)} & \makecell[c]{AIC\\(block)} & \makecell[c]{LRT\\$p$-value\\($\chi^2$)} & \makecell[c]{LRT\\$p$-value\\(bootstrap)}\\ [0.5ex]
+\makecell[c]{Specific\\parameters}  & \makecell[c]{Max\\loglik\\(PIF)} & \makecell[c]{AIC\\(PIF)} & \makecell[c]{Max loglik\\(MPIF)} & \makecell[c]{AIC\\(MPIF)} & \makecell[c]{LRT\\$p$-value\\($\chi^2$)} & \makecell[c]{LRT\\$p$-value\\(bootstrap)}\\ [0.5ex]
  \hline\hline
 $\theta^{\native}_{I,\unit}$ & \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[1,]$ll,5)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[1,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[1,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[1,]$block_AIC,6)} & $<$0.001 & 0.010 \\
 $\varnothing$  & \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[2,]$ll,5)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[2,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[2,]$ll,5)}& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[2,]$AIC,6)} & --- & --- \\
@@ -1557,7 +1557,7 @@ $\theta_{P,\unit}$& \Sexpr{mysignif_ll_AIC(dent_para_parameter_table[8,]$ll,5)}&
 \begin{center}
 \begin{tabular}{||c |c |c |c|c|c|c||}
  \hline
-\makecell[c]{Specific\\parameters}  & \makecell[c]{Max\\loglik} & AIC & \makecell[c]{Max loglik\\(block)} & \makecell[c]{AIC\\(block)} & \makecell[c]{LRT\\$p$-value\\($\chi^2$)} & \makecell[c]{LRT\\$p$-value\\(bootstrap)}\\ [0.5ex]
+\makecell[c]{Specific\\parameters}  & \makecell[c]{Max\\loglik\\(PIF)} & \makecell[c]{AIC\\(PIF)} & \makecell[c]{Max loglik\\(MPIF)} & \makecell[c]{AIC\\(MPIF)} & \makecell[c]{LRT\\$p$-value\\($\chi^2$)} & \makecell[c]{LRT\\$p$-value\\(bootstrap)}\\ [0.5ex]
  \hline\hline
 $\xi_{\unit}$ & \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[1,]$ll,5)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[1,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[1,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[1,]$block_AIC,6)} & 0.003 & 0.07 \\
 $\varnothing$  & \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[2,]$ll,5)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[2,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[2,]$ll,5)}& \Sexpr{mysignif_ll_AIC(lum_para_parameter_table[2,]$AIC,6)} & --- & --- \\
@@ -1908,7 +1908,7 @@ $\tau^{\invasive}_{S}$      &  Measurement dispersion for susceptible invasive a
 \begin{center}
 \begin{tabular}{||c |c |c |c|c|c|c||}
  \hline
-\makecell[c]{Specific\\parameters}  & \makecell[c]{Max\\loglik} & AIC & \makecell[c]{Max loglik\\(block)} & \makecell[c]{AIC\\(block)} & \makecell[c]{LRT\\$p$-value\\($\chi^2$)} & \makecell[c]{LRT\\$p$-value\\(bootstrap)}\\ [0.5ex]
+\makecell[c]{Specific\\parameters}  & \makecell[c]{Max\\loglik\\(PIF)} & \makecell[c]{AIC\\(PIF)} & \makecell[c]{Max loglik\\(MPIF)} & \makecell[c]{AIC\\(MPIF)} & \makecell[c]{LRT\\$p$-value\\($\chi^2$)} & \makecell[c]{LRT\\$p$-value\\(bootstrap)}\\ [0.5ex]
  \hline\hline
 $\varnothing$  & \Sexpr{mysignif_ll_AIC(target_no_para_parameter_table[1,]$ll,5)}& \Sexpr{mysignif_ll_AIC(target_no_para_parameter_table[1,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(target_no_para_parameter_table[1,]$ll,5)}& \Sexpr{mysignif_ll_AIC(target_no_para_parameter_table[1,]$AIC,6)} & --- & --- \\
 $\theta^{\species}_{S,\unit}$ & \Sexpr{mysignif_ll_AIC(target_no_para_parameter_table[2,]$ll,5)}& \Sexpr{mysignif_ll_AIC(target_no_para_parameter_table[2,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(target_no_para_parameter_table[2,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(target_no_para_parameter_table[2,]$block_AIC,6)} & 0.22 & 0.81 \\
@@ -2348,7 +2348,7 @@ $\tau^{\invasive}_{S}$      &  Measurement dispersion for susceptible adult     
 \begin{center}
 \begin{tabular}{||c |c |c |c|c|c|c||}
  \hline
-\makecell[c]{Specific\\parameters}  & \makecell[c]{Max\\loglik} & AIC & \makecell[c]{Max loglik\\(block)} & \makecell[c]{AIC\\(block)} & \makecell[c]{LRT\\$p$-value\\($\chi^2$)} & \makecell[c]{LRT\\$p$-value\\(bootstrap)}\\ [0.5ex]
+\makecell[c]{Specific\\parameters}  & \makecell[c]{Max\\loglik\\(PIF)} & \makecell[c]{AIC\\(PIF)} & \makecell[c]{Max loglik\\(MPIF)} & \makecell[c]{AIC\\(MPIF)} & \makecell[c]{LRT\\$p$-value\\($\chi^2$)} & \makecell[c]{LRT\\$p$-value\\(bootstrap)}\\ [0.5ex]
  \hline\hline
 $\varnothing$ & \Sexpr{mysignif_ll_AIC(dent_no_para_parameter_table[1,]$ll,5)}& \Sexpr{mysignif_ll_AIC(dent_no_para_parameter_table[1,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(dent_no_para_parameter_table[1,]$ll,5)}& \Sexpr{mysignif_ll_AIC(dent_no_para_parameter_table[1,]$AIC,6)} & --- & --- \\
 $\theta^{\native}_{S,\unit}$  & \Sexpr{mysignif_ll_AIC(dent_no_para_parameter_table[2,]$ll,5)}& \Sexpr{mysignif_ll_AIC(dent_no_para_parameter_table[2,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(dent_no_para_parameter_table[2,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(dent_no_para_parameter_table[2,]$block_AIC,6)} & 0.04 & 0.12 \\
@@ -2366,7 +2366,7 @@ $f^{\native}_{S,\unit}$ & \Sexpr{mysignif_ll_AIC(dent_no_para_parameter_table[4,
 \begin{center}
 \begin{tabular}{||c |c |c |c|c|c|c||}
  \hline
-\makecell[c]{Specific\\parameters}  & \makecell[c]{Max\\loglik} & AIC & \makecell[c]{Max loglik\\(block)} & \makecell[c]{AIC\\(block)} & \makecell[c]{LRT\\$p$-value\\($\chi^2$)} & \makecell[c]{LRT\\$p$-value\\(bootstrap)}\\ [0.5ex]
+\makecell[c]{Specific\\parameters}  & \makecell[c]{Max\\loglik\\(PIF)} & \makecell[c]{AIC\\(PIF)} & \makecell[c]{Max loglik\\(MPIF)} & \makecell[c]{AIC\\(MPIF)} & \makecell[c]{LRT\\$p$-value\\($\chi^2$)} & \makecell[c]{LRT\\$p$-value\\(bootstrap)}\\ [0.5ex]
  \hline\hline
 $\varnothing$ & \Sexpr{mysignif_ll_AIC(lum_no_para_parameter_table[1,]$ll,5)}& \Sexpr{mysignif_ll_AIC(lum_no_para_parameter_table[1,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(lum_no_para_parameter_table[1,]$ll,5)}& \Sexpr{mysignif_ll_AIC(lum_no_para_parameter_table[1,]$AIC,6)} & --- & --- \\
 $\theta^{\invasive}_{S,\unit}$  & \Sexpr{mysignif_ll_AIC(lum_no_para_parameter_table[2,]$ll,5)}& \Sexpr{mysignif_ll_AIC(lum_no_para_parameter_table[2,]$AIC,6)}& \Sexpr{mysignif_ll_AIC(lum_no_para_parameter_table[2,]$block_ll,5)}& \Sexpr{mysignif_ll_AIC(lum_no_para_parameter_table[2,]$block_AIC,6)} & 0.14 & 0.42 \\
