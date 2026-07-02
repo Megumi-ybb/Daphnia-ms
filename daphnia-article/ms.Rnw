@@ -851,6 +851,7 @@ Model & Parameters & Max log-likelihood & AIC \\ [0.5ex]
  \hline\hline
 SIRJPF2 & \Sexpr{length(parms)} & \Sexpr{mysignif_ll_AIC(loglik_target,5)} & \Sexpr{mysignif_ll_AIC(AIC_target,6)} \\
 SIRPF2 & 20 & \Sexpr{mysignif_ll_AIC(benchmark_model_summary$Model_no_juv[1],5)} & \Sexpr{mysignif_ll_AIC(benchmark_model_summary$Model_no_juv[2],6)} \\
+SIRJP2 & 23 & -887.8 & 1821.6 \\
 SIRJPF2-Gamma & \Sexpr{length(parms)} & \Sexpr{mysignif_ll_AIC(benchmark_model_summary$SIRJPF2_gamma[1],5)} & \Sexpr{mysignif_ll_AIC(benchmark_model_summary$SIRJPF2_gamma[2],6)} \\
 Negative Binomial (Cubic) & 24 & \Sexpr{mysignif_ll_AIC(benchmark_model_summary$NB_cubic[1],5)} & \Sexpr{mysignif_ll_AIC(benchmark_model_summary$NB_cubic[2],6)} \\
 Negative Binomial (Quadratic) & 20 & \Sexpr{mysignif_ll_AIC(benchmark_model_summary$NB_quad[1],5)} & \Sexpr{mysignif_ll_AIC(benchmark_model_summary$NB_quad[2],6)} \\
@@ -860,7 +861,8 @@ Searle et al. (2016) & 19 & \Sexpr{mysignif_ll_AIC(benchmark_model_summary$Model
 \end{tabular}
 \end{center}
 \caption{
-Comparison of model fit for mechanistic models and non-mechanistic benchmarks.}
+Comparison of model fit for mechanistic models and non-mechanistic benchmarks.
+\eic{I ADDED THE FOOD ABLATION RESULT, BUT THIS IS CURRENTLY HARD-CODED}}
 \label{Table:Model_comparison}
 \renewcommand{\arraystretch}{1}
 \end{table}
@@ -875,12 +877,13 @@ Although these more flexible polynomial expansions do not represent latent biolo
 
 Table~\ref{Table:Model_comparison} includes the log-likelihood and AIC values for the fitted model and the deterministic ODE model of \citet{searle16}, which served as a starting point for our model.
 Although the mechanistic model of \citet{searle16} was successfully used to provide scientific insight into the ecological dynamics of the experiment, we found it does not provide a competitive statistical fit to the data compared to simple alternatives.
-We also consider several variants of the SIRJPF2 model described here, namely a model that excludes the juvenile state (SIRPF2, described in Section~{\suppSecBenchmark}.3)\eic{THIS COULD BE IN ITS OWN SECTION. IT IS AN ABLATION STUDY, REMOVING J, COMPARABLE TO THE F ABLATION STUDY}, and a version of the SIRJPF2 model where the Gaussian noise has been replaced with Gamma noise (SIRJPF2-Gamma, see Section~{\suppSecSIRJPFgamma}).
-The SIRPF2 model ignores the process of maturation of juvenile and instead highlights the infection process of the \textit{Daphnia} adult populations.
-While this model does have an improved statistical fit compared to the deterministic ODE model of \citet{searle16} and other benchmark models, it has weaker performance than the model that accounts for the effect of juveniles on population dynamics.
+We also consider several variants of the SIRJPF2 model described here, namely a model that excludes the juvenile state (SIRPF2, described in Section~{\suppSecJablation}),
+a model omitting the dynamics of the algal food (SIRJP2, see Section~{\suppSecFablation}),
+and a version of the SIRJPF2 model where the Gaussian noise has been replaced with Gamma noise (SIRJPF2-Gamma, see Section~{\suppSecSIRJPFgamma}).
 
 
-Our SIRJPF2 model quantitatively describes the observed data better than any of the alternatives, while simultaneously providing a plausible mechanistic description of the experimental system.
+The SIRJPF2 model quantitatively describes the observed data better than any of the alternatives, while simultaneously providing a plausible mechanistic description of the experimental system.
+\revision{\editNewModelComparisonExplanation}
 Having assessed the fit of our model, we have some support for interpreting the estimated parameters of the model.
 It is hard to rule out the possibility that some biological details in the model are misspecified in ways that may lead to confounding with the modeled mechanisms and therefore bias in the causal interpretation of estimated parameters \citep{wheeler24}.
 With that caveat acknowledged, we proceed to interpret the model and parameters at face value.

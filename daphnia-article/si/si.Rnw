@@ -1,4 +1,7 @@
 \documentclass[aoas,preprint]{imsart}
+
+\input{../edits.tex}
+
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{graphicx}
@@ -893,23 +896,24 @@ For likelihood ratio tests of shared versus unit-specific parameters, in the pre
 
 \clearpage
 
-\section{No-\texorpdfstring{$F$}{F} Ablation}\label{sec:no-F-ablation}
+\section{\texorpdfstring{$F$}{F} Ablation}\label{sec:no-F-ablation}
 
-\bye{
-The latent food compartment $F$ is central to the way the model explains the population dynamics,  we fit an ablated model in which $F$ is held fixed at its initial value $F(t_0)=16.667$ for the whole trajectory. 
-In effect we remove the food dynamics, that is, its consumption losses, its renewal inflow, and the process noise $\sigma_F$, so that food no longer depletes as the Daphnia consume it. 
+We considered an SIRJP2 model derived by removing the latent food dynamics from the SIRJPF2 model.
+This ablation experiment tests whether the latent food compartment $F$ is central to the way the model explains the population dynamics.
+We implemented SIRJP2 by fitting SIRJPF2 while holding $F$ fixed at its initial value $F(t_0)=16.667$ for the whole trajectory.
+Effectively, this eliminates from the dynamics food loss due to consumption by {\it Daphna}, food renewal inflow, and the process noise $\sigma_F$.
 The birth terms still read the food level through $r^{\species}f_S^{\species}F$, but with $F$ held constant the per-capita recruitment rate no longer responds to a depletable resource. We fit the ablated model to the observed data using the same panel iterated-filtering protocol as the all-shared SIRJPF2 model, warm-started from the all-shared maximum likelihood estimate. 
 Dropping $\sigma_F$ lowers the free-parameter count from $24$ to $23$, so the ablation is actually favoured by the AIC penalty. 
 Because freezing the food dynamics is a structural change rather than a parameter restriction, the two models are non-nested and we compare them by AIC.
-}
+Results are shown in Table~{\mainTableModelComparison} and copied in Table~\ref{Table:no-F-ablation}.
 
 \begin{table}[ht]
 \centering
-\caption{\label{Table:no-F-ablation}\bye{
-Comparison of the all-shared SIRJPF2 model with its no-$F$ ablation, in which the food compartment is held fixed at its initial value. 
+\caption{\label{Table:no-F-ablation}
+Comparison of the all-shared SIRJPF2 model with its $F$ ablation, SIRJP2, in which the food compartment is held fixed at its initial value. 
 Log-likelihoods are evaluated by particle filtering, and the standard error shown for the ablation is the Monte Carlo standard error of the maximized log-likelihood across replicate searches. 
-Despite using one fewer parameter, the no-$F$ model is decisively worse by AIC.
-}}
+The no-$F$ model is decisively worse by AIC.
+}
 \begin{tabular}{lccc}
 \toprule
 Model & Free parameters $k$ & Max log-likelihood & AIC \\
@@ -2502,7 +2506,7 @@ and the log-likelihood is:
 \end{align}
 The calculated log-likelihood used to compute the AIC for model comparison. And the result of the model fitting of model~\ref{model:GLMM_linear},~\ref{model:GLMM_quad} and \ref{model:GLMM_cubic} can be found in the Table~2 in the main article.
 
-\subsection{SIRPF2 Model}
+\section{$J$ ablation}
 
 The SIRPF2 model presented here ignores the state of juvenile \textit{Daphnia} and describes the dynamics in each bucket ($\unit$) among susceptible individuals ($S^{\species}$), infected individuals ($I^{\species}$), alga as a food resource ($F$), the parasite population ($P$).
 The superscript $\species$ denotes the species, which represents native or invasive species.
@@ -2535,8 +2539,9 @@ d\zeta_{P,{\unit}} \sim \Normal \big[0, \sigma_{P,{\unit}}^{2}\, dt\big].
 Unlike the SIRJPF2 model, we ignore the maturation process from juvenile to adult in equation \eqref{eq:SIRPF2_dS}.
 Instead, this model uses $r^{\species}_{\unit}$ to represent the average rate of growth in density of \textit{Daphnia} adult.
 
-\subsubsection{Flow Diagram}
 The SIRPF2 model illustrates the interdependent dynamics among the Susceptible ($S$), Infected ($I$), Food ($F$), and Parasite ($P$) populations, with transitions representing ecological and biological interactions.
+The model is represented diagrammatically in Fig.~\ref{fig:flow_SIRPF2}.
+The maximized log-likelihood for this model is presented in Table~{\mainTableModelComparison}.
 
 \usetikzlibrary{positioning}
 \usetikzlibrary {arrows.meta}
