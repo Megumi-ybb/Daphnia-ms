@@ -131,7 +131,8 @@ We adopt MPIF here because \citet{wheeler25} show that it has favorable theoreti
 
 \newcommand\editMPIFdiscussion{Our analysis was faciliated by the development of marginalized panel iteratated filtering methodology \citep{wheeler25}.}
 
-\newcommand\editAbstractScience{Scientifically, we found that mesocosms in a treatment group behave as stochastic replicates: across all treatment-by-species combinations considered, a model with parameters shared across replicate mesocosms is preferred over models with mesocosm-specific parameters under both AIC and a parametric bootstrap likelihood ratio test. Thus, stochastic models can provide a parsimonious explanation of the observed variation between replicates.}
+\newcommand\editAbstractScience{Scientifically, we found that mesocosms in a treatment group behave as stochastic replicates: across all treatment-by-species combinations considered, a model with parameters shared across replicate mesocosms is preferred over models with mesocosm-specific parameters using a parametric bootstrap likelihood ratio test.
+Thus, stochastic models can provide a parsimonious explanation of the observed variation between replicates.}
 
 \newcommand\editParametricBootstrap{A simulation study showed that the chi-square approximation to the likelihood ratio test, supported by Wilks' Theorem, is not accurate in this situation (Section~\suppSecSimModelSelection).
 To better understand this, we present a simple toy model caricaturing the task of testing for shared parameters in a PanelPOMP model.
@@ -146,7 +147,7 @@ The null distribution can be computed by simulation to obtain the correct covera
 For other paramters, where computational resources and scientific priorities do not support this intensive computation, we simply bear in mind that the coverage may be less than the target 95\%.}
 
 
-\newcommand\editLANandAICforPOMP{A general theoretical justification of the $2p$ penalty used by AIC is based on a local asymptotic quadratic approximation to the log likelihood in a neighborhood of the MLE, together with a normal approximation to the Fisher score \citep{aic74,konishi08}.
+\newcommand\editLANandAICforPOMP{A theoretical justification of the $2p$ penalty used by AIC is based on a local asymptotic quadratic approximation to the log likelihood in a neighborhood of the MLE, together with a normal approximation to the Fisher score \citep{aic74,konishi08}.
 This is essentially the same as the local asymptotic normality (LAN) property of Le Cam and the requirements for Wilks' Theorem.
 LAN has been studied for a general class of partially observed Markov processes \citep{bickel98}.
 Finite sample behavior of the likelihood ratio statistic has been found to match asymptotic theory fairly accurately in other POMP model contexts \citep{bhadra11,stocks20,wheeler25}.}

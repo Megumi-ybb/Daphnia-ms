@@ -717,9 +717,10 @@ In PanelPOMP models, it is necessary to decide which parameters should be shared
 This decision can be guided both by scientific considerations and by empirical evidence.
 As the number of units in the PanelPOMP model increases, the number of parameters increases linearly with the number of unit-specific parameters.
 Therefore, balancing model fit and parsimony becomes essential to avoid overly complex models.
-Here, we use AIC, defined to be twice the number of estimated parameters minus twice the maximized log-likelihood.
+Here, we use AIC, defined to be twice the number of estimated parameters ($2p$) minus twice the maximized log-likelihood.
 AIC compensates for over-fitting by seeking to optimize out-of-sample forecast skill for a log-likelihood scoring rule \citep{aic74}.
-Thus, AIC penalizes complexity only so far as it affects generalization error for prediction; parsimony has additional scientific benefits, but the scientific value of model simplicity cannot be determined by a purely statistical criterion.
+\revision{\editLANandAICforPOMP}
+AIC penalizes complexity only so far as it affects generalization error for prediction; parsimony has additional scientific benefits, but the scientific value of model simplicity cannot be determined by a purely statistical criterion.
 Various other information criteria have been proposed and used in ecological data analysis, in addition to likelihood ratio hypothesis tests \citep{johnson04}.
 However, AIC has earned widespread use due to its clear theoretical motivation and its applicability for evaluating collections of non-nested hypotheses, including comparing mechanistic models to non-mechanistic benchmark models.
 
