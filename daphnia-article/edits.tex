@@ -112,7 +112,8 @@ We are not aware of any previous scientific study where non-Gaussian PanelPOMP m
 \newcommand\editMales{Male \textit{Daphnia} are excluded from this model because they are absent until late in the experiment, are physically smaller than females, and have low observed infection rates.}
 
 
-\newcommand\editSetToZero{fixed at zero.}
+\newcommand\editSetToZero{Since the profile for $\sigma^{\native}_{S}$, $\sigma^{\invasive}_{S}$ has low curvature and indicates that the parameters are insignificantly different from zero, we fixed the $\sigma^{\native}_{S}$ and $\sigma^{\invasive}_{S}$ to be zero.
+}
 
 \newcommand\editReminderShared{In this version of SIRJPF2, parameters are shared between units and so their potential dependence on $\unit$ is suppressed.}
 
@@ -152,7 +153,9 @@ This is essentially the same as the local asymptotic normality (LAN) property of
 LAN has been studied for a general class of partially observed Markov processes \citep{bickel98}.
 Finite sample behavior of the likelihood ratio statistic has been found to match asymptotic theory fairly accurately in other POMP model contexts \citep{bhadra11,stocks20,wheeler25}.}
 
-\newcommand\editNewModelComparisonExplanation{AIC applies to the non-nested comparisons in Table~\ref{Table:Model_comparison} because each model is scored by its maximized log-likelihood on the same data. The advantage of SIRJPF2 over the negative binomial benchmarks and the deterministic model of \citet{searle16} is large relative to any plausible Monte Carlo or approximation error, and so provides decisive support for the mechanistic model. Smaller differences, such as those among SIRJPF2 and its reduced variants, warrant more caution: the asymptotic argument underlying AIC can be inaccurate for these models (Section~{\suppSecSimModelSelection}), so a modest gap in AIC is better read as statistical comparability than as a definitive ranking.}
+\newcommand\editNewModelComparisonExplanation{AIC applies to the non-nested comparisons in Table~\ref{Table:Model_comparison} because each model is scored by its maximized log-likelihood on the same data.
+  The advantage of SIRJPF2 over the negative binomial benchmarks and the deterministic model of \citet{searle16} is large relative to any plausible Monte Carlo or approximation error, and so provides decisive support for the mechanistic model.
+  Smaller differences, such as those among SIRJPF2 and its reduced variants, warrant more caution since the asymptotic argument underlying AIC can be inaccurate for these models (Section~{\suppSecSimModelSelection}).}
 
 
 
