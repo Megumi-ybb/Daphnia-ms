@@ -68,7 +68,7 @@
 \newcommand\suppFigSRJFdentiferaSimByUnit{S26}
 \newcommand\suppFigSRJFlumholtziSimAggregate{S27}
 \newcommand\suppFigSRJFlumholtziSimByUnit{S28}
-\newcommand\suppFigSIRPFiiDiagram{S20}
+\newcommand\suppFigSIRPFiiDiagram{S29}
 
 
 % Bo Yang revision flag: marks items still owed for the revision pass.
@@ -81,7 +81,7 @@
 Collections of partially observed nonlinear stochastic dynamic systems arise in diverse scientific applications and raise methodologically challenging statistical inference problems.
 We considered this task in the context of analyzing panel time series data collected from ecological studies.
 We developed and demonstrated data analysis techniques that apply to a flexible model class, permitting scientists to obtain statistically efficient inference on models describing scientifically plausible mechanisms.
-For our experiment, a model with stochastic dynamics provided simpler interpretation than previous determinstic models: variation between experimental replicates was adequately described by dynamic noise rather than systematic differences between replicates.
+For our experiment, a model with stochastic dynamics provided simpler interpretation than previous deterministic models: variation between experimental replicates was adequately described by dynamic noise rather than systematic differences between replicates.
 }
 
 \newcommand\editSimpson{
@@ -127,7 +127,7 @@ Both algorithms extend iterated filtering \citep{ionides15} to PanelPOMP models 
 When the swarm is filtered through the data of unit $u$, the algorithm of \citet{breto20} resamples not only the shared parameters $\phi$ and the focal unit's parameters $\psi_u$ but also the parameters $\psi_{\tilde u}$ of every other unit $\tilde u \neq u$, even though the data for unit $u$ are uninformative about $\psi_{\tilde u}$.
 The marginalized variant instead resamples only $\phi$ and $\psi_u$, leaving each $\psi_{\tilde u}$ unchanged while filtering through unit $u$.
 MPIF and PIF become different only in the presence of unit-specific parameters; they are identical when all parameters are shared between all units.
-We adopt MPIF here because \citet{wheeler25} show that it has favorable theoretical and practical properties.}
+We adopt MPIF here because, when many parameters are unit-specific, it converges to the maximum likelihood faster than the standard filter; \citet{wheeler25} establish its theoretical properties.}
 
 \newcommand\editMPIFdiscussion{Our analysis was faciliated by the development of marginalized panel iteratated filtering methodology \citep{wheeler25}.}
 
@@ -152,7 +152,7 @@ This is essentially the same as the local asymptotic normality (LAN) property of
 LAN has been studied for a general class of partially observed Markov processes \citep{bickel98}.
 Finite sample behavior of the likelihood ratio statistic has been found to match asymptotic theory fairly accurately in other POMP model contexts \citep{bhadra11,stocks20,wheeler25}.}
 
-\newcommand\editNewModelComparisonExplanation{TODO: explain the use of AIC (and its limitations) in the context of Table~2}
+\newcommand\editNewModelComparisonExplanation{AIC applies to the non-nested comparisons in Table~\ref{Table:Model_comparison} because each model is scored by its maximized log-likelihood on the same data. The advantage of SIRJPF2 over the negative binomial benchmarks and the deterministic model of \citet{searle16} is large relative to any plausible Monte Carlo or approximation error, and so provides decisive support for the mechanistic model. Smaller differences, such as those among SIRJPF2 and its reduced variants, warrant more caution: the asymptotic argument underlying AIC can be inaccurate for these models (Section~{\suppSecSimModelSelection}), so a modest gap in AIC is better read as statistical comparability than as a definitive ranking.}
 
 
 

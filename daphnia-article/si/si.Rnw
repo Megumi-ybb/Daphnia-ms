@@ -217,7 +217,7 @@ MCAP has previously been demonstrated for panel iterated filtering by \citet{bre
 
 \parskip 3mm
 
-To investigate identifiability, we carried out an additional exploration to obtain estimates, profiles and confidence intervals for the composite parameters,  $r^{\species}f^{\species}_{S}$ and $r^{\species}f^{\species}_{S}$, as well as the individual parameters.
+To investigate identifiability, we carried out an additional exploration to obtain estimates, profiles and confidence intervals for the composite parameters,  $r^{\species}f^{\species}_{S}$ and $p^{\species}f^{\species}_{S}$, as well as the individual parameters.
 We could have reparameterized to apply MCAP to these composite parameters exactly as we did for the individual parameters.
 However, for this additional analysis we made a simplification by re-using the calculations for the original profiles.
 For every point on every profile, computed for the individual parameters, we calculated the value of the composite parameters.
@@ -269,9 +269,9 @@ Here, $\Phi^{F,m}_{u,n,j}$ is the $j$th filter particle searching for the MLE of
 Cooling factor $\rho$ determines how aggressively the parameter perturbations are dampened as the number of iterations increases.
 By gradually reducing the size of these parameter random walks, the algorithm refines the parameter estimates and converges more tightly to the maximum likelihood point.
 
-When $\mathrm{MARGINALIZE}=\mathrm{TRUE}$, the estimate of the unit-specific parameter $\psi_u$ belonging to particle $j$ is unchanged when filtering throuth a unit $\tilde u\neq u$. 
+When $\mathrm{MARGINALIZE}=\mathrm{TRUE}$, the estimate of the unit-specific parameter $\psi_u$ belonging to particle $j$ is unchanged when filtering through a unit $\tilde u\neq u$. 
 The unmarginalized PIF was proposed by \cite{breto20} and was provided with theoretical convergence results that are not yet available for MPIF.
-However, our results demonstrate that MPIF has superior empirical performance on the ecological model considered here.
+However, when many parameters are unit-specific, MPIF converges to the maximum likelihood faster than the standard filter, because it does not resample a unit's parameters using data from other units.
 Theoretical support for MPIF will be published elsewhere \citep{wheeler25}.
 
 To briefly review, the model is specified by the initial condition, $ f_{X_{u,0}}(\, \cdot \, \params \phi,\psi_u)$, the latent state transition density, $f_{X_{u,n} | X_{u,n-1}}\big(\, \cdot \mid \,  \params \phi,\psi_u \big)$, and the measurement density, $f_{Y_{u,n} | X_{u,n}}\big(\, \cdot \mid \cdot \params \phi,\psi_u\big)$, for $u = \seq{1}{U}$ and $n=\seq{1}{N_u}$.
@@ -308,6 +308,7 @@ Parametric-bootstrap coverage of the MCAP $95\%$ confidence intervals, on the lo
 The basic interval uses the asymptotic cutoff $c=1.92$ and matches Table~1 of the main text; the corrected interval re-cuts the same profile at the calibrated cutoff $c$ that targets $95\%$ coverage. 
 The native birth rate $r^{\native}$ is biased a little high and the noise parameters $\sigma_P$ and $\sigma_F$ a little low, all on weakly identified ridges. 
 The invasive birth rate $r^{\invasive}$ has a flat profile and is not separately identifiable, so we omit it from the correction.
+Coverage rates are binomial proportions over the $B=100$ simulated datasets, so they carry a Monte Carlo standard error of at most about $0.05$.
 }
 \begin{tabular}{lccccccc}
 \toprule
@@ -351,16 +352,18 @@ We use LRTs for model comparisons of unit-specific parameters against the nested
 \ref{Table:SRJF_lum_model_comparison}.
 For each of these tests, we compare a p-value from a chi-square approximation against a simulation-based parametric bootstrap.
 In some situations, we find substantial discrepancy between these two values, and in those cases we give more credence to the finite-sample simulation-based approach.
+Throughout these tables, the maximized log-likelihoods are Monte Carlo estimates with standard error of order $0.35$ (main text), so differences in AIC of only a few units are within Monte Carlo error and are not treated as decisive.
 Section~\ref{sec:discussion:chi-square:failure} explains why this may arise, via a simple toy example.
 
 We use AIC to compare log-likelihoods of non-nested models, in Table~\ref{Table:SIRJPF2_model_comparison}.
 AIC also provides a quick reference point for comparing nested models.
 AIC is not designed to be a formal hypothesis test; its goal is to select a good predictive model.
 Nevertheless, whenever one selects a model, it can be helpful to calculate the sensitivity and specificity of the approach.
-We check this for the native infection clearance rate $\theta_I^{\native}$, the one parameter wfor which unit-specific variation was favored by AIC and a chi-square LRT approximation.
+We check this for the native infected-host mortality rate $\theta_I^{\native}$, the one parameter for which unit-specific variation was favored by AIC and a chi-square LRT approximation.
 We simulate panels under two truths: one in which every parameter is shared, at the fitted all-shared SIRJPF2 MLE estimate, and one in which $\theta_I^{\native}$ is unit-specific, set to the MLE under the model where all other parameters are shared between units.
 For each simulated panel we fit both the all-shared model and the $\theta_I^{\native}$-unit-specific model with the same iterated-filtering protocol used in the main analysis, compute the AIC of each, and record which model AIC prefers.
 Table~\ref{tab:aic:specificity} presents proportions of model selections via AIC in 100 simulations, so the diagonal terms give the rate at which AIC recovers the truth under these hypotheses.
+Each data-generating truth is simulated $50$ times, so the tabulated proportions carry a binomial standard error of at most about $0.07$.
 
 \begin{table}[ht]
 \begin{center}
@@ -380,7 +383,7 @@ $\theta_I^{\native}$ unit-specific & 0.08 & 0.92 \\
 
 Under the all-shared truth AIC recovered the correct all-shared model on $78\%$ of panels (mean $\Delta\mathrm{AIC}=+5.0$ in its favour), over-selecting the $\theta_I^{\native}$-unit-specific elaboration on the remaining $22\%$; under the unit-specific truth it recovered the unit-specific model on $92\%$ of panels (mean $\Delta\mathrm{AIC}=-12.9$).
 Thus, despite the penalty that AIC places on the more complex model, the method demonstrates some preference toward it.
-For a formal model selection inference, a simluation-based bootstrap likelihood ratio test is therefore preferable, when it is available.
+For a formal model selection inference, a simulation-based bootstrap likelihood ratio test is therefore preferable, when it is available.
 
 
 \section{Discussion about the failure of chi-square LRT}
@@ -397,13 +400,12 @@ This is a mixed effect model with $U$ units, each with $N$ measurements, where e
 The null hypothesis of a shared mean, $H_0: \mu_u=\mu$, is to be tested against the unit-specific alternative $H_1$ for which $\mu_u$ is unconstrained.
 The random effect $\eta_u$ is a simplification of the process noise in a POMP model, and $\epsilon_{un}$ is a simple measurement error model.
 Under $H_0$ and $H_1$, the likelihood of data $y^*_{un}$ can be obtained directly by a multivariate normal calculation.
-\bye{
 Under $H_1$, with the unit means $\mu_u$ free, the random-effect variance is estimated at its boundary, $\hat\tau=0$, for every $U$ and $N$, because the free fixed effects absorb the between-unit variation that the random effect would otherwise explain. 
 The alternative therefore does not recover the data-generating $\tau$, and it is this boundary behaviour, not the shared structure of the null, that voids the regularity conditions behind the chi-square limit.
-}
+
 
 General theory for the likelihood ratio test gives a chi-square distribution under local asymptotic normality \citep[][Theorem 16.7]{vandervaart00}, without necessarily requiring independence \citep{geyer94}.
-However, these results requires a consistent MLE under $H_1$.
+However, these results require a consistent MLE under $H_1$.
 Chi-square approximations to likelihood ratio test statistics have been found to be useful even in some situations where the theoretical asymptotic limit does not apply \citep{anisimova01}.
 In our situation, when $\tau$ is large, we may expect that the log-likelihood advantage of using a fixed effect becomes large and so the chi-square approximation becomes poor.
 Empirically, this is the case, and Figure~\ref{fig:lrt-sim} shows that even a moderate value of $\tau$ can give rise to a substantial discrepancy between the actual null distribution and the chi-square approximation.
@@ -899,7 +901,7 @@ The red line shows the chi-square approximation based on Wilks' Theorem.
 }
 \end{figure}
 
-We conclude that chi-square approximations to the null distribution of the likelihood ratio test statistic are anti-conserative in this context, biasing inference against the null hypothesis.
+We conclude that chi-square approximations to the null distribution of the likelihood ratio test statistic are anti-conservative in this context, biasing inference against the null hypothesis.
 For likelihood ratio tests of shared versus unit-specific parameters, in the presence of random effects and therefore in the presence of dynamic process noise in POMP models, this example suggests the use of a simulation-based null distribution in preference to a chi-square approximation.
 
 
@@ -910,7 +912,7 @@ For likelihood ratio tests of shared versus unit-specific parameters, in the pre
 We considered an SIRJP2 model derived by removing the latent food dynamics from the SIRJPF2 model.
 This ablation experiment tests whether the latent food compartment $F$ is central to the way the model explains the population dynamics.
 We implemented SIRJP2 by fitting SIRJPF2 while holding $F$ fixed at its initial value $F(t_0)=16.667$ for the whole trajectory.
-Effectively, this eliminates from the dynamics food loss due to consumption by {\it Daphna}, food renewal inflow, and the process noise $\sigma_F$.
+Effectively, this eliminates from the dynamics food loss due to consumption by {\it Daphnia}, food renewal inflow, and the process noise $\sigma_F$.
 The birth terms still read the food level through $r^{\species}f_S^{\species}F$, but with $F$ held constant the per-capita recruitment rate no longer responds to a depletable resource. We fit the ablated model to the observed data using the same panel iterated-filtering protocol as the all-shared SIRJPF2 model, warm-started from the all-shared maximum likelihood estimate. 
 Dropping $\sigma_F$ lowers the free-parameter count from $24$ to $23$, so the ablation is actually favoured by the AIC penalty. 
 Because freezing the food dynamics is a structural change rather than a parameter restriction, the two models are non-nested and we compare them by AIC.
@@ -928,7 +930,7 @@ The no-$F$ model is decisively worse by AIC.
 Model & Free parameters $k$ & Max log-likelihood & AIC \\
 \midrule
 All-shared (depletable $F$) & $24$ & $-880.6$            & $1809.1$ \\
-No-$F$ ($F$ held constant)  & $23$ & $-887.8$ & $1821.6$ \\
+No-$F$ ($F$ held constant)  & $23$ & $-887.8 \pm 0.16$ & $1821.6$ \\
 \midrule
 \multicolumn{3}{l}{$\Delta\mathrm{AIC}$ (no-$F$ $-$ all-shared)} & $+12.4$ \\
 \bottomrule
@@ -976,7 +978,7 @@ target_para_parameter_table <- add_bootstrap_pvalues(
 In the panelPOMP framework, one must decide whether or not each parameter should be unit specific, or shared across units.
 These decisions greatly affect the degree of freedom for each model. For example, with ten units in the model, adding a shared parameter increases the model’s dimension by one, and adding a unit specific parameter will increase the dimension by ten.
 An increase in parameter dimension increases the model’s ability to quantitatively describe the observed data, but leads to the possibility of over-fitting, resulting in a model with poor explanatory and predictive power.
-In order to find a balance between fitting accuracy and simplicity when selecting models, we employed the Akaike information criterion (AIC) as a criteria to compare models while adjusting for dimension.
+In order to find a balance between fitting accuracy and simplicity when selecting models, we employed the Akaike information criterion (AIC) as a criterion to compare models while adjusting for dimension.
 We estimate model parameters via maximum likelihood using the panel iterated filtering (PIF) \citep{breto20} and calculate AIC for all models.
 In addition to AIC, we report $p$-values from the likelihood ratio test (LRT) to provide a complementary assessment of whether unit-specific parameterizations yield a statistically significant improvement in model fit over the all-shared baseline.
 The LRT compares each unit-specific model (alternative) against the all-shared model (null) as a nested pair: the all-shared model is the restricted case obtained by constraining all unit-specific copies of a parameter to be equal.
@@ -1025,9 +1027,9 @@ Measured against its own bootstrap null, which is centred near $23$, the observe
 
 This violation of the asymptotic chi-square null distribution is not evident for all parameters.
 For example, consider adding unit-specific variation to $\theta_P$, which adds only seven parameters.
-The bootstrap null is close to $\chi^2_7$---its mean is about $7$---and the two references agree fairly closely ($p=0.23$ against $p_{\mathrm{boot}}=0.28$). 
+At this lower dimension the two references are in closer agreement, and both give a clearly non-significant conclusion ($p_{\chi^2}=0.23$ against $p_{\mathrm{boot}}=0.14$). 
 We accordingly take the bootstrap as the primary test and report the $\chi^2$ values as a familiar but, in this regime, anti-conservative benchmark. 
-One caveat concerns $\theta_I$, the closest of the seven alternatives to significance: at $B=100$ its bootstrap $p$-value of $0.10$ carries its own Monte Carlo uncertainty, and we are increasing the number of bootstrap replicates to estimate it more precisely.
+One caveat concerns $\theta_I$, the closest of the seven alternatives to significance: at $B=100$ its bootstrap $p$-value of $0.10$ carries a Monte Carlo standard error of order $0.03$ (computed as $\sqrt{p(1-p)/B}$).
 It nonetheless sits well above the conventional $0.05$ level, so for this panel the conclusion that no unit-specific elaboration improves on the all-shared model is significant.
 
 \begin{figure}[H]
@@ -1058,6 +1060,10 @@ The observed densities are represented by the solid colorful curves.}
     \label{fig:Res}
     \caption{Residual analysis results}
 \end{figure}
+
+We assessed the identifiability of the juvenile filtration ratio $\xi_{J,\unit}$ by refitting the SIRJPF2 model with $\xi_{J,\unit}$ fixed at $1$ (juveniles and adults filter at the same rate) and at the extreme value $0.001$ (juveniles filter much more slowly).
+Fixing $\xi_{J,\unit}=1$ gives a maximized log-likelihood of $-881.13$, only slightly higher than the $-882.24$ obtained at $\xi_{J,\unit}=0.001$, so the parameter is weakly identified; the conditional log-likelihoods for susceptible and infected \textit{D.~dentifera} and \textit{D.~lumholtzi} are similar between the two settings (Figure~\ref{fig:Res_loglik}).
+At the biologically implausible small value the simulated trajectories contain far fewer juveniles than were observed (Figure~\ref{fig:Res_sim}), which would bias the estimates of $r^{\species}_{\unit}$, $p^{\species}_{\unit}$ and $f^{\species}_{S,\unit}$.
 
 
 
@@ -1576,15 +1582,16 @@ $\theta^{\invasive}_{S,\unit}$ & \Sexpr{mysignif_ll_AIC(lum_para_parameter_table
 \label{Table:SIRJPF_lum_model_comparison}
 \end{table}
 
-Despite the model configuration with unit-specific $\theta^{\native}_{I,\unit}$ and $\xi_{\unit}$ achieving the lowest AIC value in Table \ref{Table:SIRJPF_dent_model_comparison} and \ref{Table:SIRJPF_lum_model_comparison}, the improvement over the all-shared-parameters model is marginal.
-This slight advantage may be attributed to Monte Carlo error inherent in the parameter estimation process using the panelPOMP framework.
-The stochastic nature of the iterated filtering algorithms employed in POMP relies on Monte Carlo simulations, which can introduce variability in the maximum likelihood estimates and, consequently, the AIC values.
-The LRT $p$-values in Tables~\ref{Table:SIRJPF_dent_model_comparison} and~\ref{Table:SIRJPF_lum_model_comparison} further support this conclusion: none of the unit-specific models achieve a statistically significant improvement over the all-shared model, consistent with the AIC-based ranking.
+For the invasive \textit{D.~lumholtzi} treatment (Table~\ref{Table:SIRJPF_lum_model_comparison}), the unit-specific $\xi_{\unit}$ model attains the lowest AIC, but the improvement over the all-shared model is marginal and the bootstrap likelihood ratio test is not significant ($p_{\mathrm{boot}}=0.07$), so we adopt the all-shared model.
+For the native \textit{D.~dentifera} treatment (Table~\ref{Table:SIRJPF_dent_model_comparison}), a unit-specific infected-host mortality rate $\theta^{\native}_{I,\unit}$ attains a substantially lower AIC ($\Delta\mathrm{AIC}\approx 26$) and is favored by the bootstrap test ($p_{\mathrm{boot}}=0.010$).
+This is the only unit-specific alternative to reject the all-shared null among the $30$ tested across the six treatment-by-species combinations, and we interpret it with caution.
+Infected-host mortality is the parameter most sensitive to variation in the parasite challenge that is difficult to control across replicate mesocosms, such as the spore dose that becomes established and the within-host infection intensity that follows.
+A mesocosm-specific $\theta^{\native}_{I,\unit}$ most plausibly absorbs this replicate-level variation in the infection process, rather than indicating that the underlying population dynamics differ between mesocosms.
+The heterogeneity is confined to a single infection-outcome parameter in a single treatment, whereas every other parameter and every other treatment is adequately described by shared dynamics with process noise.
 \parskip 3mm
 
-Given the potential for such computational noise, the relatively small difference in AIC, and the lack of significant LRT $p$-values, we prefer to adopt the model with all shared parameters.
-This choice promotes parsimony and reduces the risk of overfitting, ensuring that the model remains both interpretable and generalizable.
-By keeping $\theta_I$—the natural death rate of infected \textit{Daphnia}—shared across all units, we maintain a simpler model structure that is sufficient to describe the observed data without unnecessary complexity.
+We therefore adopt the all-shared model as the description of the shared biological dynamics, and regard the \textit{D.~dentifera} $\theta^{\native}_{I,\unit}$ heterogeneity as a localized feature of the infection process.
+A subsequent experiment that controls the initial parasite exposure could investigate this directly.
 
 \subsection{Simulation}
 The simulation plots (Figures \ref{fig:SIRJPF_native_simulation_band} to \ref{fig:SIRJPF_lum_simulation_lines}) demonstrate our model's capability to capture the complex interactions among various states within the population dynamics of \textit{D.~dentifera} and \textit{D.~lumholtzi}.
