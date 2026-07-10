@@ -585,6 +585,7 @@ Various plug-and-play inference methods including iterated filtering, particle M
 Algorithms and software for vector-valued POMP models could in principle be applied to PanelPOMP models, but in practice the high dimensionality of panel data requires modified algorithms.
 The panel iterated filter (PIF) algorithm of \citet{breto20} enables plug-and-play likelihood-based inference for general PanelPOMP models.
 We start by setting up some general notation that we use to describe PIF, a variant of PIF called the marginalized panel iterated filter (MPIF), and our specific model for the mesocosm experiment.
+\revision{\editMainTextTutorials}
 
 Time series data are collected on $\Unit$ units, labeled $1,2,\dots,\Unit$.
 Unit $\unit$ is observed at $N_u$ measurement times, denoted by $t_{\unit,1},t_{\unit,2},\dots,t_{\unit,N_\unit}$ which we write as $t_{\unit,1:N_\unit}$.

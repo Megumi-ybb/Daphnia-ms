@@ -907,42 +907,6 @@ For likelihood ratio tests of shared versus unit-specific parameters, in the pre
 
 \clearpage
 
-\section{SIRJP2: An $F$ Ablation of the Full Model}\label{sec:no-F-ablation}
-
-We considered an SIRJP2 model derived by removing the latent food dynamics from the SIRJPF2 model.
-This ablation experiment tests whether the latent food compartment $F$ is central to the way the model explains the population dynamics.
-We implemented SIRJP2 by fitting SIRJPF2 while holding $F$ fixed at its initial value $F(t_0)=16.667$ for the whole trajectory.
-Effectively, this eliminates from the dynamics food loss due to consumption by {\it Daphnia}, food renewal inflow, and the process noise $\sigma_F$.
-The birth terms still read the food level through $r^{\species}f_S^{\species}F$, but with $F$ held constant the per-capita recruitment rate no longer responds to a depletable resource. We fit the ablated model to the observed data using the same panel iterated-filtering protocol as the all-shared SIRJPF2 model, warm-started from the all-shared maximum likelihood estimate. 
-Dropping $\sigma_F$ lowers the free-parameter count from $24$ to $23$, so the ablation is actually favoured by the AIC penalty. 
-Because freezing the food dynamics is a structural change rather than a parameter restriction, the two models are non-nested and we compare them by AIC.
-Results are shown in Table~{\mainTableModelComparison} and copied in Table~\ref{Table:no-F-ablation}.
-
-\begin{table}[ht]
-\centering
-\caption{\label{Table:no-F-ablation}
-Comparison of the all-shared SIRJPF2 model with its $F$ ablation, SIRJP2, in which the food compartment is held fixed at its initial value. 
-Log-likelihoods are evaluated by particle filtering, and the standard error shown for the ablation is the Monte Carlo standard error of the maximized log-likelihood across replicate searches. 
-The no-$F$ model is decisively worse by AIC.
-}
-\begin{tabular}{lccc}
-\toprule
-Model & Free parameters $k$ & Max log-likelihood & AIC \\
-\midrule
-All-shared (depletable $F$) & $24$ & $-880.6$            & $1809.1$ \\
-No-$F$ ($F$ held constant)  & $23$ & $-887.8 \pm 0.16$ & $1821.6$ \\
-\midrule
-\multicolumn{3}{l}{$\Delta\mathrm{AIC}$ (no-$F$ $-$ all-shared)} & $+12.4$ \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-Holding the food compartment fixed costs about $7.2$ log-likelihood units, even though the ablated model is handed a free parameter back. 
-On the AIC scale the model with a depletable food compartment is preferred by $\Delta\mathrm{AIC}\approx 12.4$, which is decisive on the conventional evidential scale. 
-When the resource does not deplete, recruitment into the juvenile classes $J^{\native}$ and $J^{\invasive}$ continues at an undiminished rate as the adult population grows, and the model cannot reproduce the resource-limited turnover that drives the observed rise and fall in {\it Daphnia} abundance.
-It is exactly the feedback in which a growing population draws down the food supply, which in turn slows its own recruitment, that produces the peak-then-collapse signature in the data. 
-The ablation confirms that explicitly modeling resource depletion through the latent food compartment adds significantly to the model's ability to explain the data.
-
 
 %\clearpage
 
@@ -2515,6 +2479,44 @@ and the log-likelihood is:
 \end{align}
 The calculated log-likelihood used to compute the AIC for model comparison. And the result of the model fitting of model~\ref{model:GLMM_linear},~\ref{model:GLMM_quad} and \ref{model:GLMM_cubic} can be found in the Table~2 in the main article.
 
+
+\section{SIRJP2: An $F$ Ablation of the Full Model}\label{sec:no-F-ablation}
+
+We considered an SIRJP2 model derived by removing the latent food dynamics from the SIRJPF2 model.
+This ablation experiment tests whether the latent food compartment $F$ is central to the way the model explains the population dynamics.
+We implemented SIRJP2 by fitting SIRJPF2 while holding $F$ fixed at its initial value $F(t_0)=16.667$ for the whole trajectory.
+Effectively, this eliminates from the dynamics food loss due to consumption by {\it Daphnia}, food renewal inflow, and the process noise $\sigma_F$.
+The birth terms still read the food level through $r^{\species}f_S^{\species}F$, but with $F$ held constant the per-capita recruitment rate no longer responds to a depletable resource. We fit the ablated model to the observed data using the same panel iterated-filtering protocol as the all-shared SIRJPF2 model, warm-started from the all-shared maximum likelihood estimate. 
+Dropping $\sigma_F$ lowers the free-parameter count from $24$ to $23$, so the ablation is actually favoured by the AIC penalty. 
+Because freezing the food dynamics is a structural change rather than a parameter restriction, the two models are non-nested and we compare them by AIC.
+Results are shown in Table~{\mainTableModelComparison} and copied in Table~\ref{Table:no-F-ablation}.
+
+\begin{table}[ht]
+\centering
+\caption{\label{Table:no-F-ablation}
+Comparison of the all-shared SIRJPF2 model with its $F$ ablation, SIRJP2, in which the food compartment is held fixed at its initial value. 
+Log-likelihoods are evaluated by particle filtering, and the standard error shown for the ablation is the Monte Carlo standard error of the maximized log-likelihood across replicate searches. 
+The no-$F$ model is decisively worse by AIC.
+}
+\begin{tabular}{lccc}
+\toprule
+Model & Free parameters $k$ & Max log-likelihood & AIC \\
+\midrule
+All-shared (depletable $F$) & $24$ & $-880.6$            & $1809.1$ \\
+No-$F$ ($F$ held constant)  & $23$ & $-887.8 \pm 0.16$ & $1821.6$ \\
+\midrule
+\multicolumn{3}{l}{$\Delta\mathrm{AIC}$ (no-$F$ $-$ all-shared)} & $+12.4$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Holding the food compartment fixed costs about $7.2$ log-likelihood units, even though the ablated model is handed a free parameter back. 
+On the AIC scale the model with a depletable food compartment is preferred by $\Delta\mathrm{AIC}\approx 12.4$, which is decisive on the conventional evidential scale. 
+When the resource does not deplete, recruitment into the juvenile classes $J^{\native}$ and $J^{\invasive}$ continues at an undiminished rate as the adult population grows, and the model cannot reproduce the resource-limited turnover that drives the observed rise and fall in {\it Daphnia} abundance.
+It is exactly the feedback in which a growing population draws down the food supply, which in turn slows its own recruitment, that produces the peak-then-collapse signature in the data. 
+The ablation confirms that explicitly modeling resource depletion through the latent food compartment adds significantly to the model's ability to explain the data.
+
+
 \section{SIRPF2: A $J$ Ablation of the Full Model}
 
 The SIRPF2 model presented here ignores the state of juvenile \textit{Daphnia} and describes the dynamics in each bucket ($\unit$) among susceptible individuals ($S^{\species}$), infected individuals ($I^{\species}$), alga as a food resource ($F$), the parasite population ($P$).
@@ -2670,5 +2672,17 @@ d\Gamma^{\species}_{IP,{\unit}} &\sim \Gamma
 d\Gamma_{F,{\unit}} \sim \Normal \big[0, \sigma_{F,{\unit}}^{2}\, dt\big].
 \end{align}
 }
+
+\section{Tutorials on conducting the data analysis in pomp and Pypomp}
+
+To assist other scientists and statisticians in carrying out similar investigations, we have provided tutorials that guide the reader through practical issues arising in the data analysis.
+We initially carried out the data analysis using the pomp R package \citep{king16}.
+We later re-implemented the analysis using the Pypomp Python library \citep{abkemeier26-pypomp}.
+Pypomp can compile to CPU or GPU hardware, since it is written in JAX \citep{bradbury18}.
+After checking that the two implementations are in close numerical agreement, we used Pypomp for the simulation studies in Sections~\ref{sec:mcap-coverage} and~\ref{sec:aic-power}.
+
+A tutorial on the pomp implementation of our ecological model and data analysis is at \url{https://github.com/Megumi-ybb/Daphnia-tutorial}, and archived at Zenodo \eic{WHEN READY}.
+A similar tutorial, but written in Python/JAX using Pypomp, is at \url{https://github.com/pypomp/daphnia}, and archived at Zenodo \eic{WHEN READY}.
+
 \bibliography{../bib-daphnia}
 \end{document}
