@@ -1186,7 +1186,7 @@ The flexibility of the PanelPOMP model class provides many opportunities for dev
 \begin{acks}[Acknowledgments]
 %% The corresponding author is Bo Yang with address 665 W 130th St, New York, NY 10027.
 A. A. King is affiliated with the Center for the Study of Complex Systems, University of Michigan.
-This work was supported by National Science Foundation grant DMS-1761603.
+This work was supported by National Science Foundation grants DMS-1761603 and OAC-2607869.
 \end{acks}
 
 \section*{Data Availability Statement}
