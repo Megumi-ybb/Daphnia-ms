@@ -89,14 +89,14 @@ opts_chunk$set(echo = TRUE, cache = cache_option)
 {
 \begin{aug}
 \author[A]{\fnms{Bo}~\snm{Yang}\ead[label=e1]{ybb@umich.edu}},
-\author[B]{\fnms{Jesse}~\snm{Wheeler}\ead[label=e2]{jeswheel@umich.edu}},
+\author[B]{\fnms{Jesse}~\snm{Wheeler}\ead[label=e2]{jesse.wheeler@usu.edu}},
 \author[C]{\fnms{Meghan A.}~\snm{Duffy}\ead[label=e3]{duffymeg@umich.edu}},
 \author[C]{\fnms{Aaron A.}~\snm{King}\ead[label=e4]{kingaa@umich.edu}}
 \and
 \author[D]{\fnms{Edward}~\snm{Ionides}\ead[label=e5]{ionides@umich.edu}}
 
 \address[A]{Department of Marketing, Columbia University\printead[presep={,\ }]{e1}}
-\address[B]{Department of Mathematics and Statistics, Idaho State University\printead[presep={,\ }]{e2}}
+\address[B]{Department of Mathematics and Statistics, Utah State University\printead[presep={,\ }]{e2}}
 \address[C]{Department of Ecology and Evolutionary Biology, University of Michigan\printead[presep={,\ }]{e3,e4}}
 \address[D]{Department of Statistics, University of Michigan\printead[presep={,\ }]{e5}}
  
@@ -994,7 +994,7 @@ For example, consider adding unit-specific variation to $\theta_P$, which adds o
 At this lower dimension the two references are in closer agreement, and both give a clearly non-significant conclusion ($p_{\chi^2}=0.23$ against $p_{\mathrm{boot}}=0.14$). 
 We accordingly take the bootstrap as the primary test and report the $\chi^2$ values as a familiar but, in this regime, anti-conservative benchmark. 
 One caveat concerns $\theta_I$, the closest of the seven alternatives to significance: at $B=100$ its bootstrap $p$-value of $0.10$ carries a Monte Carlo standard error of order $0.03$ (computed as $\sqrt{p(1-p)/B}$).
-It nonetheless sits well above the conventional $0.05$ level, so for this panel the conclusion that no unit-specific elaboration improves on the all-shared model is significant.
+It nonetheless sits well above the conventional $0.05$ level, so for this panel the conclusion that no unit-specific elaboration improves on the all-shared model is supported by the data.
 
 \begin{figure}[H]
     \centering
@@ -2681,8 +2681,8 @@ We later re-implemented the analysis using the Pypomp Python library \citep{abke
 Pypomp can compile to CPU or GPU hardware, since it is written in JAX \citep{bradbury18}.
 After checking that the two implementations are in close numerical agreement, we used Pypomp for the simulation studies in Sections~\ref{sec:mcap-coverage} and~\ref{sec:aic-power}.
 
-A tutorial on the pomp implementation of our ecological model and data analysis is at \url{https://github.com/Megumi-ybb/Daphnia-tutorial}, and archived at Zenodo \eic{WHEN READY}.
-A similar tutorial, but written in Python/JAX using Pypomp, is at \url{https://github.com/pypomp/daphnia}, and archived at Zenodo \eic{WHEN READY}.
+A tutorial on the pomp implementation of our ecological model and data analysis is available at \url{https://github.com/Megumi-ybb/Daphnia-tutorial}.
+A similar tutorial, written in Python/JAX using Pypomp, is available at \url{https://github.com/pypomp/daphnia}.
 
 \bibliography{../bib-daphnia}
 \end{document}

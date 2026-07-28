@@ -27,6 +27,9 @@ Daphnia.Rproj
 *.pe*
 *.po*
 
+# Claude Code session files
+.claude/
+
 # core dumps
 core
 core.*
