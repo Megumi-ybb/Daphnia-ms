@@ -2681,8 +2681,9 @@ We later re-implemented the analysis using the Pypomp Python library \citep{abke
 Pypomp can compile to CPU or GPU hardware, since it is written in JAX \citep{bradbury18}.
 After checking that the two implementations are in close numerical agreement, we used Pypomp for the simulation studies in Sections~\ref{sec:mcap-coverage} and~\ref{sec:aic-power}.
 
-A tutorial on the pomp implementation of our ecological model and data analysis is available at \url{https://github.com/Megumi-ybb/Daphnia-tutorial}.
-A similar tutorial, written in Python/JAX using Pypomp, is available at \url{https://github.com/pypomp/daphnia}.
+A tutorial on the pomp implementation of our ecological model and data analysis is available at \url{https://pypomp.github.io/Daphnia-tutorial/R-code/}.
+A similar tutorial, written in Python/JAX using Pypomp, is available at \url{https://pypomp.github.io/Daphnia-tutorial/Python-code/}.
+Source code for these tutorials is at \url{https://github.com/pypomp/Daphnia-tutorial}.
 
 \bibliography{../bib-daphnia}
 \end{document}
