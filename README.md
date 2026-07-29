@@ -60,7 +60,7 @@ cd ./daphnia-article/si && Rscript -e "library(knitr); knit2pdf('./si.Rnw')"
 
 For a step-by-step guide on implementing PanelPOMP models and the methods used in this article, please refer to the tutorial repository:
 
-**[https://github.com/Megumi-ybb/Daphnia-tutorial](https://github.com/pypomp/Daphnia-tutorial)** 
+**[https://github.com/pypomp/Daphnia-tutorial]** 
 
 The tutorial covers model specification, parameter estimation via panel iterated filtering, profile likelihood confidence intervals, and model diagnostics.
 
