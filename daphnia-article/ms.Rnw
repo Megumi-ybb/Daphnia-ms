@@ -1190,7 +1190,7 @@ This work was supported by National Science Foundation grants DMS-1761603 and OA
 \end{acks}
 
 \section*{Data Availability Statement}
-Code and data for the analysis is available on Github at \url{https://github.com/Megumi-ybb/Daphnia-ms} and is archived on Zenodo at \url{https://doi.org/10.5281/zenodo.21701837}.
+Code and data for the analysis is available on Github at \url{https://github.com/Megumi-ybb/Daphnia-ms} and is archived on Zenodo at \url{https://doi.org/10.5281/zenodo.21702121}.
 
 \section*{Supplementary Material}
 Supporting text gives details of the Panel Iterated Filtering algorithm and the benchmark models.
