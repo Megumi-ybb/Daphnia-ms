@@ -2683,7 +2683,7 @@ After checking that the two implementations are in close numerical agreement, we
 
 A tutorial on the pomp implementation of our ecological model and data analysis is available at \url{https://pypomp.github.io/Daphnia-tutorial/R-code/}.
 A similar tutorial, written in Python/JAX using Pypomp, is available at \url{https://pypomp.github.io/Daphnia-tutorial/Python-code/}.
-Source code for these tutorials is at \url{https://github.com/pypomp/Daphnia-tutorial}.
+Source code for these tutorials is at \url{https://github.com/pypomp/Daphnia-tutorial} \citep{Daphnia-tutorial}.
 
 \bibliography{../bib-daphnia}
 \end{document}
