@@ -1,8 +1,11 @@
 
 
 % macros for main tables and figures referenced in the si and the response letter
+% Kept as plain numbers, not \ref, so these macros are safe to quote in the
+% response letter, which has no access to the manuscript's labels.
 \newcommand\mainTableModelComparison{2}
 \newcommand\mainFigFlowSIRJPFii{2}
+\newcommand\mainFigPIF{3}
 
 % macros for supplementary sections, tables and figures.
 % to be copied into ms.Rnw at some later point, perhaps after the revision is submitted
@@ -124,7 +127,7 @@ We are not aware of any previous scientific study where non-Gaussian PanelPOMP m
 \newcommand\editJuveniles{\citep[to facilitate comparison with the analysis of][]{searle16}}
 
 
-\newcommand\editMPIF{All likelihood maximization in this article uses the marginalized variant of panel iterated filtering (MPIF; Fig.~\ref{fig:pif}; Algorithm~{\suppAlgMPIF}), rather than the panel iterated filter of \citet{breto20} in its original form.
+\newcommand\editMPIF{All likelihood maximization in this article uses the marginalized variant of panel iterated filtering (MPIF; Fig.~{\mainFigPIF}; Algorithm~{\suppAlgMPIF}), rather than the panel iterated filter of \citet{breto20} in its original form.
 Both algorithms extend iterated filtering \citep{ionides15} to PanelPOMP models by associating a perturbed parameter value with each particle $j$ and using particle-filter resampling to concentrate the parameter swarm around the maximum likelihood estimate; they differ only in the parameter resampling step.
 When the swarm is filtered through the data of unit $u$, the algorithm of \citet{breto20} resamples not only the shared parameters $\phi$ and the focal unit's parameters $\psi_u$ but also the parameters $\psi_{\tilde u}$ of every other unit $\tilde u \neq u$, even though the data for unit $u$ are uninformative about $\psi_{\tilde u}$.
 The marginalized variant instead resamples only $\phi$ and $\psi_u$, leaving each $\psi_{\tilde u}$ unchanged while filtering through unit $u$.
@@ -154,7 +157,7 @@ This is essentially the same as the local asymptotic normality (LAN) property of
 LAN has been studied for a general class of partially observed Markov processes \citep{bickel98}.
 Finite sample behavior of the likelihood ratio statistic has been found to match asymptotic theory fairly accurately in other POMP model contexts \citep{bhadra11,stocks20,wheeler25-arma}.}
 
-\newcommand\editNewModelComparisonExplanation{AIC applies to the non-nested comparisons in Table~\ref{Table:Model_comparison} because each model is scored by its maximized log-likelihood on the same data.
+\newcommand\editNewModelComparisonExplanation{AIC applies to the non-nested comparisons in Table~{\mainTableModelComparison} because each model is scored by its maximized log-likelihood on the same data.
   The advantage of SIRJPF2 over the negative binomial benchmarks and the deterministic model of \citet{searle16} is large relative to any plausible Monte Carlo or approximation error, and so provides decisive support for the mechanistic model.
   Smaller differences, such as those among SIRJPF2 and its reduced variants, warrant more caution since the asymptotic argument underlying AIC can be inaccurate for these models (Section~{\suppSecSimModelSelection}).}
 

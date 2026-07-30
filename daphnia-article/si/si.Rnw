@@ -223,7 +223,7 @@ However, for this additional analysis we made a simplification by re-using the c
 For every point on every profile, computed for the individual parameters, we calculated the value of the composite parameters.
 We obtained the highest log-likelihoods within a grid of values for the composite parameters and applied MCAP to these values.
 We have found previously that these ``poor man's profiles'' provide a reasonable approximation to the true profile, while avoiding the need to work with a reparameterized version of the model.
-We calculated these composite parameters only for the SIRJPF2 model, and the results are shown together with the individual parameters, in Table~1 and Figure~S-1.
+We calculated these composite parameters only for the SIRJPF2 model, and the results are shown together with the individual parameters, in Table~1 of the main text and Figure~\ref{fig:SIRJPF2_profile}.
 
 \section{The Panel Iterated Filtering Algorithm}
 
@@ -329,7 +329,7 @@ To check that the correction captures something real and is not over-fitted to t
 We therefore read the coverage study as a reliable exploratory description of uncertainty rather than a guarantee of $95\%$ coverage for downstream decisions. 
 In practical terms, Table~\ref{Table:mcap-coverage} shows that reaching nominal coverage in this richly parameterized model takes intervals roughly $1.3$ to $2.1$ times wider than the asymptotic ones.
 It was not practical to compute the corrected confidence intervals for every parameter in all the models.
-We therefore report the basic MCAP interval in Table~1, with the understanding that more precise results are available for parameters of particular interest.
+We therefore report the basic MCAP interval in Table~1 of the main text, with the understanding that more precise results are available for parameters of particular interest.
 
 
 \begin{figure}[ht]
@@ -359,7 +359,7 @@ We use AIC to compare log-likelihoods of non-nested models, in Table~\ref{Table:
 AIC also provides a quick reference point for comparing nested models.
 AIC is not designed to be a formal hypothesis test; its goal is to select a good predictive model.
 Nevertheless, whenever one selects a model, it can be helpful to calculate the sensitivity and specificity of the approach.
-We check this for the native infected-host mortality rate $\theta_I^{\native}$, the one parameter for which unit-specific variation was favored by AIC and a chi-square LRT approximation.
+We check this for the native infected-host mortality rate $\theta_I^{\native}$, the parameter for which unit-specific variation was most strongly favored by AIC and a chi-square LRT approximation; other alternatives are preferred by AIC only by margins within Monte Carlo error.
 We simulate panels under two truths: one in which every parameter is shared, at the fitted all-shared SIRJPF2 MLE estimate, and one in which $\theta_I^{\native}$ is unit-specific, set to the MLE under the model where all other parameters are shared between units.
 For each simulated panel we fit both the all-shared model and the $\theta_I^{\native}$-unit-specific model with the same iterated-filtering protocol used in the main analysis, compute the AIC of each, and record which model AIC prefers.
 Table~\ref{tab:aic:specificity} presents proportions of model selections via AIC in 100 simulations, so the diagonal terms give the rate at which AIC recovers the truth under these hypotheses.
@@ -376,7 +376,7 @@ $\theta_I^{\native}$ unit-specific & 0.08 & 0.92 \\
 \hline
 \end{tabular}
 \end{center}
-\caption{Specificity of AIC when used to choose between shared and unit-specific models}
+\caption{Sensitivity and specificity of AIC when used to choose between shared and unit-specific models. Rows are data-generating truths, so the diagonal gives the rate at which AIC recovers the truth.}
 \label{tab:aic:specificity}
 \end{table}
 
@@ -1042,8 +1042,8 @@ Each stochastic differential equation accounts for various biological and ecolog
     dS^{\species}_{\unit}(t) &= \lambda^{\species}_{J,{\unit}} J^{\species}_{\unit}(t) \, dt - \big\{\theta^{\species}_{S,{\unit}} + p^{\species}_{\unit} f^{\species}_{S,{\unit}} P_{\unit}(t) + \delta \big\} S^{\species}_{\unit}(t)\, dt  + S^{\species}_{\unit}(t)\, d\zeta^{\species}_{S,{\unit}}, \label{eq:SIRJPF_dS}\\
     dJ^{\species}_{\unit}(t) &= r^{\species}_{\unit}f^{\species}_{S,{\unit}}F_{\unit}(t) S^{\species}_{\unit}(t)\, dt - \theta^{\species}_{J,{\unit}} J^{\species}_{\unit}(t)\, dt - \delta J^{\species}_{\unit}(t)\, dt - \lambda^{\species}_{J,{\unit}} J^{\species}_{\unit}(t)\, dt + J^{\species}_{\unit}(t)\, d\zeta^{\species}_{J,{\unit}}, \label{eq:SIRJPF_dJ}\\
     dI^{\species}_{\unit}(t) &= p^{\species}_{\unit} f^{\species}_{S,{\unit}} S^{\species}_{\unit}(t) P_{\unit}(t)\, dt - \big\{\theta^{\species}_{I,{\unit}} + \delta \big\} I^{\species}_{\unit}(t)\, dt + I^{\species}_{\unit}(t) \, d\zeta^{\species}_{I,{\unit}}, \label{eq:SIRJPF_dI}\\
-    dP_{\unit}(t) &= \beta^{\species}_{\unit} \theta^{\species}_{I,{\unit}} I^{\species}_{\unit}(t)dt - f^{\species}_{S,{\unit}} ( S^{\species}_{\unit}(t) + \xi_{\unit} I^{\species}_{\unit}(t))P_{\unit}(t) dt - \theta_{p,{\unit}} P_{\unit}(t)\, dt + P_{\unit}(t)\, d\zeta_{P,{\unit}}, \label{eq:SIRJPF_dP}\\
-    dF_{\unit}(t) &= - f^{\species}_{S,{\unit}} F_{\unit}(t) \left(S^{\species}_{\unit}(t)+\xi_{J,{\unit}}J^{\species}_{\unit}(t) +\xi_{\unit} I^{\species}_{\unit}(t)\right)dt  + \mu \, dt + F_{\unit}(t)\, d\zeta_{F,{\unit}}, \label{eq:SIRJPF_dF}\\
+    dP_{\unit}(t) &= \beta^{\species}_{\unit} \theta^{\species}_{I,{\unit}} I^{\species}_{\unit}(t)dt - f^{\species}_{S,{\unit}} ( S^{\species}_{\unit}(t) + \xi_{\unit} I^{\species}_{\unit}(t))P_{\unit}(t) dt - \big\{ \theta_{P,{\unit}} + \delta \big\} \, P_{\unit}(t)\, dt + P_{\unit}(t)\, d\zeta_{P,{\unit}}, \label{eq:SIRJPF_dP}\\
+    dF_{\unit}(t) &= - f^{\species}_{S,{\unit}} F_{\unit}(t) \left(S^{\species}_{\unit}(t)+\xi_{J,{\unit}}J^{\species}_{\unit}(t) +\xi_{\unit} I^{\species}_{\unit}(t)\right)dt  + \mu \, dt - \delta \, F_{\unit}(t) \, dt + F_{\unit}(t)\, d\zeta_{F,{\unit}}, \label{eq:SIRJPF_dF}\\
 d\zeta^{\species}_{S,{\unit}} &\sim \Normal \big[0, (\sigma^{\species}_{S,{\unit}})^{2}\, dt\big],
 d\zeta^{\species}_{I,{\unit}} \sim \Normal \big[0, (\sigma^{\species}_{I,{\unit}})^{2}\, dt\big],
 d\zeta^{\species}_{J,{\unit}} \sim \Normal \big[0, (\sigma^{\species}_{J,{\unit}})^{2}\, dt\big],\\
@@ -1069,11 +1069,11 @@ Infected individuals experience losses through natural mortality ($\theta^{\spec
 \parskip 3mm
 
 Equation \eqref{eq:SIRJPF_dP} models the dynamics of \textit{M.} population $P_{\unit}(t)$, which grows through spore release from the death of infected individuals $I^{\species}_{\unit}(t)$ at a rate $\beta^{\species}_{\unit} \theta^{\species}_{I,\unit}$.
-Losses are due to intaking by susceptible and infected individuals, scaled by filtering rate $f^{\species}_{S,\unit}$ and the ratio of filtering rate $\xi_{\unit}$ between subjects before and after infection, and natural mortality at rate $\theta^{\species}_{P,\unit}$.
+Losses are due to intaking by susceptible and infected individuals, scaled by filtering rate $f^{\species}_{S,\unit}$ and the ratio of filtering rate $\xi_{\unit}$ between subjects before and after infection, natural mortality at rate $\theta_{P,\unit}$, and the sampling rate ($\delta$).
 Stochastic fluctuations are represented by the term $P_{\unit}(t) \, d\zeta_{P,\unit}$.
 \parskip 3mm
 
-Finally, Equation \eqref{eq:SIRJPF_dF} models the \textit{A.} alga population $F_{\unit}(t)$. The algae are consumed by susceptible individuals, juveniles, and infected individuals, scaled by consumption rate $f_S$ and ratio of filtering rate $\xi_{J,\unit}$ and $\xi_{\unit}$. Algae gets manually refilled at rate $\mu$, with $F_{\unit}(t) \, d\zeta_{F,\unit}$ representing stochastic noise.
+Finally, Equation \eqref{eq:SIRJPF_dF} models the \textit{A.} alga population $F_{\unit}(t)$. The algae are consumed by susceptible individuals, juveniles, and infected individuals, scaled by consumption rate $f_S$ and ratio of filtering rate $\xi_{J,\unit}$ and $\xi_{\unit}$. Algae gets manually refilled at rate $\mu$ and is removed by sampling at rate $\delta$, with $F_{\unit}(t) \, d\zeta_{F,\unit}$ representing stochastic noise.
 \parskip 3mm
 
 The stochastic terms $d\zeta^{\species}_{S,{\unit}}$, $d\zeta^{\species}_{J,{\unit}}$, $d\zeta^{\species}_{I,{\unit}}$, $d\zeta_{P,{\unit}}$, and $d\zeta_{F,{\unit}}$ represent Brownian motion affecting each population, modeled as Gaussian white noise with mean zero and variances $(\sigma^{\species}_{S,{\unit}})^{2}\, dt$, $(\sigma^{\species}_{J,{\unit}})^{2}\, dt$, $(\sigma^{\species}_{I,{\unit}})^{2}\, dt$, $(\sigma_{P,{\unit}})^{2}\, dt$, and $(\sigma_{F,{\unit}})^{2}\, dt$, respectively.
@@ -1499,7 +1499,7 @@ $\tau^{\invasive}_{I}$      &  Measurement dispersion for infected adult        
     The vertical blue lines show the MLE estimated using MCAP.
     The red vertical lines correspond to the model with the overall highest likelihood among all searches.
 }
-    \label{fig:SIRJPF_native_profile}
+    \label{fig:SIRJPF_lum_profile}
 \end{figure}
 
 \begin{table}[ht]
@@ -1613,7 +1613,7 @@ The stochastic differential equations governing the system are:
 \begin{align}
     dS^{\species}_{\unit}(t) &= \lambda^{\species}_{J,{\unit}} J^{\species}_{\unit}(t) \, dt - (\theta^{\species}_{S,{\unit}} + \delta) S^{\species}_{\unit}(t)\, dt + S^{\species}_{\unit}(t)\, d\zeta^{\species}_{S,{\unit}}, \label{eq:SRJF2_dS}\\
     dJ^{\species}_{\unit}(t) &= r^{\species}_{\unit}f^{\species}_{S,{\unit}}F_{\unit}(t) S^{\species}_{\unit}(t)\, dt - \theta^{\species}_{J,{\unit}} J^{\species}_{\unit}(t)\, dt - \delta J^{\species}_{\unit}(t)\, dt - \lambda^{\species}_{J,{\unit}} J^{\species}_{\unit}(t)\, dt + J^{\species}_{\unit}(t)\, d\zeta^{\species}_{J,{\unit}}, \label{eq:SRJF2_dJ}\\
-    dF_{\unit}(t) &= - \sum_{\species \in \{\native, \invasive\}} f^{\species}_{S,{\unit}} F_{\unit}(t) \left(S^{\species}_{\unit}(t)+\xi_{J,{\unit}}J^{\species}_{\unit}(t)\right)dt  + \mu \, dt + F_{\unit}(t)\, d\zeta_{F,{\unit}}, \label{eq:SRJF2_dF}\\
+    dF_{\unit}(t) &= - \sum_{\species \in \{\native, \invasive\}} f^{\species}_{S,{\unit}} F_{\unit}(t) \left(S^{\species}_{\unit}(t)+\xi_{J,{\unit}}J^{\species}_{\unit}(t)\right)dt  + \mu \, dt - \delta \, F_{\unit}(t) \, dt + F_{\unit}(t)\, d\zeta_{F,{\unit}}, \label{eq:SRJF2_dF}\\
 d\zeta^{\species}_{S,{\unit}} &\sim \Normal \big[0, (\sigma^{\species}_{S,{\unit}})^{2}\, dt\big]\,
 d\zeta^{\species}_{J,{\unit}} \sim \Normal \big[0, (\sigma^{\species}_{J,{\unit}})^{2}\, dt\big]\,
 d\zeta_{F,{\unit}} \sim \Normal \big[0, \sigma_{F,{\unit}}^{2}\, dt\big]\label{eq:SRJF2_dzetaS}.
@@ -1937,7 +1937,7 @@ In this section, we introduce the SRJF model, which formalizes the dynamics amon
 \begin{align}
     dS^{\species}_{\unit}(t) &= \lambda^{\species}_{J,{\unit}} J^{\species}_{\unit}(t) \, dt - (\theta^{\species}_{S,{\unit}} + \delta) S^{\species}_{\unit}(t)\, dt + S^{\species}_{\unit}(t)\, d\zeta^{\species}_{S,{\unit}} , \label{eq:SRJF_dS}\\
     dJ^{\species}_{\unit}(t) &= r^{\species}_{\unit}f^{\species}_{S,{\unit}}F_{\unit}(t) S^{\species}_{\unit}(t)\, dt - \theta^{\species}_{J,{\unit}} J^{\species}_{\unit}(t)\, dt - \delta J^{\species}_{\unit}(t)\, dt - \lambda^{\species}_{J,{\unit}} J^{\species}_{\unit}(t)\, dt + J^{\species}_{\unit}(t)\, d\zeta^{\species}_{J,{\unit}}, \label{eq:SRJF_dJ}\\
-    dF_{\unit}(t) &= - f^{\species}_{S,{\unit}} F_{\unit}(t) \left(S^{\species}_{\unit}(t)+\xi_{J,{\unit}}J^{\species}_{\unit}(t)\right)dt  + \mu \, dt + F_{\unit}(t)\, d\zeta_{F,{\unit}}, \label{eq:SRJF_dF}\\
+    dF_{\unit}(t) &= - f^{\species}_{S,{\unit}} F_{\unit}(t) \left(S^{\species}_{\unit}(t)+\xi_{J,{\unit}}J^{\species}_{\unit}(t)\right)dt  + \mu \, dt - \delta \, F_{\unit}(t) \, dt + F_{\unit}(t)\, d\zeta_{F,{\unit}}, \label{eq:SRJF_dF}\\
 d\zeta^{\species}_{S,{\unit}} &\sim \Normal \big[0, (\sigma^{\species}_{S,{\unit}})^{2}\, dt\big]\,
 d\zeta^{\species}_{J,{\unit}} \sim \Normal \big[0, (\sigma^{\species}_{J,{\unit}})^{2}\, dt\big]\,
 d\zeta_{F,{\unit}} \sim \Normal \big[0, \sigma_{F,{\unit}}^{2}\, dt\big].\label{eq:SRJF_dzetaS}
@@ -2159,7 +2159,7 @@ p2<- ggplot(lumNoPara_data_combined, aes(x = day)) +
 
 grid.arrange(p1, p2, ncol = 1)
 @
-\caption{\label{fig:data_vis_SIPJF_lum}
+\caption{\label{fig:data_vis_SRJF_lum}
 Density (Individuals$/$Liter) of \textit{D.~lumholtzi}.
 The top panel shows adult susceptibles (\textit{D.~lumholtzi}, blue).
 The bottom panel shows juvenile susceptibles (\textit{D.~lumholtzi}, purple).
@@ -2412,7 +2412,7 @@ Specifically, we use the observed densities $y^*_{\unit,\benchmarktime}$ and the
 \end{align}
 
 To obtain the maximum likelihood estimate, we conduct the linear optimization on $\tau$ and choose the $\hat{\tau}$ that yields the highest overall likelihood. 
-With this $\hat{\tau}$, we obtain the likelihood by \ref{eq:total_loglik} for the model on the data. And the result of the model fitting can be found in the Table~2 in the main article.
+With this $\hat{\tau}$, we obtain the likelihood by equation~(\ref{eq:total_loglik}) for the model on the data. The result of the model fitting is in Table~{\mainTableModelComparison} of the main text.
 
 \subsection{Negative Binomial Regression}
 
@@ -2477,7 +2477,7 @@ and the log-likelihood is:
 \ell(\beta, \tau, \sigma^2) &= \sum_{\unit=1}^{\Unit} \sum_{\benchmarktime=1}^{N} \log \bigl(f_{\text{NB}}(Y_{\unit,\benchmarktime}; \mu_{i,j}(\beta, \sigma^2), \tau)\bigl).
 \label{eq:log_likelihood}
 \end{align}
-The calculated log-likelihood used to compute the AIC for model comparison. And the result of the model fitting of model~\ref{model:GLMM_linear},~\ref{model:GLMM_quad} and \ref{model:GLMM_cubic} can be found in the Table~2 in the main article.
+The calculated log-likelihood is used to compute the AIC for model comparison. The results of fitting model~\ref{model:GLMM_linear},~\ref{model:GLMM_quad} and \ref{model:GLMM_cubic} are in Table~{\mainTableModelComparison} of the main text.
 
 
 \section{SIRJP2: An $F$ Ablation of the Full Model}\label{sec:no-F-ablation}
@@ -2536,8 +2536,8 @@ Each stochastic differential equation accounts for various biological and ecolog
     \, I^{\species}_{\unit}(t)\, dt + I^{\species}_{\unit}(t) \, d\zeta^{\species}_{I,{\unit}},\label{eq:SIRPF2_dS}\\
     dP_{\unit}(t) &= \sum_{\species \in \{\native, \invasive\}} \left(\beta^{\species}_{\unit} \, \theta^{\species}_{I,{\unit}} \,  I^{\species}_{\unit}(t) - f^{\species}_{S,{\unit}} \big\{ S^{\species}_{\unit}(t) + \xi_{\unit} I^{\species}_{\unit}(t) \big\} P_{\unit}(t)\right) dt
     \\ \nonumber
-    & \hspace{5cm} - \theta_{P,{\unit}} \, P_{\unit}(t)\, dt + P_{\unit}(t)\, d\zeta_{P,{\unit}},\\
-    dF_{\unit}(t) &= - \sum_{\species \in \{\native, \invasive\}} f^{\species}_{S,{\unit}} \, F_{\unit}(t) \left(S^{\species}_{\unit}(t)+\xi_{\unit} \, I^{\species}_{\unit}(t)\right)dt  + \mu \, dt + F_{\unit}(t)\, d\zeta_{F,{\unit}},\label{eq:SIRPF2_dF}\\
+    & \hspace{5cm} - \big\{ \theta_{P,{\unit}} + \delta \big\} \, P_{\unit}(t)\, dt + P_{\unit}(t)\, d\zeta_{P,{\unit}},\\
+    dF_{\unit}(t) &= - \sum_{\species \in \{\native, \invasive\}} f^{\species}_{S,{\unit}} \, F_{\unit}(t) \left(S^{\species}_{\unit}(t)+\xi_{\unit} \, I^{\species}_{\unit}(t)\right)dt  + \mu \, dt - \delta \, F_{\unit}(t) \, dt + F_{\unit}(t)\, d\zeta_{F,{\unit}},\label{eq:SIRPF2_dF}\\
 d\zeta^{\species}_{I,{\unit}} &\sim \Normal \big[0, (\sigma^{\species}_{I,{\unit}})^{2}\, dt\big],
 \hspace{5mm}
 d\zeta_{F,{\unit}} \sim \Normal \big[0, \sigma_{F,{\unit}}^{2}\, dt\big],
@@ -2659,8 +2659,8 @@ This aligns with the underlying dynamics that the jump-like transitions observed
     \, J^{\species}_{\unit}(t)\, dt - \lambda^{\species}_{J,{\unit}} \,  J^{\species}_{\unit}(t)dt, \\
     dP_{\unit}(t) &= \sum_{\species \in \{\native, \invasive\}} \left(\beta^{\species}_{\unit} \, \theta^{\species}_{I,{\unit}} \,  I^{\species}_{\unit}(t)d\Gamma^{\species}_{IP,{\unit}} - f^{\species}_{S,{\unit}} \big\{ S^{\species}_{\unit}(t) + \xi_{\unit} I^{\species}_{\unit}(t) \big\} P_{\unit}(t)dt\right) 
     \\ \nonumber & \hspace{7cm}
-    - \theta_{P,{\unit}} \, P_{\unit}(t)\, dt,\\
-    dF_{\unit}(t) &= - \sum_{\species \in \{\native, \invasive\}} f^{\species}_{S,{\unit}} \, F_{\unit}(t) \left(S^{\species}_{\unit}(t)+\xi_{J,{\unit}} \, J^{\species}_{\unit}(t) +\xi_{\unit} \, I^{\species}_{\unit}(t)\right)dt  + \mu \, dt + F_{\unit}(t)\, d\Gamma_{F,{\unit}},\\
+    - \big\{ \theta_{P,{\unit}} + \delta \big\} \, P_{\unit}(t)\, dt,\\
+    dF_{\unit}(t) &= - \sum_{\species \in \{\native, \invasive\}} f^{\species}_{S,{\unit}} \, F_{\unit}(t) \left(S^{\species}_{\unit}(t)+\xi_{J,{\unit}} \, J^{\species}_{\unit}(t) +\xi_{\unit} \, I^{\species}_{\unit}(t)\right)dt  + \mu \, dt - \delta \, F_{\unit}(t) \, dt + F_{\unit}(t)\, d\Gamma_{F,{\unit}},\\
 d\Gamma^{\species}_{JS,{\unit}} &\sim \Gamma
   \bigg[\frac{dt}{(\sigma^{\species}_{JS,{\unit}})^{2}}, (\sigma^{\species}_{JS,{\unit}})^{2}\bigg],
 \quad
