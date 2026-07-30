@@ -500,13 +500,13 @@ We use Gaussian noise, though multiplicative gamma noise can be employed to enfo
 A version of SIRJPF2 with gamma noise, called SIRJPF2-Gamma, is presented in Section~{\suppSecSIRJPFgamma}, though we found that a simpler Gaussian noise model is sufficient.
 
 
-The nonlinearity and intrinsic stochasticity of the SIRPF2 model are characteristic features of dynamics in biological systems \citep{coulson04,wilkinson18}.
+The nonlinearity and intrinsic stochasticity of the SIRJPF2 model are characteristic features of dynamics in biological systems \citep{coulson04,wilkinson18}.
 In the following equations, the superscript $\species$ describes the species of \textit{Daphnia}, taking value ${\native}$ for native (\textit{D.~dentifera}) and ${\invasive}$ for invasive  (\textit{D.~lumholtzi}).
 \editSubscript
 Most parameters are written with potential dependence on $u$ to enable investigation of factors explaining differences between replicates.
 We will later establish that this dependence is not needed; random dynamic noise is sufficient to explain the observed differences between units.
-The experimentally determined sampling rate, $\delta = 0.013$ per liter per day, and food replenishment rate, $\mu = 0.37 \times 10^5$ cells per liter per day, are fixed parameter values that are shared between units based on the experimental protocol.
-{\small
+The experimentally determined sampling rate, $\delta = 0.013$ per day, and food replenishment rate, $\mu = 0.37 \times 10^6$ cells per liter per day, are fixed parameter values that are shared between units based on the experimental protocol.
+{\footnotesize
 \begin{align}
     \label{eq:model:first}
     dS^{\species}_{\unit}(t) &= \lambda^{\species}_{J,{\unit}} \,  J^{\species}_{\unit}(t) \, dt -
@@ -526,8 +526,8 @@ The experimentally determined sampling rate, $\delta = 0.013$ per liter per day,
     \, J^{\species}_{\unit}(t)\, dt + J^{\species}_{\unit}(t)\, d\zeta^{\species}_{J,{\unit}}, \\
     dP_{\unit}(t) &= \hspace{-1mm} \sum_{\species \in \{\native, \invasive\}} \hspace{-1mm} \left(\beta^{\species}_{\unit} \, \theta^{\species}_{I,{\unit}} \,  I^{\species}_{\unit}(t) - f^{\species}_{S,{\unit}} \big\{ S^{\species}_{\unit}(t) + \xi_{\unit} I^{\species}_{\unit}(t) \big\} P_{\unit}(t)\right) \! dt
     \\ \nonumber & \hspace{5.5cm}
-    - \theta_{P,{\unit}} \, P_{\unit}(t)\, dt + P_{\unit}(t)\, d\zeta_{P,{\unit}},\\
-    dF_{\unit}(t) &= - \hspace{-1mm} \sum_{\species \in \{\native, \invasive\}} f^{\species}_{S,{\unit}} \, F_{\unit}(t) \left(S^{\species}_{\unit}(t)+\xi_{J,{\unit}} \, J^{\species}_{\unit}(t) +\xi_{\unit} \, I^{\species}_{\unit}(t)\right)dt  + \mu \, dt + F_{\unit}(t)\, d\zeta_{F,{\unit}},\\
+    - (\theta_{P,{\unit}} + \delta) P_{\unit}(t)\, dt + P_{\unit}(t)\, d\zeta_{P,{\unit}},\\
+    dF_{\unit}(t) &= - \hspace{-1mm} \sum_{\species \in \{\native, \invasive\}} f^{\species}_{S,{\unit}} \, F_{\unit}(t) \left(S^{\species}_{\unit}(t)+\xi_{J,{\unit}} \, J^{\species}_{\unit}(t) +\xi_{\unit} \, I^{\species}_{\unit}(t)\right)dt  + \mu \, dt - \delta \, F_{\unit}(t) \, dt + F_{\unit}(t)\, d\zeta_{F,{\unit}},\\
 d\zeta^{\species}_{S,{\unit}} &\sim \Normal \big[0, (\sigma^{\species}_{S,{\unit}})^{2}\, dt\big],
 \quad
 d\zeta^{\species}_{I,{\unit}} \sim \Normal \big[0, (\sigma^{\species}_{I,{\unit}})^{2}\, dt\big],
@@ -548,7 +548,7 @@ This filtration rate is expected to be smaller for infected and juvenile individ
 
 Infected hosts of species $\species$ die at rate $\theta^{\species}_{I,{\unit}}$, at which point $\beta^{\species}_{\unit}$ parasite spores are released.
 We do not measure the spores in this experiment, and so only the product $\beta^{\species}_{\unit}\, p^{\species}_{\unit}$ is identified but not the separate values of $\beta^{\species}_{\unit}$ and $p^{\species}_{\unit}$.
-We therefore fix $\beta^{\species}_{\unit}=3\times 10^3$ for $\species\in\{\native,\invasive\}$ and for all units \citep{penczykowski14}, though \citet{searle16} estimated a slightly smaller value.
+We therefore fix $\beta^{\species}_{\unit}=3\times 10^4$ for $\species\in\{\native,\invasive\}$ and for all units \citep{penczykowski14}, though \citet{searle16} estimated a slightly smaller value.
 Maturation and death of juvenile individuals are modeled to occur at rate  $\lambda^{\species}_{J,{\unit}}$ and  $\theta^{\species}_{J,{\unit}}$ respectively.
 
 The model's effectiveness at statistically describing the variation in \textit{Daphnia} population dynamics depends critically on its ability to account for overdispersion, a phenomenon which is overlooked in the common practice of using binomial and Poisson variation to add stochasticity to deterministic models \citep{breto11}.
@@ -568,7 +568,7 @@ We do not include the data on juveniles during the model fitting process, to kee
 Therefore, these data are available for an out-of-sample model validation.
 
 Simpler treatments with a single \textit{Daphnia} species (SIRJPF) and without the parasite (SRJF and SRJF2) arise as special cases of SIRJPF2, with appropriate states and parameters.
-These experiment treatments and corresponding models are presented in Sections~S8, S9 and S10.
+These experimental treatments and corresponding models are presented in Sections~S7, S8 and S9.
 By isolating the food variable in the absence of parasites and/or inter-species competition among {\it Daphnia}, these results provide additional evidence on how food resource availability or scarcity impacts the population dynamics of native and invasive species.
 
 
@@ -814,8 +814,8 @@ $\lambda^{\native}_{J}$ & Maturation rate of native juvenile                  & 
 $\lambda^{\invasive}_{J}$ & Maturation rate of invasive juvenile                &     $ \mathrm{day}^{-1} $                  & \Sexpr{mysignif(lambda_Ji,2)}  & \\
 $\xi$           & Ratio of infected host filtering rate       &     $\mathrm{Unitless}$                    & \Sexpr{mysignif(xi,2)}         & (\Sexpr{mysignif(ci_table$xi[1],2)},\Sexpr{mysignif(ci_table$xi[2],2)})\\
 $\xi_J$         & Ratio of juvenile individual filtering rate &     $\mathrm{Unitless}$                    & \Sexpr{mysignif(xi_J,2)} & \\
-$\beta^{\native}$       & Spores produced per infected native individual     &  $10^3 \cdot \mathrm{spores} \cdot \mathrm{individual}^{-1} \cdot \mathrm{day}^{-1}$  & \Sexpr{mysignif(beta_n,2)} & \\
-$\beta^{\invasive}$       & Spores produced per infected invasive individual   &  $10^3 \cdot \mathrm{spores} \cdot \mathrm{individual}^{-1} \cdot \mathrm{day}^{-1}$  & \Sexpr{mysignif(beta_i,2)} & \\
+$\beta^{\native}$       & Spores produced per infected native individual     &  $10^3 \cdot \mathrm{spores} \cdot \mathrm{individual}^{-1}$  & \Sexpr{mysignif(beta_n,2)} & \\
+$\beta^{\invasive}$       & Spores produced per infected invasive individual   &  $10^3 \cdot \mathrm{spores} \cdot \mathrm{individual}^{-1}$  & \Sexpr{mysignif(beta_i,2)} & \\
 $\mu$           & Alga refilling rate                                &  $10^6 \cdot \mathrm{cell} \cdot \mathrm{L} ^{-1} \cdot \mathrm{day}^{-1}$                 & \Sexpr{mysignif(mu,2)} & \\
 $\delta$        & Sampling rate                                      &  $\mathrm{day}^{-1}$                                                                         & \Sexpr{mysignif(delta,2)} & \\
 $\sigma^{\native}_{S}$ & Standard deviation of Brownian motion of susceptible native adult         &   $\sqrt{\mathrm{individual} \cdot \mathrm{day}^{-1}}$  & 0  &  \\
@@ -856,7 +856,7 @@ Model & Parameters & Max log-likelihood & AIC \\ [0.5ex]
 SIRJPF2 & 24 & \Sexpr{mysignif_ll_AIC(loglik_target,5)} & \Sexpr{mysignif_ll_AIC(AIC_target,6)} \\ % k=24: sigSn=sigSi=0 fixed at boundary, excluded; matches AIC=2k-2ll (26 would give 1813.12)
 SIRPF2 & 20 & \Sexpr{mysignif_ll_AIC(benchmark_model_summary$Model_no_juv[1],5)} & \Sexpr{mysignif_ll_AIC(benchmark_model_summary$Model_no_juv[2],6)} \\
 SIRJP2 & 23 & -887.8 & 1821.6 \\
-SIRJPF2-Gamma & \Sexpr{length(parms)} & \Sexpr{mysignif_ll_AIC(benchmark_model_summary$SIRJPF2_gamma[1],5)} & \Sexpr{mysignif_ll_AIC(benchmark_model_summary$SIRJPF2_gamma[2],6)} \\
+SIRJPF2-Gamma & 26 & \Sexpr{mysignif_ll_AIC(benchmark_model_summary$SIRJPF2_gamma[1],5)} & \Sexpr{mysignif_ll_AIC(benchmark_model_summary$SIRJPF2_gamma[2],6)} \\ % k=26, not 24: this model has no sigSn/sigSi to fix at the boundary; its noise is transition-level (sigSIn, sigIPn, sigSIi, sigIPi, sigSJn, sigSJi), all estimated. Matches stored AIC=2k-2ll. Was \Sexpr{length(parms)}, which read the SIRJPF2 MLE object and gave 26 only by coincidence.
 Negative Binomial (Cubic) & 24 & \Sexpr{mysignif_ll_AIC(benchmark_model_summary$NB_cubic[1],5)} & \Sexpr{mysignif_ll_AIC(benchmark_model_summary$NB_cubic[2],6)} \\
 Negative Binomial (Quadratic) & 20 & \Sexpr{mysignif_ll_AIC(benchmark_model_summary$NB_quad[1],5)} & \Sexpr{mysignif_ll_AIC(benchmark_model_summary$NB_quad[2],6)} \\
 Negative Binomial (Linear) & 16 & \Sexpr{mysignif_ll_AIC(benchmark_model_summary$NB_linear[1],6)} & \Sexpr{mysignif_ll_AIC(benchmark_model_summary$NB_linear[2],6)} \\
@@ -866,6 +866,7 @@ Searle et al. (2016) & 19 & \Sexpr{mysignif_ll_AIC(benchmark_model_summary$Model
 \end{center}
 \caption{
 Comparison of model fit for mechanistic models and non-mechanistic benchmarks.
+Parameters is the number of estimated parameters; values held fixed at a boundary are excluded, which is why SIRJPF2 counts $24$ while its gamma-noise variant, having no such boundary-fixed noise intensities, counts $26$.
 }
 \label{Table:Model_comparison}
 \renewcommand{\arraystretch}{1}
@@ -904,8 +905,8 @@ For example, in a PanelPOMP analysis of pre-vaccine polio transmission dynamics 
 Modeling decisions concerning shared and unit-specific parameters are testable hypotheses that are of scientific interest in the quest for a parsimonious understanding of the dynamics, and for understanding sources of variation.
 
 In our selected model, the feeding rate of the invasive {\it Daphnia} species ($f^{\invasive}_{S}$) is not statistically significantly different from that of the native {\it Daphnia} species ($f^{\native}_{S}$).
-Also, the invasive species has a lower rate of infection per consumed spore ($p^{\native} < p^{\invasive}$), consistent with Fig.~1C of \citet{searle16}.
-The native parameters—juvenile growth $r^{\native}$, feeding rate $f^{\native}_{S}$ and infection probability $p^{\native}$ show full identifiability as shown in Fig.~{\suppFigSIRJPFiiProfiles}, whereas the corresponding invasive parameters $r^{\invasive},\,f^{\invasive}_{S},\,p^{\invasive}$ are only bounded on one side.
+Also, the invasive species has a higher rate of infection per consumed spore ($p^{\native} < p^{\invasive}$), consistent with Fig.~1C of \citet{searle16}.
+The native parameters---juvenile growth $r^{\native}$, feeding rate $f^{\native}_{S}$ and infection probability $p^{\native}$---are fully identified, as shown in Fig.~{\suppFigSIRJPFiiProfiles}, whereas the corresponding invasive parameters $r^{\invasive},\,f^{\invasive}_{S},\,p^{\invasive}$ are only bounded on one side.
 This limited identifiability is attributable to
 (i) the lower density of \textit{D. lumholtzi} which may increase stochastic effects;
 (ii) model complexity, since the parameters become identifiable in host-only experiments with simplified dynamics (Fig.~\suppFigSIRJPFlumholtziProfiles);
@@ -1114,7 +1115,7 @@ suppressWarnings(
 @
   % \includegraphics[width=1\textwidth]{"Density_plot.png"}
 \caption{\label{fig:sim_plot}
-Simulated \textit{Daphnia} densities (Individuals$/$Liter), alga density ($10^6\cdot$cells$/$Liter) and parasite density ($10^3\cdot$spores$/$Liter), over time (days), in the mixed species parasitized dynamics with parameters from Table~\ref{Table:Model_comparison}.
+Simulated \textit{Daphnia} densities (Individuals$/$Liter), alga density ($10^6\cdot$cells$/$Liter) and parasite density ($10^3\cdot$spores$/$Liter), over time (days), in the mixed species parasitized dynamics with parameters from Table~\ref{tab:estimates}.
 Shaded blue bands are $95\%$ pointwise confidence intervals; thick black lines show the mean; thin solid color lines are the experimental data.
 The parasite and food densities were not observed, and the dashed colored lines are simulations.
 }
@@ -1130,11 +1131,11 @@ Simulations from other models considered are included in the supplement (Figs.~{
 
 The consistency of simulated data with the empirical data provides a qualitative indicator of the fit of the model that complements a comparison of log-likelihood values.
 Our simulations from  the fitted SIRJPF2 model align with the observed data for the susceptible and infected species of \textit{Daphnia}, and from the out-of fit juvenile data.
-This encourages us to explore the dynamics of latent states in the dynamic system by simulating the unobserved densities of \textit{M.~bicuspidata} and \textit{A.~falcatus} (see the third column of Fig.~\ref{fig:sim_plot}).
+This encourages us to explore the dynamics of latent states in the dynamic system by simulating the unobserved densities of \textit{M.~bicuspidata} and \textit{A.~falcatus} (see the fourth column of Fig.~\ref{fig:sim_plot}).
 The model predicts that the alga density decreases dramatically from its starting value, and then starts to rebound, due to resupply, once the \textit{Daphnia} population has crashed.
 The parasite density is predicted to rise sharply during the population growth phase and then plateaus at a high level.
 
-As mentioned in Section~\ref{sec:mecmod}, high population density of \textit{Daphnia} and limited food resources will prompt the production of male \textit{Daphnia} leading to sexual reproduction and the generation of diapausing eggs.
+As mentioned in Section~\ref{sec:studysystem}, high population density of \textit{Daphnia} and limited food resources will prompt the production of male \textit{Daphnia} leading to sexual reproduction and the generation of diapausing eggs.
 That biological feature plays a large role in the model of \cite{searle16}, though Table~\ref{Table:Model_comparison} shows that our proposed mechanism for the role of resource depletion provides a better statistical explanation of the analyzed data.
 Our modeling and inference approach could be extended to include data on males and ephippial females, collected by \cite{searle16} but not included in either their model or ours.
 
@@ -1184,7 +1185,6 @@ The flexibility of the PanelPOMP model class provides many opportunities for dev
 \revision{\editSignificance}
 
 \begin{acks}[Acknowledgments]
-%% The corresponding author is Bo Yang with address 665 W 130th St, New York, NY 10027.
 A. A. King is affiliated with the Center for the Study of Complex Systems, University of Michigan.
 This work was supported by National Science Foundation grants DMS-1761603 and OAC-2607869.
 \end{acks}
